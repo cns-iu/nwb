@@ -23,76 +23,76 @@
 	   <menu name="Database" type="group">
 		<menu name="ISI" type="group">
 			<!-- Merging -->
-			<menu pid="edu.iu.scipolicy.database.isi.merge.MergeIdenticalPeople" />
-			<menu pid="edu.iu.scipolicy.database.isi.merge.SuggestPeopleMerges" />
-			<menu pid="edu.iu.scipolicy.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm" />
-			<menu pid="edu.iu.scipolicy.database.isi.merge.document_source.CreateDocumentSourceMergingTable" />
-			<menu pid="edu.iu.scipolicy.database.isi.match.reference_to_paper.MatchReferenceToPaperAlgorithm" />
+			<menu pid="edu.iu.sci2.database.isi.merge.MergeIdenticalPeople" />
+			<menu pid="edu.iu.sci2.database.isi.merge.SuggestPeopleMerges" />
+			<menu pid="edu.iu.sci2.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm" />
+			<menu pid="edu.iu.sci2.database.isi.merge.document_source.CreateDocumentSourceMergingTable" />
+			<menu pid="edu.iu.sci2.database.isi.match.reference_to_paper.MatchReferenceToPaperAlgorithm" />
 			<menu type="break"/>
 			
 	    	<!-- Core entities -->
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentsAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractKeywordsAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractDocumentsAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractKeywordsAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
 	    	
 	    	<!-- Core entities by year -->
 	    	<menu type="break"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractAuthorsByYearAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractReferencesByYearAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractOriginalKeywordsByYearAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractNewISIKeywordsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractAuthorsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractReferencesByYearAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractOriginalKeywordsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractNewISIKeywordsByYearAlgorithm"/>
 
 			<!-- Core entities by year for burst detection -->
 			<menu type="break"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractAuthorsByYearForBurstDetectionAlgorithm"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractDocumentsByYearForBurstDetectionAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractOriginalKeywordsByYearForBurstDetectionAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractNewISIKeywordsByYearForBurstDetectionAlgorithm"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractReferencesByYearForBurstDetectionAlgorithm"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst.ExtractAuthorsByYearForBurstDetectionAlgorithm"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst.ExtractDocumentsByYearForBurstDetectionAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst.ExtractOriginalKeywordsByYearForBurstDetectionAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst.ExtractNewISIKeywordsByYearForBurstDetectionAlgorithm"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst.ExtractReferencesByYearForBurstDetectionAlgorithm"/>
 	    
 	    	<!-- Summaries that result in tables (originally "Tabular summaries") -->
 	    	<menu type="break"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.longitudinalsummary"/> 
+	    	<menu pid="edu.iu.sci2.database.isi.extract.table.longitudinalsummary"/> 
 	    	
 	    	<!-- Co-authorship network -->
 	    	<menu type="break"/>
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
+	    	<menu pid="edu.iu.sci2.database.isi.extract.network.coauthor"/>
 
 			<!-- Citation networks-->
 		   	<menu type="break"/>
-		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
-		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithoutOuterNodes"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes"/>
+		   	<menu pid="edu.iu.sci2.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
+		   	<menu pid="edu.iu.sci2.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.sci2.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
+		    <menu pid="edu.iu.sci2.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.sci2.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes"/>
 
 			<!-- Co-citation networks -->
 			<menu type="break"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.cocitation.document.core"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.cocitation.document.all"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.cocitation.document_source.core"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.cocitation.document_source.all"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.cocitation.author.core"/>
 
 			<!-- Bibliographic coupling networks -->
 			<menu type="break"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.author"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.bibcoupling.author"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.bibcoupling.document"/>
+			<menu pid="edu.iu.sci2.database.isi.extract.network.bibcoupling.document_source"/>
 		</menu>
 	    <menu name="NSF" type="group">
 			<!-- Merging -->
-			<menu pid="edu.iu.scipolicy.database.nsf.merge.MergeIdenticalPeople" />
+			<menu pid="edu.iu.sci2.database.nsf.merge.MergeIdenticalPeople" />
 			<menu type="break"/>
 	   		<!-- Core entities -->
-	   		<menu pid="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractInvestigators"/>
-	    	        <menu pid="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractAwards"/>	    	
-	    		<menu pid="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractOrganizations"/>
+	   		<menu pid="edu.iu.sci2.database.nsf.extract.table.core_entities.ExtractInvestigators"/>
+	    	        <menu pid="edu.iu.sci2.database.nsf.extract.table.core_entities.ExtractAwards"/>	    	
+	    		<menu pid="edu.iu.sci2.database.nsf.extract.table.core_entities.ExtractOrganizations"/>
 	    
 	    		<menu type="break"/>
 	    		<!--  Co-PI network -->
-	    		<menu pid="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
+	    		<menu pid="edu.iu.sci2.database.nsf.extract.network.copi"/>
     	</menu>
     	<!-- <menu name="Generic-CSV" type="group">
     		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractCoOccurrenceNetworkAlgorithm"/>
@@ -108,7 +108,7 @@
 			<menu pid="edu.iu.cns.database.extract.generic.ExtractTable"/>
 			<menu pid="edu.iu.cns.database.extract.generic.ExtractGraph"/>
 			<menu type="break"/>
-			<menu pid="edu.iu.scipolicy.tool.db_to_prefuse.DbToPrefuseAlgorithm"/>
+			<menu pid="edu.iu.sci2.tool.db_to_prefuse.DbToPrefuseAlgorithm"/>
 		</menu>
 	</menu>
 	<menu name="Text Files" type="group">
@@ -134,15 +134,15 @@
     
     <top_menu name="Preprocessing">
 	<menu name="General" type="group"> 
- 	    <menu pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm"/>
-	    <menu pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm"/>
-            <menu pid="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm"/>
+ 	    <menu pid="edu.iu.sci2.filtering.topnpercent.TopNPercentAlgorithm"/>
+	    <menu pid="edu.iu.sci2.filtering.topn.TopNAlgorithm"/>
+            <menu pid="edu.iu.sci2.preprocessing.aggregatedata.AggregateDataAlgorithm"/>
 	</menu>
 	<menu name="Temporal" type="group"> 
 	    <menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
 	</menu>
 	<menu name="Geospatial" type="group"> 
-		<menu pid="edu.iu.scipolicy.preprocessing.extractzipcode.ExtractZipcodeAlgorithm"/>
+		<menu pid="edu.iu.sci2.preprocessing.extractzipcode.ExtractZipcodeAlgorithm"/>
 	</menu>
 	<menu name="Topical" type="group"> 
 	    <menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
@@ -166,7 +166,7 @@
 	    <menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
         <menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
         <menu type="break"/>
-        <menu pid="edu.iu.scipolicy.preprocessing.mergenetworks.MergeNetworks"/>
+        <menu pid="edu.iu.sci2.preprocessing.mergenetworks.MergeNetworks"/>
 	 </menu>
     </top_menu>   
     
@@ -175,8 +175,8 @@
 <menu pid= "edu.iu.nwb.analysis.burst.Burst"/> 
 </menu>
 <menu name="Geospatial" type="group"> 
-<menu pid="edu.iu.scipolicy.preprocessing.geocoder.GeocoderAlgorithm"/>
-<menu pid="edu.iu.scipolicy.preprocessing.geocoder.YahooGeocoderAlgorithm"/>
+<menu pid="edu.iu.sci2.preprocessing.geocoder.GeocoderAlgorithm"/>
+<menu pid="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm"/>
 </menu>
 <menu name="Topical" type="group">
 <menu pid= "edu.iu.nwb.analysis.burst.Burst"/> 
@@ -301,16 +301,16 @@
 	    
 	    <menu name="General" type="group">
 	    	<menu pid="edu.iu.nwb.visualization.gnuplot"/>
-			<menu pid="edu.iu.scipolicy.visualization.imageviewer.ImageViewerAlgorithm"/>
+			<menu pid="edu.iu.sci2.visualization.imageviewer.ImageViewerAlgorithm"/>
 	    </menu>
 	    
 	    <menu name="Temporal" type="group">
-	         <menu pid="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm"/>
+	         <menu pid="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm"/>
 	    </menu>
 	    
 	    <menu name="Geospatial" type="group">
-			<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
-			<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
+			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory"/>
+			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory"/>
 	    </menu>
 	    
 	    <!-- Keep this commented out unless you're going to put something in it.
@@ -318,9 +318,9 @@
 	         Furthermore, if a plugin's properties file declares a menu_path inside such
 	         a menu, the menu manager gives errors on tool startup.
 	    <menu name="Topical" type="group">
-			<menu pid="edu.iu.scipolicy.visualization.scimap.journals.ScienceMapAlgorithm"/>
-			<menu pid="edu.iu.scipolicy.visualization.scimap.fields.ScienceMapAlgorithm"/>
-			<menu pid="edu.iu.scipolicy.visualization.scimap.references.MapReferences"/>
+			<menu pid="edu.iu.sci2.visualization.scimap.journals.ScienceMapAlgorithm"/>
+			<menu pid="edu.iu.sci2.visualization.scimap.fields.ScienceMapAlgorithm"/>
+			<menu pid="edu.iu.sci2.visualization.scimap.references.MapReferences"/>
 	    </menu>
 	    -->
 	    

@@ -31,7 +31,7 @@
 	       point="org.eclipse.ui.views">
 	     <view
          allowMultiple="false"
-         class="edu.iu.scipolicy.gui.brand.DataManagerView"
+         class="edu.iu.sci2.gui.brand.DataManagerView"
          icon="icons/datamanager_icon.gif"
          id="org.cishell.reference.gui.datamanager.DataManagerView"
          name="Data Manager"/>
@@ -70,7 +70,7 @@
 	</extension>
 	
 	<extension point="org.eclipse.ui.startup">
-    	<startup class="edu.iu.scipolicy.gui.brand.Activator"/>
+    	<startup class="edu.iu.sci2.gui.brand.Activator"/>
  	</extension>
  <extension
        point="org.eclipse.ui.actionSets">

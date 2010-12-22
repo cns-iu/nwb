@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Brand Plug-in
-Bundle-SymbolicName: edu.iu.scipolicy.gui.brand;singleton:=true
+Bundle-SymbolicName: edu.iu.sci2.gui.brand;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.iu.scipolicy.gui.brand.Activator
+Bundle-Activator: edu.iu.sci2.gui.brand.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

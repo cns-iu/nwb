@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.gui.brand;
+package edu.iu.sci2.gui.brand;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -15,7 +15,7 @@ import org.osgi.service.log.LogService;
 public class Activator extends AbstractUIPlugin implements IStartup{
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "edu.iu.scipolicy.gui.brand";
+	public static final String PLUGIN_ID = "edu.iu.sci2.gui.brand";
 	// The shared instance
 	private static Activator plugin;	
 	private BundleContext bContext;
