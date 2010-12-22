@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source
-Bundle-SymbolicName: edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source
+Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.network.bibcoupling.document_source
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.cns.database.extract.generic,
