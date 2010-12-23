@@ -47,6 +47,8 @@ public class Legend {
 	}
 
 	public void add(LegendComponent legendComponent) {
-		components.add(legendComponent);
+		if (legendComponent != null) {
+			components.add(legendComponent);
+		}
 	}
 }

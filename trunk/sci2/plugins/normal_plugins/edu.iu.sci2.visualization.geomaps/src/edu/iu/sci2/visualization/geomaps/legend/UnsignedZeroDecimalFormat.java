@@ -52,11 +52,6 @@ public class UnsignedZeroDecimalFormat {
 	protected static UnsignedZeroDecimalFormat createDecimalFormatOver(double... values) {
 		DecimalFormat formatter = new DecimalFormat();
 		
-		if (!isStrictlyIncreasing(values)) {
-			throw new IllegalArgumentException(
-					"Error: The given values must be strictly increasing.");
-		}
-		
 		BinaryCondition<Double> relativeDifferenceLimit =
 			new RelativeDifferenceLimit(TOLERANCE);
 		

@@ -7,20 +7,14 @@ import java.util.List;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 
 public class LinearInterpolator implements Interpolator<Double> {
-	private Range<Double> inRange;
-	private Range<Double> outRange;
+	private Range<Double> inRange; /* Data range based on the data value */
+	private Range<Double> outRange; /* Could be the circle size range or the color range */
 
-	public LinearInterpolator(Collection<Double> inValues, Range<Double> outRange)
-			throws ZeroLengthInterpolatorInputRangeException {
+	public LinearInterpolator(Collection<Double> inValues, Range<Double> outRange) {
 		this(Range.calculateRange(inValues), outRange);		
 	}
 	
-	public LinearInterpolator(Range<Double> inRange, Range<Double> outRange)
-			throws ZeroLengthInterpolatorInputRangeException {
-		if (inRange.getMin().equals(inRange.getMax())) {
-			throw new ZeroLengthInterpolatorInputRangeException(inRange);
-		}
-
+	public LinearInterpolator(Range<Double> inRange, Range<Double> outRange) {
 		this.inRange = inRange;
 		this.outRange = outRange;
 	}
@@ -55,12 +49,14 @@ public class LinearInterpolator implements Interpolator<Double> {
 									  double inMax,
 									  double outMin,
 									  double outMax) {
-		assert (inMax - inMin != 0.0);
+		if (inMax - inMin == 0) {
+			return outMin;
+		}
 		
 		return (outMin + (in - inMin) * (outMax - outMin) / (inMax - inMin));
 	}
 
-	public double invert(Double value) throws InterpolatorInversionException {
+	public double invert(Double value) {
 		Interpolator<Double> inverseInterpolator = createInverse(this);
 		
 		return inverseInterpolator.interpolate(value);
@@ -74,16 +70,11 @@ public class LinearInterpolator implements Interpolator<Double> {
 	 * and an interpolator cannot have a zero-length input range (as this would
 	 * cause a division by zero during interpolation).
 	 */
-	private static LinearInterpolator createInverse(LinearInterpolator interpolator)
-			throws InterpolatorInversionException {
-		try {
-			Range<Double> inRange = interpolator.getInRange();
-			Range<Double> outRange = interpolator.getOutRange();
-			
-			return new LinearInterpolator(outRange, inRange);
-		} catch (ZeroLengthInterpolatorInputRangeException e) {
-			throw new InterpolatorInversionException(e);
-		}
+	private static LinearInterpolator createInverse(LinearInterpolator interpolator) {
+		Range<Double> inRange = interpolator.getInRange();
+		Range<Double> outRange = interpolator.getOutRange();
+		
+		return new LinearInterpolator(outRange, inRange);
 	}
 
 	public Range<Double> getInRange() {

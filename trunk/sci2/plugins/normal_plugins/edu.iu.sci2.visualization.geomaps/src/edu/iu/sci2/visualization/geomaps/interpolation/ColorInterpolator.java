@@ -22,8 +22,7 @@ public class ColorInterpolator implements Interpolator<Color> {
 	private LinearInterpolator greenInterpolator;
 	private LinearInterpolator blueInterpolator;
 
-	public ColorInterpolator(Range<Double> inputRange, Range<Color> interpolatedRange)
-			throws ZeroLengthInterpolatorInputRangeException {
+	public ColorInterpolator(Range<Double> inputRange, Range<Color> interpolatedRange) {
 		float[] minimumColorComponents = new float[3];
 		interpolatedRange.getMin().getColorComponents(minimumColorComponents);
 		
@@ -120,32 +119,20 @@ public class ColorInterpolator implements Interpolator<Color> {
 		 * because the red and blue inversions are impossible.
 		 */
 		
-		try {
-			double invertedRed =
-				redInterpolator.invert((double) colorComponents[RED]);
-			
-			inversionSamples.add(invertedRed);
-		} catch (InterpolatorInversionException e) {
-			exceptions.add(e);
-		}
+		double invertedRed =
+			redInterpolator.invert((double) colorComponents[RED]);
 		
-		try {
-			double invertedGreen =
-				greenInterpolator.invert((double) colorComponents[GREEN]);
-			
-			inversionSamples.add(invertedGreen);
-		} catch (InterpolatorInversionException e) {
-			exceptions.add(e);
-		}
+		inversionSamples.add(invertedRed);
 		
-		try {
-			double invertedBlue =
-				blueInterpolator.invert((double) colorComponents[BLUE]);
-			
-			inversionSamples.add(invertedBlue);
-		} catch (InterpolatorInversionException e) {
-			exceptions.add(e);
-		}
+		double invertedGreen =
+			greenInterpolator.invert((double) colorComponents[GREEN]);
+		
+		inversionSamples.add(invertedGreen);
+		
+		double invertedBlue =
+			blueInterpolator.invert((double) colorComponents[BLUE]);
+		
+		inversionSamples.add(invertedBlue);
 		
 		/* If all three inversions failed, retrieving the pre-image is
 		 * impossible (at this late stage).

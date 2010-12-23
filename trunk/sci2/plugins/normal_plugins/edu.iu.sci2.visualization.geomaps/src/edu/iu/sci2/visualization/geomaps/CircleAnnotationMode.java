@@ -19,7 +19,6 @@ import edu.iu.sci2.visualization.geomaps.interpolation.ColorInterpolator;
 import edu.iu.sci2.visualization.geomaps.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.interpolation.InterpolatorInversionException;
 import edu.iu.sci2.visualization.geomaps.interpolation.LinearInterpolator;
-import edu.iu.sci2.visualization.geomaps.interpolation.ZeroLengthInterpolatorInputRangeException;
 import edu.iu.sci2.visualization.geomaps.legend.CircleAreaLegend;
 import edu.iu.sci2.visualization.geomaps.legend.ColorLegend;
 import edu.iu.sci2.visualization.geomaps.legend.Legend;
@@ -130,16 +129,11 @@ public class CircleAnnotationMode extends AnnotationMode {
 		Range<Double> areaValueScalableRange =
 			AnnotationMode.calculateScalableRangeOverColumn(
 					inTable, areaValueAttribute, areaValueScaler);
-		Interpolator<Double> areaInterpolator;
-		try {
-			areaInterpolator =
-				new LinearInterpolator(
-						areaValueScaler.scale(areaValueScalableRange),
-						areaRange);
-		} catch (ZeroLengthInterpolatorInputRangeException e) {
-			throw new AlgorithmExecutionException(
-					"Cannot interpolate circle areas due to: " + e.getMessage(), e);
-		}
+		Interpolator<Double> areaInterpolator =
+			new LinearInterpolator(
+					areaValueScaler.scale(areaValueScalableRange),
+					areaRange);
+		
 		
 		// Set up inner color interpolator
 		Range<Double> innerColorValueScalableRange = null;
@@ -148,19 +142,10 @@ public class CircleAnnotationMode extends AnnotationMode {
 			innerColorValueScalableRange =
 				AnnotationMode.calculateScalableRangeOverColumn(
 						inTable, innerColorValueAttribute, innerColorValueScaler);
-			try {
-				innerColorQuantityInterpolator =
-					new ColorInterpolator(
-							innerColorValueScaler.scale(innerColorValueScalableRange),
-							innerColorRange);
-			} catch (ZeroLengthInterpolatorInputRangeException e) {			
-				GeoMapsAlgorithm.logger.log(
-						LogService.LOG_WARNING,
-						"Can't visualize data with circle inner colors due to: "
-						+ e.getMessage(),
-						e);
-				isUsingInnerColor = false;
-			}
+			innerColorQuantityInterpolator =
+				new ColorInterpolator(
+						innerColorValueScaler.scale(innerColorValueScalableRange),
+						innerColorRange);
 		}
 		
 		// Set up outer color interpolator
@@ -171,19 +156,10 @@ public class CircleAnnotationMode extends AnnotationMode {
 				AnnotationMode.calculateScalableRangeOverColumn(
 						inTable, outerColorValueAttribute, outerColorValueScaler);
 			
-			try {
-				outerColorQuantityInterpolator =
-					new ColorInterpolator(
-							outerColorValueScaler.scale(outerColorValueScalableRange),
-							outerColorRange);
-			} catch (ZeroLengthInterpolatorInputRangeException e) {
-				GeoMapsAlgorithm.logger.log(
-						LogService.LOG_WARNING,
-						"Cannot visualize data with circle outer colors due to: "
-						+ e.getMessage(),
-						e);
-				isUsingOuterColor = false;
-			}
+			outerColorQuantityInterpolator =
+				new ColorInterpolator(
+						outerColorValueScaler.scale(outerColorValueScalableRange),
+						outerColorRange);
 		}
 		
 		
@@ -297,7 +273,6 @@ public class CircleAnnotationMode extends AnnotationMode {
 				innerColorQuantityInterpolator,
 				innerColorRange);
 		
-		
 		LegendComponent outerColorLegend =
 			createOuterColorLegend(
 				isUsingOuterColor,
@@ -323,6 +298,10 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Range<Double> scalableRange,
 			Interpolator<Double> interpolator,
 			Range<Double> outputRange) throws AlgorithmExecutionException {
+		if (scalableRange.isEqual()) {
+			return new NullLegendComponent();
+		}
+		
 		LegendComponent areaLegend = new NullLegendComponent();
 		try {
 			/* To determine how to label the middle of the legend component,
@@ -355,6 +334,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 					+ e.getMessage(),
 					e);
 		}
+		
 		return areaLegend;
 	}
 
@@ -366,8 +346,11 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Range<Double> scalableRange,
 			Interpolator<Color> interpolator,
 			Range<Color> colorRange) throws AlgorithmExecutionException {
-		LegendComponent innerColorLegend = new NullLegendComponent();
-		
+		if (scalableRange.isEqual()) {
+			return new NullLegendComponent();
+		}
+				
+		LegendComponent innerColorLegend = new NullLegendComponent();		
 		if (isUsingInnerColor) {
 			try {
 				/* To determine how to label the middle of the legend component,
@@ -418,8 +401,11 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Range<Double> scalableRange,
 			Interpolator<Color> interpolator,
 			Range<Color> colorRange) throws AlgorithmExecutionException {
-		LegendComponent outerColorLegend = new NullLegendComponent();
+		if (scalableRange.isEqual()) {
+			return new NullLegendComponent();
+		}
 		
+		LegendComponent outerColorLegend = new NullLegendComponent();
 		if (isUsingOuterColor) {
 			try {
 				/* To determine how to label the middle of the legend component,

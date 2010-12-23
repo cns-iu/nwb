@@ -30,9 +30,8 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 public abstract class GeoMapsAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {
-	@SuppressWarnings("unchecked") // Raw Dictionary.
 	public Algorithm createAlgorithm(
-			Data[] data, Dictionary parameters, CIShellContext context) {
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
         return new GeoMapsAlgorithm(data, parameters, context, getAnnotationMode(), getOutputAlgorithmName());
     }
     

@@ -1,17 +1,19 @@
 package edu.iu.sci2.visualization.geomaps;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
@@ -19,17 +21,8 @@ import edu.iu.sci2.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.sci2.visualization.geomaps.utility.Constants;
 
 public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
-	public static final List<String> LATITUDE_KEYS_TO_GUESS =
-		Collections.unmodifiableList(Arrays.asList(new String[]{
-			"latitude", "Latitude", "lat", "Lat", "lat.", "Lat."
-		}));
-	public static final List<String> LONGITUDE_KEYS_TO_GUESS =
-		Collections.unmodifiableList(Arrays.asList(new String[]{
-			"longitude", "Longitude", "long", "Long", "long.", "Long.", "lng", "Lng", "lng.", "Lng."
-		}));
-
 	@Override
-	protected AnnotationMode getAnnotationMode() {
+	protected AnnotationMode getAnnotationMode() {		
 		return new CircleAnnotationMode();
 	}
 
@@ -39,60 +32,98 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		Data inData = data[0];
 		Table table = (Table) inData.getData();
 		
+		List<String> numericColumnNames = Collections.emptyList();
+		try {
+			numericColumnNames =
+				ImmutableList.copyOf(
+						Lists.newArrayList(
+								TableUtilities.getValidNumberColumnNamesInTable(table)));
+		} catch (ColumnNotFoundException e) {
+			String message =
+				"Table does not seem to have any purely numeric columns.  "
+				+ "If your table does not have columns for the latitudes and longitudes of records,"
+				+ " you may wish to use one of the geocoders under Analysis > Geospatial.";
+			throw new AlgorithmCreationFailedException(message, e);					
+		}
+		
 		DropdownMutator mutator = new DropdownMutator();
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
 					new ArrayList<String>(Constants.SHAPEFILES.keySet()));
+	
+		addProjectionParameter(mutator);
+		addLatitudeParameter(mutator, numericColumnNames);		
+		addLongitudeParameter(mutator, numericColumnNames);		
+		addAreaParameters(mutator, numericColumnNames);		
+		addOuterColorParameters(mutator, numericColumnNames);		
+		addInnerColorParameters(mutator, numericColumnNames);
 
+		return mutator.mutate(oldParameters);
+	}
+
+	private void addInnerColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
+
+		numericColumnNames.add(
+			CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);	
+		
+		mutator.add(CircleAnnotationMode.INNER_COLOR_QUANTITY_ID,
+				numericColumnNames,
+				CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);
+		mutator.add(CircleAnnotationMode.INNER_COLOR_SCALING_ID,
+				new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
+		mutator.add(CircleAnnotationMode.INNER_COLOR_RANGE_ID,
+				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
+	}
+
+	private void addOuterColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
+		
+		numericColumnNames.add(
+				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);		
+		
+		mutator.add(CircleAnnotationMode.OUTER_COLOR_QUANTITY_ID,
+				numericColumnNames,
+				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);
+		mutator.add(CircleAnnotationMode.OUTER_COLOR_SCALING_ID,
+				new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
+		mutator.add(CircleAnnotationMode.OUTER_COLOR_RANGE_ID,
+				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
+	}
+
+	private void addAreaParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
+		
+		mutator.add(CircleAnnotationMode.AREA_ID, numericColumnNames);
+		mutator.add(CircleAnnotationMode.AREA_SCALING_ID,
+					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
+	}
+	
+	private void addLatitudeParameter(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
+		
+		mutator.add(
+				CircleAnnotationMode.LATITUDE_ID,
+				new Latitudishness().reverse().sortedCopy(numericColumnNames));
+	}
+
+	private void addLongitudeParameter(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
+		
+		mutator.add(
+				CircleAnnotationMode.LONGITUDE_ID,
+				new Longitudishness().reverse().sortedCopy(numericColumnNames));
+	}
+
+	private void addProjectionParameter(DropdownMutator mutator) {
 		if (GeoMapsAlgorithm.SHOULD_LET_USER_CHOOSE_PROJECTION) {
 			mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
 				new ArrayList<String>(Constants.PROJECTIONS.keySet()));
 		} else {
 			mutator.ignore(GeoMapsAlgorithm.PROJECTION_ID);
 		}
-
-		String[] numberColumnsForLatitude =
-			TableUtilities.getValidNumberColumnNamesInTable(table);		
-		Arrays.sort(numberColumnsForLatitude, new Latitudishness().reverse());		
-		mutator.add(CircleAnnotationMode.LATITUDE_ID, numberColumnsForLatitude);
-		
-		String[] numericColumnsForLongitude =
-			TableUtilities.getValidNumberColumnNamesInTable(table);
-		Arrays.sort(numericColumnsForLongitude, new Longitudishness().reverse());	
-		mutator.add(CircleAnnotationMode.LONGITUDE_ID, numericColumnsForLongitude);
-		
-		mutator.add(CircleAnnotationMode.AREA_ID,
-					TableUtilities.getValidNumberColumnNamesInTable(table));
-		mutator.add(CircleAnnotationMode.AREA_SCALING_ID,
-					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
-		// Expose circle area range?
-		
-		List<String> numericColumnsForOuterColorQuantity =
-			Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
-		numericColumnsForOuterColorQuantity.add(
-				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);		
-		mutator.add(CircleAnnotationMode.OUTER_COLOR_QUANTITY_ID,
-					numericColumnsForOuterColorQuantity,
-					CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);
-		mutator.add(CircleAnnotationMode.OUTER_COLOR_SCALING_ID,
-					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
-		mutator.add(CircleAnnotationMode.OUTER_COLOR_RANGE_ID,
-					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
-		
-		List<String> numericColumnsForInnerColorQuantity =
-			Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
-		numericColumnsForInnerColorQuantity.add(
-				CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);	
-		mutator.add(CircleAnnotationMode.INNER_COLOR_QUANTITY_ID,
-					numericColumnsForInnerColorQuantity,
-					CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);
-		mutator.add(CircleAnnotationMode.INNER_COLOR_SCALING_ID,
-					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
-		mutator.add(CircleAnnotationMode.INNER_COLOR_RANGE_ID,
-					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
-		
-		return mutator.mutate(oldParameters);
 	}
+
 
 	@Override
 	protected String getOutputAlgorithmName() {

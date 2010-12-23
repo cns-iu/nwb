@@ -15,7 +15,6 @@ import prefuse.data.util.TableIterator;
 import edu.iu.sci2.visualization.geomaps.interpolation.ColorInterpolator;
 import edu.iu.sci2.visualization.geomaps.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.interpolation.InterpolatorInversionException;
-import edu.iu.sci2.visualization.geomaps.interpolation.ZeroLengthInterpolatorInputRangeException;
 import edu.iu.sci2.visualization.geomaps.legend.ColorLegend;
 import edu.iu.sci2.visualization.geomaps.legend.Legend;
 import edu.iu.sci2.visualization.geomaps.legend.LegendComponent;
@@ -73,15 +72,10 @@ public class RegionAnnotationMode extends AnnotationMode {
 					colorValueAttribute,
 					colorValueScaler);
 		Interpolator<Color> colorInterpolator;
-		try {
-			colorInterpolator =
-				new ColorInterpolator(
-						colorValueScaler.scale(colorValueScalableRange),
-						colorRange);
-		} catch (ZeroLengthInterpolatorInputRangeException e) {
-			throw new AlgorithmExecutionException(
-					"Cannot interpolate feature colors due to: " + e.getMessage(), e);
-		}
+		colorInterpolator =
+			new ColorInterpolator(
+					colorValueScaler.scale(colorValueScalableRange),
+					colorRange);
 		
 		
 		int duplicateFeatureNames = 0;
@@ -168,6 +162,10 @@ public class RegionAnnotationMode extends AnnotationMode {
 			Interpolator<Color> colorInterpolator,
 			Range<Color> colorRange)
 				throws AlgorithmExecutionException {
+		if (scalableRange.isEqual()) {
+			return new NullLegendComponent();
+		}
+		
 		LegendComponent featureColorGradient = new NullLegendComponent();
 		try {
 			Color colorMidrange =

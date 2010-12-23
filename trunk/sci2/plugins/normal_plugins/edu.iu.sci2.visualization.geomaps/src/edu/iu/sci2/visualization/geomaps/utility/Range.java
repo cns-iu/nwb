@@ -27,6 +27,10 @@ public class Range<T> {
 	public void setMax(T value) {
 		this.max = value;
 	}
+	
+	public boolean isEqual() {
+		return getMin().equals(getMax());
+	}
 
 	public static Range<Double> calculateRange(
 			Collection<Double> values) {

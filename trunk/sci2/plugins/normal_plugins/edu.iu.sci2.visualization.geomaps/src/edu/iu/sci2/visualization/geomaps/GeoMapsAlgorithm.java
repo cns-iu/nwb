@@ -125,7 +125,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 						STRING_TEMPLATE_FILE_PATH)));
 	}
 	
-	@SuppressWarnings("unchecked") // metadata are raw Dictionarys
 	private Data[] formOutData(File postScriptFile, Data inDatum) {
 		Dictionary<String, Object> inMetaData = inDatum.getMetadata();
 
@@ -145,8 +144,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 
 	public static void main(String[] args) {
-//		File outFile = null;
-		
 		try {
 			Dictionary<String, Object> parameters =
 				new Hashtable<String, Object>();
@@ -156,33 +153,8 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 			URL testFileURL = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
 			File inFile = new File(testFileURL.toURI());
-//			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\nianli-10-16-12\\uspto_country_1976-1979_geocoded.csv");
-			parameters.put("latitude", "Latitude");
-			parameters.put("longitude", "Longitude");
-			parameters.put("circleArea", "Population (thousands)");
-			parameters.put("circleAreaScaling", "Linear");
-			parameters.put("outerColorQuantity", "GDP (billions USD)");//CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);//"GDP (billions USD)");
-			parameters.put("outerColorScaling", "Linear");
-			parameters.put("outerColorRange", "Yellow to Blue");
-			parameters.put("innerColorQuantity", "Population (thousands)");
-			parameters.put("innerColorScaling", "Linear");
-			parameters.put("innerColorRange", "Green to Red");
-			AlgorithmFactory algorithmFactory =
-				new GeoMapsCirclesFactory();
-			
-////			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\NIH-MIDAS-grants-pivot-by-state-to-total-award-amount_unabbreviated.csv");
-////			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\nianli-10-16-12\\uspto_country_f_00-08.csv");
-////			parameters.put("featureName", "country_name");
-////			parameters.put("featureColorQuantity", "total");
-////			parameters.put("featureColorScaling", "Logarithmic");
-////			parameters.put("featureColorRange", "Yellow to Blue");
-//			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\geomaps\\statePopulations.csv");
-//			parameters.put("featureName", "State");
-//			parameters.put("featureColorQuantity", "Population");
-//			parameters.put("featureColorScaling", "Logarithmic");
-//			parameters.put("featureColorRange", "Yellow to Blue");
-//			AlgorithmFactory algorithmFactory =
-//				new GeoMapsRegionsFactory();
+//			AlgorithmFactory algorithmFactory = prepareFactoryForCirclesTest(parameters);			
+			AlgorithmFactory algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			
 			Data data = new BasicData(inFile, CSV_MIME_TYPE);
 			
@@ -196,23 +168,45 @@ public class GeoMapsAlgorithm implements Algorithm {
 						convertedData, parameters, ciContext);
 
 			System.out.println("Executing.. ");
-			/*Data[] outData = */algorithm.execute();
-//			outFile = (File) outData[0].getData();
+			Data[] outData = algorithm.execute();
+			File outFile = (File) outData[0].getData();
+			System.out.println(outFile.getAbsolutePath());
 			System.out.println(".. Done.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
-//		try {
-//			System.out.println("Opening output..");
-//			Desktop.getDesktop().open(outFile);
-//			System.out.println(".. Done.");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			System.exit(-1);
-//		}
 
 		System.exit(0);
+	}
+
+	private static AlgorithmFactory prepareFactoryForCirclesTest(
+			Dictionary<String, Object> parameters) {
+		parameters.put("latitude", "Latitude");
+		parameters.put("longitude", "Longitude");
+		parameters.put("circleArea", "Population (thousands)");
+		parameters.put("circleAreaScaling", "Linear");
+		parameters.put("outerColorQuantity", "Population (thousands)");//CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);//"GDP (billions USD)");
+		parameters.put("outerColorScaling", "Linear");
+		parameters.put("outerColorRange", "Yellow to Blue");
+		parameters.put("innerColorQuantity", "Population (thousands)");
+		parameters.put("innerColorScaling", "Linear");
+		parameters.put("innerColorRange", "Green to Red");
+		AlgorithmFactory algorithmFactory =
+			new GeoMapsCirclesFactory();
+		return algorithmFactory;
+	}
+
+
+	@SuppressWarnings("unused")
+	private static AlgorithmFactory prepareFactoryForRegionsTest(
+			Dictionary<String, Object> parameters) {
+		parameters.put("featureName", "Country");
+		parameters.put("featureColorQuantity", "Population (thousands)");
+		parameters.put("featureColorScaling", "Logarithmic");
+		parameters.put("featureColorRange", "Yellow to Blue");
+		AlgorithmFactory algorithmFactory =
+			new GeoMapsRegionsFactory();
+		return algorithmFactory;
 	}
 }

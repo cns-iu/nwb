@@ -52,6 +52,8 @@ public abstract class AnnotationMode {
 				
 			} catch (NumberFormatException e) {
 				unreadableValueCount++;
+			} catch (NullPointerException e) {
+				unreadableValueCount++;
 			}
 	
 		}

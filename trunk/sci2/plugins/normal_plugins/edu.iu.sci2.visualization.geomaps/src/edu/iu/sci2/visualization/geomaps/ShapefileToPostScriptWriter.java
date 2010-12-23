@@ -91,7 +91,12 @@ public class ShapefileToPostScriptWriter {
 		legend.add(featureColorGradient);
 	}
 	
-	public void setCircleAnnotations(String subtitle, List<Circle> circles, LegendComponent circleAreaLegend, LegendComponent innerColorGradient, LegendComponent outerColorGradient) {
+	public void setCircleAnnotations(
+			String subtitle,
+			List<Circle> circles,
+			LegendComponent circleAreaLegend,
+			LegendComponent innerColorGradient,
+			LegendComponent outerColorGradient) {
 		this.subtitle = subtitle;
 		this.circles = circles;
 		
