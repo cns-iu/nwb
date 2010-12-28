@@ -6,12 +6,12 @@ NWB development team at nwb-dev@googlegroups.com, or post your questions to
 nwb-helpdesk@googlegroups.com.
 
 New releases will be announced on nwb-announce@googlegroups.com. Please feel 
-free to sign up NWB mailing lists at http://nwb.slis.indiana.edu/mailing.html.
+free to sign up NWB mailing lists at http://nwb.cns.iu.edu/mailing.html.
 
-Please go to http://nwb.slis.indiana.edu for more information and breaking news.
+Please go to http://nwb.cns.iu.edu for more information and breaking news.
 
 If you use the Sci2 tool or information contained in the 
-http://nwb.slis.indiana.edu website for any publication, please cite as follows:
+http://nwb.cns.iu.edu website for any publication, please cite as follows:
 
 Sci2 Team. (2009). Sci2 Tool. Indiana University, Northeastern University, 
 and University of Michigan, http://sci.slis.indiana.edu. 

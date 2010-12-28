@@ -20,13 +20,13 @@ public class DocumentationDialog extends Dialog {
 	private static final String MAIN_DOC_PAGE_URL = "http://epic.slis.indiana.edu/";
 
 	private static final String ALL_ALGORITHMS_DOC_TEXT = "<A>Algorithms Documentation</A>";
-	private static final String ALL_ALGORITHMS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Algorithms.HomePage";
+	private static final String ALL_ALGORITHMS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=Algorithms.HomePage";
 
 	private static final String ALL_SUPPORTED_FORMATS_DOC_TEXT = "<A>Supported Formats Documentation</A>";
-	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=DataFormats.HomePage";
+	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=DataFormats.HomePage";
 	
 	private static final String TUTORIALS_DOC_TEXT = "<A>Tutorials on NWB Community Wiki</A>";
-	private static final String TUTORIALS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Tutorials.HomePage";
+	private static final String TUTORIALS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=Tutorials.HomePage";
 	
 	Shell shell = null;
 

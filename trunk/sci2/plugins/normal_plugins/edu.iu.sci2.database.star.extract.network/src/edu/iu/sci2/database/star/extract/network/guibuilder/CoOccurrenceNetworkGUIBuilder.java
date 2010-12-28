@@ -36,7 +36,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		"Then, setup any node and edge attributes you want on your resulting network.\n" +
 		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/" +
+		"https://nwb.cns.iu.edu/community/" +
 		"?n=Sci2Algorithm.GenericCSVExtractCoOccurrenceNetwork";
 	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
 	public static final int INSTRUCTIONS_LABEL_HEIGHT = 55;

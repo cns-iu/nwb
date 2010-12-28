@@ -37,7 +37,7 @@ public class TableGUIBuilder extends GUIBuilder {
 		"Then, setup any attributes you want on your resulting data table.\n" +
 		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.GenericCSVExtractTable";
+		"https://nwb.cns.iu.edu/community/?n=Sci2Algorithm.GenericCSVExtractTable";
 	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
 	public static final int INSTRUCTIONS_LABEL_HEIGHT = 55;
 

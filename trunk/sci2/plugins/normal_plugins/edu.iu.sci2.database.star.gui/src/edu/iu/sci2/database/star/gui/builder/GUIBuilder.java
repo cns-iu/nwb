@@ -38,7 +38,7 @@ public class GUIBuilder {
 
 	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
 	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.LoadGenericCSVFileIntoDatabase";
+		"https://nwb.cns.iu.edu/community/?n=Sci2Algorithm.LoadGenericCSVFileIntoDatabase";
 	public static final String INSTRUCTIONS_LABEL_TEXT =
 		"The Generic-CSV Database Loader loads a CSV file into a database with a \"star\" " +
 		"schema. The star schema has one \"core\" or central table for the primary entity of " +

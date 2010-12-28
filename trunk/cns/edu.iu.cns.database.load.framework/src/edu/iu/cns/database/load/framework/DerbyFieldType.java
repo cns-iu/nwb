@@ -65,7 +65,7 @@ public enum DerbyFieldType {
 	TEXT(
 		Types.VARCHAR,
 		"Maximum-Lengthed String",
-		"VARCHAR(" + DerbyFieldType.MAX_VARCHAR_SIZE + ")",
+		"VARCHAR(" + 32000 + ")",
 		false),
 	TIME(Types.TIME, "Time", "TIME", false),
 	TIMESTAMP(Types.TIMESTAMP, "Time Stamp", "TIMESTAMP", false),
@@ -82,7 +82,7 @@ public enum DerbyFieldType {
 				" FOR BIT DATA";
 		}
 	},
-	VARCHAR(Types.VARCHAR, "String", "VARCHAR(" + DerbyFieldType.MAX_VARCHAR_SIZE + ")");
+	VARCHAR(Types.VARCHAR, "String", "VARCHAR(" + 32000 + ")");
 
 	public static final int MAX_VARCHAR_SIZE = 32000;
 
