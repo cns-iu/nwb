@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.help.documentation.Documentation.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.help.documentation.DocumentationFactory"/>
+<component name="edu.iu.sci2.help.documentation.Documentation.component" immediate="false">
+	<implementation class="edu.iu.sci2.help.documentation.DocumentationFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	
 	<service>

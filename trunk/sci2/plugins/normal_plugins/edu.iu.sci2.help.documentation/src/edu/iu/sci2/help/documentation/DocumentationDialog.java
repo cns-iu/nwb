@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 //the important part of this plugin. 
-//A dialog box which links to various online documentation for Scipolicy.
+//A dialog box which links to various online documentation for Sci2.
 public class DocumentationDialog extends Dialog {
 	private static final String MAIN_DOC_PAGE_TEXT = "<A>Main Sci2 Tool Website</A>";
 	private static final String MAIN_DOC_PAGE_URL = "https://sci2.cns.iu.edu/user";
