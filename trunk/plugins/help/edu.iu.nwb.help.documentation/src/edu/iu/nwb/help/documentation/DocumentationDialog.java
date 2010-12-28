@@ -17,16 +17,16 @@ import org.eclipse.swt.widgets.Shell;
 //A dialog box which links to various online documentation for Network Workbench.
 public class DocumentationDialog extends Dialog {
 	private static final String MAIN_DOC_PAGE_TEXT = "<A>Main Network Workbench Documentation Page</A>";
-	private static final String MAIN_DOC_PAGE_URL = "http://nwb.slis.indiana.edu/doc.html";
+	private static final String MAIN_DOC_PAGE_URL = "http://nwb.cns.iu.edu/doc.html";
 
 	private static final String ALL_ALGORITHMS_DOC_TEXT = "<A>All Algorithms Documentation</A>";
-	private static final String ALL_ALGORITHMS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Algorithms.HomePage";
+	private static final String ALL_ALGORITHMS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=Algorithms.HomePage";
 
 	private static final String ALL_SUPPORTED_FORMATS_DOC_TEXT = "<A>All Supported Formats Documentation</A>";
-	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=DataFormats.HomePage";
+	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=DataFormats.HomePage";
 	
 	private static final String TUTORIALS_DOC_TEXT = "<A>Network Workbench Tutorials on NWB Community Wiki</A>";
-	private static final String TUTORIALS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Tutorials.HomePage";
+	private static final String TUTORIALS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=Tutorials.HomePage";
 	
 	Shell shell = null;
 
