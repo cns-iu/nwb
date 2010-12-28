@@ -1088,6 +1088,7 @@
       <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk"/>
     </antcall>
   	<!-- TODO: Why was this stuff removed? -->
+  	<!--
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.isidupremover"/>
@@ -1124,13 +1125,14 @@
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.extractdirectednetfromtable"/>
       <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk"/>
     </antcall>
+  	-->
+  	<!-- TODO: Why was this stuff removed? -->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.extractnetfromtable"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.extractnetfromtable"/>
       <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk"/>
     </antcall>
-    <!-- TODO: Why was this stuff removed? -->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.toolkit.networkanalysis"/>
