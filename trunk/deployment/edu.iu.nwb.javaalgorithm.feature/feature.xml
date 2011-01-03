@@ -31,13 +31,13 @@ Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
 
-	<plugin
-		id="edu.iu.nwb.analysis.sitebetweenness.wrapper"
-        download-size="0"
-        install-size="0"
-        version="0.0.0"
-        unpack="false"/>
-   
+   <plugin
+         id="edu.iu.nwb.analysis.sitebetweenness.wrapper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
          id="edu.iu.cns.converter.graceplot"
          download-size="0"
@@ -577,21 +577,21 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="org.cishell.utilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="org.cishell.utility.datastructure"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="org.cishell.utility.swt"
          download-size="0"
          install-size="0"
@@ -619,17 +619,12 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="opencsv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-   <plugin
          id="edu.iu.cns.converter.plotcsv"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
+
    <plugin
          id="edu.iu.cns.converter.graceplot"
          download-size="0"
@@ -666,4 +661,12 @@ Dr. Katy Borner (katy@indiana.edu)
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="opencsv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
