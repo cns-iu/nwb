@@ -39,26 +39,26 @@ Dr. Katy Borner (katy@indiana.edu)
       <import feature="edu.iu.sci2.converter.feature" version="1.0.0"/>
    </requires>
 
-	<!-- Node Between Centrality Plugins -->
-	<plugin
+   <plugin
          id="graphstream"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-    <plugin
+
+   <plugin
          id="edu.iu.cns.graphstream.common"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-    <plugin
+
+   <plugin
          id="edu.iu.nwb.analysis.nodebetweennesscentrality"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-	<!-- End Node Betweenness Centrality Plugins -->
 
    <plugin
          id="org.cishell.utilities"
@@ -236,12 +236,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="org.prefuse.lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="edu.iu.iv.modeling.tarl"
          download-size="0"
          install-size="0"
@@ -357,15 +351,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!--
-   <plugin
-         id="edu.iu.nwb.analysis.symmetrize"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-	-->
 
    <plugin
          id="edu.iu.nwb.preprocessing.tablefilter"
@@ -607,15 +592,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"
          unpack="false"/>
 
-	<!--
-   <plugin
-         id="edu.iu.sci2.visualization.horizontalbargraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-	-->
-
    <plugin
          id="edu.iu.sci2.visualization.imageviewer"
          download-size="0"
@@ -747,206 +723,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
-	<!-- BEGIN (REMOVED) DATABASE FUNCTIONALITY -->
-	<!--
-	<plugin
-		id="edu.iu.cns.database.load.framework"
-		download-size="0"
-		install-size="0"
-		version="0.0.0"
-		unpack="false"/>
-
-	<plugin
-		id="edu.iu.cns.database.extract.generic"
-		download-size="0"
-		install-size="0"
-		version="0.0.0"
-		unpack="false"/>
-
-	<plugin
-		id="edu.iu.sci2.database.isi.load"
-		download-size="0"
-		install-size="0"
-		version="0.0.0"
-		unpack="false"/>
-
-	<plugin
-		id="edu.iu.cns.database.merge.generic"
-		download-size="0"
-		install-size="0"
-		version="0.0.0"
-		unpack="false"/>
-
-	<plugin
-		id="edu.iu.sci2.database.isi.merge"
-		download-size="0"
-		install-size="0"
-		version="0.0.0"
-		unpack="false"/>
-
-	<plugin
-		id="edu.iu.sci2.database.nsf.merge"
-		download-size="0"
-		install-size="0"
-		version="0.0.0"
-		unpack="false"/>
-
-	<plugin
-         id="edu.iu.sci2.database.nsf.load"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.citation.author"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.citation.document"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.citation.document_source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.coauthor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.cocitation.author.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.cocitation.document.all"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.cocitation.document.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.cocitation.document_source.all"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.cocitation.document_source.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.bibcoupling.author"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.bibcoupling.document"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.network.bibcoupling.document_source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.table.core_entities"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.table.longitudinalsummary"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.nsf.extract.network.copi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.nsf.extract.table.core_entities"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.match.reference_to_paper"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.tool.db_to_prefuse"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.table.entities_by_year"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.converters.anytoall"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-	-->
-	<!-- END (REMOVED) DATABASE FUNCTIONALITY -->
-
    <plugin
          id="google_collections"
          download-size="0"
@@ -974,50 +750,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
-	<!-- BEGIN GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW.
-   <plugin
-         id="edu.iu.sci2.database.star.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.star.load"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.star.gui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.sci2.database.star.extract.network"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-	<plugin
-         id="edu.iu.sci2.database.star.extract.table"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-    
-    <plugin
-         id="edu.iu.sci2.database.star.extract.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-	END GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW. -->
-
    <plugin
          id="edu.iu.sci2.preprocessing.mergenetworks"
          download-size="0"
@@ -1037,5 +769,11 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="prefuse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
