@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Prefuse Visualization Library
-Bundle-SymbolicName: prefuse
+Bundle-SymbolicName: org.prefuse.lib
 Bundle-Version: 20071021
 Bundle-ClassPath: prefuse-alpha-20060526.jar,
  prefuse.jar
