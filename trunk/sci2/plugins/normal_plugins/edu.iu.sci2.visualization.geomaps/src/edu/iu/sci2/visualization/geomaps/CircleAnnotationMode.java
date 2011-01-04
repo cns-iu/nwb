@@ -298,7 +298,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Range<Double> scalableRange,
 			Interpolator<Double> interpolator,
 			Range<Double> outputRange) throws AlgorithmExecutionException {
-		if (scalableRange.isEqual()) {
+		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
 		
@@ -346,7 +346,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Range<Double> scalableRange,
 			Interpolator<Color> interpolator,
 			Range<Color> colorRange) throws AlgorithmExecutionException {
-		if (scalableRange.isEqual()) {
+		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
 				
@@ -401,7 +401,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Range<Double> scalableRange,
 			Interpolator<Color> interpolator,
 			Range<Color> colorRange) throws AlgorithmExecutionException {
-		if (scalableRange.isEqual()) {
+		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
 		

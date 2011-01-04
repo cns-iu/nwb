@@ -162,7 +162,7 @@ public class RegionAnnotationMode extends AnnotationMode {
 			Interpolator<Color> colorInterpolator,
 			Range<Color> colorRange)
 				throws AlgorithmExecutionException {
-		if (scalableRange.isEqual()) {
+		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
 		
