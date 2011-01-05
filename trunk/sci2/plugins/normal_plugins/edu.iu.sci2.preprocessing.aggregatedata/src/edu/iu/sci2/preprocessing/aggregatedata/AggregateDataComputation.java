@@ -1,5 +1,6 @@
 package edu.iu.sci2.preprocessing.aggregatedata;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cishell.utilities.NumberUtilities;
 import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
@@ -100,7 +102,6 @@ public class AggregateDataComputation {
 	 */
 
 	private void processTable() {
-
 		Set<String> columnNumbersToBeRemovedFromOutput = new HashSet<String>();
 		
 		/*
@@ -108,18 +109,15 @@ public class AggregateDataComputation {
 		 * table. 
 		 */
 		outputTable = originalTable.getSchema().instantiate();
-		outputTableCountColumnName = TableUtilities
-										.formNonConflictingNewColumnName(
-												originalTable.getSchema(),
-												UNIQUE_RECORDS_COUNT_COLUMN_NAME_SUGGESTIONS);
-
+		outputTableCountColumnName = TableUtilities.formNonConflictingNewColumnName(
+			originalTable.getSchema(), UNIQUE_RECORDS_COUNT_COLUMN_NAME_SUGGESTIONS);
 		outputTable.addColumn(outputTableCountColumnName, int.class);
 
 		int groupedOnColumnNumber = originalTable.getColumnNumber(groupedOnColumnName);
 		int countColumnNumber = outputTable.getColumnNumber(outputTableCountColumnName);
 		
-		columnNumberToAggregationFunction = createColumnNumberToAggregationFunctionMap(
-													groupedOnColumnNumber);
+		columnNumberToAggregationFunction =
+			createColumnNumberToAggregationFunctionMap(groupedOnColumnNumber);
 		
 		/*
 		 * Group together all rows with the same value in their "grouped" column.
@@ -150,41 +148,36 @@ public class AggregateDataComputation {
 		 * 		1. columnNumbersToBeRemovedFromOutput - used to track columns to be
 		 * 			removed from the output table.
 		 * */
-		List<Integer> finalStringAggregationColumnNumbers = 
-			setupStringColumnsToBeProcessed(columnNumbersToBeRemovedFromOutput,
-											groupedOnColumnNumber);
+		List<Integer> finalStringAggregationColumnNumbers = setupStringColumnsToBeProcessed(
+			columnNumbersToBeRemovedFromOutput, groupedOnColumnNumber);
 		
 		/*
 		 * for each group of rows...
 		 * */
-		for (List<Integer> groupedOnValueRowNumbers 
-				: uniqueAggregatedValueToRowNumbers.values()) {
-
+		for (List<Integer> groupedOnValueRowNumbers : uniqueAggregatedValueToRowNumbers.values()) {
 			outputTable.addRow();
 			/*
 			 * Only process those rows which are supposed to be aggregated. i.e. Ignore
 			 * "Grouped On" values that have only one row assigned to it.
 			 * */
 			if (groupedOnValueRowNumbers.size() > 1) {
-			
-				
 				/*
 				 * "outputTableGroupedOnValue" data type has to be Object since we dont know
 				 * in advance if it is going to be a String or Number etc.
 				 * */
-				Object outputTableGroupedOnValue = originalTable.get(
-													groupedOnValueRowNumbers.get(0), 
-						 							groupedOnColumnNumber);
+				Object outputTableGroupedOnValue =
+					originalTable.get(groupedOnValueRowNumbers.get(0), groupedOnColumnNumber);
 				
 				/*
 				 * Create a new "merged" row in the output table
 				 * Populate the output table. Set the value of each cell in the output table.
 				 * */
-				populateColumnFields(outputTableGroupedOnValue,
-									 outputTableRowCount,
-									 finalNumericalAggregationColumnNumbers,
-									 finalStringAggregationColumnNumbers,
-									 groupedOnValueRowNumbers);
+				populateColumnFields(
+					outputTableGroupedOnValue,
+					outputTableRowCount,
+					finalNumericalAggregationColumnNumbers,
+					finalStringAggregationColumnNumbers,
+					groupedOnValueRowNumbers);
 				
 				/*
 				 * Set the value of the cell on which table aggregation was based off.  
@@ -298,13 +291,13 @@ public class AggregateDataComputation {
 			
 			@SuppressWarnings("unchecked")
 			SingleFunctionAggregator<String> currentColumnAggregatorFunction = 
-						(SingleFunctionAggregator<String>) 
-						columnNumberToAggregationFunction.get(currentColumnNumber);
+				(SingleFunctionAggregator<String>)
+					columnNumberToAggregationFunction.get(currentColumnNumber);
 
 			// aggregate all the column values into a single value
 			StringBuffer outputStringAggegatedValue = new StringBuffer();
-			outputStringAggegatedValue.append(currentColumnAggregatorFunction
-					.aggregateValue(cellValuesToBeAggregated));
+			outputStringAggegatedValue.append(
+				currentColumnAggregatorFunction.aggregateValue(cellValuesToBeAggregated));
 			
 			String aggregationType = 
 				columnNumberToAggregationType.get(currentColumnNumber);
@@ -347,7 +340,8 @@ public class AggregateDataComputation {
 	 * @param groupedOnValueRowNumbers
 	 * @param finalNumericalAggregationColumnNumbers
 	 */
-	private void populateNumericalColumnFields(Object groupedOnValue,
+	private void populateNumericalColumnFields(
+			Object groupedOnValue,
 			int outputTableRowCount,
 			List<Integer> groupedOnValueRowNumbers,
 			List<Integer> finalNumericalAggregationColumnNumbers) {
@@ -355,25 +349,47 @@ public class AggregateDataComputation {
 			
 			List<Number> cellValuesToBeAggregated = new ArrayList<Number>();
 			int nullCount = 0;
+			int invalidCount = 0;
 			
 			for (Integer currentRowNumber : groupedOnValueRowNumbers) {
-				Number number = (Number)   originalTable.get(currentRowNumber, currentColumnNumber);
-				if (number != null) {
-					cellValuesToBeAggregated.add(number);
-				} else {
-					nullCount++;
+				try {
+					Object cell = originalTable.get(currentRowNumber, currentColumnNumber);
+					Number number = NumberUtilities.interpretObjectAsNumber(cell);
+
+					if (number != null) {
+						cellValuesToBeAggregated.add(number);
+					} else {
+						nullCount++;
+					}
+				} catch (NumberFormatException e) {
+					invalidCount++;
+				} catch (ParseException e) {
+					invalidCount++;
 				}
 			}
 			
-			//log the error to user
+			// Log the error to user.
 			if (nullCount > 0) {
 				if (nullCount == groupedOnValueRowNumbers.size()) {
 					/* All rows were skipped */
 					logSkippedAll(groupedOnValue, outputTable.getColumnName(currentColumnNumber));
 				} else {
 					/* Some of the rows were skipped */
-					logSkipped(groupedOnValue, outputTable.getColumnName(currentColumnNumber),
-							nullCount);
+					logSkipped(
+						groupedOnValue, outputTable.getColumnName(currentColumnNumber), nullCount);
+				}
+			}
+
+			if (invalidCount > 0) {
+				if (invalidCount == groupedOnValueRowNumbers.size()) {
+					/* All rows were skipped */
+					logSkippedAll(groupedOnValue, outputTable.getColumnName(currentColumnNumber));
+				} else {
+					/* Some of the rows were skipped */
+					logSkipped(
+						groupedOnValue,
+						outputTable.getColumnName(currentColumnNumber),
+						invalidCount);
 				}
 			}
 			
@@ -381,14 +397,14 @@ public class AggregateDataComputation {
 			@SuppressWarnings("unchecked")
 			SingleFunctionAggregator<Number> currentColumnAggregatorFunction = 
 				(SingleFunctionAggregator<Number>) 
-				columnNumberToAggregationFunction.get(currentColumnNumber);
+					columnNumberToAggregationFunction.get(currentColumnNumber);
 			
 		    // set the value of our "merged" row for this column to the aggregated value
 			if (!cellValuesToBeAggregated.isEmpty()) {
-				outputTable.set(outputTableRowCount, 
-								currentColumnNumber,
-								currentColumnAggregatorFunction
-									.aggregateValue(cellValuesToBeAggregated));
+				outputTable.set(
+					outputTableRowCount,
+					currentColumnNumber,
+					currentColumnAggregatorFunction.aggregateValue(cellValuesToBeAggregated));
 			}
 			
 		}
@@ -398,120 +414,78 @@ public class AggregateDataComputation {
 	 * @param groupedOnColumnNumber 
 	 * @param columnNumberToAggregationFunction
 	 */
-	private Map<Integer, SingleFunctionAggregator<?>> 
-				createColumnNumberToAggregationFunctionMap(
-						int groupedOnColumnNumber) {
-		
+	private Map<Integer, SingleFunctionAggregator<?>> createColumnNumberToAggregationFunctionMap(
+			int groupedOnColumnNumber) {
 		Map<Integer, SingleFunctionAggregator<?>> columnNumberToAggregationFunction = 
 			new HashMap<Integer, SingleFunctionAggregator<?>>();
-		
-		/*
-		 * For 
-		 * */
+
 		for (Integer currentColumnNumber : numericalAggregationColumnNumbers) {
 			String aggregationType = columnNumberToAggregationType.get(currentColumnNumber);
-			
 			Class<?> currentColumnClass = originalTable.getColumnType(currentColumnNumber);
-			
+
 			if (currentColumnNumber.intValue() == groupedOnColumnNumber) {
-				
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-						  							  new NoneNumericalAggregator());
-				
-			} else if (GlobalConstants.NONE_NUMERICAL_AGGREGATION_TYPE_VALUE
-					.equalsIgnoreCase(aggregationType)) {
-		
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-					      							  new NoneNumericalAggregator());
-				
-			} else if (GlobalConstants.MIN_AGGREGATION_TYPE_VALUE
-					.equalsIgnoreCase(aggregationType)) {
-		
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-					      							  new MinAggregator());
-				
-			} else if (GlobalConstants.MAX_AGGREGATION_TYPE_VALUE
-							.equalsIgnoreCase(aggregationType)) {
-				
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-													  new MaxAggregator());
-				
-			} else
-			/*
-			 * Handle the cases when the aggregation is to be performed on an integer column. 
-			 * */
-			if (GlobalConstants.INTEGER_CLASS_TYPES.contains(currentColumnClass)) {
-				
-				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-														  new IntegerSumAggregator());
-					
-				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-														  new IntegerDifferenceAggregator());
-					
-				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-							  						      new IntegerAverageAggregator());
-					
+				columnNumberToAggregationFunction.put(
+					currentColumnNumber, new NoneNumericalAggregator());
+			} else if (GlobalConstants.NONE_NUMERICAL_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+					aggregationType)) {
+				columnNumberToAggregationFunction.put(
+					currentColumnNumber, new NoneNumericalAggregator());
+			} else if (GlobalConstants.MIN_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+					aggregationType)) {
+				columnNumberToAggregationFunction.put(currentColumnNumber, new MinAggregator());
+			} else if (GlobalConstants.MAX_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+					aggregationType)) {
+				columnNumberToAggregationFunction.put(currentColumnNumber, new MaxAggregator());
+			} else if (GlobalConstants.INTEGER_CLASS_TYPES.contains(currentColumnClass)) {
+				/*
+				 * Handle the cases when the aggregation is to be performed on an integer column.
+				 */
+
+				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new IntegerSumAggregator());
+				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+						aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new IntegerDifferenceAggregator());
+				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+						aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new IntegerAverageAggregator());
 				} 
-				
 			} else if (GlobalConstants.FLOAT_CLASS_TYPES.contains(currentColumnClass)) {
 				/*
 				 * Handle the cases when the aggregation is to be performed on an float column. 
-				 * */
-				
-				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-							  							  new FloatSumAggregator());
-					
-				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) { 
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-							  							  new FloatDifferenceAggregator());
+				 */
 
-					
-				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-							  							  new FloatAverageAggregator());
-					
-					
-				} 
-				
+				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new FloatSumAggregator());
+				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+						aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new FloatDifferenceAggregator());
+				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+						aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new FloatAverageAggregator());
+				}
 			} else if (GlobalConstants.DOUBLE_CLASS_TYPES.contains(currentColumnClass)) {
 				/*
 				 * Handle the cases when the aggregation is to be performed on an double column. 
-				 * */
-				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-														  new DoubleSumAggregator());
-					
-				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-														  new DoubleDifferenceAggregator());
-					
-					
-				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE
-								.equalsIgnoreCase(aggregationType)) {
-					
-					columnNumberToAggregationFunction.put(currentColumnNumber, 
-							  							  new DoubleAverageAggregator());	
-					
+				 */
+
+				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new DoubleSumAggregator());
+				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+						aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new DoubleDifferenceAggregator());
+				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE.equalsIgnoreCase(
+						aggregationType)) {
+					columnNumberToAggregationFunction.put(
+						currentColumnNumber, new DoubleAverageAggregator());
 				} 
 			}				
 		}
@@ -521,24 +495,21 @@ public class AggregateDataComputation {
 		 * */
 		for (Integer currentColumnNumber : stringAggregationColumnNumbers) {
 			String aggregationType = columnNumberToAggregationType.get(currentColumnNumber);
-			
+
 			if (currentColumnNumber.intValue() == groupedOnColumnNumber) {
-				
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-						  							  new NoneStringAggregator());
-			} else if (GlobalConstants.NONE_AGGREGATION_TEXT_DELIMITER
-					.equalsIgnoreCase(aggregationType)) {
-		
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-					      							  new NoneStringAggregator());
+				columnNumberToAggregationFunction.put(
+					currentColumnNumber, new NoneStringAggregator());
+			} else if (GlobalConstants.NONE_AGGREGATION_TEXT_DELIMITER.equalsIgnoreCase(
+					aggregationType)) {
+				columnNumberToAggregationFunction.put(
+					currentColumnNumber, new NoneStringAggregator());
 			} else {
-		
-				columnNumberToAggregationFunction.put(currentColumnNumber, 
-					      							  new StringAggregator(aggregationType));
+				columnNumberToAggregationFunction.put(
+					currentColumnNumber, new StringAggregator(aggregationType));
 			}
 		}
+
 		return columnNumberToAggregationFunction;
-		
 	}
 
 	/**
@@ -722,13 +693,15 @@ public class AggregateDataComputation {
 	 */
 	private void logSkipped(Object groupedOnValue, String columnName, int totalSkipped) {
 		String groupedOnValueString = "";
+
 		if (groupedOnValue != null) {
 			groupedOnValueString = groupedOnValue.toString();
 		}
-		
+
+		String format =
+			"Aggregated by \'%s\': %d row(s) of %s column were skipped " +
+			"due to non-existent values.";
 		logger.log(LogService.LOG_WARNING, String.format(
-			"Aggregated by \'%s\': %d rows of %s column were skipped"
-			+ " due to no non-null, non-empty values.", 
-			groupedOnValueString, totalSkipped, columnName));
+			format, groupedOnValueString, totalSkipped, columnName));
 	}
 }

@@ -16,17 +16,23 @@ public class GlobalConstants {
 	
 	public static final Set INTEGER_CLASS_TYPES = new HashSet() {{
 		add(int.class);
+		add(int[].class);
 		add(Integer.class);
+		add(Integer[].class);
 	}};
 	
 	public static final Set FLOAT_CLASS_TYPES = new HashSet() {{
 		add(float.class);
+		add(float[].class);
 		add(Float.class);
+		add(Float[].class);
 	}}; 
 	
 	public static final Set DOUBLE_CLASS_TYPES = new HashSet() {{
 		add(double.class);
+		add(double[].class);
 		add(Double.class);
+		add(Double[].class);
 	}}; 
 	
 	
