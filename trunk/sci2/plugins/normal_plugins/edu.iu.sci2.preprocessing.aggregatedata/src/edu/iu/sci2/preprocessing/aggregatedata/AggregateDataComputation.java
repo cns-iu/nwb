@@ -1,5 +1,6 @@
 package edu.iu.sci2.preprocessing.aggregatedata;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -401,10 +402,41 @@ public class AggregateDataComputation {
 			
 		    // set the value of our "merged" row for this column to the aggregated value
 			if (!cellValuesToBeAggregated.isEmpty()) {
-				outputTable.set(
-					outputTableRowCount,
-					currentColumnNumber,
-					currentColumnAggregatorFunction.aggregateValue(cellValuesToBeAggregated));
+				System.err.println("Class name: " +
+					outputTable.getColumnType(currentColumnNumber).getName());
+				Object aggregatedValue =
+					currentColumnAggregatorFunction.aggregateValue(cellValuesToBeAggregated);
+				System.err.println("aggregatedValue: " + aggregatedValue);
+				System.err.println("int: " + outputTable.canSet(
+					outputTable.getColumnName(currentColumnNumber), int.class));
+				System.err.println("int[]: " + outputTable.canSet(
+					outputTable.getColumnName(currentColumnNumber), int[].class));
+				System.err.println("Integer: " + outputTable.canSet(
+					outputTable.getColumnName(currentColumnNumber), Integer.class));
+				System.err.println("Integer[]: " + outputTable.canSet(
+					outputTable.getColumnName(currentColumnNumber), Integer[].class));
+				System.err.println("canSetInt: " + outputTable.canSetInt(
+					outputTable.getColumnName(currentColumnNumber)));
+
+				if (outputTable.getColumnType(currentColumnNumber).isArray()) {
+					if (aggregatedValue != null) {
+						Object array = Array.newInstance(
+							outputTable.getColumnType(currentColumnNumber).getComponentType(), 1);
+						Array.set(array, 0, aggregatedValue);
+
+						outputTable.set(
+							outputTableRowCount, currentColumnNumber, array);
+					} else {
+						Object array = Array.newInstance(
+							outputTable.getColumnType(currentColumnNumber).getComponentType(), 0);
+
+						outputTable.set(
+							outputTableRowCount, currentColumnNumber, array);
+					}
+				} else {
+					outputTable.set(
+						outputTableRowCount, currentColumnNumber, aggregatedValue);
+				}
 			}
 			
 		}
@@ -628,8 +660,7 @@ public class AggregateDataComputation {
 		Iterator<?> groupedOnColumnIterator = originalTable.iterator();
 		
 		while (groupedOnColumnIterator.hasNext()) {
-			int currentRowNumber = Integer.parseInt(groupedOnColumnIterator
-					.next().toString());
+			int currentRowNumber = Integer.parseInt(groupedOnColumnIterator.next().toString());
 			
 			
 			String currentAggregatedValue = originalTable.getString(currentRowNumber,
