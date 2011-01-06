@@ -402,21 +402,8 @@ public class AggregateDataComputation {
 			
 		    // set the value of our "merged" row for this column to the aggregated value
 			if (!cellValuesToBeAggregated.isEmpty()) {
-				System.err.println("Class name: " +
-					outputTable.getColumnType(currentColumnNumber).getName());
 				Object aggregatedValue =
 					currentColumnAggregatorFunction.aggregateValue(cellValuesToBeAggregated);
-				System.err.println("aggregatedValue: " + aggregatedValue);
-				System.err.println("int: " + outputTable.canSet(
-					outputTable.getColumnName(currentColumnNumber), int.class));
-				System.err.println("int[]: " + outputTable.canSet(
-					outputTable.getColumnName(currentColumnNumber), int[].class));
-				System.err.println("Integer: " + outputTable.canSet(
-					outputTable.getColumnName(currentColumnNumber), Integer.class));
-				System.err.println("Integer[]: " + outputTable.canSet(
-					outputTable.getColumnName(currentColumnNumber), Integer[].class));
-				System.err.println("canSetInt: " + outputTable.canSetInt(
-					outputTable.getColumnName(currentColumnNumber)));
 
 				if (outputTable.getColumnType(currentColumnNumber).isArray()) {
 					if (aggregatedValue != null) {
