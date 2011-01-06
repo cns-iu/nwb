@@ -2,7 +2,6 @@ package edu.iu.nwb.converter.prefusecsv.reader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Dictionary;
 
@@ -14,11 +13,10 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
-import edu.iu.nwb.converter.prefusecsv.preprocessing.CSVFilePreprocessor;
-
 import prefuse.data.Table;
 import prefuse.data.io.CSVTableReader;
 import prefuse.data.io.DataIOException;
+import edu.iu.nwb.converter.prefusecsv.preprocessing.CSVFilePreprocessor;
 
 /**
  * @author Russell Duhon
@@ -29,7 +27,7 @@ public class PrefuseCsvReader implements Algorithm {
     
     public static class Factory implements AlgorithmFactory {
         public Algorithm createAlgorithm(
-        		Data[] data, Dictionary parameters, CIShellContext context) {
+        		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
             return new PrefuseCsvReader(data);
         }
     }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.cishell.utilities.ArrayUtilities;
@@ -57,7 +56,7 @@ public final class CSVFilePreprocessor {
 	 */
 	private static File preprocessCSVFile(File file) throws IOException {
 		List<String[]> rows = readAllRowsFromCSVFile(file);
-		/* Remove all the tailing emtpy string */
+		/* Remove all the tailing empty string */
 		cleanTailingEmptyStrings(rows);
 		
 		/* Get the highest column size */
