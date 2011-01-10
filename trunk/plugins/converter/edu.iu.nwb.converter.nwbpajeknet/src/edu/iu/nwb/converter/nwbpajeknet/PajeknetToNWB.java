@@ -1,19 +1,14 @@
 package edu.iu.nwb.converter.nwbpajeknet;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Dictionary;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -30,22 +25,26 @@ import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 public class PajeknetToNWB implements Algorithm {
 	private File inNetFile;
-	private Map vertexToIdMap;
-
 	
-	public PajeknetToNWB(Data[] data, Dictionary parameters, CIShellContext context) {
+	public PajeknetToNWB(Data[] data, Dictionary<String, Object> parameters) {
 		inNetFile = (File) data[0].getData();
+
+		try {
+			System.err.println(FileUtilities.readEntireTextFile(inNetFile));
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		Data [] dm = null;
 		NETFileValidator validator = new NETFileValidator();
 
 		try {
 			validator.validateNETFormat(inNetFile);
-			if (validator.getValidationResult()){
-				File outNWBFile = convertNetToNWB(validator,inNetFile);
+
+			if (validator.getValidationResult()) {
+				File outNWBFile = convertNetToNWB(validator, inNetFile);
 				
 				return createOutData(outNWBFile);
 			} else {
@@ -189,23 +188,22 @@ public class PajeknetToNWB implements Algorithm {
 		out.println(st);
 	}
 
-	private void writeNodeAttributeList(NETFileValidator validator, PrintWriter out) {
-		//out.flush();
-		String st = "";// = NWBFileProperty.PREFIX_COMMENTS;
-		for(Iterator it = validator.getVertexAttrList().iterator(); it.hasNext();) {
-			NETAttribute na = (NETAttribute) it.next();
+	private void writeNodeAttributeList(NETFileValidator validator, PrintWriter writer) {
+		String st = "";
+		for (Iterator<NETAttribute> it = validator.getVertexAttrList().iterator(); it.hasNext();) {
+			NETAttribute na = it.next();
 			String s = na.getAttrName();
-			if(s.charAt(s.length()-1) == 'c' && na.getDataType().equalsIgnoreCase("float")){
-				for(int i = 0; i < 3; i++){
-					st += s + (i+1) + NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+
+			if ((s.charAt(s.length() - 1) == 'c') && "float".equalsIgnoreCase(na.getDataType())) {
+				for (int ii = 0; ii < 3; ii++) {
+					st += s + (ii + 1) + NWBFileProperty.PRESERVED_STAR + na.getDataType() +  " ";
 				}
-			}
-			else {
-				st += s+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+			} else {
+				st += s + NWBFileProperty.PRESERVED_STAR + na.getDataType() + " ";
 			}
 		}
-		//System.out.println(st);
-		out.println(st);
+
+		writer.println(st);
 	}
 	
 	private void writeUndirectedEdgeAttributeList(NETFileValidator validator, PrintWriter out) {

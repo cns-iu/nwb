@@ -8,12 +8,9 @@ package edu.iu.nwb.converter.nwbpajeknet;
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
@@ -22,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -38,31 +34,37 @@ import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 public class NWBToPajeknet implements Algorithm {
-	public static final String[] noPrintParameters = { NETFileProperty.ATTRIBUTE_ID, NETFileProperty.ATTRIBUTE_LABEL, "xpos", "ypos", "zpos", "shape",NETFileProperty.ATTRIBUTE_SOURCE, NETFileProperty.ATTRIBUTE_TARGET, NETFileProperty.ATTRIBUTE_WEIGHT };
+	public static final String[] noPrintParameters = {
+		NETFileProperty.ATTRIBUTE_ID,
+		NETFileProperty.ATTRIBUTE_LABEL,
+		"xpos",
+		"ypos",
+		"zpos",
+		"shape",
+		NETFileProperty.ATTRIBUTE_SOURCE,
+		NETFileProperty.ATTRIBUTE_TARGET,
+		NETFileProperty.ATTRIBUTE_WEIGHT };
 	
 	private File inNWBFile;
-	private Map vertexToIdMap;
+	private Map<Integer, Integer> vertexToIdMap = new HashMap<Integer, Integer>();
 
-	
-	public NWBToPajeknet(Data[] data, Dictionary parameters, CIShellContext context) {
+	public NWBToPajeknet(Data[] data, Dictionary<String, Object> parameters) {
 		this.inNWBFile = (File) data[0].getData();
-		
-		this.vertexToIdMap = new HashMap();
 	}
 
-	
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
 			ValidateNWBFile validator = new ValidateNWBFile();
 			validator.validateNWBFormat(inNWBFile);
+
 			if (validator.getValidationResult()) {
 				File outNetFile = convertNWBToNet(inNWBFile, validator);
 				
 				return createOutData(outNetFile);
 			} else {
-				throw new AlgorithmExecutionException(
-					"Error converting NWB to Pajek .net: "
-						+ validator.getErrorMessages());
+				throw new AlgorithmExecutionException(String.format(
+					"Error converting NWB to Pajek .net: %s",
+					validator.getErrorMessages()));
 			}
 		} catch (FileNotFoundException e) {
 			String message = "Couldn't find NWB file: " + e.getMessage();
@@ -155,8 +157,8 @@ public class NWBToPajeknet implements Algorithm {
 			if (inNodesSection)
 			{	//ignore attribute list line or comment line(s)
 				if (line.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
-						line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
-								NWBFileProperty.ATTRIBUTE_ID)||
+						line.startsWith(NWBFileProperty.PREFIX_COMMENTS +
+								NWBFileProperty.ATTRIBUTE_ID) ||
 								line.startsWith(NWBFileProperty.PREFIX_COMMENTS))
 				{
 					line = reader.readLine();
@@ -164,7 +166,7 @@ public class NWBToPajeknet implements Algorithm {
 				}
 				else
 				{   
-					writeNodes(line,out,validator, validator.getNodeAttrList(),nodes);
+					writeNodes(line, out, validator, validator.getNodeAttrList(), nodes);
 					nodes++;
 				}
 			}//end if (inNodesSection)
@@ -202,83 +204,80 @@ public class NWBToPajeknet implements Algorithm {
 		out.print(st+"\r\n");
 	}
 
-	private void writeNodes(String s,
-							PrintWriter out,
-							ValidateNWBFile validator,
-							List nodeAttrList,
-							int mapper) {
-		out.flush();
-		String[] columns = NETFileFunctions.processTokens(s);
+	private void writeNodes(
+			String inputString,
+			PrintWriter writer,
+			ValidateNWBFile nwbValidator,
+			List<NWBAttribute> nodeAttributes,
+			int mapper) {
+		writer.flush();
+		String[] columns = NETFileFunctions.processTokens(inputString);
 
-		int i = 0;
-		for(Iterator ii = nodeAttrList.iterator(); ii.hasNext();){
-			NWBAttribute na = (NWBAttribute) ii.next();
-			String value = columns[i];
-			//	System.out.print(value + "::");
-			//value.replace("\"", "");
-			if(value.equalsIgnoreCase("*")){
+		int valueColumnIndex = 0;
+		for (Iterator<NWBAttribute> it = nodeAttributes.iterator(); it.hasNext();) {
+			NWBAttribute nodeAttribute = it.next();
+			String value = columns[valueColumnIndex];
 
-			}
-			else if(NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)){
-				if(na.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+			if (value.equalsIgnoreCase("*")) {
+			} else if (NETFileFunctions.isInList(nodeAttribute.getAttrName(), noPrintParameters)) {
+				if (nodeAttribute.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)) {
 					String[] sa = value.split(" ");
-					if(sa.length > 1)
-						out.print(" \""+value+"\" ");
-					else
-						out.print(value + " ");
-				}
-				else{
-					if(na.getAttrName().equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+
+					if (sa.length > 1) {
+						writer.print(" \""+value+"\" ");
+					} else {
+						writer.print(value + " ");
+					}
+				} else {
+					if (nodeAttribute.getAttrName().equalsIgnoreCase(
+							NWBFileProperty.ATTRIBUTE_ID)) {
 						this.vertexToIdMap.put(new Integer(value), new Integer(mapper));
-						out.print(mapper + " ");
+						writer.print(mapper + " ");
+					} else {
+						writer.print(value + " ");
 					}
-					else
-						out.print(value + " ");
 				}
 
-			}
-			else if(na.getDataType().equalsIgnoreCase("float") || na.getDataType().equalsIgnoreCase("int")){
-				if(!value.equalsIgnoreCase("")){
-					//	System.out.print(na.getAttrName() + " " + value + " ");
-					String ss = na.getAttrName();
+			} else if (nodeAttribute.getDataType().equalsIgnoreCase("float") ||
+						nodeAttribute.getDataType().equalsIgnoreCase("int")) {
+				if (!value.equalsIgnoreCase("")) {
+					String attributeName = nodeAttribute.getAttrName();
 
-					if(ss.matches("[bil]?c1")){
+					if (attributeName.matches("[bil]?c1")) {
+						attributeName = attributeName.replace("1", "");
+						attributeName += " " + value + " ";
 
-						ss = ss.replace("1", "");
-						ss += " " + value + " ";
-						for(int j = 1; j < 3; j++){
-							ss += columns[j+i] + " ";
-							ii.next();
+						for (int jj = 1; jj < 3; jj++) {
+							attributeName += columns[jj + valueColumnIndex] + " ";
+							it.next();
 						}
-						i = i+2;
-						out.print(ss);
-					}else
-						out.print(na.getAttrName() + " " + value + " ");
-				}
-			}
-			else if(na.getDataType().equalsIgnoreCase("string")){
 
-
-				if(!value.equalsIgnoreCase("")){
-					if(na.getAttrName().startsWith("unknown")){
-						String[] sa = value.split(" ");
-						if(sa.length > 1)
-							out.print(" \""+value+"\" ");
-						else
-							out.print(value+ " ");
+						valueColumnIndex = valueColumnIndex + 2;
+						writer.print(attributeName);
+					} else {
+						writer.print(nodeAttribute.getAttrName() + " " + value + " ");
 					}
-					else
-						out.print(na.getAttrName() + " \"" + value + "\" ");
+				}
+			} else if (nodeAttribute.getDataType().equalsIgnoreCase("string")) {
+				if (!value.equalsIgnoreCase("")) {
+					if (nodeAttribute.getAttrName().startsWith("unknown")) {
+						String[] valueTokens = value.split(" ");
+
+						if (valueTokens.length > 1) {
+							writer.print(" \"" + value + "\" ");
+						} else {
+							writer.print(value+ " ");
+						}
+					} else {
+						writer.print(nodeAttribute.getAttrName() + " \"" + value + "\" ");
+					}
 				}
 			}
 
-			else;
-
-			i++;
-
+			valueColumnIndex++;
 		}
 
-		out.print("\r\n");
+		writer.print("\r\n");
 	}
 
 	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList)
@@ -314,7 +313,7 @@ public class NWBToPajeknet implements Algorithm {
 				else{
 					if(na.getAttrName().equals(NWBFileProperty.ATTRIBUTE_SOURCE) || na.getAttrName().equals(NWBFileProperty.ATTRIBUTE_TARGET)){
 						try {
-							value = ((Integer) this.vertexToIdMap.get(new Integer(value))).toString();
+							value = this.vertexToIdMap.get(new Integer(value)).toString();
 						} catch (NullPointerException e) {
 							throw new AlgorithmExecutionException("Edge references an undefined node.", e);
 						}

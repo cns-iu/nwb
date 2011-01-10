@@ -8,7 +8,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 public class PajeknetToNWBFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PajeknetToNWB(data, parameters, context);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+        return new PajeknetToNWB(data, parameters);
     }
 }
