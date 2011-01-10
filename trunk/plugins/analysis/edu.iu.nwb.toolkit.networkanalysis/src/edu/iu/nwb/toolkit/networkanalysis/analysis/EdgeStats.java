@@ -21,285 +21,288 @@ public class EdgeStats extends Thread {
 
 	int numberOfEdges;
 
-	Vector nonNumericAttributes;
-	Vector numericAttributes;
+	Vector<String> nonNumericAttributes;
+	Vector<String> numericAttributes;
 
 	SelfLoopsParallelEdges selfLoopsParallelEdges;
 	
 	private Graph edgeGraph;
-	
-	public void run(){
-		
-		initializeAdditionalAttributes(this.edgeGraph.getEdgeTable(),this);
-		
+
+	@Override
+	public void run() {
+		initializeAdditionalAttributes(this.edgeGraph.getEdgeTable(), this);
+
 		CascadedTable derivativeTable = new CascadedTable(this.edgeGraph.getEdgeTable());
 		derivativeTable.addColumn("visited", boolean.class, new Boolean(false));
-		
-		
+
 		int additionalNumericAttributes = this.numericAttributes.size();
 		
-		if(additionalNumericAttributes > 0){
-		  this.weightedDensitySum = new double[additionalNumericAttributes];
-		  this.meanValues = new double[additionalNumericAttributes];
-		  this.maxValues = new double[additionalNumericAttributes];
-		  this.minValues = new double[additionalNumericAttributes];
-		  
-		  java.util.Arrays.fill(this.maxValues, Double.MIN_VALUE);
-		  java.util.Arrays.fill(this.minValues, Double.MAX_VALUE);
+		if (additionalNumericAttributes > 0) {
+			this.weightedDensitySum = new double[additionalNumericAttributes];
+			this.meanValues = new double[additionalNumericAttributes];
+			this.maxValues = new double[additionalNumericAttributes];
+			this.minValues = new double[additionalNumericAttributes];
+
+			java.util.Arrays.fill(this.maxValues, Double.MIN_VALUE);
+			java.util.Arrays.fill(this.minValues, Double.MAX_VALUE);
 		}
-		
+
 		this.calculateEdgeStats(derivativeTable);
 	}
 	
-	public static EdgeStats constructEdgeStats(final Graph graph){
+	public static EdgeStats constructEdgeStats(Graph graph) {
 		EdgeStats edgeStats = new EdgeStats();
 		
 		edgeStats.numberOfEdges = graph.getEdgeCount();
 		edgeStats.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph);
 		edgeStats.edgeGraph = graph;
-	
-		
+
 		return edgeStats;
 	}
 	
-	private static EdgeStats initializeAdditionalAttributes(final Table edgeTable, EdgeStats es){
-		es.nonNumericAttributes = new Vector();
-		es.numericAttributes = new Vector();
-		int numberOfAdditionalAttributes = edgeTable.getColumnCount()-2;
-		if(numberOfAdditionalAttributes > 0){
-			for(int i = 0; i < edgeTable.getColumnCount(); i++){
-				String columnName = edgeTable.getColumnName(i);
-				if(!(columnName.equals("source") || columnName.equals("target"))){
-					if(edgeTable.getColumn(i).canGet(Number.class)){
-						es.numericAttributes.add(columnName);
-					}else{
-						es.nonNumericAttributes.add(columnName);
+	private static EdgeStats initializeAdditionalAttributes(Table edgeTable, EdgeStats edgeStats) {
+		edgeStats.nonNumericAttributes = new Vector<String>();
+		edgeStats.numericAttributes = new Vector<String>();
+		int numberOfAdditionalAttributes = edgeTable.getColumnCount() - 2;
+
+		if (numberOfAdditionalAttributes > 0) {
+			for (int ii = 0; ii < edgeTable.getColumnCount(); ii++) {
+				String columnName = edgeTable.getColumnName(ii);
+
+				if (!("source".equals(columnName) || "target".equals(columnName))) {
+					if (edgeTable.getColumn(ii).canGet(Number.class)) {
+						edgeStats.numericAttributes.add(columnName);
+					} else {
+						edgeStats.nonNumericAttributes.add(columnName);
 					}
 				}
 			}
 		}
-		
-		if(es.nonNumericAttributes.size() > 0){
-			es.characteristicValues = new String[es.nonNumericAttributes.size()];
+
+		if (edgeStats.nonNumericAttributes.size() > 0) {
+			edgeStats.characteristicValues = new String[edgeStats.nonNumericAttributes.size()];
 		}
-		if(es.numericAttributes.size() > 0){
-			es.isValuedNetwork = true;
+
+		if (edgeStats.numericAttributes.size() > 0) {
+			edgeStats.isValuedNetwork = true;
 		}
-		
-		return es;
+
+		return edgeStats;
 	}
 
-	private void addEdge(final Edge e, CascadedTable derivativeTable, HashSet observedValues){
-		if(!derivativeTable.getBoolean(e.getRow(), derivativeTable.getColumnNumber("visited"))){
-				processEdgeAttributes(e,this.nonNumericAttributes,observedValues,false);
-				processEdgeAttributes(e,this.numericAttributes,observedValues,true);
-				derivativeTable.setBoolean(e.getRow(), derivativeTable.getColumnNumber("visited"), true);
+	private void addEdge(
+			Edge edge, CascadedTable derivativeTable, HashSet<Object> observedValues) {
+		if (!derivativeTable.getBoolean(
+				edge.getRow(), derivativeTable.getColumnNumber("visited"))) {
+			processEdgeAttributes(edge, this.nonNumericAttributes, observedValues, false);
+			processEdgeAttributes(edge, this.numericAttributes, observedValues, true);
+			derivativeTable.setBoolean(
+				edge.getRow(), derivativeTable.getColumnNumber("visited"), true);
 		}
 	}
-	
-	private void processEdgeAttributes(final Edge e, final Vector attributeNames, HashSet observedValues, boolean isNumeric){
-		for(int i = 0; i < attributeNames.size(); i++){
-			String columnName = (String)attributeNames.get(i);
-			if(isNumeric){
-				double value = ((java.lang.Number)e.get(columnName)).doubleValue();
-				this.meanValues[i] += (value)/e.getGraph().getEdgeCount();
-				this.weightedDensitySum[i] += value;
-				if(value > this.maxValues[i])
-					this.maxValues[i] = value;
-				if(value < this.minValues[i])
-					this.minValues[i] = value;
-				
-				if(attributeNames.size() == 1){
-					
-					observedValues.add(e.get(columnName));
+
+	private void processEdgeAttributes(
+			Edge edge,
+			Vector<String> attributeNames,
+			HashSet<Object> observedValues,
+			boolean isNumeric) {
+		for (int ii = 0; ii < attributeNames.size(); ii++){
+			String columnName = attributeNames.get(ii);
+
+			if (isNumeric) {
+				double value = ((Number) edge.get(columnName)).doubleValue();
+				this.meanValues[ii] += value / edge.getGraph().getEdgeCount();
+				this.weightedDensitySum[ii] += value;
+
+				if (value > this.maxValues[ii]) {
+					this.maxValues[ii] = value;
+				}
+
+				if (value < this.minValues[ii]) {
+					this.minValues[ii] = value;
+				}
+
+				if (attributeNames.size() == 1) {
+					observedValues.add(edge.get(columnName));
+				}
+			} else {
+				Object cell = edge.get(columnName);
+
+				if (cell != null) {
+					this.characteristicValues[ii] = edge.get(columnName).toString();
 				}
 			}
-			else{
-				this.characteristicValues[i] = e.get(columnName).toString();
-			}
 		}
 	}
 
+	public void calculateEdgeStats(CascadedTable visitedTable) {
+		HashSet<Object> observedValues = null;
 
-	public void calculateEdgeStats(CascadedTable visitedTable){
-		HashSet observedValues = null;
 		if (numericAttributes.size() == 1) {
-			observedValues = new HashSet();
+			observedValues = new HashSet<Object>();
 		}
-		
-		for (Iterator edgeIt = edgeGraph.edges(); edgeIt.hasNext();){
+
+		for (Iterator<?> edgeIt = edgeGraph.edges(); edgeIt.hasNext();) {
 			Edge e = (Edge) edgeIt.next();
 			
 			addEdge(e, visitedTable, observedValues);
 		}
-		
+
 		if (numericAttributes.size() == 1) {
-			if(observedValues.size() > 1) {
+			if (observedValues.size() > 1) {
 				isValuedNetwork = true;
 			}
 		}
 		
 	}
 
-	public SelfLoopsParallelEdges getSelfLoopsParallelEdges(){
+	public SelfLoopsParallelEdges getSelfLoopsParallelEdges() {
 		return this.selfLoopsParallelEdges;
 	}
 
-	public int getNumberOfSelfLoops(){
+	public int getNumberOfSelfLoops() {
 		return this.selfLoopsParallelEdges.getNumSelfLoops();
 	}
 
-	public int getNumberOfParallelEdges(){
+	public int getNumberOfParallelEdges() {
 		return this.selfLoopsParallelEdges.getNumParallelEdges();
 	}
 
-	public double[] getWeightedDensitySumArray(){
+	public double[] getWeightedDensitySumArray() {
 		return this.weightedDensitySum;
 	}
 
-	public double[] getMaxValueArray(){
+	public double[] getMaxValueArray() {
 		return this.maxValues;
 	}
 	
 	
-	protected String[] getAdditionalNumericAttributes(){
+	protected String[] getAdditionalNumericAttributes() {
 		String[] numericAttributeNames = new String[this.numericAttributes.size()];
-		return (String[])this.numericAttributes.toArray(numericAttributeNames);
+
+		return (String[]) this.numericAttributes.toArray(numericAttributeNames);
 	}
 
-	protected String appendParallelEdgeInfo(){
-		StringBuffer sb = new StringBuffer();
+	protected String appendParallelEdgeInfo() {
+		StringBuffer stringBuffer = new StringBuffer();
 		int parallelEdges = this.getNumberOfParallelEdges();
-		if(parallelEdges > 0){
-			sb.append("There are: " + parallelEdges + " parallel edges.\n" + 
-			"They are as follows:");
-			sb.append(System.getProperty("line.separator"));
-			sb.append(this.getSelfLoopsParallelEdges().printParallelEdges());
-			sb.append(System.getProperty("line.separator"));
-		}
-		else{
-			sb.append("No parallel edges were discovered.");
-			sb.append(System.getProperty("line.separator"));
+
+		if (parallelEdges > 0) {
+			stringBuffer.append(String.format(
+				"There are: %d parallel edges.%nThey are as follows:%n%s%n",
+				parallelEdges,
+				this.getSelfLoopsParallelEdges().printParallelEdges()));
+		} else {
+			stringBuffer.append(String.format("No parallel edges were discovered.%n"));
 		}
 
-		return sb.toString();
+		return stringBuffer.toString();
 	}
 
-	protected String selfLoopInfo(){
-		StringBuffer sb = new StringBuffer();
-		if(this.getNumberOfSelfLoops() > 0){
-			sb.append("There are: " + this.getNumberOfSelfLoops() + " self-loops. \n" + 
-			"They are as follows:");
-			sb.append(System.getProperty("line.separator"));
-			sb.append(this.getSelfLoopsParallelEdges().printSelfLoops());
-			sb.append(System.getProperty("line.separator"));
+	protected String selfLoopInfo() {
+		StringBuffer stringBuffer = new StringBuffer();
+		if (this.getNumberOfSelfLoops() > 0) {
+			stringBuffer.append(String.format(
+				"There are: %d self loops.%nThey are as follows:%n%s%n",
+				this.getNumberOfSelfLoops(),
+				this.getSelfLoopsParallelEdges().printSelfLoops()));
+		} else {
+			stringBuffer.append(String.format("No self loops were discovered.%n"));
 		}
-		else{
-			sb.append("No self loops were discovered.");
-			sb.append(System.getProperty("line.separator"));
-		}
-		return sb.toString();
+
+		return stringBuffer.toString();
 	}
 
-	protected String appendEdgeInfo(){
-		StringBuffer sb = new StringBuffer();
-		
-		sb.append("Edges: " + this.numberOfEdges);
-		sb.append(System.getProperty("line.separator"));
-		sb.append(this.selfLoopInfo());
-		sb.append(this.appendParallelEdgeInfo());
-		sb.append(System.getProperty("line.separator"));
-		
+	protected String appendEdgeInfo() {
+		StringBuffer stringBuffer = new StringBuffer();
+
+		stringBuffer.append(String.format(
+			"Edges: %d%n%s%s%n", this.numberOfEdges, selfLoopInfo(), appendParallelEdgeInfo()));
+
 		int nonNumericAttributesSize = this.nonNumericAttributes.size();
 		int numericAttributesSize = this.numericAttributes.size();
-		if((nonNumericAttributesSize+numericAttributesSize) > 0){
-		sb.append("Edge attributes:");
-		sb.append(System.getProperty("line.separator"));
-		if(nonNumericAttributesSize > 0){
-			sb.append("\tNonnumeric attributes:");
-			sb.append(System.getProperty("line.separator"));
-			sb.append(printEdgeAttributes(this.nonNumericAttributes,false));
+
+		if ((nonNumericAttributesSize + numericAttributesSize) > 0) {
+			stringBuffer.append(String.format("Edge attributes:%n"));
+
+			if (nonNumericAttributesSize > 0) {
+				stringBuffer.append(String.format(
+					"\tNonnumeric attributes:%n%s",
+					printEdgeAttributes(this.nonNumericAttributes, false)));
+			} else {
+				stringBuffer.append("\tDid not detect any nonnumeric attributes.");
+			}
+
+			stringBuffer.append(System.getProperty("line.separator"));
+
+			if (numericAttributesSize > 0) {
+				stringBuffer.append(String.format(
+					"\tNumeric attributes:%n%s",
+					printEdgeAttributes(this.numericAttributes,true)));
+			} else {
+				stringBuffer.append("\tDid not detect any numeric attributes.");
+			}
+
+			stringBuffer.append(System.getProperty("line.separator"));
+		} else {
+			stringBuffer.append(String.format("\tDid not detect any edge attributes.%n"));
 		}
-		else{
-			sb.append("\tDid not detect any nonnumeric attributes");
+
+		if (this.isValuedNetwork) {
+			stringBuffer.append(String.format("\tThis network seems to be valued.%n"));
+		} else {
+			stringBuffer.append(String.format(
+				"\tThis network does not seem to be a valued network.%n"));
 		}
-		sb.append(System.getProperty("line.separator"));
-		
-		if(numericAttributesSize > 0){
-			sb.append("\tNumeric attributes:");
-			sb.append(System.getProperty("line.separator"));
-			sb.append(printEdgeAttributes(this.numericAttributes,true));
-		}
-		else{
-			sb.append("\tDid not detect any numeric attributes");
-		}
-		
-		sb.append(System.getProperty("line.separator"));
-		}
-		else{
-			sb.append("\tDid not detect any edge attributes");
-			sb.append(System.getProperty("line.separator"));
-		}
-		if(this.isValuedNetwork){
-			sb.append("\tThis network seems to be valued.");
-			sb.append(System.getProperty("line.separator"));
-		}
-		else{
-			sb.append("\tThis network does not seem to be a valued network.");
-			sb.append(System.getProperty("line.separator"));
-		}
-		return sb.toString();
+
+		return stringBuffer.toString();
 	}
+
+	private String printEdgeAttributes(Vector<String> attributeNames, boolean isNumeric) {
+		StringBuffer stringBuffer = new StringBuffer();
+		DecimalFormat densityFormatter = null;
 		
-		private String printEdgeAttributes(Vector attributeNames, boolean isNumeric){
-			StringBuffer sb = new StringBuffer();
-			DecimalFormat densityFormatter = null;
+		if (isNumeric) {
+			stringBuffer.append("\t\t\t\tmin\tmax\tmean");
+			stringBuffer.append(System.getProperty("line.separator"));
+			densityFormatter = new DecimalFormat("#.#####");
+		} else {
+			stringBuffer.append("\t\t\t\tExample value");
+			stringBuffer.append(System.getProperty("line.separator"));
+		}
+		
+		for (int ii = 0; ii < attributeNames.size(); ii++) {
+			String attributeName = attributeNames.get(ii);
+			if (attributeName.length() > 7) {
+				attributeName = attributeName.substring(0, 7);
+				attributeName += "...";
+			} else {
+				String spacer = "          ";
+				attributeName +=
+					spacer.substring(0, (1 + spacer.length() - attributeName.length()));
+			}
+			
+			stringBuffer.append("\t\t" + attributeName + "\t");
 			
 			if (isNumeric) {
-				sb.append("\t\t\t\tmin\tmax\tmean");
-				sb.append(System.getProperty("line.separator"));
-				densityFormatter = new DecimalFormat("#.#####");
+				stringBuffer.append(densityFormatter.format(this.minValues[ii])
+						+ "\t" + densityFormatter.format(this.maxValues[ii])
+						+ "\t" + densityFormatter.format(this.meanValues[ii]));
 			} else {
-				sb.append("\t\t\t\tExample value");
-				sb.append(System.getProperty("line.separator"));
+				stringBuffer.append(normalize(this.characteristicValues[ii]));
 			}
 			
-			for (int i = 0; i < attributeNames.size(); i++) {
-				String attributeName = (String) attributeNames.get(i);
-				if (attributeName.length() > 7) {
-					attributeName = attributeName.substring(0, 7);
-					attributeName += "...";
-				} else {
-					String spacer = "          ";
-					attributeName +=
-						spacer.substring(
-								0,
-								1 + spacer.length() - attributeName.length());
-				}
-				
-				sb.append("\t\t" + attributeName + "\t");
-				
-				if (isNumeric) {
-					sb.append(densityFormatter.format(this.minValues[i])
-							+ "\t" + densityFormatter.format(this.maxValues[i])
-							+ "\t" + densityFormatter.format(this.meanValues[i]));
-				} else {
-					sb.append(normalize(this.characteristicValues[i]));
-				}
-				
-				sb.append(System.getProperty("line.separator"));				
-			}
-			
-			return sb.toString();
+			stringBuffer.append(System.getProperty("line.separator"));				
 		}
+		
+		return stringBuffer.toString();
+	}
 
-		private String normalize(String value) {
-			if(value == null) {
-				return "N/A";
-			}
-			else {
-				return value;
-			}
+	private String normalize(String value) {
+		if (value == null) {
+			return "N/A";
+		} else {
+			return value;
 		}
-
+	}
 }
