@@ -2,7 +2,6 @@ package edu.iu.sci2.filtering.topnpercent;
 
 import java.util.Dictionary;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -14,30 +13,17 @@ import prefuse.data.Table;
 import edu.iu.sci2.filtering.topncommon.TopNUtilities;
 
 public class TopNPercentAlgorithm implements Algorithm {
-	private Data[] data;
-    
+	private Data inputData;
     private float topNPercent;
     private String columnToSortBy;
     private boolean isDescending;
     
-    public TopNPercentAlgorithm(Data[] data,
-    							Dictionary parameters,
-    							CIShellContext context)
-    {
-    	this.data = data;
-    	
-        // Unpack parameters that user specified.
-    	
-    	Integer topNPercentInteger =
-    		(Integer)parameters.get(TopNUtilities.TOP_N_PERCENT_ID);
-    	
-		this.topNPercent = ((float)topNPercentInteger.intValue() / 100.0f);
-		
-		this.columnToSortBy =
-			((String)parameters.get(TopNUtilities.COLUMN_TO_SORT_BY_ID));
-		
-		this.isDescending =
-			((Boolean)parameters.get(TopNUtilities.IS_DESCENDING_ID)).booleanValue();
+    public TopNPercentAlgorithm(
+    		Data inputData, float topNPercent, String columnToSortBy, boolean isDescending) {
+    	this.inputData = inputData;
+		this.topNPercent = topNPercent;
+		this.columnToSortBy = columnToSortBy;
+		this.isDescending = isDescending;
 		
 		// Make sure topNPercent is between 0.0f and 1.0f.
 		this.topNPercent = Math.min(1.0f, this.topNPercent);
@@ -45,69 +31,68 @@ public class TopNPercentAlgorithm implements Algorithm {
     }
     
     public Data[] execute() throws AlgorithmExecutionException {
-    	Data inData = this.data[0];
-    	Table table = (Table)inData.getData();
-    	final int numTableRows = table.getRowCount();
+    	Table table = (Table) this.inputData.getData();
+    	int numTableRows = table.getRowCount();
     	
-    	// This is the raw number of rows the user specified with the given
-    	// percentage (percentage * numRows).  There's no such thing as a fraction
-    	// of a row, though, so we have to properly round this number.
-    	final double calculatedTopNRows = (double)this.topNPercent * numTableRows;
+    	/* This is the raw number of rows the user specified with the given percentage
+    	 * (percentage * numRows).  There's no such thing as a fraction of a row, though, so we
+    	 * have to properly round this number.
+    	 */
+    	double calculatedTopNRows = (double) this.topNPercent * numTableRows;
     	
-    	// If there is at least one row and the user-specified percentage is greater
-    	// than 0, at least one row should be returned.  To make sure this happens,
-    	// we can add 0.5 to calculatedTopNRows.  However, if calculatedTopNRows
-    	// ends up being an exact number of rows, we DON'T want to do that.
-    	final int flooredCalculatedTopNRows = (int)calculatedTopNRows;
+    	/* If there is at least one row and the user-specified percentage is greater than 0, at
+    	 * least one row should be returned.  To make sure this happens, we can add 0.5 to
+    	 * calculatedTopNRows.  However, if calculatedTopNRows ends up being an exact number of
+    	 * rows, we DON'T want to do that.
+    	 */
+		/* TODO cast to int actually rounds toward zero, so don't call this "floored"
+		 * use Math.ceiling and Math.max to verify you don't overindex the table
+		 */
+    	int flooredCalculatedTopNRows = (int) calculatedTopNRows;
     	int finalTopN = flooredCalculatedTopNRows;
     	
-    	// Casting a double to an int has the same effect as using floor on the
-    	// double.  If the floor of calculatedTopNRows, casted BACK to double, is
-    	// the same as the original calculatedTopNRows, the user specified a
-    	// percentage that resulted in an exact number of rows, in which case we
-    	// DON'T want to add 0.5 when rounding (to make sure there is at least one
-    	// row in the result set).
-    	if ((double)flooredCalculatedTopNRows != calculatedTopNRows)
-    		finalTopN = (int)Math.round(calculatedTopNRows + 0.5);
+    	if ((double) flooredCalculatedTopNRows != calculatedTopNRows) {
+    		finalTopN = (int) Math.round(calculatedTopNRows + 0.5);
+    	}
     	
     	Table sortedTable = null;
     	
     	try {
-    		sortedTable = TopNUtilities.sortTableWithOnlyTopN(table,
-    														  this.columnToSortBy,
-    														  this.isDescending,
-    														  finalTopN);
-    	}
-    	catch (ColumnNotFoundException e) {
-    		throw new AlgorithmExecutionException(e);
+    		sortedTable = TopNUtilities.sortTableWithOnlyTopN(
+    			table, this.columnToSortBy, this.isDescending, finalTopN);
+    	} catch (ColumnNotFoundException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
     	}
     	
-    	Data[] outData = prepareOutData(sortedTable, inData);
-    	
+    	Data[] outData = prepareOutData(sortedTable, this.inputData);
+
     	return outData;
     }
     
     private Data[] prepareOutData(Table outTable, Data inData) {
 		Data outData = new BasicData(outTable, outTable.getClass().getName());
-		Dictionary outMetaData = outData.getMetadata();
-		Dictionary inMetaData = inData.getMetadata();
-		
-		final String baseLabelString = "Top " + this.topNPercent + "% (";
-		
+		Dictionary<String, Object> outMetadata = outData.getMetadata();
+		Dictionary<String, Object> inMetadata = inData.getMetadata();
+
+		int topNPercentAsInteger = (int) (this.topNPercent * 100);
 		String sortingLabelString = null;
 		
-		if (this.isDescending)
+		if (this.isDescending) {
 			sortingLabelString = "descending order";
-		else
+		} else {
 			sortingLabelString = "ascending order";
-		
-		outMetaData.put(DataProperty.LABEL,
-						baseLabelString + outTable.getRowCount() + " row(s)) (" +
-						sortingLabelString + ") (based on " + this.columnToSortBy +
-						") of " + inMetaData.get(DataProperty.LABEL));
-		
-		outMetaData.put(DataProperty.PARENT, inData);
-		outMetaData.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		}
+
+		String label = String.format(
+			"Top %d%% (%d rows(s)) (%s) (based on %s) of %s",
+			topNPercentAsInteger,
+			outTable.getRowCount(),
+			sortingLabelString,
+			this.columnToSortBy,
+			inMetadata.get(DataProperty.LABEL)); // TODO remove?
+		outMetadata.put(DataProperty.LABEL, label);
+		outMetadata.put(DataProperty.PARENT, inData);
+		outMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
 		return new Data[] { outData };
 	}

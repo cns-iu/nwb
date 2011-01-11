@@ -52,11 +52,10 @@ public class TopNTestUtilities {
 		return table;
 	}
 	
-	public static Data[] formTestData(String columnName) {
+	public static Data formTestData(String columnName) {
 		Table testTable = formTestTable(columnName);
-		Data testTableData = new BasicData(testTable,
-										   testTable.getClass().getName());
+		Data testTableData = new BasicData(testTable, testTable.getClass().getName());
 		
-		return new Data[] { testTableData };
+		return testTableData;
 	}
 }

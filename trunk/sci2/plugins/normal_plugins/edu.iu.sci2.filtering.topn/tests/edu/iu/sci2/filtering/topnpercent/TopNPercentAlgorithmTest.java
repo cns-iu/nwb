@@ -46,23 +46,19 @@ public class TopNPercentAlgorithmTest {
 	}
 	
 	private void testExecuteGeneric(boolean isDescending) {
-		Dictionary testUserParameters =
-			TopNTestUtilities.formUserParametersForTopNPercent
-				(TEST_TOP_N_PERCENT, TEST_COLUMN_NAME, isDescending);
-		
-		Data[] testInputData = TopNTestUtilities.formTestData(TEST_COLUMN_NAME);
+		Data testInputData = TopNTestUtilities.formTestData(TEST_COLUMN_NAME);
 		Data[] testOutputData = null;
 		
 		boolean testFailed = false;
 		
 		try {
-			TopNPercentAlgorithm topNPercentAlgorithm =
-				new TopNPercentAlgorithm(testInputData, testUserParameters, null);
+			TopNPercentAlgorithm topNPercentAlgorithm = new TopNPercentAlgorithm(
+				testInputData, TEST_TOP_N_PERCENT, TEST_COLUMN_NAME, isDescending);
 			
 			testOutputData = topNPercentAlgorithm.execute();
 			
 			Table testOutTable = (Table)testOutputData[0].getData();
-			final int numTestOutTableRows = testOutTable.getRowCount();
+			int numTestOutTableRows = testOutTable.getRowCount();
 			
 			// Verify that the test out table is sorted in the correct order.
 			
@@ -77,12 +73,11 @@ public class TopNPercentAlgorithmTest {
 						testFailed = true;
 					
 						break;
-					}
-					else
+					} else {
 						currentValue = thisRowValue;
+					}
 				}
-			}
-			else {
+			} else {
 				int currentValue = 0;
 				
 				for (int ii = 0; ii < numTestOutTableRows; ii++) {
@@ -93,17 +88,17 @@ public class TopNPercentAlgorithmTest {
 						testFailed = true;
 					
 						break;
-					}
-					else
+					} else {
 						currentValue = thisRowValue;
+					}
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			testFailed = true;
 		}
 		
-		if (testFailed)
+		if (testFailed) {
 			fail();
+		}
 	}
 }

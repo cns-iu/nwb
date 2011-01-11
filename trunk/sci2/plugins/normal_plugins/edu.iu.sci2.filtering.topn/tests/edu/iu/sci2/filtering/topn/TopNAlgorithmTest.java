@@ -50,7 +50,7 @@ public class TopNAlgorithmTest {
 			TopNTestUtilities.formUserParametersForTopN
 				(TEST_TOP_N, TEST_COLUMN_NAME, isDescending);
 		
-		Data[] testInputData = TopNTestUtilities.formTestData(TEST_COLUMN_NAME);
+		Data[] testInputData = new Data[] { TopNTestUtilities.formTestData(TEST_COLUMN_NAME) };
 		Data[] testOutputData = null;
 		
 		boolean testFailed = false;
