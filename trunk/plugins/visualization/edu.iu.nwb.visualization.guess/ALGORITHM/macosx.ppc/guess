@@ -16,7 +16,7 @@ export GCLASSPATH="$GUESS_LIB/guess.jar:$GUESS_LIB/piccolo.jar:$GUESS_LIB/piccol
 
 # echo $GCLASSPATH
 
-java -Xms256m -Xmx1500m -DgHome=$GUESS_HOME -classpath $GCLASSPATH "-Dpython.home=$GUESS_HOME/src" com.hp.hpl.guess.Guess $@ &> guesslog.txt
+java -Xms256m -Xmx1500m -DgHome=$GUESS_HOME -classpath $GCLASSPATH "-Dpython.home=$GUESS_HOME/src" -Ddata_label=$8 com.hp.hpl.guess.Guess $1 $2 $3 $4 $5 $6 $7 &> guesslog.txt
 
 PID=$!
 clean(){ kill $PID  
