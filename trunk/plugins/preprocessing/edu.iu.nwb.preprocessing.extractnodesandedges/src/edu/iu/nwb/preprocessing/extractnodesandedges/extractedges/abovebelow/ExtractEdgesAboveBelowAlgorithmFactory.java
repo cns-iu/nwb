@@ -18,10 +18,18 @@ public class ExtractEdgesAboveBelowAlgorithmFactory implements AlgorithmFactory,
 	
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
-        return new ExtractEdgesAboveBelowAlgorithm(data, parameters, context);
+    	Data inputData = data[0];
+    	Graph originalGraph = (Graph) inputData.getData();
+    	Double startingNumber = (Double) parameters.get("fromThisNum");
+    	Boolean belowInstead = (Boolean) parameters.get("belowInstead");
+    	String column = (String) parameters.get("column");
+
+        return new ExtractEdgesAboveBelowAlgorithm(
+        	inputData, originalGraph, startingNumber, belowInstead, column);
     }
 
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
+		System.err.println("mutateParameters");
 		Graph graph = (Graph) data[0].getData();
 
 		try {
@@ -33,13 +41,7 @@ public class ExtractEdgesAboveBelowAlgorithmFactory implements AlgorithmFactory,
 			String exceptionMessage =
 				"Edges must have some numeric attribute (other than source and target) as a " +
 				"basis for filtering/extraction";
-			throw new AlgorithmCreationFailedException(exceptionMessage);
-//			return new BasicObjectClassDefinition(
-//				"No Usable Numeric Attributes",
-//				"No Usable Numeric Attributes", 
-//				"Edges must have some numeric attribute (other than source and target) as a " +
-//					"basis for filtering/extraction",
-//				null);
+			throw new AlgorithmCreationFailedException(exceptionMessage, e);
 		}
 	}
 }

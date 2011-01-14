@@ -8,7 +8,6 @@ import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
-import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.nwb.preprocessing.extractnodesandedges.AddNumericAttributeParamMutator;
@@ -24,6 +23,7 @@ public class ExtractNodesAboveBelowAlgorithmFactory implements AlgorithmFactory,
 
 	public ObjectClassDefinition mutateParameters(
 			Data[] data, ObjectClassDefinition oldParameters) {
+		System.err.println("mutateParameters");
 		Graph graph = (Graph) data[0].getData();
 
 		try {
@@ -32,8 +32,10 @@ public class ExtractNodesAboveBelowAlgorithmFactory implements AlgorithmFactory,
 
 			return newParameters;
 		} catch (NoNumericAttributesException e) {
+			System.err.println("Exception:");
+			e.printStackTrace();
 			throw new AlgorithmCreationFailedException(
-				"Nodes must have some numeric attribute as a basis for filtering/extraction");
+				"Nodes must have some numeric attribute as a basis for filtering/extraction", e);
 		}
 	}
 }
