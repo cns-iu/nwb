@@ -47,7 +47,7 @@
 	<menu pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/>
 	<menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
 	<menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
-	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
+	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalizer"/>
 	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
     </top_menu>   
      
