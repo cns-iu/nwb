@@ -143,7 +143,7 @@
 			<menu pid="edu.iu.sci2.preprocessing.extractzipcode.ExtractZipcodeAlgorithm"/>
 		</menu>
 		<menu name="Topical" type="group"> 
-		    <menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
+		    <menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalizer"/>
 		</menu>
 		<menu name="Networks" type="group">
 		    <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
