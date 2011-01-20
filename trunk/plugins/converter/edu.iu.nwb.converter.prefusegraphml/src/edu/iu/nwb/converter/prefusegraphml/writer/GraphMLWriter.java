@@ -8,10 +8,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -75,29 +76,29 @@ public class GraphMLWriter extends AbstractGraphWriter {
     /**
      * @see prefuse.data.io.GraphWriter#writeGraph(prefuse.data.Graph, java.io.OutputStream)
      */
-    public void writeGraph(Graph graph, OutputStream os) throws DataIOException
+    public void writeGraph(Graph graph, OutputStream output) throws DataIOException
     {
     	boolean graphHasNodes = graph.nodes().hasNext();
     	boolean graphHasEdges = graph.edges().hasNext();
-    	
 
-        // first, check the schemas to ensure GraphML compatibility
-    	Schema ns = null;
-    	Schema es = null;
-    	
+        // First, check the schemas to ensure GraphML compatibility.
+    	Schema nodeSchema = null;
+    	Schema edgeSchema = null;
+
     	if (graphHasNodes) {
-    		ns = ((Node) graph.nodes().next()).getSchema();//graph.getNodeTable().getSchema();
-    		checkGraphMLSchema(ns);
+    		nodeSchema = ((Node) graph.nodes().next()).getSchema();
+    		checkGraphMLSchema(nodeSchema);
     	}
         
     	if (graphHasEdges) {
-    		es = ((Edge) graph.edges().next()).getSchema();//graph.getEdgeTable().getSchema();
-    		checkGraphMLSchema(es);
+    		edgeSchema = ((Edge) graph.edges().next()).getSchema();
+    		checkGraphMLSchema(edgeSchema);
     	}
 
     	XMLWriter xml = null;
+
         try {
-        	xml = new XMLWriter(new PrintWriter(new OutputStreamWriter(os, "UTF-8")));
+        	xml = new XMLWriter(new PrintWriter(new OutputStreamWriter(output, "UTF-8")));
         } catch (UnsupportedEncodingException e) {
         	String message =
         		"Error: The standard character encoding UTF-8 is not supported on this system.  "
@@ -106,92 +107,133 @@ public class GraphMLWriter extends AbstractGraphWriter {
         }
         
         xml.begin(Tokens.GRAPHML_HEADER, 2);
+        xml.comment("prefuse GraphML Writer | " + new Date(System.currentTimeMillis()));
         
-        xml.comment("prefuse GraphML Writer | "
-                + new Date(System.currentTimeMillis()));
-        
-        // print the graph schema
+        // Print the graph schema.
       
         if (graphHasNodes) {
-        	printSchema(xml, Tokens.NODE, ns, null);
+        	printSchema(xml, Tokens.NODE, nodeSchema, null);
         }
         
         if (graphHasEdges) {
-        	printSchema(xml, Tokens.EDGE, es, new String[] {
-        			graph.getEdgeSourceField(), graph.getEdgeTargetField()
-        	});
+        	printSchema(
+        		xml,
+        		Tokens.EDGE,
+        		edgeSchema,
+        		new String[] { graph.getEdgeSourceField(), graph.getEdgeTargetField() });
         }
+
         xml.println();
         
-        // print graph contents
-        xml.start(Tokens.GRAPH, Tokens.EDGEDEF,
-            graph.isDirected() ? Tokens.DIRECTED : Tokens.UNDIRECTED);
+        // Print graph contents.
+        String directed = (graph.isDirected() ? Tokens.DIRECTED : Tokens.UNDIRECTED);
+        xml.start(Tokens.GRAPH, Tokens.EDGEDEF, directed);
         
-        // print the nodes
+        // Print the nodes.
         if (graphHasNodes) {
+//        	String idFieldName = determineIDFieldName(nodeSchema);
         	xml.comment("nodes");
         	Iterator nodes = graph.nodes();
-        	while ( nodes.hasNext() ) {
-        		Node n = (Node)nodes.next();
+
+        	while (nodes.hasNext()) {
+        		Node node = (Node) nodes.next();
             
-        		if ( ns.getColumnCount() > 0 ) {
-        			xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
-        			for ( int i=0; i<ns.getColumnCount(); ++i ) {
-        				String field = ns.getColumnName(i);
-        				
-        				Object value = n.get(field);
+        		if (nodeSchema.getColumnCount() > 0) {
+        			xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(node.getRow()));
+
+        			for (int ii = 0; ii < nodeSchema.getColumnCount(); ii++) {
+        				String field = nodeSchema.getColumnName(ii);
+        				Object value = node.get(field);
+
         				if (value != null) {
-        					xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), value.toString());
+    						xml.contentTag(
+    							Tokens.DATA, Tokens.KEY, field.toLowerCase(), value.toString());
         				}
-        		}
-                xml.end();
+        			}
+
+                	xml.end();
         		} else {
-                xml.tag(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
+                	xml.tag(Tokens.NODE, Tokens.ID, "n" + String.valueOf(node.getRow()));
             	}
         	}
         }
-        // add a blank line
+
+        // Add a blank line.
         xml.println();
         
-        // print the edges
+        // Print the edges.
         if (graphHasEdges) {
-        	String[] attr = new String[]{Tokens.ID, Tokens.SOURCE, Tokens.TARGET};
-        	String[] vals = new String[3];
+        	String[] attributeNames = new String[] { Tokens.ID, Tokens.SOURCE, Tokens.TARGET };
+        	String[] attributeValues = new String[3];
         
         	xml.comment("edges");
         	Iterator edges = graph.edges();
-        	while ( edges.hasNext() ) {
-        		Edge e = (Edge)edges.next();
-        		vals[0] = "e" + String.valueOf(e.getRow());
-        		vals[1] = "n" + String.valueOf(e.getSourceNode().getRow());
-        		vals[2] = "n" + String.valueOf(e.getTargetNode().getRow());
+
+        	while (edges.hasNext()) {
+        		Edge edge = (Edge) edges.next();
+        		attributeValues[0] = "e" + String.valueOf(edge.getRow());
+        		attributeValues[1] = "n" + String.valueOf(edge.getSourceNode().getRow());
+        		attributeValues[2] = "n" + String.valueOf(edge.getTargetNode().getRow());
             
-        		if ( es.getColumnCount() > 2 ) {
-        			xml.start(Tokens.EDGE, attr, vals, 3);
-        			for ( int i=0; i<es.getColumnCount(); ++i ) {
-        				String field = es.getColumnName(i);
-        				if ( field.equals(graph.getEdgeSourceField()) ||
-        						field.equals(graph.getEdgeTargetField()) )
+        		if (edgeSchema.getColumnCount() > 2) {
+        			xml.start(Tokens.EDGE, attributeNames, attributeValues, 3);
+
+        			for (int ii=0; ii<edgeSchema.getColumnCount(); ii++) {
+        				String field = edgeSchema.getColumnName(ii);
+
+        				if (field.equals(graph.getEdgeSourceField()) ||
+        						field.equals(graph.getEdgeTargetField()))
+        				{
         					continue;
+        				}
                     
-        				Object value = e.get(field);
-        				
-        				if (value != null) { // Suppress elements for null-valued edge attributes
-	        				xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
-	                                   e.get(field).toString());
+        				Object value = edge.get(field);
+
+        				// Suppress elements for null-valued edge attributes
+        				if (value != null) {
+	        				xml.contentTag(
+	        					Tokens.DATA,
+	        					Tokens.KEY,
+	        					field.toLowerCase(), 
+	        					edge.get(field).toString());
         				}
         			}
-                xml.end();
+
+                	xml.end();
         		} else {
-                xml.tag(Tokens.EDGE, attr, vals, 3);
+                	xml.tag(Tokens.EDGE, attributeNames, attributeValues, 3);
         		}
         	}
         }
+
         xml.end();
         
-        // finish writing file
-        xml.finish("</"+Tokens.GRAPHML+">\n");
+        // Finish writing file.
+        xml.finish("</" + Tokens.GRAPHML + ">\n");
     }
+
+//    private String determineIDFieldName(Schema nodeSchema) {
+//    	String baseID = "idAttribute";
+//    	Set<String> fieldNames = new HashSet<String>();
+//
+//    	// Get all of the field names out of the schema.
+//    	for (int ii = 0; ii < nodeSchema.getColumnCount(); ii++) {
+//    		fieldNames.add(nodeSchema.getColumnName(ii).toLowerCase());
+//    	}
+//
+//    	if (fieldNames.contains(baseID)) {
+//    		int idNumber = 2;
+//    		String potentiallyUniqueID = baseID + idNumber;
+//
+//    		while (fieldNames.contains(potentiallyUniqueID)) {
+//    			idNumber++;
+//    		}
+//
+//    		return potentiallyUniqueID;
+//    	} else {
+//    		return null;
+//    	}
+//    }
     
     /**
      * Print a table schema to a GraphML file

@@ -15,9 +15,6 @@ import org.cishell.utilities.FileUtilities;
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 
-/**
- * @author Weixia(Bonnie) Huang 
- */
 public class PrefuseGraphMLWriter implements Algorithm {
 	public static final String GRAPHML_MIME_TYPE = "file:text/graphml+xml";
 	
@@ -31,18 +28,16 @@ public class PrefuseGraphMLWriter implements Algorithm {
     
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
-			File outGraphMLFile =
-				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"GraphML-", "graphml.xml");
+			File outGraphMLFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+				"GraphML-", "graphml.xml");
 			
 			OutputStream outStream =
-				new BufferedOutputStream(
-					new FileOutputStream(outGraphMLFile));
+				new BufferedOutputStream(new FileOutputStream(outGraphMLFile));
 			
 			(new GraphMLWriter()).writeGraph(inGraph, outStream);
+			outStream.close();
 			
-			return new Data[]{ new BasicData(
-					outGraphMLFile, GRAPHML_MIME_TYPE) };			
+			return new Data[] { new BasicData(outGraphMLFile, GRAPHML_MIME_TYPE) };			
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (DataIOException e) {

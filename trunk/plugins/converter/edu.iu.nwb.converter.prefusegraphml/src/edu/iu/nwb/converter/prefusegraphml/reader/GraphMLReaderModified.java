@@ -2,8 +2,12 @@ package edu.iu.nwb.converter.prefusegraphml.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -34,16 +38,22 @@ import prefuse.util.collections.IntIterator;
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
 public class GraphMLReaderModified extends AbstractGraphReader {
-    
+	private boolean cleanForGUESS;
+
+	public GraphMLReaderModified(boolean cleanForGUESS) {
+		this.cleanForGUESS = cleanForGUESS;
+	}
+
     /**
      * @see prefuse.data.io.GraphReader#readGraph(java.io.InputStream)
      */
-    public Graph readGraph(InputStream is) throws DataIOException {       
+    public Graph readGraph(InputStream input) throws DataIOException {       
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 		    SAXParser saxParser = factory.newSAXParser();
-			GraphMLHandler handler = new GraphMLHandler();
-	        saxParser.parse(is, handler);
+			GraphMLHandler handler = new GraphMLHandler(this.cleanForGUESS);
+	        saxParser.parse(input, handler);
+
 	        return handler.getGraph();
 		} catch (ParserConfigurationException e) {
 			throw new DataIOException(e.getMessage(), e);
@@ -58,25 +68,25 @@ public class GraphMLReaderModified extends AbstractGraphReader {
      * String tokens used in the GraphML format.
      */
     public interface Tokens {
-        public static final String ID         = "id";
-        public static final String GRAPH      = "graph";
-        public static final String EDGEDEF    = "edgedefault";
-        public static final String DIRECTED   = "directed";
+        public static final String ID = "id";
+        public static final String GRAPH = "graph";
+        public static final String EDGE_DEFINITION = "edgedefault";
+        public static final String DIRECTED = "directed";
         public static final String UNDIRECTED = "undirected";
+
+        public static final String KEY = "key";
+        public static final String FOR = "for";
+        public static final String ALL = "all";
+        public static final String ATTRIBUTE_NAME = "attr.name";
+        public static final String ATTRIBUTE_TYPE = "attr.type";
+        public static final String DEFAULT = "default";
         
-        public static final String KEY        = "key";
-        public static final String FOR        = "for";
-        public static final String ALL        = "all";
-        public static final String ATTRNAME   = "attr.name";
-        public static final String ATTRTYPE   = "attr.type";
-        public static final String DEFAULT    = "default";
-        
-        public static final String NODE   = "node";
-        public static final String EDGE   = "edge";
+        public static final String NODE = "node";
+        public static final String EDGE = "edge";
         public static final String SOURCE = "source";
         public static final String TARGET = "target";
-        public static final String DATA   = "data";
-        public static final String TYPE   = "type";
+        public static final String DATA = "data";
+        public static final String TYPE = "type";
         
         public static final String INT = "int";
         public static final String INTEGER = "integer";
@@ -94,48 +104,54 @@ public class GraphMLReaderModified extends AbstractGraphReader {
      */
     public static class GraphMLHandler extends DefaultHandler implements Tokens
     {
-        protected ParserFactory m_pf = ParserFactory.getDefaultFactory();
+    	public static final String SOURCE = Graph.DEFAULT_SOURCE_KEY;
+        public static final String TARGET = Graph.DEFAULT_TARGET_KEY;
+        public static final String SOURCE_ID = SOURCE + '_' + ID;
+        public static final String TARGET_ID = TARGET + '_' + ID;
+
+        protected ParserFactory parserFactory = ParserFactory.getDefaultFactory();
         
-        protected static final String SRC = Graph.DEFAULT_SOURCE_KEY;
-        protected static final String TRG = Graph.DEFAULT_TARGET_KEY;
-        protected static final String SRCID = SRC+'_'+ID;
-        protected static final String TRGID = TRG+'_'+ID;
+        protected Schema nodeSchema = new Schema();
+        protected Schema edgeSchema = new Schema();
         
-        protected Schema m_nsch = new Schema();
-        protected Schema m_esch = new Schema();
+        protected String graphID;
+        protected Graph graph;
+        protected Table nodes;
+        protected Table edges;
         
-        protected String m_graphid;
-        protected Graph m_graph = null;
-        protected Table m_nodes;
-        protected Table m_edges;
+        // Schema parsing.
+        protected String idAttribute;
+        protected String forAttribute;
+        protected String nameAttribute;
+        protected String typeAttribute;
+        protected String defaultValue;
         
-        // schema parsing
-        protected String m_id;
-        protected String m_for;
-        protected String m_name;
-        protected String m_type;
-        protected String m_dflt;
+        protected StringBuffer elementContents = new StringBuffer();
         
-        protected StringBuffer m_sbuf = new StringBuffer();
+        // node, edge, data parsing
+        private String currentKey;
+        private int nodeRow = -1;
+        private Table currentTable = null;
+        protected HashMap<String, Integer> nodeIDsToRowNumbers = new HashMap<String, Integer>();
+        protected HashMap idMap = new HashMap();
         
-        // node,edge,data parsing
-        private String m_key;
-        private int m_row = -1;
-        private Table m_table = null;
-        protected HashMap m_nodeMap = new HashMap();
-        protected HashMap m_idMap = new HashMap();
-        
-        private boolean m_directed = false;
+        private boolean isDirected = false;
         private boolean inSchema;
+
+        private boolean cleanForGUESS;
+
+        public GraphMLHandler(boolean cleanForGUESS) {
+        	this.cleanForGUESS = cleanForGUESS;
+        }
         
         public void startDocument() {
-            m_nodeMap.clear();
+            nodeIDsToRowNumbers.clear();
             inSchema = true;
             
-            m_esch.addColumn(SRC, int.class);
-            m_esch.addColumn(TRG, int.class);
-            m_esch.addColumn(SRCID, String.class);
-            m_esch.addColumn(TRGID, String.class);
+            this.edgeSchema.addColumn(SOURCE, int.class);
+            this.edgeSchema.addColumn(TARGET, int.class);
+            this.edgeSchema.addColumn(SOURCE_ID, String.class);
+            this.edgeSchema.addColumn(TARGET_ID, String.class);
         }
         
         public void endDocument() throws SAXException {        	
@@ -148,176 +164,244 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         	schemaCheck();
         	
             // Set up the edges
-            IntIterator rows = m_edges.rows();
+            IntIterator rows = edges.rows();
             while (rows.hasNext()) {
-                int r = rows.nextInt();
+                int rowIndex = rows.nextInt();
 
-                String src = m_edges.getString(r, SRCID);
-                if (!m_nodeMap.containsKey(src)) {
+                String source = edges.getString(rowIndex, SOURCE_ID);
+                if (!nodeIDsToRowNumbers.containsKey(source)) {
                     throw new SAXException(
-                        "Tried to create edge with source node id=" + src
+                        "Tried to create edge with source node id = " + source
                         + " which does not exist.");
                 }
-                int s = ((Integer) m_nodeMap.get(src)).intValue();
-                m_edges.setInt(r, SRC, s);
 
-                String trg = m_edges.getString(r, TRGID);
-                if (!m_nodeMap.containsKey(trg)) {
+                int s = nodeIDsToRowNumbers.get(source);
+                edges.setInt(rowIndex, SOURCE, s);
+
+                String target = edges.getString(rowIndex, TARGET_ID);
+                if (!nodeIDsToRowNumbers.containsKey(target)) {
                     throw new SAXException(
-                        "Tried to create edge with target node id=" + trg
+                        "Tried to create edge with target node this.idAttribute=" + target
                         + " which does not exist.");
                 }
-                int t = ((Integer) m_nodeMap.get(trg)).intValue();
-                m_edges.setInt(r, TRG, t);
+                int t = ((Integer) nodeIDsToRowNumbers.get(target)).intValue();
+                edges.setInt(rowIndex, TARGET, t);
             }
-            m_edges.removeColumn(SRCID);
-            m_edges.removeColumn(TRGID);
+            System.err.println("Node schema:");
+            for (int ii = 0; ii < nodes.getColumnCount(); ii++) {
+            	System.err.println("\t" + nodes.getColumnName(ii) + ": " + nodes.getColumnType(ii));
+            }
+            edges.removeColumn(SOURCE_ID);
+            edges.removeColumn(TARGET_ID);
 
             // Now create the graph
-            m_graph = new Graph(m_nodes, m_edges, m_directed);
-            if (m_graphid != null)
-                m_graph.putClientProperty(ID, m_graphid);
+            graph = new Graph(nodes, edges, isDirected);
+            if (graphID != null)
+                graph.putClientProperty(ID, graphID);
         }
+
+        private String formNonConflictingNameForGUESS(String name) {
+        	return "original" + name;
+        }
+
+        public static final String GUESS_ATTRIBUTE_COLOR = "color";
+        public static final String GUESS_ATTRIBUTE_FIXED = "fixed";
+        public static final String GUESS_ATTRIBUTE_HEIGHT = "height";
+        public static final String GUESS_ATTRIBUTE_IMAGE = "image";
+        public static final String GUESS_ATTRIBUTE_LABEL = "label";
+        public static final String GUESS_ATTRIBUTE_LABEL_COLOR = "labelcolor";
+        public static final String GUESS_ATTRIBUTE_LABEL_SIZE = "labelsize";
+        public static final String GUESS_ATTRIBUTE_LABEL_VISIBLE = "labelvisible";
+        public static final String GUESS_ATTRIBUTE_NAME = "name";
+        public static final String GUESS_ATTRIBUTE_ORIGINAL_LABEL = "originallabel";
+        public static final String GUESS_ATTRIBUTE_STROKE_COLOR = "strokecolor";
+        public static final String GUESS_ATTRIBUTE_STYLE = "style";
+        public static final String GUESS_ATTRIBUTE_VISIBLE = "visible";
+        public static final String GUESS_ATTRIBUTE_WIDTH = "width";
+        public static final String GUESS_ATTRIBUTE_X = "x";
+        public static final String GUESS_ATTRIBUTE_Y = "y";
+
+        public static final String GUESS_ATTRIBUTE_EDGE_ID = "__edgeid";
+        public static final String GUESS_ATTRIBUTE_DIRECTED = "directed";
+        public static final String GUESS_ATTRIBUTE_NODE_1 = "node1";
+        public static final String GUESS_ATTRIBUTE_NODE_2 = "node2";
+        public static final String GUESS_ATTRIBUTE_WEIGHT = "weight";
+
+        public static final Collection<String> DEFAULT_GUESS_NODES_ATTRIBUTES =
+        	Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+        		ID,
+        		GUESS_ATTRIBUTE_COLOR,
+        		GUESS_ATTRIBUTE_FIXED,
+        		GUESS_ATTRIBUTE_HEIGHT,
+        		GUESS_ATTRIBUTE_IMAGE,
+//        		GUESS_ATTRIBUTE_LABEL,
+        		GUESS_ATTRIBUTE_LABEL_COLOR,
+        		GUESS_ATTRIBUTE_LABEL_SIZE,
+        		GUESS_ATTRIBUTE_LABEL_VISIBLE,
+        		GUESS_ATTRIBUTE_NAME,
+        		GUESS_ATTRIBUTE_ORIGINAL_LABEL,
+        		GUESS_ATTRIBUTE_STROKE_COLOR,
+        		GUESS_ATTRIBUTE_STYLE,
+        		GUESS_ATTRIBUTE_VISIBLE,
+        		GUESS_ATTRIBUTE_WIDTH,
+        		GUESS_ATTRIBUTE_X,
+        		GUESS_ATTRIBUTE_Y)));
+
+        public static final Collection<String> DEFAULT_GUESS_EDGE_ATTRIBUTES =
+        	Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+        		GUESS_ATTRIBUTE_EDGE_ID,
+        		GUESS_ATTRIBUTE_COLOR,
+        		GUESS_ATTRIBUTE_DIRECTED,
+//        		GUESS_ATTRIBUTE_LABEL,
+        		GUESS_ATTRIBUTE_LABEL_COLOR,
+        		GUESS_ATTRIBUTE_LABEL_SIZE,
+        		GUESS_ATTRIBUTE_LABEL_VISIBLE,
+        		GUESS_ATTRIBUTE_NODE_1,
+        		GUESS_ATTRIBUTE_NODE_2,
+        		GUESS_ATTRIBUTE_ORIGINAL_LABEL,
+        		GUESS_ATTRIBUTE_VISIBLE,
+//        		GUESS_ATTRIBUTE_WEIGHT,
+        		GUESS_ATTRIBUTE_WIDTH)));
         
-        public void startElement(String namespaceURI,
-        						 String localName,
-        						 String qName,
-        						 Attributes atts)
-        							throws SAXException {
+        public void startElement(
+        		String namespaceURI, String localName, String attributeName, Attributes attributes)
+        		throws SAXException {
             // Clear the character buffer
-            m_sbuf.delete(0, m_sbuf.length());
+            this.elementContents.delete(0, this.elementContents.length());
             
-            if ( qName.equals(GRAPH) )
-            {
+            if (attributeName.equals(GRAPH)) {
                 // Parse directedness default
-                String edef = atts.getValue(EDGEDEF);
-                m_directed = DIRECTED.equalsIgnoreCase(edef);
-                m_graphid = atts.getValue(ID);
-            }
-            else if ( qName.equals(KEY) )
-            {
-                if ( !inSchema ) {
+                String edgeDefinition = attributes.getValue(EDGE_DEFINITION);
+                isDirected = DIRECTED.equalsIgnoreCase(edgeDefinition);
+                graphID = attributes.getValue(ID);
+            } else if (attributeName.equals(KEY)) {
+                if (!inSchema) {
                 	throw new SAXException(
-                		"\""+KEY+"\" elements can not"
+                		"\"" + KEY + "\" elements can not"
                         + " occur after the first node or edge declaration.");
                 }
-                m_for = atts.getValue(FOR);
-                m_id = atts.getValue(ID);
-                m_name = atts.getValue(ATTRNAME);
-                m_type = atts.getValue(ATTRTYPE);
-            }
-            else if ( qName.equals(NODE) )
-            {
+
+                this.forAttribute = attributes.getValue(FOR);
+                this.idAttribute = attributes.getValue(ID);
+                this.nameAttribute = attributes.getValue(ATTRIBUTE_NAME);
+
+                if (this.cleanForGUESS) {
+                	if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(this.idAttribute) ||
+                			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(this.idAttribute)) {
+                		this.idAttribute = formNonConflictingNameForGUESS(this.idAttribute);
+                	}
+
+                	if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(this.nameAttribute) ||
+                			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(this.nameAttribute)) {
+                		this.nameAttribute = formNonConflictingNameForGUESS(this.nameAttribute);
+                	}
+                }
+
+                this.typeAttribute = attributes.getValue(ATTRIBUTE_TYPE);
+            } else if (attributeName.equals(NODE)) {
                 schemaCheck();
+
+                nodeRow = nodes.addRow();
                 
-                m_row = m_nodes.addRow();
-                
-                String id = atts.getValue(ID);
-                m_nodeMap.put(id, new Integer(m_row));
-                m_table = m_nodes;
-            }
-            else if ( qName.equals(EDGE) )
-            {
+                String id = attributes.getValue(ID);
+                nodeIDsToRowNumbers.put(id, new Integer(nodeRow));
+                this.currentTable = this.nodes;
+            } else if (attributeName.equals(EDGE)) {
                 schemaCheck();
-                
-                m_row = m_edges.addRow();
-                
-                // do not use the id value
-//                String id = atts.getValue(ID);
-//                if ( id != null ) {
-//                    if ( !m_edges.canGetString(ID) )
-//                        m_edges.addColumn(ID, String.class);
-//                    m_edges.setString(m_row, ID, id);
-//                }
-                m_edges.setString(m_row, SRCID, atts.getValue(SRC));
-                m_edges.setString(m_row, TRGID, atts.getValue(TRG));
-                
-                // currently only global directedness is used
-                // ignore directed edge value for now
-//                String dir = atts.getValue(DIRECTED);
-//                boolean d = m_directed;
-//                if ( dir != null ) {
-//                    d = dir.equalsIgnoreCase("false");
-//                }
-//                m_edges.setBoolean(m_row, DIRECTED, d);
-                m_table = m_edges;
-            }
-            else if ( qName.equals(DATA) )
-            {
-                m_key = atts.getValue(KEY);
+
+                nodeRow = edges.addRow();
+                edges.setString(nodeRow, SOURCE_ID, attributes.getValue(SOURCE));
+                edges.setString(nodeRow, TARGET_ID, attributes.getValue(TARGET));
+
+                this.currentTable = this.edges;
+            } else if (attributeName.equals(DATA)) {
+                this.currentKey = attributes.getValue(KEY);
+
+                if (this.cleanForGUESS) {
+                	if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(this.currentKey) ||
+                			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(this.currentKey)) {
+            			this.currentKey = formNonConflictingNameForGUESS(this.currentKey);
+                	}
+                }
             }
         }
 
         public void endElement(
-        		String namespaceURI, String localName, String qName) throws SAXException {
-            if ( qName.equals(DEFAULT) ) {
-                // value is in the buffer
-                m_dflt = m_sbuf.toString();
-            }
-            else if ( qName.equals(KEY) ) {
-                // time to add to the proper schema(s)
+        		String namespaceURI, String localName, String attributeName) throws SAXException {
+            if (attributeName.equals(DEFAULT)) {
+                // Value is in the buffer.
+                this.defaultValue = this.elementContents.toString();
+            } else if (attributeName.equals(KEY)) {
+                // Time to add to the proper schema(s).
                 addToSchema();
-            }
-            else if ( qName.equals(DATA) ) {
-                // value is in the buffer
-                String value = m_sbuf.toString();
-                String name = (String)m_idMap.get(m_key);
-                Class type = m_table.getColumnType(name);
+            } else if (attributeName.equals(DATA)) {
+                // Value is in the buffer.
+                String contents = this.elementContents.toString();
+                String name = (String) idMap.get(this.currentKey);
+                Class type = currentTable.getColumnType(name);
+
                 try {
-                    Object val = parse(value, type);
-                    m_table.set(m_row, name, val);
+                    Object val = parse(contents, type);
+                    currentTable.set(nodeRow, name, val);
                 } catch (DataParseException e) {
                 	throw new SAXException(e);
                 }
-            }
-            else if ( qName.equals(NODE) || qName.equals(EDGE) ) {
-                m_row = -1;
-                m_table = null;
+            } else if (NODE.equals(attributeName) || EDGE.equals(attributeName)) {
+                nodeRow = -1;
+                currentTable = null;
             }
         }
         
         public void characters(char[] ch, int start, int length)  {
-            m_sbuf.append(ch, start, length);
+            this.elementContents.append(ch, start, length);
         }
 
         // --------------------------------------------------------------------
         
         protected void schemaCheck() {
             if ( inSchema ) {
-                m_nsch.lockSchema();
-                m_esch.lockSchema();
-                m_nodes = m_nsch.instantiate();
-                m_edges = m_esch.instantiate();
+                this.nodeSchema.lockSchema();
+                this.edgeSchema.lockSchema();
+                nodes = this.nodeSchema.instantiate();
+                edges = this.edgeSchema.instantiate();
                 inSchema = false;
             }
         }
         
         protected void addToSchema() throws SAXException {
-            if ( m_name == null || m_name.length() == 0 )
-                throw new SAXException("Empty "+KEY+" name.");
-            if ( m_type == null || m_type.length() == 0 )
-            	throw new SAXException("Empty "+KEY+" type.");
+            if ((this.nameAttribute == null) || (this.nameAttribute.length() == 0)) {
+                throw new SAXException("Empty " + KEY + " name.");
+            }
+
+            if ((this.typeAttribute == null) || (this.typeAttribute.length() == 0)) {
+            	throw new SAXException("Empty " + KEY + " type.");
+            }
             
             try {
-                Class type = parseType(m_type);
-                Object dflt = m_dflt==null ? null : parse(m_dflt, type);
+                Class type = parseType(this.typeAttribute);
+                Object defaultValue =
+                	(this.defaultValue == null ? null : parse(this.defaultValue, type));
                 
-                if ( m_for == null || m_for.equals(ALL) ) {
-                    m_nsch.addColumn(m_name, type, dflt);
-                    m_esch.addColumn(m_name, type, dflt);
-                } else if ( m_for.equals(NODE) ) {
-                    m_nsch.addColumn(m_name, type, dflt);
-                } else if ( m_for.equals(EDGE) ) {
-                    m_esch.addColumn(m_name, type, dflt);
+                if ((this.forAttribute == null) || this.forAttribute.equals(ALL)) {
+                    this.nodeSchema.addColumn(this.nameAttribute, type, defaultValue);
+                    this.edgeSchema.addColumn(this.nameAttribute, type, defaultValue);
+                } else if (this.forAttribute.equals(NODE)) {
+                	if (this.cleanForGUESS) {
+                		System.err.println("adding " + this.nameAttribute);
+                	}
+                    this.nodeSchema.addColumn(this.nameAttribute, type, defaultValue);
+                } else if (this.forAttribute.equals(EDGE)) {
+                    this.edgeSchema.addColumn(this.nameAttribute, type, defaultValue);
                 } else {
                 	throw new SAXException(
-                			"Unrecognized \""+FOR+"\" value: "+ m_for);
+            			"Unrecognized \"" + FOR + "\" value: " + this.forAttribute);
                 }
-                m_idMap.put(m_id, m_name);
+
+                idMap.put(this.idAttribute, this.nameAttribute);
                 
-                m_dflt = null;
-            } catch ( DataParseException dpe ) {
-            	throw new SAXException(dpe);
+                this.defaultValue = null;
+            } catch (DataParseException e) {
+            	throw new SAXException(e);
             }
         }
         
@@ -341,14 +425,16 @@ public class GraphMLReaderModified extends AbstractGraphReader {
                 throw new SAXException("Unrecognized data type: "+type);
             }
         }
-        
-        protected Object parse(String s, Class type) throws DataParseException {
-            DataParser dp = m_pf.getParser(type);
-            return dp.parse(s);
+
+        // This parses the contents of an element as (the) type of data.
+        protected Object parse(String input, Class type) throws DataParseException {
+            DataParser parser = this.parserFactory.getParser(type);
+
+            return parser.parse(input);
         }
-        
+
         public Graph getGraph() {
-            return m_graph;
+            return graph;
         }        
     }
 }

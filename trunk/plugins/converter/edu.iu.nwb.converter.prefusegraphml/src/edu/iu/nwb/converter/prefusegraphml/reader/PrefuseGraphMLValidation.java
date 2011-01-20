@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Dictionary;
 
@@ -17,20 +16,21 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.UnicodeReader;
 
+import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 
-/**
- * @author Weixia(Bonnie) Huang 
- */
 public class PrefuseGraphMLValidation implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
         return new PrefuseGraphMLValidationAlgorithm(data);
     }
     
     public class PrefuseGraphMLValidationAlgorithm implements Algorithm {
+    	private Data[] inputData;
 		private String inGraphMLFileName;
         
         public PrefuseGraphMLValidationAlgorithm(Data[] data) {
+        	this.inputData = data;
 			this.inGraphMLFileName = (String) data[0].getData();
         }
 
@@ -39,12 +39,12 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         	
         	try {
         		if (validateGraphMLHeader(inGraphMLFile)) {
-	        		(new GraphMLReaderModified()).readGraph(
-	        				new FileInputStream(inGraphMLFileName));
+	        		(new GraphMLReaderModified(false)).readGraph(
+	        			new FileInputStream(inGraphMLFileName));
+
 	        		return createOutData(inGraphMLFile);
         		} else {
-            		throw new AlgorithmExecutionException(
-            				"Unable to validate GraphML file.");
+            		throw new AlgorithmExecutionException("Unable to validate GraphML file.");
         		}
         	} catch (DataIOException e) {
 				throw new AlgorithmExecutionException(e.getMessage(), e);
@@ -58,10 +58,12 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         }
 
 		private Data[] createOutData(File inGraphMLFile) {
-			Data[] dm = new Data[] {new BasicData(inGraphMLFile, "file:text/graphml+xml")};
-			dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse GraphML file: " + inGraphMLFileName);
-			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-			return dm;
+			Data outputData = new BasicData(inGraphMLFile, "file:text/graphml+xml");
+			String label = String.format("Prefuse GraphML file: %s", inGraphMLFileName);
+			outputData.getMetadata().put(DataProperty.LABEL, label);
+			outputData.getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+
+			return new Data[] { outputData };
 		}
         
         /* TODO:  This is a temporary fix. The problem is after we get rid of
@@ -74,15 +76,17 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         private boolean validateGraphMLHeader(File inData)
         		throws FileNotFoundException, IOException {
         	boolean hasGraphMLHeader = false;
-    		
-        	BufferedReader reader = new BufferedReader(new UnicodeReader(new FileInputStream(inData)));
-    		
+        	BufferedReader reader =
+        		new BufferedReader(new UnicodeReader(new FileInputStream(inData)));
     		String line = reader.readLine();
-    		while(line != null){
-    			if(line.indexOf("http://graphml.graphdrawing.org/xmlns")!= -1){
+
+    		while (line != null) {
+    			if (line.indexOf("http://graphml.graphdrawing.org/xmlns")!= -1) {
     				hasGraphMLHeader = true;
+
     				break;
-    			}    			
+    			} 
+
     			line = reader.readLine();	
     		}
     		

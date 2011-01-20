@@ -9,7 +9,8 @@ import org.cishell.framework.data.Data;
 
 
 public class PrefuseGraphMLReaderFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLReader(data);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
+        return new PrefuseGraphMLReader(data, false);
     }
 }
