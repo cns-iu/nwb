@@ -34,15 +34,28 @@ import edu.iu.sci2.visualization.horizontallinegraph.utilities.PostScriptFormati
  *  calculate the bounding box size "properly".
  */
 public class HorizontalLineGraphPostScriptCreator {
+	public static final double CANVAS_WIDTH = 11.7;
+	public static final double CANVAS_HEIGHT = 4.75;
+	public static final int DOTS_PER_INCH = 300;
+
+	public static final double DEFAULT_BOUNDING_BOX_TOP = 300.0;
+	public static final double DEFAULT_BOUNDING_BOX_BOTTOM = 300.0;
+	public static final double DEFAULT_BOUNDING_BOX_LEFT = 300.0;
+	public static final double DEFAULT_BOUNDING_BOX_RIGHT = 300.0;
+
+	public static final double BAR_MARGIN = 24.0;
+
+	public static final int STARTING_Y_POSITION = 5;
+
 	public static final int FAKE_BOUNDING_BOX_WIDTH_HACK = 600;
 	public static final double MARGIN_WIDTH_FACTOR = 0.10;
 	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
 	public static final double SPACING_ABOVE_X_AXIS_FACTOR = 0.05;
 	
-	private String labelKey;
-	private String startDateKey;
-	private String endDateKey;
-	private String sizeByKey;
+	private String labelColumn;
+	private String startDateColumn;
+	private String endDateColumn;
+	private String sizeByColumn;
 	private String startDateFormat;
 	private String endDateFormat;
 	private double pageWidth;
@@ -53,20 +66,20 @@ public class HorizontalLineGraphPostScriptCreator {
 	private double calculatedBoundingBoxHeight = 0.0;
 	
 	public HorizontalLineGraphPostScriptCreator(
-			String labelKey,
-			String startDateKey,
-			String endDateKey,
-			String sizeByKey,
+			String labelColumn,
+			String startDateColumn,
+			String endDateColumn,
+			String sizeByColumn,
 			String startDateFormat,
 			String endDateFormat,
 			double pageWidth,
 			double pageHeight,
 			boolean shouldScaleOutput)
 	{
-		this.labelKey = labelKey;
-		this.startDateKey = startDateKey;
-		this.endDateKey = endDateKey;
-		this.sizeByKey = sizeByKey;
+		this.labelColumn = labelColumn;
+		this.startDateColumn = startDateColumn;
+		this.endDateColumn = endDateColumn;
+		this.sizeByColumn = sizeByColumn;
 		this.startDateFormat = startDateFormat;
 		this.endDateFormat = endDateFormat;
 		this.pageWidth = pageWidth;
@@ -74,43 +87,34 @@ public class HorizontalLineGraphPostScriptCreator {
 		this.shouldScaleOutput = shouldScaleOutput;
 	}
 
-	public String createPostScript(
-			Table table, int minNumberOfDaysForBar, LogService logger)
+	public String createPostScript(Table table, int minimumNumberOfDaysForBar, LogService logger)
 			throws PostScriptCreationException {
 		/*
 		 * The canvas size, in inches.
 		 * (NOTE: These could be constants right now, but they may eventually
 		 *  be user-settable.)
 		 */
-		final double canvasWidth = 11.7;
-		final double canvasHeight = 4.75;
+		double canvasWidth = CANVAS_WIDTH;
+		double canvasHeight = CANVAS_HEIGHT;
 		
 		/*
 		 * DPI stands for dots per inch, so it multiplied by the canvas
 		 *  size gives how many dots there are on the canvas.
 		 */
-		final int resolutionInDPI = 300;
+		int resolutionInDPI = DOTS_PER_INCH;
 		
 		// The default (encapsulated) bounding box dimenions.
-		final double boundingBoxTop = 300.0;
-		final double boundingBoxBottom = 300.0;
-		final double boundingBoxLeft = 300.0;
-		final double boundingBoxRight = 300.0;
+		double boundingBoxTop = DEFAULT_BOUNDING_BOX_TOP;
+		double boundingBoxBottom = DEFAULT_BOUNDING_BOX_BOTTOM;
+		double boundingBoxLeft = DEFAULT_BOUNDING_BOX_LEFT;
+		double boundingBoxRight = DEFAULT_BOUNDING_BOX_RIGHT;
 
-		final double defaultBoundingBoxWidth =
-			((canvasWidth * resolutionInDPI) -
-			 boundingBoxLeft -
-			 boundingBoxRight);
-		final double defaultBoundingBoxHeight =
-			((canvasHeight * resolutionInDPI) -
-			 boundingBoxTop -
-			 boundingBoxBottom);
-		final double barMargin = 24.0;
-		/*
-		 * (NOTE: This could be a constant, but we may eventually want it to be
-		 *  user-settable?)
-		 */
-		final int startYPosition = 5;
+		double defaultBoundingBoxWidth =
+			((canvasWidth * resolutionInDPI) - boundingBoxLeft - boundingBoxRight);
+		double defaultBoundingBoxHeight =
+			((canvasHeight * resolutionInDPI) - boundingBoxTop - boundingBoxBottom);
+		double barMargin = BAR_MARGIN;
+		int startYPosition = STARTING_Y_POSITION;
 
 		Record[] records;
 		
@@ -234,69 +238,65 @@ public class HorizontalLineGraphPostScriptCreator {
 			   postScriptRecordBars +
 			   postScriptBackground;
 	}
-	
-	@SuppressWarnings("unchecked") // Raw Iterator from the tuples method.
-	private Record[] readRecordsFromTable(Table recordTable, LogService logger)
+
+	private Record[] readRecordsFromTable(Table table, LogService logger)
 			throws ParseException {
 		List<Record> workingRecordSet = new ArrayList<Record>();
 		
-		for(Iterator<Tuple> rows = recordTable.tuples(); rows.hasNext();) {
-			Tuple row = rows.next();
+		for(Iterator<?> rows = table.tuples(); rows.hasNext();) {
+			Tuple row = (Tuple) rows.next();
 			
 			try {
 				Record newRecord = new Record(
 					row,
-					this.labelKey,
-					this.startDateKey,
-					this.endDateKey,
-					this.sizeByKey,
+					this.labelColumn,
+					this.startDateColumn,
+					this.endDateColumn,
+					this.sizeByColumn,
 					this.startDateFormat,
 					this.endDateFormat);
 				
 				workingRecordSet.add(newRecord);
-			} catch (InvalidRecordException invalidRecordException) {
-				logger.log(LogService.LOG_WARNING,
-						   invalidRecordException.getMessage(),
-						   invalidRecordException);
+			} catch (InvalidRecordException e) {
+				logger.log(LogService.LOG_WARNING, e.getMessage(), e);
 			}
 		}
 
-		return (Record[]) workingRecordSet.toArray(new Record[0]);
+		return workingRecordSet.toArray(new Record[0]);
 	}
 	
-	private Record[] sortRecords(Record[] originalRecordSet) {
-		final int numRecords = originalRecordSet.length;
-		Record[] sortedRecordSet = new Record [numRecords];
-		
-		for (int ii = 0; ii < numRecords; ii++) {
-			sortedRecordSet[ii] = originalRecordSet[ii];
+	private Record[] sortRecords(Record[] originalRecords) {
+		int recordCount = originalRecords.length;
+		Record[] sortedRecords = new Record [recordCount];
+
+		for (int ii = 0; ii < recordCount; ii++) {
+			sortedRecords[ii] = originalRecords[ii];
 		}
 		
-		Arrays.sort(sortedRecordSet);
+		Arrays.sort(sortedRecords);
 		
-		return sortedRecordSet;
+		return sortedRecords;
 	}
 	
-	private String formPostScriptTranslateForPaddingAboveYearLabels(
-			double scale) {
+	private String formPostScriptTranslateForPaddingAboveYearLabels(double scale) {
 		double xTranslate = 0.0;
 		double yTranslate = CalculationUtilities.paddingAboveXAxis(
-			this.calculatedBoundingBoxHeight,
-			SPACING_ABOVE_X_AXIS_FACTOR,
-			scale);
-		
+			this.calculatedBoundingBoxHeight, SPACING_ABOVE_X_AXIS_FACTOR, scale);
+
 		return PostScriptFormationUtilities.line(
-			xTranslate + " " + yTranslate + " translate");
+			String.format("%f %f translate", xTranslate, yTranslate));
+//		return PostScriptFormationUtilities.line(  xTranslate + " " + yTranslate + " translate");
 	}
 	
-	private String formPostScriptRecordBars(Record[] records,
-										   Date graphStartDate,
-										   Date graphEndDate,
-										   double recordBarMargin,
-										   double totalRecordAmount,
-										   double recordHeight,
-										   double defaultBoundingBoxWidth,
-										   double startYPosition) {
+	private String formPostScriptRecordBars(
+			Record[] records,
+			Date graphStartDate,
+			Date graphEndDate,
+			double recordBarMargin,
+			double totalRecordAmount,
+			double recordHeight,
+			double defaultBoundingBoxWidth,
+			double startYPosition) {
 		double cursorYCoordinate = startYPosition;
 		StringWriter recordBarPostScript = new StringWriter();
 		
@@ -305,47 +305,44 @@ public class HorizontalLineGraphPostScriptCreator {
 			Date currentRecordStartDate = currentRecord.getStartDate();
 			Date currentRecordEndDate = currentRecord.getEndDate();
 			double currentRecordAmount = currentRecord.getAmount();
-			
-			double recordBarStartXCoordinate =
-				CalculationUtilities.xCoordinate(
-					currentRecordStartDate,
-					graphStartDate,
-					graphEndDate,
-					defaultBoundingBoxWidth,
-					recordBarMargin);
-			
-			double recordBarEndXCoordinate =
-				CalculationUtilities.xCoordinate(
-					currentRecordEndDate,
-					graphStartDate,
-					graphEndDate,
-					defaultBoundingBoxWidth,
-					recordBarMargin);
-			
-			double recordBarWidth =
-				recordBarEndXCoordinate - recordBarStartXCoordinate;
-			
-			double totalMonthSpan = DateUtilities.calculateMonthsBetween(
-				currentRecordStartDate, currentRecordEndDate);
+			double recordBarStartXCoordinate = CalculationUtilities.xCoordinate(
+				currentRecordStartDate,
+				graphStartDate,
+				graphEndDate,
+				defaultBoundingBoxWidth,
+				recordBarMargin);
+			double recordBarEndXCoordinate = CalculationUtilities.xCoordinate(
+				currentRecordEndDate,
+				graphStartDate,
+				graphEndDate,
+				defaultBoundingBoxWidth,
+				recordBarMargin);
+			double recordBarWidth = recordBarEndXCoordinate - recordBarStartXCoordinate;
+			double totalMonthSpan =
+				DateUtilities.calculateMonthsBetween(currentRecordStartDate, currentRecordEndDate);
 			double scale = 12.0 / totalMonthSpan;
-			
-			double calculatedRecordBarHeight =
-				CalculationUtilities.recordBarHeight(
-					currentRecordAmount,
-					totalRecordAmount,
-					recordHeight,
-					scale);
-			
+			double calculatedRecordBarHeight = CalculationUtilities.recordBarHeight(
+				currentRecordAmount,
+				totalRecordAmount,
+				recordHeight,
+				scale);
+
 			cursorYCoordinate += recordBarMargin;
-			
-			String recordString =
-				PostScriptFormationUtilities.line(
-					"(" + currentRecordName + ") " +
-					recordBarStartXCoordinate + " " +
-					cursorYCoordinate + " " +
-					recordBarWidth + " " +
-					calculatedRecordBarHeight +
-					" record");
+
+			String recordString = PostScriptFormationUtilities.line(String.format(
+				"(%s) %f %f %f %f record",
+				currentRecordName,
+				recordBarStartXCoordinate,
+				cursorYCoordinate,
+				recordBarWidth,
+				calculatedRecordBarHeight));
+//			String recordString = PostScriptFormationUtilities.line(String.format(
+//				"(%s" + currentRecordName + ") " +
+//					recordBarStartXCoordinate + " " +
+//					cursorYCoordinate + " " +
+//					recordBarWidth + " " +
+//					calculatedRecordBarHeight +
+//					" record");
 			
 			recordBarPostScript.append(recordString);
 			
@@ -363,8 +360,7 @@ public class HorizontalLineGraphPostScriptCreator {
 		Record firstRecord = records[0];
 		Date firstRecordStartDate = firstRecord.getStartDate();
 		// Form the GRAPH start date based on the first record's start date.
-		Date graphStartDate =
-			new Date((firstRecordStartDate.getYear() - 1), 0, 1);
+		Date graphStartDate = new Date((firstRecordStartDate.getYear() - 1), 0, 1);
 		
 		return graphStartDate;
 	}
@@ -374,8 +370,7 @@ public class HorizontalLineGraphPostScriptCreator {
 		 * Form the GRAPH end date based on the determined last year of
 		 *  the records.
 		 */
-		Date graphEndDate =
-			new Date((determineLastYearOfRecords(records) + 1), 0, 1);
+		Date graphEndDate = new Date((determineLastYearOfRecords(records) + 1), 0, 1);
 		
 		return graphEndDate;
 	}
@@ -411,13 +406,9 @@ public class HorizontalLineGraphPostScriptCreator {
 		this.calculatedBoundingBoxWidth += marginWidth;
 		
 		double marginHeight = CalculationUtilities.marginHeight(
-			this.calculatedBoundingBoxHeight,
-			MARGIN_HEIGHT_FACTOR,
-			1.0);
+			this.calculatedBoundingBoxHeight, MARGIN_HEIGHT_FACTOR, 1.0);
 		double paddingAboveXAxis = CalculationUtilities.paddingAboveXAxis(
-			this.calculatedBoundingBoxHeight,
-			SPACING_ABOVE_X_AXIS_FACTOR,
-			1.0);
+			this.calculatedBoundingBoxHeight, SPACING_ABOVE_X_AXIS_FACTOR, 1.0);
 		this.calculatedBoundingBoxHeight += (marginHeight + paddingAboveXAxis);
 	}
 }
