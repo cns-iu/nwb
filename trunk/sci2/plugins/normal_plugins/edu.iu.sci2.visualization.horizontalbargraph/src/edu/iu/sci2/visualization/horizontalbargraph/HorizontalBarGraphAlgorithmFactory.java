@@ -1,11 +1,11 @@
 package edu.iu.sci2.visualization.horizontalbargraph;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.cishell.framework.CIShellContext;
@@ -95,7 +95,7 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
     }
 
     private static Collection<String> formScalingFunctionLabels() {
-    	Collection<String> scalingFunctionLabels = new HashSet<String>();
+    	Collection<String> scalingFunctionLabels = new LinkedHashSet<String>();
     	scalingFunctionLabels.add(ScalingFunction.LINEAR_SCALING_FUNCTION_NAME);
     	scalingFunctionLabels.add(ScalingFunction.LOGARITHMIC_SCALING_FUNCTION_NAME);
 
@@ -103,7 +103,7 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
     }
 
     private static Collection<String> formScalingFunctionOptions() {
-    	Collection<String> scalingFunctionOptions = new HashSet<String>();
+    	Collection<String> scalingFunctionOptions = new LinkedHashSet<String>();
     	scalingFunctionOptions.add(ScalingFunction.LINEAR_SCALING_FUNCTION_NAME);
     	scalingFunctionOptions.add(ScalingFunction.LOGARITHMIC_SCALING_FUNCTION_NAME);
 
@@ -111,7 +111,7 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
     }
     
     private static Collection<String> formDateFormatLabels() {
-    	Collection<String> dateFormatLabels = new HashSet<String>();
+    	Collection<String> dateFormatLabels = new LinkedHashSet<String>();
     	dateFormatLabels.add(
     		DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT + " (U.S., e.g. 10/31/2010)");
     	dateFormatLabels.add(
@@ -121,7 +121,7 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
     }
     
     private static Collection<String> formDateFormatOptions() {
-    	Collection<String> dateFormatOptions = new HashSet<String>();
+    	Collection<String> dateFormatOptions = new LinkedHashSet<String>();
     	dateFormatOptions.add(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
     	dateFormatOptions.add(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT);
 
