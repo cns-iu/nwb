@@ -313,6 +313,7 @@ public class BasicLayout {
 
 		return new Bar(
 			label,
+			record.getLabel(),
 			color,
 			!record.hasStartDate(),
 			!record.hasEndDate(),

@@ -4,6 +4,7 @@ import java.awt.Color;
 
 public class Bar {
 	private String label;
+	private String originalLabel;
 	private Color color;
 	private boolean continuesLeft;
 	private boolean continuesRight;
@@ -16,6 +17,7 @@ public class Bar {
 
 	public Bar(
 			String label,
+			String originalLabel,
 			Color color,
 			boolean continuesLeft,
 			boolean continuesRight,
@@ -26,6 +28,7 @@ public class Bar {
 			double originalAmount,
 			boolean hasInfiniteAmount) {
 		this.label = label;
+		this.originalLabel = originalLabel;
 		this.color = color;
 		this.continuesLeft = continuesLeft;
 		this.continuesRight = continuesRight;
@@ -39,6 +42,10 @@ public class Bar {
 
 	public String getLabel() {
 		return this.label;
+	}
+
+	public String getOriginalLabel() {
+		return this.originalLabel;
 	}
 	
 	public Color getColor() {

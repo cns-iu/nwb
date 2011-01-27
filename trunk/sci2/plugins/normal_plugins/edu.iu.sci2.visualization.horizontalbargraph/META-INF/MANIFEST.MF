@@ -4,7 +4,8 @@ Bundle-Name: edu.iu.sci2.visualization.horizontalbargraph
 Bundle-SymbolicName: edu.iu.sci2.visualization.horizontalbargraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
+Import-Package: au.com.bytecode.opencsv,
+ edu.iu.cns.utilities.testing;resolution:=optional,
  edu.iu.cns.visualization,
  edu.iu.cns.visualization.exception,
  edu.iu.cns.visualization.utility,

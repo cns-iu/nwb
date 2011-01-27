@@ -14,6 +14,7 @@ import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class HorizontalLineGraphAlgorithm implements Algorithm {
 	public static final double DEFAULT_PAGE_WIDTH = 8.5;
@@ -21,7 +22,9 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 	public static final int MINIMUM_NUMBER_OF_DAYS_FOR_BAR = 15;
 
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
+	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String EPS_FILE_EXTENSION = "eps";
+	public static final String CSV_FILE_EXTENSION = "csv";
 	
     private Data inputData;
     private Table inputTable;
@@ -65,23 +68,44 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	logger.log(LogService.LOG_INFO, "Creating PostScript. May take a few moments...");
+    	CSVWriter csvWriter = null;
 
     	try {
-    		String postScriptCode = createPostScriptCode();
+    		File barSizesFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+    			"barSizes", CSV_FILE_EXTENSION);
+    		csvWriter = new CSVWriter(new FileWriter(barSizesFile));
+    		String[] header = new String[] {
+    			"Record Name", "Width", "Height", "Area (Width x Height)"
+    		};
+    		csvWriter.writeNext(header);
+    		String postScriptCode = createPostScriptCode(csvWriter);
     		File temporaryPostScriptFile =
     			writePostScriptCodeToTemporaryFile(postScriptCode, "horizontal-line-graph");
+    		csvWriter.close();
 
-			return formOutData(temporaryPostScriptFile, inputData);
-    	} catch (PostScriptCreationException postScriptCreationException) {
+			return formOutData(temporaryPostScriptFile, barSizesFile, inputData);
+    	} catch (IOException e) {
+    		String exceptionMessage = String.format(
+    			"An error occurred when creating the bar sizes CSV file for %s.",
+    			getLabel(this.inputData.getMetadata()));
+    		throw new AlgorithmExecutionException(exceptionMessage, e);
+    	} catch (PostScriptCreationException e) {
     		String exceptionMessage = String.format(
     			"An error occurred when creating the PostScript for the %s.",
     			getLabel(this.inputData.getMetadata()));
-    		
-    		throw new AlgorithmExecutionException(exceptionMessage, postScriptCreationException);
+    		throw new AlgorithmExecutionException(exceptionMessage, e);
+    	} finally {
+    		if (csvWriter != null) {
+    			try {
+    				csvWriter.close();
+    			} catch (Exception e) {
+    				throw new AlgorithmExecutionException(e.getMessage(), e);
+    			}
+    		}
     	}
     }
 
-    private String createPostScriptCode() throws PostScriptCreationException {
+    private String createPostScriptCode(CSVWriter csvWriter) throws PostScriptCreationException {
     	HorizontalLineGraphPostScriptCreator postScriptCreator =
     		new HorizontalLineGraphPostScriptCreator(
     			this.labelColumn,
@@ -95,7 +119,7 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     			this.shouldScaleOutput);
 
 		String postScriptCode = postScriptCreator.createPostScript(
-			this.inputTable, MINIMUM_NUMBER_OF_DAYS_FOR_BAR, this.logger);
+			this.inputTable, MINIMUM_NUMBER_OF_DAYS_FOR_BAR, this.logger, csvWriter);
 
 		return postScriptCode;
     }
@@ -137,17 +161,21 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 		return temporaryPostScriptFile;
     }
 
-    private Data[] formOutData(File postScriptFile, Data inputData) {
-    	Dictionary<String, Object> inputMetadata = inputData.getMetadata();
-
+    private Data[] formOutData(File postScriptFile, File barSizesFile, Data inputData) {
 		Data postScriptData = new BasicData(postScriptFile, POSTSCRIPT_MIME_TYPE);
 		Dictionary<String, Object> postScriptMetaData = postScriptData.getMetadata();
 		postScriptMetaData.put(
-			DataProperty.LABEL, "PostScript: " + inputMetadata.get(DataProperty.LABEL));
+			DataProperty.LABEL, "visualized with Horizontal Line Graph");
 		postScriptMetaData.put(DataProperty.PARENT, inputData);
 		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
 
-        return new Data[] { postScriptData };
+		Data barSizesData = new BasicData(barSizesFile, CSV_MIME_TYPE);
+		Dictionary<String, Object> barSizesMetadata = barSizesData.getMetadata();
+		barSizesMetadata.put(DataProperty.LABEL, "bar sizes");
+		barSizesMetadata.put(DataProperty.PARENT, inputData);
+		barSizesMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+
+        return new Data[] { postScriptData, barSizesData };
     }
 
     private String getLabel(Dictionary<String, Object> metadata) {

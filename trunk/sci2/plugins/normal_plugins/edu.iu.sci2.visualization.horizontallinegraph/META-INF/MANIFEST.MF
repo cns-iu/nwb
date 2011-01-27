@@ -4,7 +4,8 @@ Bundle-Name: Horizontal Line Graph Visualization
 Bundle-SymbolicName: edu.iu.sci2.visualization.horizontallinegraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: org.cishell.framework;version="1.0.0",
+Import-Package: au.com.bytecode.opencsv,
+ org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.framework.userprefs;version="1.0.0",

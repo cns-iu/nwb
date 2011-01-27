@@ -11,6 +11,7 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.NumberUtilities;
 import org.joda.time.DateTime;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.horizontalbargraph.HeaderAndFooterPositioningData;
 import edu.iu.sci2.visualization.horizontalbargraph.Metadata;
 import edu.iu.sci2.visualization.horizontalbargraph.PageOrientation;
@@ -43,12 +44,14 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 	private Metadata metadata;
 	private RecordCollection recordCollection;
 	private ColorLegend colorLegend;
+	private CSVWriter csvWriter;
 
 	public PostScriptGenerator(
 			StringTemplateGroup templateGroup,
 			BasicLayout layout,
 			Metadata metadata,
-			RecordCollection recordCollection) {
+			RecordCollection recordCollection,
+			CSVWriter csvWriter) {
 //		super(layout, metadata, recordCollection);
 		this.templateGroup = templateGroup;
 		this.layout = layout;
@@ -58,6 +61,7 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		this.bars = layout.createBars(records);
 		this.pageOrientation = layout.determinePageOrientation(bars);
 		this.colorLegend = layout.createColorLegend(this.metadata.getColorizedByColumn(), records);
+		this.csvWriter = csvWriter;
 	}
 
 	public PageOrientation getPageOrientation() {
@@ -453,6 +457,14 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			
 			rightArrowPostScript = rightArrowTemplate.toString();
 		}
+
+		String[] csvRecord = new String[] {
+			bar.getOriginalLabel(),
+			Double.toString(bar.getWidth()),
+			Double.toString(bar.getHeight()),
+			Double.toString(bar.getWidth() * bar.getHeight())
+		};
+		this.csvWriter.writeNext(csvRecord);
 		
 		return barTemplate.toString() + leftArrowPostScript + rightArrowPostScript;
 	}

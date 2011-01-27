@@ -13,6 +13,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.horizontallinegraph.utilities.CalculationUtilities;
 import edu.iu.sci2.visualization.horizontallinegraph.utilities.PostScriptFormationUtilities;
 
@@ -87,7 +88,8 @@ public class HorizontalLineGraphPostScriptCreator {
 		this.shouldScaleOutput = shouldScaleOutput;
 	}
 
-	public String createPostScript(Table table, int minimumNumberOfDaysForBar, LogService logger)
+	public String createPostScript(
+			Table table, int minimumNumberOfDaysForBar, LogService logger, CSVWriter csvWriter)
 			throws PostScriptCreationException {
 		/*
 		 * The canvas size, in inches.
@@ -167,7 +169,8 @@ public class HorizontalLineGraphPostScriptCreator {
 			totalAmount,
 			totalHeightSpan,
 			defaultBoundingBoxWidth,
-			startYPosition);
+			startYPosition,
+			csvWriter);
 		
 		double originalBoundingBoxWidth = this.calculatedBoundingBoxWidth;
 		// double originalBoundingBoxHeight = this.calculatedBoundingBoxHeight;
@@ -296,7 +299,8 @@ public class HorizontalLineGraphPostScriptCreator {
 			double totalRecordAmount,
 			double recordHeight,
 			double defaultBoundingBoxWidth,
-			double startYPosition) {
+			double startYPosition,
+			CSVWriter csvWriter) {
 		double cursorYCoordinate = startYPosition;
 		StringWriter recordBarPostScript = new StringWriter();
 		
@@ -336,13 +340,13 @@ public class HorizontalLineGraphPostScriptCreator {
 				cursorYCoordinate,
 				recordBarWidth,
 				calculatedRecordBarHeight));
-//			String recordString = PostScriptFormationUtilities.line(String.format(
-//				"(%s" + currentRecordName + ") " +
-//					recordBarStartXCoordinate + " " +
-//					cursorYCoordinate + " " +
-//					recordBarWidth + " " +
-//					calculatedRecordBarHeight +
-//					" record");
+			String[] csvRecord = new String[] {
+				currentRecordName,
+				Double.toString(recordBarWidth),
+				Double.toString(calculatedRecordBarHeight),
+				Double.toString(recordBarWidth * calculatedRecordBarHeight)
+			};
+			csvWriter.writeNext(csvRecord);
 			
 			recordBarPostScript.append(recordString);
 			

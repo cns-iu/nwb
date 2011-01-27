@@ -1,6 +1,8 @@
 package edu.iu.sci2.visualization.horizontalbargraph;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Dictionary;
 
@@ -16,6 +18,7 @@ import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.cns.visualization.exception.VisualizationExportException;
 import edu.iu.sci2.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.sci2.visualization.horizontalbargraph.record.RecordCollection;
@@ -42,9 +45,10 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String NO_COLORIZED_BY = "No Coloring";
 
 	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
-	public static final String EPS_FILE_EXTENSION = "eps";
-	
 	public static final String CSV_MIME_TYPE = "file:text/csv";
+	public static final String EPS_FILE_EXTENSION = "eps";
+	public static final String CSV_FILE_EXTENSION = "csv";
+	
 	public static final String TEST_DATA_PATH =
 		"/edu/iu/sci2/visualization/horizontalbargraph/testing/";
 	public static final String CNS_TEST_DATA_PATH = TEST_DATA_PATH + "CNS.csv";
@@ -107,6 +111,8 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 *	 itself. et cetera. done.
     	 */
 
+    	CSVWriter csvWriter = null;
+
     	try {
     		PreprocessedRecordInformation recordInformation =
     			new PreprocessedRecordInformation(this.inputTable, metadata, logger);
@@ -128,85 +134,51 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     			minimumAmountPerUnitOfTime,
     			this.metadata.getYearLabelFontSize(),
     			this.metadata.getBarLabelFontSize());
+    		File barSizesFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+    			"barSizes", CSV_FILE_EXTENSION);
+    		csvWriter = new CSVWriter(new FileWriter(barSizesFile));
+    		String[] header = new String[] {
+    			"Record Name", "Width", "Height", "Area (Width x Height)"
+    		};
+    		csvWriter.writeNext(header);
     		PostScriptGenerator generator = new PostScriptGenerator(
-    			horizontalBarGraphGroup, layout, this.metadata, recordCollection);
+    			horizontalBarGraphGroup, layout, this.metadata, recordCollection, csvWriter);
     		HorizontalBarGraphVisualization visualization = generator.generateVisualization();
-
-//    		BoundingBox boundingBox = layout.calculateBoundingBox(visualization.getBars());
-//    		int width = (int)boundingBox.getWidth();
-//    		int height = (int)boundingBox.getHeight();
-//    		AWTVisualizationRunner visualizationRunner = new AWTVisualizationRunner(
-//    			visualization, new Dimension(width, height));
-//    		visualizationRunner.setUp();
-//    		visualizationRunner.run();
     		
     		try {
     			File temporaryPostScriptFile =
     				visualization.export(EPS_FILE_EXTENSION, "horizontal-bar-graph");
-//    		String postScript = generator.toString();
-//
-//        	File temporaryPostScriptFile =
-//        		writePostScriptCodeToTemporaryFile(postScript, "horizontal-bar-graph");
+    			csvWriter.close();
 
-				return formOutData(temporaryPostScriptFile, inputData);
+				return formOutData(temporaryPostScriptFile, barSizesFile, inputData);
     		} catch (VisualizationExportException e) {
     			String exceptionMessage =
     				"An error occurred when trying to generate your visualization.  " +
     				" Please submit this entire message to the Help Desk: \"" +
     				e.getMessage() + "\"";
-
     			throw new AlgorithmExecutionException(exceptionMessage, e);
     		}
-//    	} catch (AlgorithmExecutionException e) {
-//    		throw e;
     	} catch (BadDatasetException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
-    	}/* catch (Exception e) {
-    		String exceptionMessage =
-    			"An error occurred when trying to generate your visualization.  " +
-    			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
-    		throw new AlgorithmExecutionException(exceptionMessage, e);
-    	}*/
+    	} catch (IOException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	} finally {
+    		if (csvWriter != null) {
+    			try {
+    				csvWriter.close();
+    			} catch (Exception e) {
+    				throw new AlgorithmExecutionException(e.getMessage(), e);
+    			}
+    		}
+    	}
     }
     
     private static StringTemplateGroup loadTemplates() {
     	return new StringTemplateGroup(new InputStreamReader(
     			HorizontalBarGraphAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
     }
-    
-//    private File writePostScriptCodeToTemporaryFile(
-//    		String postScriptCode, String temporaryFileName) throws AlgorithmExecutionException {
-//    	File temporaryPostScriptFile = null;
-//    	
-//    	try {
-//    		temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-//    			temporaryFileName, EPS_FILE_EXTENSION);
-//    	} catch (IOException postScriptFileCreationException) {
-//    		String exceptionMessage = "Error creating temporary PostScript file.";
-//    		
-//    		throw new AlgorithmExecutionException(
-//    			exceptionMessage, postScriptFileCreationException);
-//    	}
-//    	
-//		try {		
-//			FileWriter temporaryPostScriptFileWriter = new FileWriter(temporaryPostScriptFile);
-//			
-//			temporaryPostScriptFileWriter.write(postScriptCode);
-//			temporaryPostScriptFileWriter.flush();
-//			temporaryPostScriptFileWriter.close();
-//		}
-//		catch (IOException postScriptFileWritingException) {
-//			String exceptionMessage = "Error writing PostScript out to temporary file";
-//			
-//			throw new AlgorithmExecutionException(
-//				exceptionMessage, postScriptFileWritingException);
-//		}
-//		
-//		return temporaryPostScriptFile;
-//    }
-    
-    @SuppressWarnings("unchecked")
-    private Data[] formOutData(File postScriptFile, Data singleInData) {
+
+    private Data[] formOutData(File postScriptFile, File barSizesFile, Data singleInData) {
     	Dictionary<String, Object> inMetaData = singleInData.getMetadata();
     	
 		Data postScriptData = new BasicData(postScriptFile, POST_SCRIPT_MIME_TYPE);
@@ -220,7 +192,13 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 		postScriptMetaData.put(DataProperty.LABEL, label);
 		postScriptMetaData.put(DataProperty.PARENT, singleInData);
 		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
+
+		Data barSizesData = new BasicData(barSizesFile, CSV_MIME_TYPE);
+		Dictionary<String, Object> barSizesMetadata = barSizesData.getMetadata();
+		barSizesMetadata.put(DataProperty.LABEL, "bar sizes");
+		barSizesMetadata.put(DataProperty.PARENT, inputData);
+		barSizesMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
     	
-        return new Data[] { postScriptData };
+        return new Data[] { postScriptData, barSizesData };
     }
 }
