@@ -21,6 +21,7 @@ import operator
 execfile("scripts/ResizeLinear.py")
 execfile("scripts/Colorize.py")
 execfile("scripts/ChangeAttribute.py")
+execfile("scripts/TimeSliceUtilities.py")
 
 # Graph Modifier
 # By: Jeffrey Wong and Bernie Hogan
@@ -1391,4 +1392,7 @@ print "Starting GUESS GraphModifier (this may take a while)"
 initializeGlobalVariables()
 GraphModifier()
 print "Finished loading GUESS GraphModifier"
+
+setupExportNodePositionsMenuItem()
+setupImportNodePositionsMenuItem()
 ######################### END FUNCTION CALLS ###################################
