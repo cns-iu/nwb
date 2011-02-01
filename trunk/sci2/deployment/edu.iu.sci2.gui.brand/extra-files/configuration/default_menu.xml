@@ -230,8 +230,8 @@
 	         Furthermore, if a plugin's properties file declares a menu_path inside such
 	         a menu, the menu manager gives errors on tool startup.
 	    <menu name="Topical" type="group">
-			<menu pid="edu.iu.sci2.visualization.scimap.journals.ScienceMapAlgorithm"/>
-			<menu pid="edu.iu.sci2.visualization.scimap.fields.ScienceMapAlgorithm"/>
+			<menu pid="edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm"/>
+			<menu pid="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm"/>
 			<menu pid="edu.iu.sci2.visualization.scimap.references.MapReferences"/>
 	    </menu>
 	    -->
