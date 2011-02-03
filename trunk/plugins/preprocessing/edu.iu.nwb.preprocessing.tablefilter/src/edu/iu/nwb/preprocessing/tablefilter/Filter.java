@@ -3,7 +3,6 @@ package edu.iu.nwb.preprocessing.tablefilter;
 import java.util.Dictionary;
 import java.util.regex.Pattern;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -14,36 +13,42 @@ import prefuse.data.Tuple;
 import prefuse.data.expression.ColumnExpression;
 
 public class Filter implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
+    private Data inputData;
+    private Table inputTable;
+    private Pattern pattern;
+    private String column;
+    private int cutoff;
     
-    public Filter(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
+    public Filter(
+    		Data data, Table inputTable, Pattern pattern, String column, int cutoff) {
+        this.inputData = data;
+        this.inputTable = inputTable;
+        this.pattern = pattern;
+        this.column = column;
+        this.cutoff = cutoff;
     }
 
     public Data[] execute() {
-    	Table original = (Table) this.data[0].getData();
+    	Table outputTable = this.inputTable.select(
+    		new ColumnExpression(Filter.this.column) {
+				public boolean getBoolean(Tuple tuple) {
+					int elementCount =
+						Filter.this.pattern.split(this.get(tuple).toString()).length;
+
+					return elementCount < Filter.this.cutoff;
+				}
+			},
+			null);
     	
-    	String column = (String) this.parameters.get("column");
-    	final Pattern pattern = Pattern.compile("\\Q" + (String) this.parameters.get("separator") + "\\E");
-    	final int cutoff = ((Integer) this.parameters.get("cutoff")).intValue();
+    	Data outputData = new BasicData(outputTable, Table.class.getName());
     	
-    	Table table = original.select(new ColumnExpression(column){
-    			public boolean getBoolean(Tuple tuple) {
-    				return pattern.split(this.get(tuple).toString()).length < cutoff;
-    			}
-			}, null);
+    	Dictionary<String, Object> metadata = outputData.getMetadata();
+    	String label =
+    		String.format("Rows with less than %d in column %s", this.cutoff,  this.column);
+		metadata.put(DataProperty.LABEL, label);
+		metadata.put(DataProperty.PARENT, this.inputData);
+		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
     	
-    	Data output = new BasicData(table, Table.class.getName());
-    	
-    	Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "Rows with less than " + cutoff + " in column " + column);
-		metadata.put(DataProperty.PARENT, this.data[0]);
-		metadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
-    	
-        return new Data[] {output};
+        return new Data[] { outputData };
     }
 }
