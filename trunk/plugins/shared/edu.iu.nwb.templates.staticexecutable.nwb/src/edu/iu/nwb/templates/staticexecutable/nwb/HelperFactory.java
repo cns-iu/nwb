@@ -5,19 +5,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.DataValidator;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.osgi.framework.BundleContext;
+import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -30,14 +31,15 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
 
 public class HelperFactory implements AlgorithmFactory, DataValidator, ParameterMutator {
 	protected static final String DEFAULT_WEIGHT = "Treat all edges as weight one.";
-	private ComponentContext bundleContext;
+	private ComponentContext componentContext;
 
-    protected void activate(ComponentContext ctxt) {
-    	this.bundleContext = ctxt;
+    protected void activate(ComponentContext componentContext) {
+    	this.componentContext = componentContext;
     }
 
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new Helper(data, parameters, context, bundleContext);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+        return new Helper(data, parameters, ciShellContext, componentContext);
     }
 
 	public String validate(Data[] data) {
@@ -55,11 +57,10 @@ public class HelperFactory implements AlgorithmFactory, DataValidator, Parameter
 		return "";
 	}
 	
-	private String[] createKeyArray(Map schema) {
-		List goodkeys = new ArrayList();
-		
-		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
-			String key = ""+keys.next();
+	private String[] createKeyArray(Map<String, String> schema) {
+		List<String> goodkeys = new ArrayList<String>();
+
+		for (String key : schema.keySet()) {
 			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING) &&
 				!"source".equals(key) &&
 				!"target".equals(key)) {
@@ -74,8 +75,8 @@ public class HelperFactory implements AlgorithmFactory, DataValidator, Parameter
 		return (String[]) goodkeys.toArray(new String[]{});
 	}
 
-	public ObjectClassDefinition mutateParameters(Data[] data,
-			ObjectClassDefinition parameters) {
+	public ObjectClassDefinition mutateParameters(
+			Data[] data, ObjectClassDefinition oldParameters) {
 		File nwbFile = (File) data[0].getData();
 		GetNWBFileMetadata handler = new GetNWBFileMetadata();
 		
@@ -83,38 +84,56 @@ public class HelperFactory implements AlgorithmFactory, DataValidator, Parameter
 			NWBFileParser parser = new NWBFileParser(nwbFile);
 			parser.parse(handler);
 		} catch (IOException e1) {
-			return parameters;
+			return oldParameters;
 		} catch (ParsingException e) {
-			return parameters;
-		}
-		
-		
-		BasicObjectClassDefinition definition;
-		try {
-			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), parameters.getIcon(16));
-		} catch (IOException e) {
-			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), null);
+			return oldParameters;
 		}
 
-		String[] edgeAttributesArray = createKeyArray(handler.getUndirectedEdgeSchema());
+		BasicObjectClassDefinition newParameters =
+			MutateParameterUtilities.createNewParameters(oldParameters);
+		LinkedHashMap<String, String> undirectedEdgeSchema = handler.getUndirectedEdgeSchema();
+		System.err.println("undirectedEdgeSchema: " + undirectedEdgeSchema);
 
-		AttributeDefinition[] definitions = parameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		if ((undirectedEdgeSchema == null) || (undirectedEdgeSchema.keySet().size() == 0)) {
+			Dictionary<?, ?> properties = this.componentContext.getProperties();
+			Object labelObject = properties.get("label");
+
+			if (labelObject == null) {
+				labelObject = properties.get("service.pid");
+
+				if (labelObject == null) {
+					labelObject = "This algorithm";
+				}
+			}
+
+			String label = labelObject.toString();
+
+			String exceptionMessage =
+				String.format("%s expects undirected edges, but none were found.", label);
+			throw new AlgorithmCreationFailedException(exceptionMessage);
+		}
+
+		String[] edgeAttributesArray = createKeyArray(undirectedEdgeSchema);
+		AttributeDefinition[] definitions =
+			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
 		
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("weightAttribute", 
-						"Weight Attribute", 
-						"The attribute to use for weight", 
-						AttributeDefinition.STRING, 
-						edgeAttributesArray, 
-						edgeAttributesArray));
-		
-		
-		for(int ii = 0; ii < definitions.length; ii++) {
-			if(!"DROPALWAYS".equals(definitions[ii].getName())) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
+		newParameters.addAttributeDefinition(
+			ObjectClassDefinition.REQUIRED,
+			new BasicAttributeDefinition(
+				"weightAttribute", 
+				"Weight Attribute", 
+				"The attribute to use for weight", 
+				AttributeDefinition.STRING, 
+				edgeAttributesArray, 
+				edgeAttributesArray));
+
+		for (AttributeDefinition definition : definitions) {
+			if (!"DROPALWAYS".equals(definition.getName())) {
+				newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED, definition);
 			}
 		}
 
-		return definition;
+		return newParameters;
 	}
 }

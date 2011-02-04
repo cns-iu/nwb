@@ -42,12 +42,12 @@ public class Helper implements Algorithm {
 		String weightAttribute = (String) this.parameters.get("weightAttribute");
 		
 		boolean ignoreWeightAttribute = HelperFactory.DEFAULT_WEIGHT.equals(weightAttribute);
-		
+
 		try {
 			NWBFileParser parser = new NWBFileParser(nwbFile);
 			parser.parse(handler);
-		} catch (IOException e1) {
-			throw new AlgorithmExecutionException("Problem reading the input file.", e1);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException("Problem reading the input file.", e);
 		} catch (ParsingException e) {
 			throw new AlgorithmExecutionException("Invalid input file.", e);
 		}
@@ -74,31 +74,43 @@ public class Helper implements Algorithm {
 		try {
 			File simpleFormat = File.createTempFile("nwb-", ".simple");
 			FileOutputStream simpleOutputStream = new FileOutputStream(simpleFormat);
-			NWBSimplifier simplifier = new NWBSimplifier(simpleOutputStream, nodeCount, undirectedEdgeCount + directedEdgeCount, weightAttribute, ignoreWeightAttribute); //one of the edge counts is guaranteed to be zero
+			// One of the edge counts is guaranteed to be zero.
+			NWBSimplifier simplifier = new NWBSimplifier(
+				simpleOutputStream,
+				nodeCount,
+				undirectedEdgeCount + directedEdgeCount,
+				weightAttribute,
+				ignoreWeightAttribute);
 			new NWBFileParser(nwbFile).parse(simplifier);
-			if(simplifier.hadIssue()) {
+
+			if (simplifier.hadIssue()) {
 				throw new AlgorithmExecutionException(simplifier.getReason());
 			}
-			
-			
+
 			simpleOutputStream.flush();
 			simpleOutputStream.close();
 
-			Data simpleData = new BasicData(simpleFormat, null);
-			Algorithm realAlgorithm = staticAlgorithmFactory.createAlgorithm(new Data[]{simpleData}, parameters, context);
+			Data simpleData = new BasicData(this.data[0].getMetadata(), simpleFormat, null);
+			Algorithm realAlgorithm = staticAlgorithmFactory.createAlgorithm(
+				new Data[] { simpleData }, parameters, context);
 
 			List transformedOutput = new ArrayList();
 			List forNodes = new ArrayList();
 			List forEdges = new ArrayList();
-			Data[] output = realAlgorithm.execute(); //let any exceptions bubble up, they're already real exceptions
+			// Let any exceptions bubble up, they're already real exceptions.
+			Data[] output = realAlgorithm.execute();
 			//System.err.println("SEA Length is: " + output.length);
 			Data firstAttributeData = null;
-			for(int ii = 0; ii < output.length; ii++) {
+
+			for (int ii = 0; ii < output.length; ii++) {
 				Data outputData = output[ii];
 				String fileName = ((File) outputData.getData()).getName();
-				if(fileName.endsWith(".nodes")) {
-					forNodes.add(outputData.getData()); //always a file object
-					if(firstAttributeData == null) {
+
+				if (fileName.endsWith(".nodes")) {
+					// Always a file object.
+					forNodes.add(outputData.getData());
+
+					if (firstAttributeData == null) {
 						firstAttributeData = outputData;
 					}
 				} else if(fileName.endsWith(".edges")) {
