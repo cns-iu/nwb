@@ -77,8 +77,16 @@ int main(int argc, char **argv)
       sprintf(quantityname, "endpointdegree_averageweight.linbinned");
       sprintf(output_type, "plot");
       allocateMemoryForGlobalMeasurementLinearBinned(numberofbins);
-      determineAverageQuantityWithRespectToDegreeLinearBinned(averageedgeweight, edgedegreedistribution, newedgedegree,
-								   edgeweight, minedgedegree, maxedgedegree, edgedegree, numberofedges, numberofbins);
+      determineAverageQuantityWithRespectToDegreeLinearBinned(
+		averageedgeweight,
+		edgedegreedistribution,
+		newedgedegree,
+		edgeweight,
+		minedgedegree,
+		maxedgedegree,
+		edgedegree,
+		numberofedges,
+		numberofbins);
       writeAverageQuantityBinned(averageedgeweight, edgedegreedistribution, newedgedegree,
 							  numberofbins, quantityname, output_type);
       sprintf(quantityname, "endpointdegree_averageweight.logbinned");
@@ -208,8 +216,27 @@ void freeMemoryOfGlobalMeasurementLinearBinned(void)
   free(averageedgeweight);
 }
 
-void determineAverageQuantityWithRespectToDegreeLinearBinned(double *avgs, double *ddist, double *nd, double *s, double mind, double maxd, double *d, int nnode, int nbin)
+void determineAverageQuantityWithRespectToDegreeLinearBinned(
+	double *avgs,
+	double *ddist,
+	double *nd,
+	double *s,
+	double mind,
+	double maxd,
+	double *d,
+	int nnode,
+	int nbin)
 {
+	/* avgs is averageedgeweight
+	 * ddist is edgedegreedistribution
+	 * nd is newedgedegree
+	 * s is edgeweight
+	 * mind is minedgedegree
+	 * maxd is maxedgedegree
+	 * d is edgedegree
+	 * nnode is numberofedges
+	 * nbin is numberofbins
+	 */
   int ctrn, ctrb;
   double delta;
 

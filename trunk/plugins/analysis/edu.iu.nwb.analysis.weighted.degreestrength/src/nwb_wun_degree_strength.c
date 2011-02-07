@@ -32,18 +32,23 @@ int main(int argc, char **argv)
     {
       sprintf(input_filename, "%s", argv[1]);
 
+      // Read the edges (sourcenodeid, targetnodeid, edgeweight).
       readEdgeWeightData(input_filename);
 
+      // Allocate memory for nodedegree and nodestrength.
       allocateMemoryForNodeAttribute(numberofnodes);
 
-      sprintf(quantityname, "degree");      
+      sprintf(quantityname, "degree");
       sprintf(output_type, "nodes");
+
+      // Determine the total node degree.
       determineNodeDegree(nodedegree, sourcenodeid, targetnodeid, numberofedges);
+      //
       writeIntegerTypeNodeAttribute(nodedegree, numberofnodes, quantityname, output_type);
 
       sprintf(quantityname, "strength");
       sprintf(output_type, "nodes");
-      determineNodeStrength(nodestrength, sourcenodeid, targetnodeid, edgeweight, numberofedges);      
+      determineNodeStrength(nodestrength, sourcenodeid, targetnodeid, edgeweight, numberofedges);
       writeDoubleTypeNodeAttribute(nodestrength, numberofnodes, quantityname, output_type);
 
       freeMemoryOfNodeAttribute();
@@ -98,14 +103,20 @@ void writeIntegerTypeNodeAttribute(int *d, int nnode, char *quantityname, char *
 
 void determineNodeStrength(double *s, int *sid, int *tid, double *w, int nedge)
 {
+	/* s is nodestrength
+	 * sid is sourcenodeid
+	 * tid is targetnodeid
+	 * w is edgeweight
+	 * nedge is numberofedges
+	 */
   int ctre, ctrs, ctrt;
 
   for(ctre=0; ctre < nedge; ctre++)
     {
-      ctrs=sid[ctre];
-      ctrt=tid[ctre];
-      s[ctrs]=s[ctrs]+w[ctre];
-      s[ctrt]=s[ctrt]+w[ctre];
+      ctrs=sid[ctre];	// Get the current source node id.
+      ctrt=tid[ctre];	// Get the current target node id.
+      s[ctrs]=s[ctrs]+w[ctre];	// strength(node[s]) = sum(weight(edges[s]))
+      s[ctrt]=s[ctrt]+w[ctre];	// strength(node[t]) = sum(weight(edges[t]))
     }
 }
 
