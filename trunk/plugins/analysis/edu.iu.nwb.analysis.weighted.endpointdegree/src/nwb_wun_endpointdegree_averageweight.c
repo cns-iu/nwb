@@ -53,15 +53,21 @@ int main(int argc, char **argv)
       printf("Number of bins for linear binning : %d\n", numberofbins);
       printf("Number of bins for logarithmic binning : %d\n", numberofbins_logbinned);
 
+      // Read the edges in (source node, target node, weight)
       readEdgeWeightData(input_filename);
 
+      // Allocate the memory for the node degree (node) attribute.
       allocateMemoryForNodeAttribute(numberofnodes);
+      // sourcenodeid and targetnodeid are of size numberofedges
       determineNodeDegree(nodedegree, sourcenodeid, targetnodeid, numberofedges);
 
       sprintf(quantityname, "endpointdegree");
       sprintf(output_type, "edges");
+      // Allocate the memory for the degree (edge) attribute.
       allocateMemoryForEdgeAttribute(numberofedges);
+      // Calculate the edge degree (degree(edge[s, t]) = degree(node[s]) * degree(node[t]))
       determineEdgeDegree(edgedegree, sourcenodeid, targetnodeid, numberofedges, nodedegree);
+      // Write the edge degree to the output file (quantityname.output_type)
       writeEdgeAttribute(edgedegree, numberofedges, quantityname, output_type);
 
       determineExtremumValuesOfDoubleTypeQuantity(&minedgedegree, &maxedgedegree, edgedegree, numberofedges);
@@ -71,16 +77,16 @@ int main(int argc, char **argv)
       sprintf(quantityname, "endpointdegree_averageweight.linbinned");
       sprintf(output_type, "plot");
       allocateMemoryForGlobalMeasurementLinearBinned(numberofbins);
-      determineAverageQuantityWithRespectToDegreeLinearBinned(averageedgeweight, edgedegreedistribution, newedgedegree, 
+      determineAverageQuantityWithRespectToDegreeLinearBinned(averageedgeweight, edgedegreedistribution, newedgedegree,
 								   edgeweight, minedgedegree, maxedgedegree, edgedegree, numberofedges, numberofbins);
-      writeAverageQuantityBinned(averageedgeweight, edgedegreedistribution, newedgedegree, 
+      writeAverageQuantityBinned(averageedgeweight, edgedegreedistribution, newedgedegree,
 							  numberofbins, quantityname, output_type);
       sprintf(quantityname, "endpointdegree_averageweight.logbinned");
       sprintf(output_type, "plot");
       allocateMemoryForGlobalMeasurementLogarithmicBinned(numberofbins_logbinned);
-      determineAverageQuantityWithRespectToDegreeLogarithmicBinned(averageedgeweight_logbinned, edgedegreedistribution_logbinned, newedgedegree_logbinned, 
+      determineAverageQuantityWithRespectToDegreeLogarithmicBinned(averageedgeweight_logbinned, edgedegreedistribution_logbinned, newedgedegree_logbinned,
 								   edgeweight, minedgedegree, maxedgedegree, edgedegree, numberofedges, numberofbins_logbinned);
-      writeAverageQuantityBinned(averageedgeweight_logbinned, edgedegreedistribution_logbinned, newedgedegree_logbinned, 
+      writeAverageQuantityBinned(averageedgeweight_logbinned, edgedegreedistribution_logbinned, newedgedegree_logbinned,
 							       numberofbins_logbinned, quantityname, output_type);
 
       freeMemoryOfGlobalMeasurementLogarithmicBinned();
@@ -115,31 +121,50 @@ void freeMemoryOfEdgeAttribute(void)
 
 void determineNodeDegree(int *d, int *sid, int *tid, int nedge)
 {
+	/* d is nodedegree
+	 * sid is sourcenodeid
+	 * tid is targetnodeid
+	 * nedge is numberofedges
+	 */
+
+	/* ctre is the loop counter
+	 */
   int ctre, ctrs, ctrt;
 
   for(ctre=0; ctre < nedge; ctre++)
     {
-      ctrs=sid[ctre];
-      ctrt=tid[ctre];
-      d[ctrs]++;
-      d[ctrt]++;
+      ctrs=sid[ctre];	// Get the current source node id.
+      ctrt=tid[ctre];	// Get the current target node id.
+      d[ctrs]++;	// Increase the degree count for the source node.
+      d[ctrt]++;	// Increase the degree count for the target node.
     }
 }
 
 void determineEdgeDegree(double *ed, int *sid, int *tid, int nedge, int *nd)
 {
+	/* ed is edgedegree
+	 * sid is sourcenodeid
+	 * tid is targetnodeid
+	 * nedge is numberofedges
+	 * nd is nodedegree
+	 */
   int ctre, ctrs, ctrt;
 
   for(ctre=0; ctre < nedge; ctre++)
     {
-      ctrs=sid[ctre];
-      ctrt=tid[ctre];
+      ctrs=sid[ctre];	// Get the current source node id
+      ctrt=tid[ctre];	// Get the current target node id
       ed[ctre]=((double)nd[ctrs])*((double)nd[ctrt]);
     }
 }
 
 void writeEdgeAttribute(double *s, int nnode, char *quantityname, char *output_type)
 {
+	/* s is edgedegree
+	 * nnode is numberofedges
+	 * quantityname is quantityname ("endpointdegree")
+	 * output_type is output_type ("edges")
+	 */
   char output_filename[NAMELENGTH+1];
   int ctr;
   FILE *fp;
