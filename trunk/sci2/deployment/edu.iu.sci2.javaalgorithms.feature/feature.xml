@@ -592,12 +592,12 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"
          unpack="false"/>
 
-   <plugin
+   <!-- <plugin
          id="edu.iu.sci2.visualization.imageviewer"
          download-size="0"
          install-size="0"
          version="0.0.1"
-         unpack="false"/>
+         unpack="false"/> -->
 
    <plugin
          id="edu.iu.nwb.analysis.hits"

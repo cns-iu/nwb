@@ -205,10 +205,10 @@
 	    <menu name="Statistical" type="group">
 	    </menu>
 	    
-	    <menu name="General" type="group">
+	    <!-- <menu name="General" type="group">
 	    	<menu pid="edu.iu.nwb.visualization.gnuplot"/>
 			<menu pid="edu.iu.sci2.visualization.imageviewer.ImageViewerAlgorithm"/>
-	    </menu>
+	    </menu> -->
 
 		<menu name="Temporal" type="group">
 	         <menu pid="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>

@@ -445,12 +445,12 @@
   	  	      <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/normal_plugins"/>
   	  	 </antcall>
   	
-  	<antcall target="svn.co">
+  	<!-- <antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="edu.iu.sci2.visualization.imageviewer"/>
   	  	      <param name="project.name" value="edu.iu.sci2.visualization.imageviewer"/>
   	  	      <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/normal_plugins"/>
-  	  	 </antcall>
+  	  	 </antcall> -->
   	
   	<antcall target="svn.co">
   	  	  	      <param name="target" value="plugins"/>
