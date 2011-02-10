@@ -1,18 +1,29 @@
 package edu.iu.nwb.analysis.burst;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+/**
+ * This is a re-implementation version of the old Java code base. Few 
+ * attentions while before start reading the code.
+ * 1. Read the dynamicburst.c which is the origin C implementation.
+ * 2. The indexing of the automaton states are reversed compare to the 
+ * paper.
+ * 3. computeStates() are implemented by converting from orginal C code.
+ * 4. A little different from original implementation is we generate the
+ * empty bin to fill up the gates between years. In the original 
+ * implementation, batches are treated as continuous, even the year is 
+ * differences. In other words, we create empty bin to make the batches 
+ * continuous based on year. 
+ * 
+ * Please refer to the dynamicburst.c for the origin implementation of
+ * the computeStates. There are a lot of comments added into the 
+ * dynamic.c while I reading the C implementation (The original C code
+ * don't have any comments). The WordBins is not included in the original
+ * C code. It is created based on the description in the paper. please 
+ * refer to the batch solution in the Enumerating section.
+ * 
+ * @author kongch
+ * 
+ */
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -26,158 +37,111 @@ import prefuse.data.Schema;
 import prefuse.data.Table;
 
 public class Burst implements Algorithm {
-	private static final int MIN_SLENGTH = 0;
-	private static final double POWER_THRESH = 0;
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext context;
-	private DateFormat format;
+	public static final int MIN_SLENGTH = 0;
+	public static final double POWER_THRESH = 0;
+	public static final double HUGEN = 1000000.0;
+	public static final double DTRANS = 1.0;
 	
-	private static double HUGEN = 1000000.0;
-	private static double DTRANS = 1.0;
+	/* Input columns' name */
+	public static final String DATE_COLUMN = "date";
+	public static final String DATE_FORMAT_COLUMN = "format";
+	public static final String TEXT_COLUMN = "text";
+	public static final String TEXT_SEPARATOR_COLUMN = "separator";
+	public static final String IGNORE_EMPTY_COLUMN = "ignore";
+	public static final String BURSTING_STATES_COLUMN = "states";
+	public static final String RATIO_COLUMN = "ratio";
+	public static final String GAMMA_COLUMN = "gamma";
+	public static final String DOCUMENT_COLUMN = "document";
 	
-	//get these from params
-	private double trans = 1.0;
-	private int inputLevels = 1;
-	private double baseRatio = 2;
-	private double increaseRatio = 2;
+	/* Output columns' name */
+	public static final String WORD_COLUMN = "Word";
+	public static final String LEVEL_COLUMN = "Level";
+	public static final String WEIGHT_COLUMN = "Weight";
+	public static final String LENGTH_COLUMN = "Length";
+	public static final String START_COLUMN = "Start";
+	public static final String END_COLUMN = "End";
 	
+	/* Updated parameters */
+	private double gamma = 1.0; // parameter that controls the ease with which the automaton can change states. 'trans' in C code
+	private int inputStates = 1; // the higher  bursting states
+	private double densityScaling = 2; // density scaling which will affect the probability of the burst happens 
 	private LogService logger;
+	private Data[] data;
+	private Dictionary<String, Object> parameters;
 	
 	
-	public Burst(Data[] data, Dictionary parameters, CIShellContext context) {
+	public Burst(Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
-		this.context = context;
-
+		this.logger = (LogService)context.getService(LogService.class.getName());
 	}
-
+	
 	public Data[] execute() throws AlgorithmExecutionException {
 
-		logger = (LogService)context.getService(LogService.class.getName());
-		/* double gamma = ((Double) parameters.get("gamma")).doubleValue();
-		double generalRatio = ((Double) parameters.get("ratio")).doubleValue();
-		double firstRatio = ((Double) parameters.get("first")).doubleValue();
-		int states = ((Integer) parameters.get("states")).intValue() + 1; */
-		String dateColumn = (String) parameters.get("date");
-		String textColumn = (String) parameters.get("text");
-		String documentColumn = (String) parameters.get("document");
-		boolean ignoreEmpty = (Boolean) parameters.get("ignore");
-		String separator = (String) parameters.get("separator");
-		String formatString = (String) parameters.get("format");
-		format = new SimpleDateFormat(formatString);
+		String dateColumnTitle = (String) this.parameters.get(DATE_COLUMN);
+		String textColumnTitle = (String) this.parameters.get(TEXT_COLUMN);
+		String documentColumnTitle = (String) this.parameters.get(DOCUMENT_COLUMN);
+		boolean ignoreEmpty = (Boolean) this.parameters.get(IGNORE_EMPTY_COLUMN);
+		String textSeparator = (String) this.parameters.get(TEXT_SEPARATOR_COLUMN);
+		String dateFormatString = (String) this.parameters.get(DATE_FORMAT_COLUMN);
 		
-		inputLevels = ((Integer) parameters.get("states"));
-		baseRatio = ((Double) parameters.get("ratio"));
-		increaseRatio = ((Double) parameters.get("first"));
-		trans = ((Double) parameters.get("gamma"));
+		this.inputStates = ((Integer) this.parameters.get(BURSTING_STATES_COLUMN));
+		this.densityScaling = ((Double) this.parameters.get(RATIO_COLUMN));
+		this.gamma = ((Double) this.parameters.get(GAMMA_COLUMN));
 		
-		Table data = (Table) this.data[0].getData();
+		Table data = (Table) this.data[0].getData();		
+		checkColumns(data, dateColumnTitle, textColumnTitle);
 		
-		checkColumns(data, dateColumn, textColumn);
+		/*
+		 * WordBins contains a list of WordBin where each WordBin contains a word 
+		 * and n number of bins. Each bin represent a time slot and hold the number
+		 * of related douments that contains the word in a specified time slot.
+		 */
+		WordBinsGenerator wordBinsGenerator = new WordBinsGenerator(
+				this.logger,
+				data, 
+				documentColumnTitle,
+				textColumnTitle, 
+				textSeparator, 
+				dateColumnTitle, 
+				dateFormatString, 
+				ignoreEmpty);
 		
-		DocumentRetriever retriever = DocumentRetrieverFactory.createForColumn(documentColumn);
-		
-		Map<Date, String> datePairs = new HashMap<Date, String>();
-		SortedMap<Date, List<String>> wordsMap = new TreeMap<Date, List<String>>();
-		SortedMap<Date, Integer> dates = new TreeMap<Date, Integer>();
-		Map<String, int[]> entryMap = new HashMap<String, int[]>();
-		Set<Object> documents = new HashSet<Object>();
-				
-		for(int row = 0; row < data.getRowCount(); row++) {
-			String dateString = data.getString(row, dateColumn);
-			if(!"".equals(dateString)) {
-				try {
-					Date rowDate = format.parse(dateString);
-					datePairs.put(rowDate, dateString);
-					String rowText = data.getString(row, textColumn);
-					List<String> rowWords = this.words(rowText, separator);
-					if(ignoreEmpty && rowWords.size() == 0) {
-						continue;
-					}
-					if(!wordsMap.containsKey(rowDate)) {
-						wordsMap.put(rowDate, new ArrayList<String>());
-						dates.put(rowDate, 0);
-					}
-					wordsMap.get(rowDate).addAll(rowWords);
-					Object document = retriever.retrieve(data, row, documentColumn);
-					if(document == null || !documents.contains(document)) {
-						dates.put(rowDate, dates.get(rowDate) + 1);
-						if(document != null) {
-							documents.add(document);
-						}
-					}
-				} catch (ParseException e) {
-					logger.log(LogService.LOG_WARNING, "Problems parsing value " + dateString + ", verify chosen date format " + formatString + " matches format in file.", e);
-				}
-			}
-		}
-		
-		
-		int numDates = dates.size();
-		int currentDate = 0;
-		int[] binBase = new int[numDates];
-		for(Integer count : dates.values()) {
-			binBase[currentDate] = count;
-			currentDate++;
-		}
-		
-		currentDate = 0;
-		for(List<String> words : wordsMap.values()) {
-			for(String word : words) {
-				if(!entryMap.containsKey(word)) {
-					entryMap.put(word, new int[numDates]);
-				}
-				
-				entryMap.get(word)[currentDate] += 1;
-			}
-			currentDate++;
-		}
-		
-		Date[] dateArray = dates.keySet().toArray(new Date[0]);
-		
-		Schema resultsSchema = new Schema(new String[]{"Word", "Length", "Weight", "Strength", "Start", "End"}, new Class[]{String.class, int.class, double.class, double.class, String.class, String.class});
+		WordBins wordBins = wordBinsGenerator.generateWordBins();
+		int binSize = wordBins.getBinSize();
+		Schema resultsSchema = new Schema(new String[]{WORD_COLUMN, LEVEL_COLUMN, WEIGHT_COLUMN, LENGTH_COLUMN, START_COLUMN, END_COLUMN}, new Class[]{String.class, int.class, double.class, int.class, String.class, String.class});
 		Table results = resultsSchema.instantiate();
 		
-		for(String word : entryMap.keySet()) {
-			int[] entry = entryMap.get(word);
-			Cell[] cells;
+		/* Compute the burst, word by word and save it into results table */
+		for(String word : wordBins.getWordSet()) {
+			WordBin wordBin = wordBins.getWordBin(word);
 			try {
-				cells = this.computeStates(numDates, entry, binBase);
-				double totalPower = 0;
-				for(int j = 0; j < numDates; j++) {
-					Cell currentCell = cells[j];
+				/* 
+				 * A cell represents a specified date burst information of a token. 
+				 * Compute all the burst score by date for a token 
+				 */
+				Cell[] cells = this.computeStates(binSize, wordBin.getBin(), wordBins.getBinDocumentCount());
+				
+				/* process the results for a token by date */
+				for(int i = 0; i < binSize; i++) {
+					Cell currentCell = cells[i];
 					
-					for(int k = currentCell.candidate.length - 2; k >= 0; k--) {
-						if(currentCell.candidate[k]
-						        && currentCell.breakpoint[k] - j + 1 >= MIN_SLENGTH
-						        && currentCell.totalPower[k] >= POWER_THRESH) {
-						        //&& k != currentCell.minRateClass) { the original includes !SHARP_OPT or this, and sharp opt is never used
-							int startIndex = j;
-							String start = datePairs.get(dateArray[startIndex]);
-							int endIndex;
-							String end;
-							if(currentCell.breakpoint[k] < numDates - 1) {
-								endIndex = currentCell.breakpoint[k] - 1;
-								end = datePairs.get(dateArray[endIndex]);
-							} else {
-								endIndex = currentCell.breakpoint[k] + 1;
-								end = "";
-							}
-							if(!currentCell.subordinate[k]) {
-								totalPower += currentCell.totalPower[k];
-							}
-							if(k == currentCell.minRateClass) {
-								
-							}
-							logger.log(LogService.LOG_INFO,word + " starts: " + start + " ends: " + end);
+					for(int level = currentCell.candidate.length - 2; level >= 0; level--) {
+						if(isValidBurstCandidate(currentCell, level, i)) {
+							
+							/* Generate result for CSV output */
+							Result result = generateResult(currentCell, word, level, i, wordBins);
+							
+							this.logger.log(LogService.LOG_INFO, word + " starts: " + result.getStart() + " ends: " + result.getEnd());
+							
+							/* Add result to row */
 							int row = results.addRow();
-							results.setString(row, "Word", word);
-							results.setInt(row, "Length", endIndex - startIndex + 1);
-							results.setDouble(row, "Weight", currentCell.totalPower[k]);
-							results.setDouble(row, "Strength", totalPower);
-							results.setString(row, "Start", start);
-							results.setString(row, "End", end);
+							results.setString(row, "Word", result.getWord());
+							results.setDouble(row, "Weight", result.getWeight());
+							results.setInt(row, "Length", result.getLength());
+							results.setInt(row, "Level", result.getLevel());
+							results.setString(row, "Start", result.getStart());
+							results.setString(row, "End", result.getEnd());
 						}
 					}
 					
@@ -188,12 +152,42 @@ public class Burst implements Algorithm {
 		}
 		
 		Data output = new BasicData(results, Table.class.getName());
-		Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "Burst detection analysis (" + dateColumn + ", " + textColumn + "): maximum burst level " + inputLevels);
+		Dictionary<String, Object> metadata = output.getMetadata();
+		metadata.put(DataProperty.LABEL, "Burst detection analysis (" + dateColumnTitle + ", " + textColumnTitle + "): maximum burst level " + inputStates);
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 		
 		return new Data[]{ output };
+	}
+	
+	private Result generateResult(Cell cell, String word, int level, int startIndex, WordBins wordBins) {
+		String startString = String.valueOf(wordBins.getBinDate(startIndex));
+		String endString;
+		
+		int binSize = wordBins.getBinSize();
+		int endIndex = cell.breakpoint[level];
+		if(endIndex < binSize - 1) {
+			endIndex -= 1;
+			endString = String.valueOf(wordBins.getBinDate(endIndex));
+		} else {
+			endString = "";
+		}
+		
+		/* 
+		 * The length is the bin length. It is not equal to the 
+		 * (end year - start year) since we might lost data between 
+		 * year.
+		 */
+		int length = endIndex - startIndex + 1;
+		int state = this.inputStates - level;
+		
+		return new Result(word, state, cell.totalPower[level], length, startString, endString);
+	}
+	
+	private boolean isValidBurstCandidate(Cell currentCell, int level, int binIndex) {
+		return (currentCell.candidate[level]
+		        &&  currentCell.breakpoint[level] - binIndex + 1 >= MIN_SLENGTH 
+		        && currentCell.totalPower[level] >= POWER_THRESH);
 	}
 
 	private void checkColumns(Table data, String dateColumn, String textColumn) throws AlgorithmExecutionException {
@@ -210,17 +204,12 @@ public class Burst implements Algorithm {
 	
 	
 	private Cell[] computeStates(int n, int[] entry, int[] binBase) throws BurstException {
-		//logger.log(LogService.LOG_INFO, "## " + bin_k + " " + bin_n + " " + expected);
-		
 		
 		double transCost = computeTransCost(n);
 		
-		int levels = inputLevels + 1;
+		int levels = this.inputStates + 1;
 		
 		Cell[] cells = computeCosts(n, levels, entry, binBase);
-		
-		
-		
 		
 		int q = computeTotals(cells, n, transCost, levels);
 		computePathAndMark(cells, n, levels, q);
@@ -290,7 +279,14 @@ public class Burst implements Algorithm {
 			currentCell.minRateClass = q;
 			for(int k = 0; k < p; ++k) {
 				if(currentCell.candidate[k]) {
-					currentCell.totalPower[p] += currentCell.power[k];
+					/* 
+					 * This try to accumulate all level's weight into the lower burst level. 
+					 * This have created double standard of total_power value of lower level
+					 * with the higher levels. Based on the paper, total_power (weight) is 
+					 * the rectangle area of the time period with the level.
+					 * 
+					 * currentCell.totalPower[p] += currentCell.power[k];
+					 */
 					currentCell.subordinate[k] = true;
 				}
 			}
@@ -310,9 +306,7 @@ public class Burst implements Algorithm {
 		for(int j = 0; j < n; j++) {
 			Cell cell = cells[j] = new Cell(levels);
 			for(int k = 0; k < levels; k++) {
-				//logger.log(LogService.LOG_INFO, "" + fRate[k] + " " + entry[j] + " " + binBase[j]);
 				cell.cost[k] = binomW(1.0 / fRate[k], entry[j], binBase[j]);
-				//logger.log(LogService.LOG_INFO, "## " + j + " " + k + " = " + cell.cost[k]);
 			}
 		}
 		return cells;
@@ -335,17 +329,21 @@ public class Burst implements Algorithm {
 				int q = 0;
 				double tmpD;
 				for(int m = 1; m < levels; m++) {
-					if(m > k && (tmpD = currentCell.cost[k] + previousCell.total[m] + transCost * (m - k)) < d) {
+					/* 
+					 * The '< d' have changed to '<= d' due to we are interested on lower burst level that
+					 * give the same cost. Ideally, there will not exist two levels that contains the same 
+					 * cost. It only happens if all costs is zero where there is not data in this bin.
+					 */
+					if(m > k && (tmpD = currentCell.cost[k] + previousCell.total[m] + transCost * (m - k)) <= d) {
 						d = tmpD;
 						q = m;
-					} else if(m <= k && (tmpD = currentCell.cost[k] + previousCell.total[m]) < d) {
+					} else if(m <= k && (tmpD = currentCell.cost[k] + previousCell.total[m]) <= d) {
 						d = tmpD;
 						q = m;
 					}
 				}
 				currentCell.total[k] = d;
 				currentCell.previous[k] = q;
-				//logger.log(LogService.LOG_INFO, "##" + this.word + " @ " + j + " " + k + " : " + currentCell.total[k] + " (" + currentCell.previous[k] + ")");
 				
 			}
 		}
@@ -396,16 +394,19 @@ public class Burst implements Algorithm {
 		double[] fRate = new double[levels];
 
 		fRate[levels - 1] = expected;
-		fRate[levels - 2] = expected / baseRatio;
 
-		for(int j = levels - 3; j >= 0; j--) {
-			fRate[j] = fRate[j+1]/increaseRatio;
+		/* 
+		 * Change it to the same. Based on the paper. It didn't make sense to have 
+		 * first level ratio different from other level. This sound cheating.
+		 */
+		for(int j = levels - 2; j >= 0; j--) {
+			fRate[j] = fRate[j+1]/this.densityScaling;
 		}
 		return fRate;
 	}
 
 	private double computeTransCost(int n) {
-		double transCost = trans * Math.log(n + 1) - Math.log(DTRANS);
+		double transCost = this.gamma * Math.log(n + 1) - Math.log(DTRANS);
 		
 		if(transCost < 0.0) {
 			transCost = 0.0;
@@ -449,29 +450,7 @@ public class Burst implements Algorithm {
 		if(probability >= 1.0) {
 			return HUGEN;
 		} else {
-			
-			return -1 * (logChoose(n,k) + k * Math.log(probability) + (n-k) * Math.log(1.0 - probability));
+			return -1 * (logChoose(n,k) + k * Math.log(probability) + (n - k) * Math.log(1.0 - probability));
 		}
-	}
-
-	
-
-	private List<String> words(String text, String separator) {
-		//String[] strings = text.replaceAll("\\p{Punct}", "").toLowerCase().split("\\s");
-		
-		List<String> words = new ArrayList<String>();
-		if(text == null) {
-			return words;
-		}
-		
-		String[] strings = text.split("\\" + separator);
-		for(String word : strings) {
-			word = word.trim();
-			if(word.length() > 0) {
-				words.add(word);
-			}
-		}
-
-		return words;
 	}
 }
