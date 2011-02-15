@@ -114,7 +114,7 @@ public class ValidateNWBFile {
 		if (this.hasTotalNumOfNodes && (this.countedNodes != this.totalNumOfNodes)) {
 			// I'm not sure if we should set this to false or not.
 			// TODO: It should not?
-			isFileGood = false;
+//			isFileGood = false;
 			errorMessages.append(
 				"There was an inconsistency between the specified number of nodes: " 
 				+ this.totalNumOfNodes + " and the " +
