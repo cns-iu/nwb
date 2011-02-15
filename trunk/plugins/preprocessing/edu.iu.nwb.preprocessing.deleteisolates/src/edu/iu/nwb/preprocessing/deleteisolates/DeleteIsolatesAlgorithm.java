@@ -84,7 +84,13 @@ public class DeleteIsolatesAlgorithm implements Algorithm {
 				createTemporaryFileInDefaultTemporaryDirectory("DeleteIsolates-", "nwb");
     		NodeIDFilteringNWBWriter nodeIDFilteringNWBWriter =
     			new NodeIDFilteringNWBWriter(nonIsolateNodeIDs, outputNWBFile);
-    		nodeIDFilteringNWBWriter.setNodeCount(nonIsolateNodeIDs.size());
+    		/* TODO: This line is correct, but the incorrect node count (counting isolates) is
+    		 * still written to the output file. This is done by NWBFileParser. Really, maybe it
+    		 * shouldn't, but that aside, the proper node count should be gotten via a
+    		 * preprocessing step.
+    		 */
+//    		nodeIDFilteringNWBWriter.setNodeCount(
+//    			nonIsolateNodeIDs.size() - nodeIDFilteringNWBWriter.getNumberFiltered());
     		NWBFileParser isolateStripperFileParser =
     			new NWBFileParser(inputNWBFile);
     		isolateStripperFileParser.parse(nodeIDFilteringNWBWriter);
