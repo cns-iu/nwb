@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.persistence.session.save.SaveSessionAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.persistence.session.save.SaveSessionAlgorithmFactory"/>
+	<properties entry="OSGI-INF/save/save.properties"/>
+	
+	<service>
+		<provide interface="org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
