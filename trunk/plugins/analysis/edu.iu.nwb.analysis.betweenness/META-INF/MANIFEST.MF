@@ -6,7 +6,6 @@ Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: com.google.common.annotations,
  com.google.common.base,
- com.google.common.base.internal,
  com.google.common.collect,
  edu.iu.nwb.util.nwbfile,
  org.cishell.framework;version="1.0.0",
