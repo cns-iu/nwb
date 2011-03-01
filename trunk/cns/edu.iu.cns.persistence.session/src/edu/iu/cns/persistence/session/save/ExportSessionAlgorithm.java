@@ -13,9 +13,10 @@ import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.service.log.LogService;
 
+import edu.iu.cns.persistence.session.common.Utilities;
+
 public class ExportSessionAlgorithm implements Algorithm {
 	public static final String ANY_FILE_EXTENSION = "file-ext:*";
-	public static final String DEFAULT_SESSION_FILE_NAME = "cishell.session";
 
 	private LogService logger;
 	private DataManagerService dataManager;
@@ -60,7 +61,8 @@ public class ExportSessionAlgorithm implements Algorithm {
 
 	private File getTargetSessionFileFromUser() throws AlgorithmExecutionException {
 		try {
-			File targetSessionFile = fileSaver.promptForTargetFile(DEFAULT_SESSION_FILE_NAME);
+			File targetSessionFile =
+				fileSaver.promptForTargetFile(Utilities.FULL_DEFAULT_SESSION_FILE_NAME);
 
 			if (targetSessionFile != null) {
 				try {

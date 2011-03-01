@@ -34,4 +34,9 @@ public class Utilities {
 
 	public static final String FILE_EXTENSION = "file-ext:";
 	public static final String FILE = "file:";
+
+	public static final String DEFAULT_SESSION_FILE_NAME = "cishell";
+	public static final String DEFAULT_SESSION_FILE_EXTENSION = ".session";
+	public static final String FULL_DEFAULT_SESSION_FILE_NAME = String.format(
+		"%s%s", DEFAULT_SESSION_FILE_NAME, DEFAULT_SESSION_FILE_EXTENSION);
 }
