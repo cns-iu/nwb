@@ -8,98 +8,94 @@ import java.util.Dictionary;
 import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.utilities.Pair;
-import org.osgi.service.log.LogService;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 public class SessionDataGetter {
 	private Data[] data;
+	private DataManagerService dataManager;
 
-	public SessionDataGetter(LogService logger, DataManagerService dataManager) {
-		this.data = getAndValidateData(logger, dataManager);
+	public SessionDataGetter(DataManagerService dataManager) {
+		this.dataManager = dataManager;
+	}
 
-		if (this.data == null) {
-			return;
+	public Data[] readData() {
+		if (data != null) {
+			return this.data;
 		}
-
+		
+		this.data = dataManager.getAllData();
 		Collection<Data> allData = Arrays.asList(this.data);
 		Collection<Data> sortedData = sortDataByDataManagerView(allData);
-		System.err.println("sortedData: " + sortedData);
 		this.data = sortedData.toArray(new Data[0]);
-	}
-
-	public Data[] getData() {
-		return this.data;
-	}
-
-	// 1
-	private Data[] getAndValidateData(LogService logger, DataManagerService dataManager) {
-		Data[] allData = dataManager.getAllData();
-
-		if (allData.length == 0) {
-			String logMessage = "There is no data to save to a session. Ignoring operation.";
-			logger.log(LogService.LOG_WARNING, logMessage);
-
-			return null;
-		}
-
-		return allData;
+		
+		return data;
 	}
 
 	// 1
+	/* TODO: Even though this has been tested, this is a potential source of bugs. Note the
+	 * possibility of infinite loops and infinite loops and general incorrectness.
+	 */
 	private Collection<Data> sortDataByDataManagerView(Collection<Data> dataToSort) {
-		Pair<Collection<Data>, Collection<Data>> parentlessAndParentedData =
-			findParentlessAndParentedData(dataToSort);
-		Collection<Data> parentlessData = parentlessAndParentedData.getFirstObject();
-		Collection<Data> dataWithParent = parentlessAndParentedData.getSecondObject();
+		Collection<Data> parentlessData = findParentlessData(dataToSort);
+		Collection<Data> parentedData = findParentedData(dataToSort);
 
-		if (dataWithParent.size() == 0) {
+		if (parentedData.isEmpty()) {
 			return parentlessData;
 		} else {
 			Collection<Data> sortedData = new ArrayList<Data>();
 
 			for (Data rootDatum : parentlessData) {
 				sortedData.add(rootDatum);
-				Collection<Data> ancestorData = gatherAncestorData(rootDatum, dataWithParent);
-				sortedData.addAll(sortDataByDataManagerView(ancestorData));
+				Collection<Data> descendantData = gatherDescendantData(rootDatum, parentedData);
+				sortedData.addAll(sortDataByDataManagerView(descendantData));
 			}
 
 			return sortedData;
 		}
 	}
-
-	// 2
-	private Pair<Collection<Data>, Collection<Data>> findParentlessAndParentedData(
-			Collection<Data> dataToSort) {
-		Collection<Data> parentlessData = new ArrayList<Data>();
-
-		for (Data datum : dataToSort) {
-			Dictionary<String, Object> metadata = datum.getMetadata();
-
-			if (!dataToSort.contains(metadata.get(DataProperty.PARENT))) {
-//			if (metadata.get(DataProperty.PARENT) == null) {
-				parentlessData.add(datum);
-			}
-		}
-
-		Collection<Data> dataWithParent = new ArrayList<Data>(dataToSort);
-		dataWithParent.removeAll(parentlessData);
-
-		return new Pair<Collection<Data>, Collection<Data>>(parentlessData, dataWithParent);
+	
+	private Collection<Data> findParentedData(Collection<Data> data) {
+		return Collections2.filter(data, new HasParentPredicate(data));
+	}
+	
+	private Collection<Data> findParentlessData(Collection<Data> data) {
+		return Collections2.filter(data, Predicates.not(new HasParentPredicate(data)));
 	}
 
 	// 2
-	private Collection<Data> gatherAncestorData(Data rootDatum, Collection<Data> dataToSort) {
-		Collection<Data> ancestorData = new ArrayList<Data>();
+	/* TODO: Even though this has been tested, this is a potential source of bugs. Note the
+	 * possibility of infinite loops and infinite loops and general incorrectness.
+	 */
+	private Collection<Data> gatherDescendantData(Data rootDatum, Collection<Data> parentedData) {
+		Collection<Data> descendantData = new ArrayList<Data>();
 
-		for (Data nonRootDatum : dataToSort) {
-			Dictionary<String, Object> metadata = nonRootDatum.getMetadata();
+		for (Data parentedDatum : parentedData) {
+			Dictionary<String, Object> metadata = parentedDatum.getMetadata();
 
-			if (metadata.get(DataProperty.PARENT) == rootDatum) {
-				ancestorData.add(nonRootDatum);
-				ancestorData.addAll(gatherAncestorData(nonRootDatum, dataToSort));
+			// NOTE: The (parentedDatum != rootDatum) is to prevent data from parenting itself.
+			if ((metadata.get(DataProperty.PARENT) == rootDatum) && (parentedDatum != rootDatum)) {
+				Data childDatum = parentedDatum;
+			
+				descendantData.add(childDatum);
+				descendantData.addAll(gatherDescendantData(childDatum, parentedData));
 			}
 		}
 
-		return ancestorData;
+		return descendantData;
+	}
+	
+	private static class HasParentPredicate implements Predicate<Data> {
+		private Collection<Data> collection;
+
+		public HasParentPredicate(Collection<Data> collection) {
+			this.collection = collection;
+		}
+
+		public boolean apply(Data data){
+			return collection.contains(data.getMetadata().get(DataProperty.PARENT));
+		}
 	}
 }

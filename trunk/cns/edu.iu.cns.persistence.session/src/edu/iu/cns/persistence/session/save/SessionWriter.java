@@ -2,12 +2,10 @@ package edu.iu.cns.persistence.session.save;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.cishell.framework.data.Data;
@@ -18,12 +16,16 @@ import org.cishell.utilities.ZipIOException;
 import org.cishell.utilities.ZipUtilities;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
+import com.google.common.collect.BiMap;
+
 import edu.iu.cns.persistence.session.common.Utilities;
 
 public class SessionWriter {
 	public SessionWriter(
 			Map<Data, Pair<Data, String>> inputToOutputData,
 			Map<Data, Integer> outputDataToIndex,
+			BiMap<Data, Data> originalToConvertedData,
 			File targetSessionFile) {
 		Map<String, Integer> metadataColumnNameToHeaderIndex =
 			compileMetadataSchema(inputToOutputData.values());
@@ -34,29 +36,34 @@ public class SessionWriter {
 			CSVWriter metadataWriter = new CSVWriter(new FileWriter(metadataFile));
 			writeMetadataHeader(metadataColumnNameToHeaderIndex, metadataWriter);
 
-			List<File> outputFiles = new ArrayList<File>();
+			Map<File, String> outputFileToEntryName = new LinkedHashMap<File, String>();
 			int datumIndex = 0;
 
 			for (Data inputDatum : inputToOutputData.keySet()) {
-				Pair<Data, String> outputDatumWithTargetMimeType =
+				Pair<Data, String> outputDatumAndToolMimeType =
 					inputToOutputData.get(inputDatum);
-				Data outputDatum = outputDatumWithTargetMimeType.getFirstObject();
-				String outputDatumTargetMimeType = outputDatumWithTargetMimeType.getSecondObject();
+				Data outputDatum = outputDatumAndToolMimeType.getFirstObject();
+				String outputDatumToolMimeType = outputDatumAndToolMimeType.getSecondObject();
+				String zippedFileName = formZippedFileName(outputDatum);
+				
 				writeMetadataEntry(
 					metadataWriter,
 					datumIndex,
+					zippedFileName,
 					inputDatum,
 					outputDatum,
-					outputDatumTargetMimeType,
+					outputDatumToolMimeType,
 					metadataColumnNameToHeaderIndex,
-					outputDataToIndex);
-				outputFiles.add((File) outputDatum.getData());
+					outputDataToIndex,
+					originalToConvertedData);
+
+				outputFileToEntryName.put((File) outputDatum.getData(), zippedFileName);
 				datumIndex++;
 			}
 
 			metadataWriter.close();
 
-			writeSessionFile(metadataFile, outputFiles, targetSessionFile);
+			writeSessionFile(metadataFile, outputFileToEntryName, /*outputFiles,*/ targetSessionFile);
 		} catch (Exception e) {
 //			throw new AlgorithmExecutionException(e.getMessage(), e);
 			e.printStackTrace();
@@ -71,9 +78,11 @@ public class SessionWriter {
 		metadataColumnNameToHeaderIndex.put(
 			Utilities.DATUM_INDEX_METADATA_KEY, metadataColumnNameToHeaderIndex.size());
 		metadataColumnNameToHeaderIndex.put(
+			Utilities.ZIPPED_FILE_NAME_KEY, metadataColumnNameToHeaderIndex.size());
+		metadataColumnNameToHeaderIndex.put(
 			Utilities.FILE_NAME_METADATA_KEY, metadataColumnNameToHeaderIndex.size());
 		metadataColumnNameToHeaderIndex.put(
-			Utilities.TARGET_MIME_TYPE_METADATA_KEY, metadataColumnNameToHeaderIndex.size());
+			Utilities.TOOL_MIME_TYPE_METADATA_KEY, metadataColumnNameToHeaderIndex.size());
 
 		for (Pair<Data, String> outputDatum : outputData) {
 			Dictionary<String, Object> metadata = outputDatum.getFirstObject().getMetadata();
@@ -100,37 +109,51 @@ public class SessionWriter {
 	}
 
 	// 1
+	private String formZippedFileName(Data datum) {
+		String zippedFileName = String.format(
+			"Data_%d_%s", datum.hashCode(), ((File) datum.getData()).getName());
+
+		return zippedFileName;
+	}
+
+	// 1
 	private void writeMetadataEntry(
 			CSVWriter metadataWriter,
 			int datumIndex,
+			String zippedFileName,
 			Data inputDatum,
 			Data outputDatum,
-			String targetMimeType,
+			String toolMimeType,
 			Map<String, Integer> metadataColumnNameToHeaderIndex,
-			Map<Data, Integer> outputDataToIndex) {
+			Map<Data, Integer> outputDataToIndex,
+			BiMap<Data, Data> originalToConvertedData) {
 		String fileName = ((File) outputDatum.getData()).getName();
+		
 		String[] entry = makeEntry(
 			datumIndex,
+			zippedFileName,
 			fileName,
-			targetMimeType,
+			toolMimeType,
 			inputDatum.getMetadata(),
 			metadataColumnNameToHeaderIndex,
-			outputDataToIndex);
+			outputDataToIndex,
+			originalToConvertedData);
+		
 		metadataWriter.writeNext(entry);
 	}
 
 	// 1
 	private void writeSessionFile(
 			File metadataFile,
-			Collection<File> outputFiles,
+			Map<File, String> outputFileToEntryName,
+//			Collection<File> outputFiles,
 			File targetSessionFile) throws ZipIOException {
-		Map<File, String> fileToZippedName = new LinkedHashMap<File, String>();
-		String metadataZippedFileName = Utilities.FULL_METADATA_FILE_NAME;
-		fileToZippedName.put(metadataFile, metadataZippedFileName);
+		Map<File, String> fileToZippedName = new LinkedHashMap<File, String>(outputFileToEntryName);
+		fileToZippedName.put(metadataFile, Utilities.FULL_METADATA_FILE_NAME);
 
-		for (File outputFile : outputFiles) {
+		/*for (File outputFile : outputFiles) {
 			fileToZippedName.put(outputFile, outputFile.getName());
-		}
+		}*/
 
 		ZipUtilities.zipFilesWithNames(fileToZippedName, targetSessionFile);
 //		ZipUtilities.zipFiles(outputFiles, this.targetSessionFile);
@@ -153,32 +176,33 @@ public class SessionWriter {
 	// 2
 	private String[] makeEntry(
 			int datumIndex,
+			String zippedFileName,
 			String fileName,
-			String targetMimeType,
+			String toolMimeType,
 			Dictionary<String, Object> metadata,
 			Map<String, Integer> metadataColumnNameToHeaderIndex,
-			Map<Data, Integer> outputDataToIndex) {
+			Map<Data, Integer> outputDataToIndex,
+			BiMap<Data, Data> originalToConvertedData) {
 		String[] entry = new String[metadataColumnNameToHeaderIndex.size()];
 		entry[metadataColumnNameToHeaderIndex.get(Utilities.DATUM_INDEX_METADATA_KEY)] =
 			Integer.toString(datumIndex);
+		entry[metadataColumnNameToHeaderIndex.get(Utilities.ZIPPED_FILE_NAME_KEY)] =
+			zippedFileName;
 		entry[metadataColumnNameToHeaderIndex.get(Utilities.FILE_NAME_METADATA_KEY)] = fileName;
-		entry[metadataColumnNameToHeaderIndex.get(Utilities.TARGET_MIME_TYPE_METADATA_KEY)] =
-			targetMimeType;
+		entry[metadataColumnNameToHeaderIndex.get(Utilities.TOOL_MIME_TYPE_METADATA_KEY)] =
+			toolMimeType;
 
 		for (String key : metadataColumnNameToHeaderIndex.keySet()) {
-			if (!Utilities.DATUM_INDEX_METADATA_KEY.equals(key) &&
-					!Utilities.FILE_NAME_METADATA_KEY.equals(key) &&
-					!Utilities.TARGET_MIME_TYPE_METADATA_KEY.equals(key) &&
-					!DataProperty.SERVICE_REFERENCE.equals(key)) {
+			if (!Utilities.DEFAULT_METADATA_KEYS.contains(key)) {
 				int index = metadataColumnNameToHeaderIndex.get(key);
 				Object metadataProperty = metadata.get(key);
 
 				if (metadataProperty != null) {
 					if (DataProperty.PARENT.equals(key)) {
-						System.err.println("DATA NAME: " + metadata.get(DataProperty.LABEL));
-						Data parent = (Data) metadataProperty;
-						int parentIndex = outputDataToIndex.get(parent);
-						entry[index] = Integer.toString(parentIndex);
+						Data rawParent = (Data) metadataProperty;
+						Data actualParent = originalToConvertedData.get(rawParent);
+						int actualParentIndex = outputDataToIndex.get(actualParent);
+						entry[index] = Integer.toString(actualParentIndex);
 					} else {
 						entry[index] = metadataProperty.toString();
 					}

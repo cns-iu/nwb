@@ -3,12 +3,10 @@ package edu.iu.cns.persistence.session.restore;
 import java.util.Dictionary;
 
 import org.cishell.app.service.datamanager.DataManagerService;
-import org.cishell.app.service.fileloader.FileLoaderService;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.cishell.service.conversion.DataConversionService;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
@@ -28,21 +26,7 @@ public class SessionValidatorAlgorithmFactory implements AlgorithmFactory {
     		this.bundleContext.getServiceReference(LogService.class.getName()));
 		DataManagerService dataManager = (DataManagerService) this.bundleContext.getService(
     		this.bundleContext.getServiceReference(DataManagerService.class.getName()));
-		DataConversionService dataConverter =
-			(DataConversionService) this.bundleContext.getService(
-				this.bundleContext.getServiceReference(DataConversionService.class.getName()));
-		FileLoaderService fileLoader =
-			(FileLoaderService) this.bundleContext.getService(
-				this.bundleContext.getServiceReference(FileLoaderService.class.getName()));
 
-		return new SessionValidatorAlgorithm(
-			this.bundleContext,
-			ciShellContext,
-			inputData,
-			fileName,
-			logger,
-			dataManager,
-			dataConverter,
-			fileLoader);
+		return new SessionValidatorAlgorithm(fileName, logger, dataManager);
 	}
 }

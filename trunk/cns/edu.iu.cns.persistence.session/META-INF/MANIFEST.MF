@@ -5,15 +5,18 @@ Bundle-SymbolicName: edu.iu.cns.persistence.session
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
+ com.google.common.base,
  com.google.common.collect,
  edu.berkeley.guir.prefuse.graph,
  edu.uci.ics.jung.graph,
  org.cishell.app.service.datamanager;version="1.0.0",
  org.cishell.app.service.fileloader,
+ org.cishell.app.service.filesaver,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.framework.userprefs;version="1.0.0",
+ org.cishell.reference.service.metatype,
  org.cishell.service.conversion;version="1.0.0",
  org.cishell.utilities,
  org.osgi.framework;version="1.3.0",
@@ -24,4 +27,5 @@ Import-Package: au.com.bytecode.opencsv,
  org.osgi.service.prefs;version="1.1.0",
  prefuse.data
 X-AutoStart: true
-Service-Component: OSGI-INF/save/save.xml, OSGI-INF/validator/validator.xml, OSGI-INF/component.xml
+Service-Component: OSGI-INF/import/import.xml, OSGI-INF/export/export.xml, OSGI-INF/validator/validator.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Restore Session" id="edu.iu.cns.persistence.session.restore.RestoreSessionAlgorithm.OCD"
-		 description="This algorithm restores a previously-saved session. ">
+	<OCD name="Restore Session" id="edu.iu.cns.persistence.session.restore.ImportSessionAlgorithm.OCD"
+		 	description="This algorithm restores a previously-saved session. ">
 	</OCD>
-	<Designate pid="edu.iu.cns.persistence.session.restore.RestoreSessionAlgorithm">
-		<Object ocdref="edu.iu.cns.persistence.session.restore.RestoreSessionAlgorithm.OCD" />
+	<Designate pid="edu.iu.cns.persistence.session.restore.ImportSessionAlgorithm">
+		<Object ocdref="edu.iu.cns.persistence.session.restore.ImportSessionAlgorithm.OCD" />
+	</Designate>
+
+	<OCD name="Save Session" id="edu.iu.cns.persistence.session.save.ExportSessionAlgorithm.OCD"
+		 	description="This algorithm saves the current session to a chosen file. ">
+	</OCD>
+	<Designate pid="edu.iu.cns.persistence.session.save.ExportSessionAlgorithm">
+		<Object ocdref="edu.iu.cns.persistence.session.save.ExportSessionAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

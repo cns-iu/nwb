@@ -1,9 +1,9 @@
 package edu.iu.cns.persistence.session.save;
 
-import java.io.File;
 import java.util.Dictionary;
 
 import org.cishell.app.service.datamanager.DataManagerService;
+import org.cishell.app.service.filesaver.FileSaverService;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
@@ -13,7 +13,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
-public class SaveSessionAlgorithmFactory implements AlgorithmFactory {
+public class ExportSessionAlgorithmFactory implements AlgorithmFactory {
 	private BundleContext bundleContext;
 
 	protected void activate(ComponentContext componentContext) {
@@ -22,8 +22,6 @@ public class SaveSessionAlgorithmFactory implements AlgorithmFactory {
 
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
-		File targetSessionFile = new File(
-			"C:\\Documents and Settings\\pataphil\\Desktop\\Sessions\\testSavedSession.zip");
 		LogService logger = (LogService) this.bundleContext.getService(
     		this.bundleContext.getServiceReference(LogService.class.getName()));
 		DataManagerService dataManager = (DataManagerService) this.bundleContext.getService(
@@ -31,8 +29,10 @@ public class SaveSessionAlgorithmFactory implements AlgorithmFactory {
 		DataConversionService dataConverter =
 			(DataConversionService) this.bundleContext.getService(
 				this.bundleContext.getServiceReference(DataConversionService.class.getName()));
+		FileSaverService fileSaver =
+			(FileSaverService) this.bundleContext.getService(
+				this.bundleContext.getServiceReference(FileSaverService.class.getName()));
 
-		return new SaveSessionAlgorithm(
-			this.bundleContext, targetSessionFile, logger, dataManager, dataConverter);
+		return new ExportSessionAlgorithm(logger, dataManager, dataConverter, fileSaver);
 	}
 }
