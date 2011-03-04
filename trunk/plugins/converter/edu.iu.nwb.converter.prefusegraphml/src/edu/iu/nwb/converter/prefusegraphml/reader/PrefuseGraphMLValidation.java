@@ -16,9 +16,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.UnicodeReader;
 
-import prefuse.data.Graph;
-import prefuse.data.io.DataIOException;
-
 public class PrefuseGraphMLValidation implements AlgorithmFactory {
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
@@ -39,16 +36,16 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         	
         	try {
         		if (validateGraphMLHeader(inGraphMLFile)) {
-	        		(new GraphMLReaderModified(false)).readGraph(
-	        			new FileInputStream(inGraphMLFileName));
+	        		/*(new GraphMLReaderModified(false)).readGraph(
+	        			new FileInputStream(inGraphMLFileName));*/
 
 	        		return createOutData(inGraphMLFile);
         		} else {
             		throw new AlgorithmExecutionException("Unable to validate GraphML file.");
         		}
-        	} catch (DataIOException e) {
+        	} /* catch (DataIOException e) {
 				throw new AlgorithmExecutionException(e.getMessage(), e);
-        	} catch (SecurityException e) {
+        	} */ catch (SecurityException e) {
         		throw new AlgorithmExecutionException(e.getMessage(), e);
         	} catch (FileNotFoundException e) {
         		throw new AlgorithmExecutionException(e.getMessage(), e);

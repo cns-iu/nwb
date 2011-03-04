@@ -261,7 +261,14 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         		GUESS_ATTRIBUTE_ORIGINAL_LABEL,
         		GUESS_ATTRIBUTE_VISIBLE,
 //        		GUESS_ATTRIBUTE_WEIGHT,
-        		GUESS_ATTRIBUTE_WIDTH)));
+        		GUESS_ATTRIBUTE_WIDTH,
+        		SOURCE,
+        		TARGET)));
+
+        public static final Collection<String> NODE_ATTRIBUTES_TO_IGNORE_MULTIPLE_DECLARATIONS_OF =
+        	Collections.unmodifiableSet(new HashSet<String>());
+        public static final Collection<String> EDGE_ATTRIBUTES_TO_IGNORE_MULTIPLE_DECLARATIONS_OF =
+        	Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(SOURCE, TARGET)));
         
         public void startElement(
         		String namespaceURI, String localName, String attributeName, Attributes attributes)
@@ -378,20 +385,30 @@ public class GraphMLReaderModified extends AbstractGraphReader {
             }
             
             try {
-                Class type = parseType(this.typeAttribute);
+                Class<?> type = parseType(this.typeAttribute);
                 Object defaultValue =
                 	(this.defaultValue == null ? null : parse(this.defaultValue, type));
                 
                 if ((this.forAttribute == null) || this.forAttribute.equals(ALL)) {
-                    this.nodeSchema.addColumn(this.nameAttribute, type, defaultValue);
-                    this.edgeSchema.addColumn(this.nameAttribute, type, defaultValue);
+//                    this.nodeSchema.addColumn(type, defaultValue);
+                	addNodeColumn(type, defaultValue);
+//                    this.edgeSchema.addColumn(this.nameAttribute, type, defaultValue);
+                	addEdgeColumn(type, defaultValue);
                 } else if (this.forAttribute.equals(NODE)) {
-                	if (this.cleanForGUESS) {
-                		System.err.println("adding " + this.nameAttribute);
-                	}
-                    this.nodeSchema.addColumn(this.nameAttribute, type, defaultValue);
+//                    this.nodeSchema.addColumn(this.nameAttribute, type, defaultValue);
+                	addNodeColumn(type, defaultValue);
                 } else if (this.forAttribute.equals(EDGE)) {
-                    this.edgeSchema.addColumn(this.nameAttribute, type, defaultValue);
+                	System.err.println(String.format(
+                		"addColumn for edge: %s, %s, %s", this.nameAttribute, type, defaultValue));
+                	System.err.println("\tedgeSchema:");
+                	for (int ii = 0; ii < edgeSchema.getColumnCount(); ii++) {
+                		System.err.println(String.format(
+                			"\t\t%s: %s",
+                			edgeSchema.getColumnName(ii),
+                			edgeSchema.getColumnType(ii).getName()));
+                	}
+                	addEdgeColumn(type, defaultValue);
+//                    this.edgeSchema.addColumn(this.nameAttribute, type, defaultValue);
                 } else {
                 	throw new SAXException(
             			"Unrecognized \"" + FOR + "\" value: " + this.forAttribute);
@@ -404,22 +421,42 @@ public class GraphMLReaderModified extends AbstractGraphReader {
             	throw new SAXException(e);
             }
         }
+
+        private void addNodeColumn(Class<?> typeClazz, Object defaultValue) {
+        	addColumn(this.nodeSchema, typeClazz, defaultValue);
+        }
+
+        private void addEdgeColumn(Class<?> typeClazz, Object defaultValue) {
+        	addColumn(this.edgeSchema, typeClazz, defaultValue);
+        }
+
+        private void addColumn(Schema schema, Class<?> typeClazz, Object defaultValue) {
+        	boolean freshDeclaration = (this.nodeSchema.getColumnIndex(this.nameAttribute) == -1);
+        	System.err.println(String.format("freshDeclaration: %s", freshDeclaration));
+        	boolean duplicateDeclarationAllowed = 
+        		!NODE_ATTRIBUTES_TO_IGNORE_MULTIPLE_DECLARATIONS_OF.contains(this.nameAttribute);
+        	System.err.println(String.format("duplicateDeclarationAllowed: %s", duplicateDeclarationAllowed));
+
+        	if (freshDeclaration || (!freshDeclaration && duplicateDeclarationAllowed)) {
+        		schema.addColumn(this.nameAttribute, typeClazz, defaultValue);
+        	}
+        }
         
         protected Class parseType(String type) throws SAXException {
             type = type.toLowerCase();
-            if ( type.equals(INT) || type.equals(INTEGER) ) {
+            if (type.equals(INT) || type.equals(INTEGER) ) {
                 return int.class;
-            } else if ( type.equals(LONG) ) {
+            } else if (type.equals(LONG)) {
                 return long.class;
-            } else if ( type.equals(FLOAT) ) {
+            } else if (type.equals(FLOAT)) {
                 return float.class;
-            } else if ( type.equals(DOUBLE) || type.equals(REAL)) {
+            } else if (type.equals(DOUBLE) || type.equals(REAL)) {
                 return double.class;
-            } else if ( type.equals(BOOLEAN) ) {
+            } else if (type.equals(BOOLEAN)) {
                 return boolean.class;
-            } else if ( type.equals(STRING) ) {
+            } else if (type.equals(STRING)) {
                 return String.class;
-            } else if ( type.equals(DATE) ) {
+            } else if (type.equals(DATE)) {
                 return Date.class;
             } else {
                 throw new SAXException("Unrecognized data type: "+type);
