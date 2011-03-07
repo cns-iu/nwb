@@ -22,6 +22,10 @@ import org.eclipse.swt.widgets.Text;
 
 import edu.iu.sci2.database.star.extract.common.aggregate.AggregateFunction;
 
+/** This class is T in AttributeWidgetFactory and AttributeListWidget.
+ * It's specifically meant for Generic-CSV database extraction GUIs.
+ * Each instance of this class corresponds to a single aggregate field in the resulting extraction.
+ */
 public class AttributeWidgetContainer {
 	public static final int AGGREGATE_FUNCTION_COLUMN_WIDTH = 45;
 	public static final int CORE_ENTITY_COLUMN_WIDTH = 80;
@@ -33,10 +37,22 @@ public class AttributeWidgetContainer {
 	private int index;
 	private ExpandableComponentWidget<AttributeWidgetContainer> componentWidget;
 
+	/** The widget that lets users choose the aggregate function to use for this field.
+	 */
 	private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> aggregateFunction;
+	/** The widget that lets users specify which column to aggregate on for this field.
+	 */
 	private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> coreEntityColumn;
+	/** The widget that lets users name this field.
+	 */
 	private SWTModelField<String, Text, TextDataSynchronizer> attributeNameField;
 
+	/** We try to be smart about suggesting a default field name (attributeNameField) based on
+	 * the aggregate function (aggregateFunction) and
+	 * core entity column (coreEntityColumn) selected.
+	 * We only try to suggest default field names until the user has explicitly typed something in
+	 * attributeNameField; this is set to true when that happens.
+	 */
 	private boolean userEnteredCustomResultColumnLabelName = false;
 
 	public AttributeWidgetContainer(
@@ -45,22 +61,20 @@ public class AttributeWidgetContainer {
 			int index,
 			int uniqueIndex,
 			GridContainer scrolledAreaGrid,
-			int style)
-			throws UniqueNameException {
+			int style) throws UniqueNameException {
 		this.model = properties.model;
 		this.componentWidget = componentWidget;
 		this.index = index;
 
 		this.aggregateFunction = createAggregateFunction(
-			properties, componentWidget, "" + uniqueIndex, scrolledAreaGrid);
+			properties, "" + uniqueIndex, scrolledAreaGrid);
 		this.coreEntityColumn = createCoreEntityColumn(
 			properties,
-			componentWidget,
 			"" + uniqueIndex,
 			scrolledAreaGrid);
 		this.attributeNameField = createAttributeNameField(
-			properties, componentWidget, "" + uniqueIndex, uniqueIndex, scrolledAreaGrid);
-		createDeleteButton(this.componentWidget, scrolledAreaGrid);
+			properties, "" + uniqueIndex, uniqueIndex, scrolledAreaGrid);
+		createDeleteButton(scrolledAreaGrid);
 
 		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
@@ -114,6 +128,8 @@ public class AttributeWidgetContainer {
 		this.index = newIndex;
 	}
 
+	/** Dispose of this aggregate attribute. Not quite in the SWT sense, but almost.
+	 */
 	public void dispose() {
 		this.componentWidget.removeComponent(AttributeWidgetContainer.this.index);
 		this.aggregateFunction.dispose();
@@ -129,6 +145,10 @@ public class AttributeWidgetContainer {
 		this.attributeNameField.setValue(value);
 	}
 
+	/** originalValue is an aggregate function or core entity column name, both of which have
+	 * spaces in them. This method converts spaces into underscores and all alphabetic characters
+	 * to uppercase.
+	 */
 	private String suggestName_FixValue(String originalValue) {
 		String[] tokenized =
 			StringUtilities.tokenizeByWhitespace(originalValue);
@@ -137,13 +157,13 @@ public class AttributeWidgetContainer {
 		return reimplodedWithUnderscores.toUpperCase();
 	}
 
+	/** Create the aggregate function field, and wire it to have validation.
+	 */
 	private static SWTModelField<
 			String, Combo, DropDownDataSynchronizer<String>> createAggregateFunction(
 				AttributeWidgetProperties properties,
-				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 				String aggregateFunctionFieldName,
-				GridContainer scrolledAreaGrid)
-				throws UniqueNameException {
+				GridContainer scrolledAreaGrid) throws UniqueNameException {
 		Map<String, AggregateFunction> aggregateFunctionsByHumanReadableNames;
 		Map<String, String> sqlNamesByHumanReadableNames;
 
@@ -167,8 +187,6 @@ public class AttributeWidgetContainer {
 				0,
 				aggregateFunctionsByHumanReadableNames.keySet(),
 				sqlNamesByHumanReadableNames,
-//				AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet(),
-//				AggregateFunction.SQL_NAMES_BY_HUMAN_READABLE_NAMES,
 				scrolledAreaGrid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		aggregateFunction.getWidget().setLayoutData(createAggregateFunctionLayoutData());
@@ -188,10 +206,11 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
+	/** Create the core entity column field, and wire it to have validation.
+	 */
 	private static SWTModelField<
 			String, Combo, DropDownDataSynchronizer<String>> createCoreEntityColumn(
 				AttributeWidgetProperties properties,
-				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 				String coreEntityColumnFieldName,
 				GridContainer scrolledAreaGrid) throws UniqueNameException {
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> coreEntityColumn =
@@ -217,10 +236,11 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
+	/** Create the attribute name field, and wire it to have validation.
+	 */
 	private SWTModelField<
 			String, Text, TextDataSynchronizer> createAttributeNameField(
 				AttributeWidgetProperties properties,
-				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 				String attributeFieldName,
 				int uniqueIndex,
 				GridContainer scrolledAreaGrid)
@@ -251,9 +271,7 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
-	private Button createDeleteButton(
-			final ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
-			GridContainer grid) {
+	private Button createDeleteButton(GridContainer grid) {
 		Button deleteButton = new Button(grid.getActualParent(), SWT.PUSH);
 		deleteButton.setLayoutData(createDeleteButtonLayoutData());
 		deleteButton.setText(DELETE_BUTTON_TEXT);
