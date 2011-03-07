@@ -19,6 +19,8 @@ import edu.iu.sci2.database.star.common.entity.CoreEntityManager;
 import edu.iu.sci2.database.star.common.entity.LeafEntityManager;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
+/** Given the input parameters (to parse()), parse the input CSV file as a relational database.
+ */
 public class CSVModelParser {
 	public static DatabaseModel parse(
 			String coreEntityDisplayName,

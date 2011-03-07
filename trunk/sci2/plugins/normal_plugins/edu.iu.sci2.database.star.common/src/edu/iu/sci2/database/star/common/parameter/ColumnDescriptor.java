@@ -2,6 +2,13 @@ package edu.iu.sci2.database.star.common.parameter;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 
+/** Metadata about a column on a database table.
+ * Columns are either on the core table or a leaf table.
+ * If isCoreColumn is true, databaseName is both the database table name and the column name. (So,
+ * databaseName.databaseName would result in the exact column name in an SQL query.)
+ * columnIndex, isMultiValued, shouldMergeIdenticalValues, and separator are all used strictly
+ * during database creation.
+ */
 public class ColumnDescriptor {
 	private int columnIndex;
 	private String name;

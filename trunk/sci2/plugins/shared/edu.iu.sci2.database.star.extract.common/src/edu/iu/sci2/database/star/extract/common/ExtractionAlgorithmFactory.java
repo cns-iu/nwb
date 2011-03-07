@@ -17,7 +17,9 @@ public abstract class ExtractionAlgorithmFactory implements AlgorithmFactory {
 	public static final int WINDOW_WIDTH = 1000;
 	public static final int WINDOW_HEIGHT = 600;
 
-	// TODO Use CIShell constants, if available, and use to build out Data also.  Enumeration & change return type of extractionType
+	/* TODO: Use CIShell constants, if available, and use to build out Data also.
+	 * Enumeration & change return type of extractionType
+	 */
 	public static final String NETWORK_EXTRACTION_TYPE = "network";
 	public static final String TABLE_EXTRACTION_TYPE = "table";
 

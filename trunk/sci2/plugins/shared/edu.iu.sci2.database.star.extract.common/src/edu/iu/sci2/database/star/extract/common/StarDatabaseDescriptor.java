@@ -5,10 +5,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
+/**
+ * metadata -- the metadata for this Generic-CSV database. It's created when the Generic-CSV is
+ * created, and passed as a CIShell Data metadata entry.
+ * coreTableDescriptor -- metadata on the core table.
+ * allColumnDescriptorsByName -- all of the columns' metadata, mapped by their respective
+ * display name.
+ * allColumnDescriptorsBySQLName -- all of the columns' metadata, mapped by their respective
+ * database name.
+ * coreColumnDescriptorsByName -- all of the core table columns' metadata, mapped by their
+ * respective display name.
+ * leafColumnDescriptorsByName -- all of the leaf table columns' metadata, mapped by their
+ * respective display name.
+ * leafColumnDescriptorsBySQLName -- all of the leaf table columns' metadata, mapped by their
+ * respective database name.
+ */
 public class StarDatabaseDescriptor {
 	private StarDatabaseMetadata metadata;
 	private CoreTableDescriptor coreTableDescriptor;
@@ -17,7 +31,6 @@ public class StarDatabaseDescriptor {
 	private Map<String, ColumnDescriptor> allColumnDescriptorsBySQLName =
 		new HashMap<String, ColumnDescriptor>();
 	private Map<String, ColumnDescriptor> coreColumnDescriptorsByName;
-//	private Map<String, ColumnDescriptor> coreColumnDescriptorsBySQLName;
 	private Map<String, ColumnDescriptor> leafColumnDescriptorsByName;
 	private Map<String, ColumnDescriptor> leafColumnDescriptorsBySQLName;
 
@@ -29,31 +42,10 @@ public class StarDatabaseDescriptor {
 
 		this.coreColumnDescriptorsByName =
 			constructCoreColumnDescriptorsByName(this.allColumnDescriptorsByName);
-
 		this.leafColumnDescriptorsByName =
 			constructLeafColumnDescriptorsByName(this.allColumnDescriptorsByName);
 		this.leafColumnDescriptorsBySQLName =
 			constructLeafColumnDescriptorsBySQLName(this.allColumnDescriptorsBySQLName);
-
-		if (leafColumnDescriptorsByName.size() == 0) {
-			// TODO: Hack!
-//			ColumnDescriptor corePrimaryKeyColumnDescriptor = new ColumnDescriptor(
-//				metadata.getColumnDescriptorsByHumanReadableName().size(),
-//				metadata.getCoreEntityHumanReadableName() + " Primary Key",
-//				"PK",
-//				DerbyFieldType.INTEGER,
-//				true,
-//				false,
-//				false,
-//				"");
-//			this.allColumnDescriptorsByName.put(
-//				corePrimaryKeyColumnDescriptor.getName(),
-//				corePrimaryKeyColumnDescriptor);
-//			this.allColumnDescriptorsBySQLName.put(
-//				corePrimaryKeyColumnDescriptor.getNameForDatabase(),
-//				corePrimaryKeyColumnDescriptor);
-		}
-
 		this.coreTableDescriptor = new CoreTableDescriptor(
 			this.metadata.getCoreEntityHumanReadableName(),
 			this.metadata.getCoreEntityTableName(),

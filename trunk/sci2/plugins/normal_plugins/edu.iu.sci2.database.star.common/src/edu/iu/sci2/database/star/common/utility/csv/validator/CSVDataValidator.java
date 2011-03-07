@@ -11,13 +11,19 @@ import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
 import edu.iu.sci2.database.star.common.utility.csv.validator.exception.CSVBodyValidationException;
 import edu.iu.sci2.database.star.common.utility.csv.validator.exception.CSVHeaderValidationException;
 
+/** This class is designed to provide a general way to validate CSV files.
+ * It could probably benefit other code that reads CSVs, but only have further
+ * testing and verification.
+ * The basic idea is, the CSVDataValidator is general, but takes a specific CSVDataValidationRules
+ * that validates certain things (the header and each row as its read). 
+ */
 public class CSVDataValidator {
 	private CSVReader reader;
 	private CSVDataValidationRules rules;
 	private boolean hasValidatedHeader = false;
 
 	public CSVDataValidator(Data data, CSVDataValidationRules rules) throws IOException {
-		this((File)data.getData(), rules);
+		this((File) data.getData(), rules);
 	}
 
 	public CSVDataValidator(File file, CSVDataValidationRules rules) throws IOException {
@@ -39,9 +45,8 @@ public class CSVDataValidator {
 			this.rules.validateHeader(header);
 			this.hasValidatedHeader = true;
 		} catch (IOException e) {
-			String exceptionMessage =
-				"An error occurred when attempting to read the header: " +
-				"\"" + e.getMessage() + "\"";
+			String exceptionMessage = String.format(
+				"An error occurred when attempting to read the header: \"%s\"", e.getMessage());
 			throw new CSVHeaderValidationException(exceptionMessage, e);
 		}
 	}
@@ -67,9 +72,8 @@ public class CSVDataValidator {
 				this.rules.validateRow(row);
 			}
 		} catch (IOException e) {
-			String exceptionMessage =
-				"An error occurred when attempting to read the next row: " +
-				"\"" + e.getMessage() + "\"";
+			String exceptionMessage = String.format(
+				"An error occurred when attempting to read the next row: \"%s\"", e.getMessage());
 			throw new CSVBodyValidationException(exceptionMessage, e);
 		}
 	}

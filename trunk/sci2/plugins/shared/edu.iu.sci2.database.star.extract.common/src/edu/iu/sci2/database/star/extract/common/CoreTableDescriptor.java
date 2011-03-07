@@ -12,6 +12,15 @@ import org.cishell.utilities.MapUtilities;
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
+/**
+ * coreEntityHumanReadableName -- the display label of the core table.
+ * coreEntityTableName -- the database name of the core table.
+ * columnNamesByLabels -- the display labels of the core table columns mapped to the
+ * database columns names.
+ * columnNames -- the core table database column names.
+ * columnNamesForAggregates -- the list of core table column names to use for the aggregate field
+ * widgets.
+ */
 public class CoreTableDescriptor {
 	public static final Collection<String> TYPES_OF_COLUMNS_FOR_AGGREGATES = Arrays.asList(
 		DerbyFieldType.INTEGER.getDerbyQueryStringRepresentation());
@@ -26,13 +35,6 @@ public class CoreTableDescriptor {
 	private Map<String, String> columnNamesByLabels;
 	private Collection<String> columnNames;
 	private Collection<String> columnNamesForAggregates;
-
-//	public CoreTableDescriptor(StarDatabaseMetadata metadata) {
-//		this(
-//			metadata.getCoreEntityHumanReadableName(),
-//			metadata.getCoreEntityTableName(),
-//			constructColumnNamesByLabels(metadata));
-//	}
 
 	public CoreTableDescriptor(
 			String coreEntityHumanReadableName,

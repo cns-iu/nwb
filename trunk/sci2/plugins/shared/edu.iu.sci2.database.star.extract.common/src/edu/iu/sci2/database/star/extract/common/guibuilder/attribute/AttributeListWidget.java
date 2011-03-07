@@ -13,6 +13,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+/** In the various extraction GUIs, each aggregate field area corresponds to one of these guys.
+ */
 public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidgetContainer> {
 	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute";
 	public static final String REMOVE_ALL_BUTTON_TEXT_FORMAT = "Remove All %s Fields";
@@ -34,6 +36,8 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 		return 4;
 	}
 
+	/** Aggregate Function Selection Combo, Column Selection Combo, Field Name Text, Delete Button
+	 */
 	@Override
 	public Collection<String> createColumnLabelTexts() {
 		List<String> columnLabelTexts = Arrays.asList(
@@ -45,11 +49,15 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 		return columnLabelTexts;
 	}
 
+	/** We don't need a footer.
+	 */
 	@Override
 	protected Composite createFooterArea() {
 		return null;
 	}
 
+	/** This gets added to the header.
+	 */
 	private Button createAddAttributeButton(Composite parent, String type) {
 		Button addAttributeButton = new Button(parent, SWT.PUSH);
 		addAttributeButton.setLayoutData(createAddAttributeButtonLayoutData());
@@ -81,6 +89,8 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 		return layoutData;
 	}
 
+	/** This gets added to the header.
+	 */
 	private Button createRemoveAllAttributesButton(Composite parent, String type) {
 		Button removeAllAttributesButton = new Button(parent, SWT.PUSH);
 		removeAllAttributesButton.setLayoutData(createRemoveAllAttributesButtonLayoutData());

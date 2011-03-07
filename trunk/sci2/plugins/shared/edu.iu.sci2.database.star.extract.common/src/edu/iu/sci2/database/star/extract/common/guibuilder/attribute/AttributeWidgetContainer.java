@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 
 import edu.iu.sci2.database.star.extract.common.aggregate.AggregateFunction;
 
-/** This class is T in AttributeWidgetFactory and AttributeListWidget.
+/** This class is T in AttributeWidgetFactory<T> and AttributeListWidget<T>.
  * It's specifically meant for Generic-CSV database extraction GUIs.
  * Each instance of this class corresponds to a single aggregate field in the resulting extraction.
  */

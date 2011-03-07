@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.cishell.utilities.StringUtilities;
-
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 import edu.iu.sci2.database.star.extract.common.aggregate.Aggregate;
 import edu.iu.sci2.database.star.extract.common.aggregate.LeafAggregate;

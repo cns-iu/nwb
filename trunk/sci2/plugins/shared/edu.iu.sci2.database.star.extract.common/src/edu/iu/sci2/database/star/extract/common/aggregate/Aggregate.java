@@ -4,7 +4,13 @@ import java.util.Map;
 
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
-
+/** Each aggregate entry that the user created (in any of the extractions) translates to
+ * one of these.
+ * name -- the name of this aggregate field.
+ * function -- the aggregate function to use when aggregating over the column represented by
+ * targetColumnDescriptor.
+ * targetColumnDescriptor -- represents a column in one of the database tables.
+ */
 public class Aggregate {
 	private String name;
 	private AggregateFunction function;
