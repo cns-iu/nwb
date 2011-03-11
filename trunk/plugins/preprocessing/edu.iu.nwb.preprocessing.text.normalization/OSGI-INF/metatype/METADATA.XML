@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Normalize Text" id="edu.iu.nwb.preprocessing.text.normalization.StandardNormalizer.OCD"
+	<OCD name="Lowercase, Tokenize, Stem, and Stopword Text" id="edu.iu.nwb.preprocessing.text.normalization.StandardNormalizer.OCD"
 		 description=" ">
 		 <AD name="Stopword List" id="stopWordListFile" type="String" description="The file that specifies your list of stop words to use" default="file:"/>
 		 <AD name="New Separator" id="separator" type="String" description="The separator to use for the normalized text" default="|"/>
