@@ -18,8 +18,9 @@ import edu.iu.sci2.preprocessing.geocoder.coders.Geocoder;
  * @author cdtank
  *
  */
-public final class GeocoderComputation {
+public final class GeocoderComputation implements Computation {
 	
+	private static GeocoderComputation instance;
 	public static final String[] LATITUDE_COLUMN_NAME_SUGGESTIONS = { "Latitude", "Lat" };
 	public static final String[] LONGITUDE_COLUMN_NAME_SUGGESTIONS = { "Longitude", "Lon" };
 	public static final Geolocation DEFAULT_NO_LOCATION_VALUE = new Geolocation(null, null);
@@ -27,12 +28,20 @@ public final class GeocoderComputation {
 	private GeocoderComputation() {
 	}
 	
+	public static GeocoderComputation getInstance() {
+		if (instance == null) {
+			instance = new GeocoderComputation(); 
+		}
+		
+		return instance;
+	}
+	
 	/*
 	 * Input data from the "Place_Column_Name" is obtained from the original table & Lookups 
 	 * are made to appropriate maps. After processing all rows, the new output table is
 	 * returned having original data and 2 new columns for Latitude & Longitude. 
 	 */
-	public static Table compute(
+	public Table compute(
 			String locationColumnName,
 			Table originalTable,
 			LogService logger,

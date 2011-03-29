@@ -34,6 +34,7 @@ public abstract class AbstractGeocoderFactory implements AlgorithmFactory, Param
 	public static final String PLACE_NAME_COLUMN = "place_name_column";
 	public static final String PLACE_TYPE = "place_type";
 	public static final String APPLICATION_ID = "application_id";
+	public static final String ENABLE_DETAIL = "details";
 	
 	public static final String ADDRESS = "Address";
 	public static final String COUNTRY = "Country";
@@ -61,9 +62,15 @@ public abstract class AbstractGeocoderFactory implements AlgorithmFactory, Param
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
 		
+		Computation computation = GeocoderComputation.getInstance();
 		if (FamilyOfGeocoders.FAMILY_TYPE.Yahoo.equals(this.familyGeocoder.getFamilyType())) {
 			YahooFamilyOfGeocoder.class.cast(familyGeocoder).
 									setApplicationId((String) parameters.get(APPLICATION_ID));
+			
+			/* If the user request for detail from the geocoding result */
+			if ((Boolean.class.cast(parameters.get(ENABLE_DETAIL)))) {
+				computation = DetailGeocoderComputation.getInstance();
+			}
 		}
 		LogService logger = (LogService) ciShellContext.getService(LogService.class.getName());
 		Table originalInputTable = (Table) data[0].getData();
@@ -75,7 +82,8 @@ public abstract class AbstractGeocoderFactory implements AlgorithmFactory, Param
 			logger,
 			originalInputTable,
 			locationColumnName,
-			geocoder);
+			geocoder,
+			computation);
 	}
 
 	public ObjectClassDefinition mutateParameters(

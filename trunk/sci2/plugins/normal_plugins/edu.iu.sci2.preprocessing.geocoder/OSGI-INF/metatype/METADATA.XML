@@ -14,6 +14,7 @@
 		<AD name="Yahoo Application ID" id="application_id" type="String" description="Please obtain a Yahoo Place Finder application ID from \nhttp://developer.yahoo.com/geo/placefinder/" default=""/>
 		<AD name="Place Type" id="place_type" type="String" description="Select the type of place: State, Country, Zip Code or Address" default="Address"/>
 		<AD name="Place Name Column" id="place_name_column" type="String" description="Find longitudes and latitudes for the place names in this column" default=""/>
+		<AD name="Include address details" id="details" type="Boolean" description="Include additional address details from Yahoo! such as county, ZIP code, city, etc." default="false"/>
 	</OCD>
 	<Designate pid="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm">
 		<Object ocdref="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD" />

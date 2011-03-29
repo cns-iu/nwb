@@ -32,22 +32,25 @@ public class GeocoderAlgorithm implements Algorithm {
 	private Table originalInputTable;
 	private String locationColumnName;
 	private Geocoder geocoder;
+	private Computation computation;
     
     public GeocoderAlgorithm(
     		Data[] data,
     		LogService logger,
     		Table originalInputTable,
     		String locationColumnName,
-    		Geocoder geocoder) {
+    		Geocoder geocoder,
+    		Computation computation) {
         this.data = data;
 		this.logger = logger;
 		this.originalInputTable = originalInputTable;
 		this.locationColumnName = locationColumnName;
 		this.geocoder = geocoder;
+		this.computation = computation;
 	}
 
 	public Data[] execute() {
-		Table outputTable = GeocoderComputation.compute(
+		Table outputTable = computation.compute(
 			this.locationColumnName, this.originalInputTable, this.logger, this.geocoder);
 		
 		/*

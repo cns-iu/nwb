@@ -27,7 +27,8 @@ import edu.iu.sci2.preprocessing.geocoder.coders.yahoo.placefinder.beans.ResultS
  *
  */
 public final class PlaceFinderClient {
-	public static final int NUMBER_OF_RETRY = 3;
+	public static final int UTF8_ERROR_CODE = 102; /* UTF8 error code from Yahoo! */
+	public static final int NUMBER_OF_RETRIES = 3;
 	public static final int BUFFER_SIZE = 4096;
 	public static final String GET_METHOD = "GET";
 	public static final String SERVICE_EPR = "http://where.yahooapis.com/geocode?";
@@ -139,7 +140,17 @@ public final class PlaceFinderClient {
 		String responseString = query(GET_METHOD, url);
 		
 		/* Parse responseString to ResultSet */
-		return generateResultSet(responseString);
+		ResultSet resultSet = generateResultSet(responseString);
+		
+		/* Fix UTF8 error and re-geocoding */
+		if (resultSet.getError().intValue() == UTF8_ERROR_CODE) {
+			URL urlUTF8 = new URL(new String(url.toString().getBytes(), "UTF-8"));
+			
+			responseString = query(GET_METHOD, urlUTF8);
+			resultSet = generateResultSet(responseString);
+		}
+		
+		return resultSet;
 	}
     
 	/*
@@ -153,7 +164,12 @@ public final class PlaceFinderClient {
 		UnmarshallerJAXB unmarshallerJAXB = UnmarshallerJAXB.newInstance(schemaURL);
 		if (unmarshallerJAXB != null) {
 			StringReader reader = new StringReader(inputString);
-			return unmarshallerJAXB.unmarshal(reader);
+			try {
+				return unmarshallerJAXB.unmarshal(reader);
+			} catch (JAXBException e) {
+				reader = removeWoeIdAndWoeType(inputString);
+				return unmarshallerJAXB.unmarshal(reader);
+			}
 		}
 		
 		/* Generate error code due to Yahoo schema changed */
@@ -162,10 +178,15 @@ public final class PlaceFinderClient {
 		resultSet.setErrorMessage("Failed to unmarshal due to XML schema changed");
 		return resultSet;
 	}
+
+	/* Try to fixed unmarshaller problem with empty WOE entities */
+	private static StringReader removeWoeIdAndWoeType(String inputString) {
+		return new StringReader(inputString.replace("<woeid></woeid>", "").replace("<woetype></woetype>", ""));
+	}
     
-	private static String query(String method, URL url) throws IOException {
-	
-		int retry = NUMBER_OF_RETRY;
+	private static String query(String method, URL url) throws IOException {	
+		int retry = NUMBER_OF_RETRIES;
+		
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod(method);
 		
@@ -173,13 +194,14 @@ public final class PlaceFinderClient {
 		while (retry > 0) {
 			try {
 				connection.connect();
-				retry = 0;
+				break;
 			} catch (Exception e) {
 				/* Retry */
 				connection.disconnect();
 				retry--;
 			}
 		}
+		
 		InputStream inputStream = connection.getInputStream();
 		StringBuilder response = new StringBuilder();
 		
