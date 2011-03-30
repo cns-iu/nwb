@@ -2,6 +2,8 @@ package edu.iu.sci2.help.documentation;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -16,19 +18,15 @@ import org.eclipse.swt.widgets.Shell;
 //the important part of this plugin. 
 //A dialog box which links to various online documentation for Sci2.
 public class DocumentationDialog extends Dialog {
-	private static final String MAIN_DOC_PAGE_TEXT = "<A>Main Sci2 Tool Website</A>";
-	private static final String MAIN_DOC_PAGE_URL = "https://sci2.cns.iu.edu/user";
-
-	private static final String ALL_ALGORITHMS_DOC_TEXT = "<A>Algorithms Documentation</A>";
-	private static final String ALL_ALGORITHMS_DOC_URL = "http://wiki.slis.indiana.edu:8080/display/ALGDOC";
-
-	private static final String ALL_SUPPORTED_FORMATS_DOC_TEXT = "<A>Supported Formats Documentation</A>";
-	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "http://wiki.slis.indiana.edu:8080/display/ALGDOC/Data+Formats";
 	
-	private static final String TUTORIALS_DOC_TEXT = "<A>Sci2 Tutorials</A>";
-	private static final String TUTORIALS_DOC_URL = "http://wiki.slis.indiana.edu:8080/display/SCI2TUTORIAL";
+	private static List<Hyperlink> links = new ArrayList<Hyperlink>();
+	static {
+		links.add(new Hyperlink("Main Sci2 Tool Website", "https://sci2.cns.iu.edu"));
+		links.add(new Hyperlink("All Sci2 Documentation", "https://sci2.cns.iu.edu/user/documentation.php"));
+		links.add(new Hyperlink("Sci2 Manual","http://sci2.wiki.cns.iu.edu"));
+	}
 	
-	Shell shell = null;
+	private Shell shell;
 
 	public DocumentationDialog(Shell parent) {
 		super(parent);
@@ -49,29 +47,13 @@ public class DocumentationDialog extends Dialog {
 		group.setLayout(new GridLayout(1, true));
 		   	
 		try {
-			//main page link
-			URL mainDocPageURL = new URL(MAIN_DOC_PAGE_URL);
-			WebsiteLink mainDocPageLink = new WebsiteLink(group, SWT.BORDER, MAIN_DOC_PAGE_TEXT, mainDocPageURL);
-			mainDocPageLink.setSize(180, 40);
-			mainDocPageLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-			
-			//all algorithms docs link
-			WebsiteLink allAlgorithmsDocLink = new WebsiteLink(group, SWT.BORDER, ALL_ALGORITHMS_DOC_TEXT, new URL(
-					ALL_ALGORITHMS_DOC_URL));
-			allAlgorithmsDocLink.setSize(180, 40);
-			allAlgorithmsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-			
-			//all supported formats doc link
-			WebsiteLink allSupportedFormatsDocLink = new WebsiteLink(group, SWT.BORDER,
-					ALL_SUPPORTED_FORMATS_DOC_TEXT, new URL(ALL_SUPPORTED_FORMATS_DOC_URL));
-			allSupportedFormatsDocLink.setSize(180, 40);
-			allSupportedFormatsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-			
-			//tutorials doc link
-			WebsiteLink tutorialsDocLink = new WebsiteLink(group, SWT.BORDER,
-					TUTORIALS_DOC_TEXT, new URL(TUTORIALS_DOC_URL));
-			tutorialsDocLink.setSize(180, 40);
-			tutorialsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+			for (Hyperlink link : links) {
+				URL url = new URL(link.url);
+				WebsiteLinkWidget widget = 
+					new WebsiteLinkWidget(group, SWT.BORDER, link.text, url);
+				widget.setSize(180, 40);
+				widget.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+			}
 			
 			//explanation of how browser opens these links
 			String labelText = "Documentation should open in your default web browser." +
@@ -91,8 +73,21 @@ public class DocumentationDialog extends Dialog {
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		// you can create your own button or can call super method to create default ok and cancel button
+		/*
+		 *  you can create your own button 
+		 *  or can call super method to create default ok and cancel button
+		 */
 		super.createButtonsForButtonBar(parent);
+	}
+	
+	private static final class Hyperlink {
+		public String text;
+		public String url;
+		
+		public Hyperlink(String text, String url) {
+			this.text = "<A>" + text + "</A>"; //text inside 'A' will become the hyperlink
+			this.url = url;
+		}
 	}
 
 }

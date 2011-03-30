@@ -12,11 +12,11 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 //Makes it easier to create a link which opens a website.
-public class WebsiteLink {
+public class WebsiteLinkWidget {
 
 	private Link link;
 	//Remember that the link portion of the link text must be in the tag <A></A>, for example 'here is <A>the link</A>'
-	public WebsiteLink(Composite parent, int style, String linkText, final URL websiteURL) {
+	public WebsiteLinkWidget(Composite parent, int style, String linkText, final URL websiteURL) {
 		this.link = new Link(parent, style);
 
 		link.setText(linkText);
