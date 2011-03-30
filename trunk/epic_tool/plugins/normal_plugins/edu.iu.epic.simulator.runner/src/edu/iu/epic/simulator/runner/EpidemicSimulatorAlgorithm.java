@@ -170,8 +170,7 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	private Data[] executeSimulator(
 			Data[] coreData, CIShellContext coreCIContext, BundleContext coreBundleContext)
 				throws AlgorithmExecutionException {
-		try {
-			
+		try {			
 			return
 				AlgorithmUtilities.executeAlgorithm(
 					AlgorithmUtilities.getAlgorithmFactoryByPID(
