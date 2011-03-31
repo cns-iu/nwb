@@ -23,7 +23,7 @@ public class DocumentationDialog extends Dialog {
 	static {
 		links.add(new Hyperlink("Main Sci2 Tool Website", "https://sci2.cns.iu.edu"));
 		links.add(new Hyperlink("All Sci2 Documentation", "https://sci2.cns.iu.edu/user/documentation.php"));
-		links.add(new Hyperlink("Sci2 Manual","http://sci2.wiki.cns.iu.edu"));
+		links.add(new Hyperlink("Sci2 Tutorial","http://sci2.wiki.cns.iu.edu"));
 	}
 	
 	private Shell shell;
