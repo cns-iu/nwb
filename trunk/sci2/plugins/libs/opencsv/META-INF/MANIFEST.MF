@@ -5,3 +5,4 @@ Bundle-SymbolicName: opencsv
 Bundle-Version: 2.2
 Export-Package: au.com.bytecode.opencsv,
  au.com.bytecode.opencsv.bean
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
