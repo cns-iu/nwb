@@ -157,7 +157,7 @@ public class ZipToDistrictAlgorithm implements Algorithm {
 			logger.log(LogService.LOG_WARNING,
 						String.format(
 						"There are %d rows with \"%s\" ZIP code, which could not been given a"
-						+ "congressional district.",
+						+ " congressional district.",
 						failedFrequency.getFrequency(zipCodeString), zipCodeString));
 		}
 		logger.log(LogService.LOG_WARNING,
@@ -167,7 +167,7 @@ public class ZipToDistrictAlgorithm implements Algorithm {
 				+ " If a zip code was recently created,"
 			    + " it may also not be contained in our database." 
 				+ " If this is the case," 
-				+ " please contact nwb-helpdesk@googlegroups.com or katy@indiana.edu");
+				+ " please contact CNS-CISHELLPOWERED-L@listserv.indiana.edu or katy@indiana.edu");
 				
 		
 	}
