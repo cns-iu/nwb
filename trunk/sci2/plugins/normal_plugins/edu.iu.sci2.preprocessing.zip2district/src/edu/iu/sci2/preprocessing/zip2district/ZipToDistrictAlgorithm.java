@@ -165,9 +165,7 @@ public class ZipToDistrictAlgorithm implements Algorithm {
 				+ " as many zip codes contain multiple congressional districts. " 
 				+ "9-digit zip codes may be required." 
 				+ " If a zip code was recently created,"
-			    + " it may also not be contained in our database." 
-				+ " If this is the case," 
-				+ " please contact CNS-CISHELLPOWERED-L@listserv.indiana.edu or katy@indiana.edu");
+			    + " it may also not be contained in our database.");
 				
 		
 	}
