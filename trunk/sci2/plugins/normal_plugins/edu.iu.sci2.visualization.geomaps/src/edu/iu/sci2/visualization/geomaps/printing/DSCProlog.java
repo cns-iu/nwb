@@ -11,7 +11,7 @@ import edu.iu.sci2.visualization.geomaps.utility.Constants;
 public class DSCProlog {
 	public static final String CREATOR_DSC_COMMENT_VALUE =
 		"Geo Maps plug-in for the Sci� Tool, a product of the Cyberinfrastructure " +
-		"for Network Science Center (http://cns.slis.indiana.edu) at Indiana University";
+		"for Network Science Center (http://cns.iu.edu) at Indiana University";
 	public static final int NUMBER_OF_PAGES_DSC_COMMENT_VALUE = 1;
 	private static final String PAGE_ORDER_DSC_COMMENT_VALUE = "Ascend";
 	

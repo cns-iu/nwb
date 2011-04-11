@@ -9,7 +9,7 @@ public class PageFooter {
 	public static final String INDENT = "    ";
 	public static final String ATTRIBUTION_PREFIX =	"Created with ";
 	
-	public static final String CNS_URL = "http://cns.slis.indiana.edu";
+	public static final String CNS_URL = "http://cns.iu.edu";
 	public static final String CNS =
 		"Cyberinfrastructure for Network Science Center";
 	
