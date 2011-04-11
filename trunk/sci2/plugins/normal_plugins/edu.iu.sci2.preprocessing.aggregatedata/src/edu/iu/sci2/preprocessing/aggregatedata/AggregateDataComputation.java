@@ -356,16 +356,13 @@ public class AggregateDataComputation {
 				try {
 					Object cell = originalTable.get(currentRowNumber, currentColumnNumber);
 					Number number = NumberUtilities.interpretObjectAsNumber(cell);
-
-					if (number != null) {
-						cellValuesToBeAggregated.add(number);
-					} else {
-						nullCount++;
-					}
+					cellValuesToBeAggregated.add(number);
 				} catch (NumberFormatException e) {
 					invalidCount++;
 				} catch (ParseException e) {
 					invalidCount++;
+				} catch (NullPointerException e) {
+					nullCount++;
 				}
 			}
 			
