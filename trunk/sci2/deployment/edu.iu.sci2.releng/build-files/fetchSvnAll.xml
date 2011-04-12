@@ -40,6 +40,12 @@
   	</antcall>
   	<antcall target="svn.co">
 		<param name="target" value="plugins"/>
+  	  	<param name="element.id" value="edu.iu.cns.converter.nwb_graphstream"/>
+  	  	<param name="project.name" value="edu.iu.cns.converter.nwb_graphstream"/>
+  	  	<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/cns"/>
+  	</antcall>
+  	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
   	  	<param name="element.id" value="edu.iu.nwb.analysis.nodebetweennesscentrality"/>
   	  	<param name="project.name" value="edu.iu.nwb.analysis.nodebetweennesscentrality"/>
   	  	<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/plugins/analysis"/>
