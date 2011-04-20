@@ -1,9 +1,10 @@
-package edu.iu.nwb.analysis.burst;
+package edu.iu.nwb.analysis.burst.bins;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * A container of WordBin. WordBins contains all the data of the documents.

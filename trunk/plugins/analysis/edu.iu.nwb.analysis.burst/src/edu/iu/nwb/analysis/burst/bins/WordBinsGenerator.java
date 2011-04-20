@@ -1,4 +1,4 @@
-package edu.iu.nwb.analysis.burst;
+package edu.iu.nwb.analysis.burst.bins;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.osgi.service.log.LogService;
+
+import edu.iu.nwb.analysis.burst.DocumentRetriever;
+import edu.iu.nwb.analysis.burst.DocumentRetrieverFactory;
 
 import prefuse.data.Table;
 

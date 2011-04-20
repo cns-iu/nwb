@@ -1,4 +1,4 @@
-package edu.iu.nwb.analysis.burst;
+package edu.iu.nwb.analysis.burst.bins;
 
 /**
  * A WordBin represents a word that contains a set of bins where

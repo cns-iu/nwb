@@ -33,6 +33,10 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import edu.iu.nwb.analysis.burst.bins.WordBin;
+import edu.iu.nwb.analysis.burst.bins.WordBins;
+import edu.iu.nwb.analysis.burst.bins.WordBinsGenerator;
+
 import prefuse.data.Schema;
 import prefuse.data.Table;
 
