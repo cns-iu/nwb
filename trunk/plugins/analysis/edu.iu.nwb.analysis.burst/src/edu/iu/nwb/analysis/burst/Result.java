@@ -12,7 +12,8 @@ public class Result {
 	private int length;
 	private int level;
 	
-	public Result (String word, int level, double weight, int length, String start, String end) {
+	public Result(
+			String word, int level, double weight, int length, String start, String end) {
 		this.word = word;
 		this.level = level;
 		this.weight = weight;

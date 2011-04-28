@@ -41,34 +41,18 @@ import prefuse.data.Schema;
 import prefuse.data.Table;
 
 public class Burst implements Algorithm {
+	/* Constant parameters of the burst detection algorithm */
 	public static final int MIN_SLENGTH = 0;
 	public static final double POWER_THRESH = 0;
 	public static final double HUGEN = 1000000.0;
 	public static final double DTRANS = 1.0;
 	
-	/* Input columns' name */
-	public static final String DATE_COLUMN = "date";
-	public static final String DATE_FORMAT_COLUMN = "format";
-	public static final String TEXT_COLUMN = "text";
-	public static final String TEXT_SEPARATOR_COLUMN = "separator";
-	public static final String IGNORE_EMPTY_COLUMN = "ignore";
-	public static final String BURSTING_STATES_COLUMN = "states";
-	public static final String RATIO_COLUMN = "ratio";
-	public static final String GAMMA_COLUMN = "gamma";
-	public static final String DOCUMENT_COLUMN = "document";
-	
-	/* Output columns' name */
-	public static final String WORD_COLUMN = "Word";
-	public static final String LEVEL_COLUMN = "Level";
-	public static final String WEIGHT_COLUMN = "Weight";
-	public static final String LENGTH_COLUMN = "Length";
-	public static final String START_COLUMN = "Start";
-	public static final String END_COLUMN = "End";
-	
 	/* Updated parameters */
-	private double gamma = 1.0; // parameter that controls the ease with which the automaton can change states. 'trans' in C code
-	private int inputStates = 1; // the higher  bursting states
-	private double densityScaling = 2; // density scaling which will affect the probability of the burst happens 
+	private double gamma = 1.0; 		// Parameter that controls the ease with which the 
+										// automaton can change states 'trans' in C code.
+	private int inputStates = 1; 		// The higher  bursting states.
+	private double densityScaling = 2; 	// Density scaling which will affect the probability of 
+										// the burst happens .
 	private LogService logger;
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
@@ -77,66 +61,57 @@ public class Burst implements Algorithm {
 	public Burst(Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
-		this.logger = (LogService)context.getService(LogService.class.getName());
+		this.logger = (LogService) context.getService(LogService.class.getName());
 	}
 	
 	public Data[] execute() throws AlgorithmExecutionException {
 
-		String dateColumnTitle = (String) this.parameters.get(DATE_COLUMN);
-		String textColumnTitle = (String) this.parameters.get(TEXT_COLUMN);
-		String documentColumnTitle = (String) this.parameters.get(DOCUMENT_COLUMN);
-		boolean ignoreEmpty = (Boolean) this.parameters.get(IGNORE_EMPTY_COLUMN);
-		String textSeparator = (String) this.parameters.get(TEXT_SEPARATOR_COLUMN);
-		String dateFormatString = (String) this.parameters.get(DATE_FORMAT_COLUMN);
+		String dateColumnTitle = (String) this.parameters.get(Constants.DATE_COLUMN);
+		String textColumnTitle = (String) this.parameters.get(Constants.TEXT_COLUMN);
 		
-		this.inputStates = ((Integer) this.parameters.get(BURSTING_STATES_COLUMN));
-		this.densityScaling = ((Double) this.parameters.get(RATIO_COLUMN));
-		this.gamma = ((Double) this.parameters.get(GAMMA_COLUMN));
+		this.inputStates = ((Integer) this.parameters.get(Constants.BURSTING_STATES_COLUMN));
+		this.densityScaling = ((Double) this.parameters.get(Constants.RATIO_COLUMN));
+		this.gamma = ((Double) this.parameters.get(Constants.GAMMA_COLUMN));
 		
 		Table data = (Table) this.data[0].getData();		
 		checkColumns(data, dateColumnTitle, textColumnTitle);
+		Table results = createResultTable();
 		
 		/*
 		 * WordBins contains a list of WordBin where each WordBin contains a word 
 		 * and n number of bins. Each bin represent a time slot and hold the number
 		 * of related douments that contains the word in a specified time slot.
 		 */
-		WordBinsGenerator wordBinsGenerator = new WordBinsGenerator(
-				this.logger,
-				data, 
-				documentColumnTitle,
-				textColumnTitle, 
-				textSeparator, 
-				dateColumnTitle, 
-				dateFormatString, 
-				ignoreEmpty);
+		WordBinsGenerator wordBinsGenerator = 
+			new WordBinsGenerator(this.logger, data, this.parameters);
 		
-		WordBins wordBins = wordBinsGenerator.generateWordBins();
-		int binSize = wordBins.getBinSize();
-		Schema resultsSchema = new Schema(new String[]{WORD_COLUMN, LEVEL_COLUMN, WEIGHT_COLUMN, LENGTH_COLUMN, START_COLUMN, END_COLUMN}, new Class[]{String.class, int.class, double.class, int.class, String.class, String.class});
-		Table results = resultsSchema.instantiate();
-		
-		/* Compute the burst, word by word and save it into results table */
-		for(String word : wordBins.getWordSet()) {
-			WordBin wordBin = wordBins.getWordBin(word);
-			try {
+		try {
+			WordBins wordBins = wordBinsGenerator.generateWordBins();
+			int binSize = wordBins.getBinSize();
+			
+			/* Compute the burst, word by word and save it into results table */
+			for (String word : wordBins.getWordSet()) {
+				WordBin wordBin = wordBins.getWordBin(word);
+
 				/* 
 				 * A cell represents a specified date burst information of a token. 
 				 * Compute all the burst score by date for a token 
 				 */
-				Cell[] cells = this.computeStates(binSize, wordBin.getBin(), wordBins.getBinDocumentCount());
+				Cell[] cells = this.computeStates(
+						binSize, wordBin.getBin(), wordBins.getBinDocumentCount());
 				
-				/* process the results for a token by date */
-				for(int i = 0; i < binSize; i++) {
+				/* Process the results for a token by date */
+				for (int i = 0; i < binSize; i++) {
 					Cell currentCell = cells[i];
 					
-					for(int level = currentCell.candidate.length - 2; level >= 0; level--) {
-						if(isValidBurstCandidate(currentCell, level, i)) {
+					for (int level = currentCell.getCandidates().length - 2; level >= 0; level--) {
+						if (isValidBurstCandidate(currentCell, level, i)) {
 							
 							/* Generate result for CSV output */
 							Result result = generateResult(currentCell, word, level, i, wordBins);
 							
-							this.logger.log(LogService.LOG_INFO, word + " starts: " + result.getStart() + " ends: " + result.getEnd());
+							this.logger.log(LogService.LOG_INFO, word + " starts: " 
+									+ result.getStart() + " ends: " + result.getEnd());
 							
 							/* Add result to row */
 							int row = results.addRow();
@@ -150,29 +125,77 @@ public class Burst implements Algorithm {
 					}
 					
 				}
-			} catch (BurstException e) {
-				throw new AlgorithmExecutionException(e.getMessage(), e);
 			}
+		} catch (BurstException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (OutOfMemoryError e) {
+			throw new AlgorithmExecutionException(
+					"There is not enough memory to handle such a big number of batches. "
+					+ "Here are some suggestions:"
+					+ "\ni) Increase the Java virtual machine's memory size until it can "
+					+ "support the number of batches that needed. Please refer to "
+					+ "[url]http://sci2.wiki.cns.iu.edu/3.4+Memory+Allocation[/url] for the memory "
+					+ "allocation guidance."
+					+ "\nii) Adjust the 'Batch By' option to the longer batch option such "
+					+ "as 'Month' and 'Year', so that the number of batches would be "
+					+ "decreased.");
+		}
+		
+		if (results.getRowCount() == 0) {
+			this.logger.log(LogService.LOG_DEBUG, "No burst was detected. This may not be an error;"
+					+ " the input data might not contain any bursts. Here are some suggestions:"
+					+ "\ni) Adjust the 'Batch By' option, so that each bin will contain "
+					+ "multiple documents."
+					+ "\nii) Tokenize your text column by using the 'Lowercase, Tokenize, Stem, and"
+					+ " Stopword Text' algorithm in the Preprocessing menu and re-run the burst "
+					+ "detection algorithm on the new dataset."
+					+ "\niii) More information and guides are available at "
+					+ "[url]http://wiki.cns.iu.edu/display/CISHELL/Burst+Detection[/url]."
+					+ "\niv) Contact us to report your problem.");
 		}
 		
 		Data output = new BasicData(results, Table.class.getName());
 		Dictionary<String, Object> metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "Burst detection analysis (" + dateColumnTitle + ", " + textColumnTitle + "): maximum burst level " + inputStates);
+		metadata.put(DataProperty.LABEL, "Burst detection analysis (" 
+				+ dateColumnTitle + ", " 
+				+ textColumnTitle + "): maximum burst level " 
+				+ inputStates);
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 		
 		return new Data[]{ output };
 	}
 	
-	private Result generateResult(Cell cell, String word, int level, int startIndex, WordBins wordBins) {
-		String startString = String.valueOf(wordBins.getBinDate(startIndex));
+	private Table createResultTable() {
+		Schema resultsSchema = new Schema(
+				new String[]{
+						Constants.WORD_COLUMN, 
+						Constants.LEVEL_COLUMN, 
+						Constants.WEIGHT_COLUMN, 
+						Constants.LENGTH_COLUMN, 
+						Constants.START_COLUMN, 
+						Constants.END_COLUMN}, 
+				new Class[]{
+						String.class, 
+						int.class, 
+						double.class, 
+						int.class, 
+						String.class, 
+						String.class});
+		
+		return resultsSchema.instantiate();
+	}
+	
+	private Result generateResult(
+			Cell cell, String word, int level, int startIndex, WordBins wordBins) {
+		String startString = wordBins.getDateStringByIndex(startIndex);
 		String endString;
 		
 		int binSize = wordBins.getBinSize();
-		int endIndex = cell.breakpoint[level];
-		if(endIndex < binSize - 1) {
+		int endIndex = cell.getBreakpoints()[level];
+		if (endIndex < binSize - 1) {
 			endIndex -= 1;
-			endString = String.valueOf(wordBins.getBinDate(endIndex));
+			endString = wordBins.getDateStringByIndex(endIndex);
 		} else {
 			endString = "";
 		}
@@ -185,24 +208,27 @@ public class Burst implements Algorithm {
 		int length = endIndex - startIndex + 1;
 		int state = this.inputStates - level;
 		
-		return new Result(word, state, cell.totalPower[level], length, startString, endString);
+		return new Result(
+				word, state, cell.getTotalPowers()[level], length, startString, endString);
 	}
 	
 	private boolean isValidBurstCandidate(Cell currentCell, int level, int binIndex) {
-		return (currentCell.candidate[level]
-		        &&  currentCell.breakpoint[level] - binIndex + 1 >= MIN_SLENGTH 
-		        && currentCell.totalPower[level] >= POWER_THRESH);
+		return (currentCell.getCandidates()[level]
+		        &&  currentCell.getBreakpoints()[level] - binIndex + 1 >= MIN_SLENGTH 
+		        && currentCell.getTotalPowers()[level] >= POWER_THRESH);
 	}
 
-	private void checkColumns(Table data, String dateColumn, String textColumn) throws AlgorithmExecutionException {
+	private void checkColumns(Table data, String dateColumn, String textColumn) 
+			throws AlgorithmExecutionException {
 		checkForColumn(data, dateColumn);
 		checkForColumn(data, textColumn);
 	}
 
 	private void checkForColumn(Table data, String dateColumn)
 			throws AlgorithmExecutionException {
-		if(!data.canGetString(dateColumn)) {
-			throw new AlgorithmExecutionException("The column '" + dateColumn + "' does not exist or cannot be accessed as a string.");
+		if (!data.canGetString(dateColumn)) {
+			throw new AlgorithmExecutionException("The column '" + dateColumn 
+					+ "' does not exist or cannot be accessed as a string.");
 		}
 	}
 	
@@ -220,69 +246,71 @@ public class Burst implements Algorithm {
 		
 		int[] leftBarrier = new int[levels];
 		
-		for(int k = 0; k < levels; k++) {
+		for (int k = 0; k < levels; k++) {
 			leftBarrier[k] = -1;
 		}
 		
-		for(int j = 0; j < n; j++) {
+		for (int j = 0; j < n; j++) {
 			Cell currentCell = cells[j];
 			
-			for(int k = 0; k < levels - 1; k++) {
-				if(currentCell.mark[k]) {
+			for (int k = 0; k < levels - 1; k++) {
+				if (currentCell.getMarks()[k]) {
 					leftBarrier[k] = j;
 				}
 			}
 			
-			for(int k = 0; k < currentCell.path; k++) {
-				if(leftBarrier[k] >= 0) {
+			for (int k = 0; k < currentCell.getPath(); k++) {
+				if (leftBarrier[k] >= 0) {
 					Cell barrierCell = cells[leftBarrier[k]];
-					barrierCell.breakpoint[k] = j;
-					barrierCell.candidate[k] = true;
-					currentCell.endCandidate[k] = 1;
+					barrierCell.getBreakpoints()[k] = j;
+					barrierCell.getCandidates()[k] = true;
+					currentCell.getEndCandidates()[k] = 1;
 					leftBarrier[k] = -1;
 				}
 			}
 			
-			for(int k = currentCell.path; k < levels - 1; k++) {
-				if(leftBarrier[k] >= 0) {
+			for (int k = currentCell.getPath(); k < levels - 1; k++) {
+				if (leftBarrier[k] >= 0) {
 					Cell barrierCell = cells[leftBarrier[k]];
-					barrierCell.power[k] += currentCell.cost[k+1] - currentCell.cost[k];
-					barrierCell.totalPower[k] += currentCell.cost[levels - 1] - currentCell.cost[k];
+					barrierCell.getPowers()[k] += 
+						currentCell.getCosts()[k + 1] - currentCell.getCosts()[k];
+					barrierCell.getTotalPowers()[k] += 
+						currentCell.getCosts()[levels - 1] - currentCell.getCosts()[k];
 				}
 			}
 		}
 		Cell lastCell = cells[n - 1];
 		
-		for(int k = 0; k < levels - 1; k++) {
-			if(leftBarrier[k] >= 0) {
+		for (int k = 0; k < levels - 1; k++) {
+			if (leftBarrier[k] >= 0) {
 				Cell barrierCell = cells[leftBarrier[k]];
-				barrierCell.breakpoint[k] = n - 1;
-				barrierCell.candidate[k] = true;
-				lastCell.endCandidate[k] = 1;
+				barrierCell.getBreakpoints()[k] = n - 1;
+				barrierCell.getCandidates()[k] = true;
+				lastCell.getEndCandidates()[k] = 1;
 				leftBarrier[k] = -1;
 			}
 		}
 		
-		for(int j = 0; j < n - 1; j++) {
+		for (int j = 0; j < n - 1; j++) {
 			Cell currentCell = cells[j];
 			
 			int p = -1;
 			q = -1;
-			for(int k = 0; k < levels - 1; k++) {
-				if(currentCell.candidate[k]) {
+			for (int k = 0; k < levels - 1; k++) {
+				if (currentCell.getCandidates()[k]) {
 					p = k;
-					if(q < 0) {
+					if (q < 0) {
 						q = k;
 					}
 				}
 			}
-			if(p < 0) {
+			if (p < 0) {
 				continue;
 			}
 			
-			currentCell.minRateClass = q;
-			for(int k = 0; k < p; ++k) {
-				if(currentCell.candidate[k]) {
+			currentCell.setMinRateClass(q);
+			for (int k = 0; k < p; ++k) {
+				if (currentCell.getCandidates()[k]) {
 					/* 
 					 * This try to accumulate all level's weight into the lower burst level. 
 					 * This have created double standard of total_power value of lower level
@@ -291,7 +319,7 @@ public class Burst implements Algorithm {
 					 * 
 					 * currentCell.totalPower[p] += currentCell.power[k];
 					 */
-					currentCell.subordinate[k] = true;
+					currentCell.getSubordinates()[k] = true;
 				}
 			}
 		}
@@ -299,7 +327,8 @@ public class Burst implements Algorithm {
 		return cells;
 	}
 
-	private Cell[] computeCosts(int n, int levels, int[] entry, int[] binBase) throws BurstException {
+	private Cell[] computeCosts(
+			int n, int levels, int[] entry, int[] binBase) throws BurstException {
 		double expected = computeExpected(n, entry, binBase);
 		
 		double[] fRate = initializeFRate(expected, levels);
@@ -307,10 +336,11 @@ public class Burst implements Algorithm {
 		
 		Cell[] cells = new Cell[n];
 		
-		for(int j = 0; j < n; j++) {
-			Cell cell = cells[j] = new Cell(levels);
-			for(int k = 0; k < levels; k++) {
-				cell.cost[k] = binomW(1.0 / fRate[k], entry[j], binBase[j]);
+		for (int j = 0; j < n; j++) {
+			Cell cell = new Cell(levels);
+			cells[j] = cell;
+			for (int k = 0; k < levels; k++) {
+				cell.getCosts()[k] = binomW(1.0 / fRate[k], entry[j], binBase[j]);
 			}
 		}
 		return cells;
@@ -321,45 +351,47 @@ public class Burst implements Algorithm {
 		Cell firstCell = cells[0];
 		Cell lastCell = cells[n - 1];
 		
-		for(int k = 0; k < levels; k++) {
-			firstCell.total[k] = firstCell.cost[k] + transCost * (levels - 1 - k);
+		for (int k = 0; k < levels; k++) {
+			firstCell.getTotals()[k] = firstCell.getCosts()[k] + transCost * (levels - 1 - k);
 		}
 		
-		for(int j = 1; j < n; j++) {
+		for (int j = 1; j < n; j++) {
 			Cell currentCell = cells[j];
 			Cell previousCell = cells[j - 1];
-			for(int k = 0; k < levels; k++) {
-				double d = currentCell.cost[k] + previousCell.total[0];
+			for (int k = 0; k < levels; k++) {
+				double d = currentCell.getCosts()[k] + previousCell.getTotals()[0];
 				int q = 0;
 				double tmpD;
-				for(int m = 1; m < levels; m++) {
+				for (int m = 1; m < levels; m++) {
 					/* 
-					 * The '< d' have changed to '<= d' due to we are interested on lower burst level that
-					 * give the same cost. Ideally, there will not exist two levels that contains the same 
-					 * cost. It only happens if all costs is zero where there is not data in this bin.
+					 * The '< d' have changed to '<= d' due to we are interested on lower 
+					 * burst level that give the same cost. Ideally, there will not exist
+					 * two levels that contains the same cost. It only happens if all 
+					 * costs is zero where there is not data in this bin.
 					 */
-					if(m > k && (tmpD = currentCell.cost[k] + previousCell.total[m] + transCost * (m - k)) <= d) {
-						d = tmpD;
+					tmpD = currentCell.getCosts()[k] + previousCell.getTotals()[m];
+					if (m > k && (tmpD + transCost * (m - k)) <= d) {
+						d = tmpD + transCost * (m - k);
 						q = m;
-					} else if(m <= k && (tmpD = currentCell.cost[k] + previousCell.total[m]) <= d) {
+					} else if (m <= k && tmpD <= d) {
 						d = tmpD;
 						q = m;
 					}
 				}
-				currentCell.total[k] = d;
-				currentCell.previous[k] = q;
+				currentCell.getTotals()[k] = d;
+				currentCell.getPreviousPaths()[k] = q;
 				
 			}
 		}
 		
 		
 		int q = 0;
-		for(int k = 0; k < levels; k++) {
-			double d = lastCell.total[0];
+		for (int k = 0; k < levels; k++) {
+			double d = lastCell.getTotals()[0];
 			q = 0;
-			for(int m = 1; m < levels; m++) {
-				if(lastCell.total[m] < d) {
-					d = lastCell.total[m];
+			for (int m = 1; m < levels; m++) {
+				if (lastCell.getTotals()[m] < d) {
+					d = lastCell.getTotals()[m];
 					q = m;
 				}
 			}
@@ -372,24 +404,24 @@ public class Burst implements Algorithm {
 		Cell firstCell = cells[0];
 		Cell lastCell = cells[n - 1];
 		
-		lastCell.path = q;
+		lastCell.setPath(q);
 		
-		for(int j = n - 2; j >= 0; j--) {
-			Cell nextCell = cells[j+1];
+		for (int j = n - 2; j >= 0; j--) {
+			Cell nextCell = cells[j + 1];
 			Cell currentCell = cells[j];
-			currentCell.path = nextCell.previous[nextCell.path];
+			currentCell.setPath(nextCell.getPreviousPaths()[nextCell.getPath()]);
 		}
 		
-		for(int k = firstCell.path; k < levels - 1; k++) {
-			firstCell.mark[k] = true;
+		for (int k = firstCell.getPath(); k < levels - 1; k++) {
+			firstCell.getMarks()[k] = true;
 		}
 		
 		
-		for(int j = 1; j < n; j++) {
+		for (int j = 1; j < n; j++) {
 			Cell currentCell = cells[j];
 			Cell previousCell = cells[j - 1];
-			for(int k = currentCell.path; k < previousCell.path; k++) {
-				currentCell.mark[k] = true;
+			for (int k = currentCell.getPath(); k < previousCell.getPath(); k++) {
+				currentCell.getMarks()[k] = true;
 			}
 		}
 	}
@@ -403,8 +435,8 @@ public class Burst implements Algorithm {
 		 * Change it to the same. Based on the paper. It didn't make sense to have 
 		 * first level ratio different from other level. This sound cheating.
 		 */
-		for(int j = levels - 2; j >= 0; j--) {
-			fRate[j] = fRate[j+1]/this.densityScaling;
+		for (int j = levels - 2; j >= 0; j--) {
+			fRate[j] = fRate[j + 1] / this.densityScaling;
 		}
 		return fRate;
 	}
@@ -412,26 +444,27 @@ public class Burst implements Algorithm {
 	private double computeTransCost(int n) {
 		double transCost = this.gamma * Math.log(n + 1) - Math.log(DTRANS);
 		
-		if(transCost < 0.0) {
+		if (transCost < 0.0) {
 			transCost = 0.0;
 		}
 		return transCost;
 	}
 
 	private double computeExpected(int n, int[] entry, int[] binBase) throws BurstException {
-		int bin_n = 0;
-		int bin_k = 0;
+		int binN = 0;
+		int binK = 0;
 		
-		for(int i = 0; i < n; i++) {
-			bin_k += entry[i];
-			bin_n += binBase[i];
+		for (int i = 0; i < n; i++) {
+			binK += entry[i];
+			binN += binBase[i];
 		}
 		
-		if(bin_n == 0 || bin_k ==0) {
-			throw new BurstException("A word bursted on is never used; this should be impossible, please notify the algorithm author");
+		if (binN == 0 || binK == 0) {
+			throw new BurstException("A word bursted on is never used; this should "
+					+ "be impossible, please notify the algorithm author");
 		}
 		
-		double expected = (double) bin_n/ (double) bin_k;
+		double expected = (double) binN / (double) binK;
 		return expected;
 	}
 	
@@ -439,11 +472,11 @@ public class Burst implements Algorithm {
 			int index;
 			double value = 0.0;
 			
-			for(index=n; index > n-k; --index) {
+			for (index = n; index > n - k; --index) {
 				value += Math.log(index);
 			}
 			
-			for(index=1; index <= k; ++index) {
+			for (index = 1; index <= k; ++index) {
 				value -= Math.log(index);
 			}
 			
@@ -451,10 +484,12 @@ public class Burst implements Algorithm {
 	}
 	
 	private double binomW(double probability, int k, int n) {
-		if(probability >= 1.0) {
+		if (probability >= 1.0) {
 			return HUGEN;
 		} else {
-			return -1 * (logChoose(n,k) + k * Math.log(probability) + (n - k) * Math.log(1.0 - probability));
+			return -1 * (logChoose(n, k) 
+					+ k * Math.log(probability) 
+					+ (n - k) * Math.log(1.0 - probability));
 		}
 	}
 }

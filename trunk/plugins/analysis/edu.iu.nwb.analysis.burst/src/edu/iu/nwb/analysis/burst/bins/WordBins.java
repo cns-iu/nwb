@@ -1,9 +1,12 @@
 package edu.iu.nwb.analysis.burst.bins;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import edu.iu.nwb.analysis.burst.batcher.Batcher;
 
 
 /**
@@ -19,20 +22,19 @@ import java.util.Set;
  */
 public class WordBins {
 	private Map<String, WordBin> wordToBin;
-	private int startDate;
-	private int endDate;
+	private Batcher batcher;
 	private int binSize;
 	private int[] binDocumentCounts;
 	
-	public WordBins(int startDate, int endDate) {
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.binSize = this.endDate - this.startDate + 1;
+	public WordBins(Batcher batcher) {
+		this.batcher = batcher;
+		this.binSize = this.batcher.getSize();
 		this.binDocumentCounts = new int[this.binSize];
 		this.wordToBin = new HashMap<String, WordBin>();
+		System.out.println("Bin size: " + String.valueOf(this.binSize));
 	}
 	
-	public void setWordBinValue(String word, int binDate, int value) {
+	public void setWordBinValue(String word, Date binDate, int value) {
 		
 		if (!this.wordToBin.containsKey(word)) {
 			this.wordToBin.put(word, new WordBin(word, this.binSize));
@@ -41,14 +43,14 @@ public class WordBins {
 		wordBin.set(getBinIndex(binDate), value);
 	}
 	
-	public void addADocument(Collection<String> words, int binDate) {
+	public void addADocument(Collection<String> words, Date binDate) {
 		for (String word : words) {
 			this.addWordToBin(word, binDate);
 		}
 		this.increaseDocumentCount(binDate);
 	}
 		
-	private void addWordToBin(String word, int binDate) {
+	private void addWordToBin(String word, Date binDate) {
 		if (!this.wordToBin.containsKey(word)) {
 			this.wordToBin.put(word, new WordBin(word, this.binSize));
 		}
@@ -65,15 +67,15 @@ public class WordBins {
 		return this.wordToBin.get(word);
 	}
 	
-	public int getBinDate(int binIndex) {
-		return this.startDate + binIndex;
+	public String getDateStringByIndex(int binIndex) {
+		return this.batcher.getDateStringByIndex(binIndex);
 	}
 	
-	public int getBinIndex(int binDate) {
-		return binDate - this.startDate;
+	public int getBinIndex(Date binDate) {
+		return this.batcher.getIndexByDate(binDate);
 	}
 	
-	private void increaseDocumentCount(int binDate) {
+	private void increaseDocumentCount(Date binDate) {
 		this.binDocumentCounts[getBinIndex(binDate)]++;
 	}
 	
