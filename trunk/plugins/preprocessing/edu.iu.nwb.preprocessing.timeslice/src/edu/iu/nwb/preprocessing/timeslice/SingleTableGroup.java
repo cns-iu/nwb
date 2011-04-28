@@ -5,7 +5,7 @@ import prefuse.data.Tuple;
 
 public class SingleTableGroup extends MultiTableGroup {
 	
-	Table table;
+	private Table table;
 
 	/* Adds a tuple to the current table.
 	 * 

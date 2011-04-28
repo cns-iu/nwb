@@ -9,7 +9,7 @@ import prefuse.data.Tuple;
 
 public class MultiTableGroup implements TableGroup {
 	
-	private List tables = new ArrayList();
+	private List<Table> tables = new ArrayList<Table>();
 	
 	/* Put a tuple into every table in the group
 	 * 
@@ -17,9 +17,9 @@ public class MultiTableGroup implements TableGroup {
 	 * @see edu.iu.nwb.preprocessing.timeslice.TableSet#addTupleToAll(prefuse.data.Tuple)
 	 */
 	public void addTupleToAll(Tuple tuple) {
-		Iterator iter = tables.iterator();
+		Iterator<Table> iter = tables.iterator();
 		while (iter.hasNext()) {
-			Table table = (Table) iter.next();
+			Table table = iter.next();
 			table.addTuple(tuple);
 		}
 	}
@@ -40,6 +40,6 @@ public class MultiTableGroup implements TableGroup {
 	 * @see edu.iu.nwb.preprocessing.timeslice.TableGroup#getTables()
 	 */
 	public Table[] getTables() {
-		return (Table[]) tables.toArray(new Table[]{});
+		return tables.toArray(new Table[]{});
 	}
 }

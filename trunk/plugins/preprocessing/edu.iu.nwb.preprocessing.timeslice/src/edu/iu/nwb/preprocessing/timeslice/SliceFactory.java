@@ -16,7 +16,8 @@ import prefuse.data.Table;
 
 public class SliceFactory implements AlgorithmFactory, ParameterMutator {
     
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm 
+    createAlgorithm(Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
         return new Slice(data, parameters, context);
     }
     

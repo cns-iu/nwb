@@ -1,5 +1,6 @@
 package edu.iu.nwb.preprocessing.timeslice;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
+import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.osgi.service.log.LogService;
@@ -38,21 +40,26 @@ import prefuse.util.collections.IntIterator;
  * @author rduhon & modified by @author Chintan Tank
  *
  */
-@SuppressWarnings({ "unchecked" })
 public class Slice implements Algorithm {
+	public static final int MONTHS_PER_QUARTER = 3;
+	public static final int YEARS_PER_DECADE = 10;
+	public static final int YEARS_PER_CENTURY = 100;
 	private Data[] data;
-	private Dictionary parameters;
+	private Dictionary<String, Object> parameters;
 	private LogService logger;
 	private static final String DEFAULT_CUSTOM_TIME = "yyyy";
 
 
-	private static Map alignmentMap = new HashMap();
-	private static Map dependencyMap = new HashMap();
-	private static Map weekDayMap = new HashMap();
-	private static Map rollBackMap = new HashMap();
-	private static Map periodMap = new HashMap();
-	private static Map formatTokenToPeriod = new LinkedHashMap();
-	private static Set periodPatternTokens = new HashSet();
+	private static Map<String, DateTimeFieldType> alignmentMap = 
+		new HashMap<String, DateTimeFieldType>();
+	private static Map<DateTimeFieldType, DateTimeFieldType> dependencyMap = 
+		new HashMap<DateTimeFieldType, DateTimeFieldType>();
+	private static Map<String, Integer> weekDayMap = new HashMap<String, Integer>();
+	private static Map<DateTimeFieldType, Period> rollBackMap = 
+		new HashMap<DateTimeFieldType, Period>();
+	private static Map<String, Period> periodMap = new HashMap<String, Period>();
+	private static Map<String, Period> formatTokenToPeriod = new LinkedHashMap<String, Period>();
+	private static Set<String> periodPatternTokens = new HashSet<String>();
 	private Period smallestInputPeriodComponent = Period.millis(1);
 	private DateTimeFormatter format;
 	static {
@@ -97,10 +104,10 @@ public class Slice implements Algorithm {
 		periodMap.put("days", Period.days(1));
 		periodMap.put("weeks", Period.weeks(1));
 		periodMap.put("months", Period.months(1));
-		periodMap.put("quarters", Period.months(3));
+		periodMap.put("quarters", Period.months(MONTHS_PER_QUARTER));
 		periodMap.put("years", Period.years(1));
-		periodMap.put("decades", Period.years(10));
-		periodMap.put("centuries", Period.years(100));
+		periodMap.put("decades", Period.years(YEARS_PER_DECADE));
+		periodMap.put("centuries", Period.years(YEARS_PER_CENTURY));
 		//periodMap.put("eras", Period);
 		
 		/*
@@ -131,11 +138,21 @@ public class Slice implements Algorithm {
 
 	}
 
-	public Slice(Data[] data, Dictionary parameters, CIShellContext context) {
+	public Slice(Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
 		this.logger = (LogService) context.getService(LogService.class.getName());
 
+	}
+	
+	public static void main(String[] ss) throws ParseException {
+		DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yy");
+		DateTime date1 = format.parseDateTime("01/12/4");
+		DateTime date2 = format.parseDateTime("01/01/-3");
+		
+		
+		Years years = Years.yearsBetween(date2, date1);
+		System.out.println(years.getYears());
 	}
 
 	/* (non-Javadoc)
@@ -156,8 +173,8 @@ public class Slice implements Algorithm {
 		String formatString = (String) parameters.get("format");
 		String dateColumn = (String) parameters.get("column");
 		String interval = (String) parameters.get("interval");
-		boolean align = ((Boolean) parameters.get("align")).booleanValue();
-		boolean cumulative = ((Boolean) parameters.get("cumulative")).booleanValue();
+		boolean align = (Boolean) parameters.get("align");
+		boolean cumulative = (Boolean) parameters.get("cumulative");
 		String weekStarts = (String) parameters.get("weekstarts");
 		
 		smallestInputPeriodComponent = initializeSmallestInputPeriodComponent(formatString);
@@ -172,24 +189,27 @@ public class Slice implements Algorithm {
 			periodMultiplier = 1;
 		}
 		
-		Period periodOriginal = (Period) periodMap.get(interval);
+		Period periodOriginal = periodMap.get(interval);
 
 		Period period = multiplyPeriod(periodOriginal, periodMultiplier);
 
-		SortedMap byDateTime = createDateTimeMap(table, dateColumn);
+		SortedMap<LocalDateTime, Set<Integer>> byDateTime = createDateTimeMap(table, dateColumn);
 
 		/*
 		 * this is where tables will be put as created, and new rows will be added through the 
 		 * TableGroup interface
 		 * */
 		TableGroup tables = createTableGroup(cumulative);
+		LocalDateTime[] recordsExtractionBounds = initializeRecordsExtractionBounds(
+				interval, align, weekStarts, period, customYearRange, byDateTime);
+		List<List<LocalDateTime>> epochRange = accumulateTables(
+				table, period, recordsExtractionBounds, byDateTime, tables, cumulative);
 
-		List epochRange = accumulateTables(table, interval, align, weekStarts,
-				period, customYearRange, byDateTime, tables, cumulative);
-
-		return dataChildrenOf(data[0], tables.getTables(), 
-				(LocalDateTime[]) ((List) epochRange.get(0)).toArray(new LocalDateTime[]{}), 
-				(LocalDateTime[]) ((List) epochRange.get(1)).toArray(new LocalDateTime[]{}),
+		return dataChildrenOf(
+				data[0], 
+				tables.getTables(), 
+				epochRange.get(0).toArray(new LocalDateTime[]{}), 
+				epochRange.get(1).toArray(new LocalDateTime[]{}),
 				period);
 	}
 
@@ -209,7 +229,7 @@ public class Slice implements Algorithm {
 		/*
 		 * Collect all the unique format tokens in the input.
 		 * */
-		Set inputFormatTokens = new HashSet<String>(Arrays.asList(formatString.split("")));
+		Set<String> inputFormatTokens = new HashSet<String>(Arrays.asList(formatString.split("")));
 		
 		/*
 		 * Retain only those tokens that are legal - this helps in removing literals like
@@ -221,12 +241,12 @@ public class Slice implements Algorithm {
 		 * Walk down the linked hash map containing legal format tokens - smallest to 
 		 * largest. Once matching token found assign its Periodic value.
 		 * */
-		for (Iterator formatTokenIterator = formatTokenToPeriod.keySet().iterator(); 
+		for (Iterator<String> formatTokenIterator = formatTokenToPeriod.keySet().iterator(); 
 				formatTokenIterator.hasNext();) {
-			String currentFormatToken = (String) formatTokenIterator.next();
+			String currentFormatToken = formatTokenIterator.next();
 			
 			if (inputFormatTokens.contains(currentFormatToken)) {
-				inputPeriodComponent = (Period) formatTokenToPeriod.get(currentFormatToken);
+				inputPeriodComponent = formatTokenToPeriod.get(currentFormatToken);
 				break;
 			}
 		}
@@ -300,33 +320,23 @@ public class Slice implements Algorithm {
 	 * @throws AlgorithmExecutionException 
 	 */
 
-	private List accumulateTables(Table table, 
-								  String interval, 
-								  boolean align,
-								  String weekStarts, 
-								  Period period, 
-								  LocalDateTime[] customYearRange, 
-								  SortedMap byDateTime,
-								  TableGroup tables, 
-								  boolean cumulative) 
-		throws AlgorithmExecutionException {
+	private List<List<LocalDateTime>> accumulateTables(
+			Table table,
+			Period period,
+			LocalDateTime[] recordsExtractionBounds,
+			SortedMap<LocalDateTime, Set<Integer>> byDateTime,
+			TableGroup tables, 
+			boolean cumulative) 
+				throws AlgorithmExecutionException {
 
 		Schema schema = table.getSchema();
-		
-		LocalDateTime[] recordsExtractionBounds = 
-			initializeRecordsExtractionBounds(interval, 
-											  align, 
-											  weekStarts, 
-											  period, 
-											  customYearRange, 
-											  byDateTime);
 
 		LocalDateTime current = new LocalDateTime(recordsExtractionBounds[1]);
 		
 		LocalDateTime currentForLabel;
 
-		List ends = new ArrayList();
-		List starts = new ArrayList();
+		List<LocalDateTime> ends = new ArrayList<LocalDateTime>();
+		List<LocalDateTime> starts = new ArrayList<LocalDateTime>();
 		
 		while (current.compareTo(recordsExtractionBounds[0]) > 0) {
 
@@ -344,7 +354,7 @@ public class Slice implements Algorithm {
 			}
 
 			
-			Collection rowSets = byDateTime.subMap(currentMinus, current).values();
+			Collection<Set<Integer>> rowSets = byDateTime.subMap(currentMinus, current).values();
 			addRowSets(tables, rowSets, table);
 			currentForLabel =  current.minus(smallestInputPeriodComponent);
 			ends.add(currentForLabel);
@@ -361,7 +371,7 @@ public class Slice implements Algorithm {
 			current = currentMinus;
 		}
 
-		List returnRange = new ArrayList();
+		List<List<LocalDateTime>> returnRange = new ArrayList<List<LocalDateTime>>();
 		returnRange.add(starts);
 		returnRange.add(ends);
 
@@ -380,10 +390,14 @@ public class Slice implements Algorithm {
 	 * @throws AlgorithmExecutionException
 	 */
 	
-	private LocalDateTime[] initializeRecordsExtractionBounds(String interval,
-			boolean align, String weekStarts, Period period,
-			LocalDateTime[] customYearRange, SortedMap byDateTime)
-			throws AlgorithmExecutionException {
+	private LocalDateTime[] initializeRecordsExtractionBounds(
+			String interval,
+			boolean align, 
+			String weekStarts, 
+			Period period,
+			LocalDateTime[] customYearRange, 
+			SortedMap<LocalDateTime, Set<Integer>> byDateTime)
+				throws AlgorithmExecutionException {
 		
 		LocalDateTime[] recordsExtractionBounds = {null, null};
 		
@@ -432,7 +446,7 @@ public class Slice implements Algorithm {
 
 	/**
 	 * Returns an array of data as children of the parent containing the tables in the array.
-	 * 
+	 * This will include empty tables.
 	 * @param parent the data item to be the parent of the new data items
 	 * @param tables the tables to become data items
 	 * @param starts a list of start times, for the descriptive label
@@ -445,22 +459,22 @@ public class Slice implements Algorithm {
 								  LocalDateTime[] starts, 
 								  LocalDateTime[] ends, 
 								  Period period) {
+		/* 
+		 * Predefined array size will only works if the out array size is equal to the 
+		 * tables' size. If the filtering is applied to the result, make sure the returned
+		 * output array size must not contain NULL value.
+		 */
 		Data[] output = new Data[tables.length];
 
 		for (int ii = 0; ii < output.length; ii++) {
-
-			//don't output tables with no rows
-			if (tables[ii].getRowCount() > 0) {
-
-				Data data = new BasicData(tables[ii], Table.class.getName());
-				data = updateProperties(data, 
-										parent, 
-										starts[ii], 
-										ends[ii], 
-										tables[ii].getRowCount(), 
-										period);
-				output[ii] = data;
-			}
+			Data data = new BasicData(tables[ii], Table.class.getName());
+			data = updateProperties(data,
+									parent,
+									starts[ii],
+									ends[ii],
+									tables[ii].getRowCount(),
+									period);
+			output[ii] = data;
 		}
 		return output;
 	}
@@ -483,7 +497,7 @@ public class Slice implements Algorithm {
 								  LocalDateTime end, 
 								  int rowCount, Period period) {
 
-		Dictionary metadata = data.getMetadata();
+		Dictionary<String, Object> metadata = data.getMetadata();
 		metadata.put(DataProperty.LABEL, 
 						"slice from beginning of " + format.print(start) 
 						+ " to end of " + format.print(end) + " (" + rowCount + " records)");
@@ -514,10 +528,10 @@ public class Slice implements Algorithm {
 	 * @param rowSets a collection of sets of ids from the original table
 	 * @param table the original table to copy rows from
 	 */
-	private void addRowSets(TableGroup tables, Collection rowSets, Table table) {
-		Iterator idSets = rowSets.iterator();
+	private void addRowSets(TableGroup tables, Collection<Set<Integer>> rowSets, Table table) {
+		Iterator<Set<Integer>> idSets = rowSets.iterator();
 		while (idSets.hasNext()) {
-			Set idSet = (Set) idSets.next();
+			Set<Integer> idSet = idSets.next();
 			addRows(tables, idSet, table);
 		}
 	}
@@ -529,10 +543,10 @@ public class Slice implements Algorithm {
 	 * @param idSet a set of ids from the original table
 	 * @param table the original table to copy rows from
 	 */
-	private void addRows(TableGroup tables, Set idSet, Table table) {
-		Iterator ids = idSet.iterator();
+	private void addRows(TableGroup tables, Set<Integer> idSet, Table table) {
+		Iterator<Integer> ids = idSet.iterator();
 		while (ids.hasNext()) {
-			int id = ((Integer) ids.next()).intValue();
+			int id = ids.next();
 			tables.addTupleToAll(table.getTuple(id));
 		}
 	}
@@ -544,8 +558,8 @@ public class Slice implements Algorithm {
 	 * @param byDateTime the map from dates to sets of rows
 	 * @return the maximum date/time to use
 	 */
-	private LocalDateTime realMax(SortedMap byDateTime) {
-		LocalDateTime max = (LocalDateTime) byDateTime.lastKey();
+	private LocalDateTime realMax(SortedMap<LocalDateTime, Set<Integer>> byDateTime) {
+		LocalDateTime max = byDateTime.lastKey();
 		return max;
 	}
 
@@ -558,9 +572,12 @@ public class Slice implements Algorithm {
 	 * @param weekStarts a string indicating which day is the first day of a week
 	 * @return
 	 */
-	private LocalDateTime realMin(SortedMap byDateTime, String interval,
-			boolean align, String weekStarts) {
-		LocalDateTime min = (LocalDateTime) byDateTime.firstKey();
+	private LocalDateTime realMin(
+			SortedMap<LocalDateTime, Set<Integer>> byDateTime, 
+			String interval, 
+			boolean align, 
+			String weekStarts) {
+		LocalDateTime min = byDateTime.firstKey();
 		if (align) {
 			min = truncate(min, interval, weekStarts);
 		}
@@ -585,7 +602,7 @@ public class Slice implements Algorithm {
 			return min;
 		}
 
-		DateTimeFieldType fieldType = (DateTimeFieldType) alignmentMap.get(interval);
+		DateTimeFieldType fieldType = alignmentMap.get(interval);
 		min = rollBackMainField(min, fieldType, weekStarts);
 		//zeroes the fields at finer resolution than the main field to be rolled back
 		min = zeroOut(min, fieldType);
@@ -605,7 +622,7 @@ public class Slice implements Algorithm {
 			DateTimeFieldType fieldType, String weekStarts) {
 		int firstValue = getFirstValue(fieldType, weekStarts);
 		if (firstValue > min.get(fieldType)) {
-			Period rollBack = (Period) rollBackMap.get(fieldType);
+			Period rollBack = rollBackMap.get(fieldType);
 			min = min.minus(rollBack);
 		}
 
@@ -623,7 +640,7 @@ public class Slice implements Algorithm {
 	 */
 	private LocalDateTime zeroOut(LocalDateTime min, DateTimeFieldType fieldType) {
 		while (dependencyMap.containsKey(fieldType)) {
-			fieldType = (DateTimeFieldType) dependencyMap.get(fieldType);
+			fieldType = dependencyMap.get(fieldType);
 			
 			/*
 			 * maybe not 0 in the future, instead check for the right 'zero' using getFirstValue, 
@@ -645,7 +662,7 @@ public class Slice implements Algorithm {
 	private int getFirstValue(DateTimeFieldType fieldType, String weekStarts) {
 
 		if (DateTimeFieldType.dayOfWeek().equals(fieldType)) {
-			return ((Integer) weekDayMap.get(weekStarts)).intValue();
+			return weekDayMap.get(weekStarts).intValue();
 		}
 		return 1;
 	}
@@ -659,9 +676,11 @@ public class Slice implements Algorithm {
 	 * @return a sorted map from date/times to sets of ids
 	 * @throws AlgorithmExecutionException
 	 */
-	private SortedMap createDateTimeMap(Table table, String dateColumn) 
-		throws AlgorithmExecutionException {
-		SortedMap byDateTime = new TreeMap();
+	private SortedMap<LocalDateTime, Set<Integer>> 
+	createDateTimeMap(Table table, String dateColumn) throws AlgorithmExecutionException {
+		
+		SortedMap<LocalDateTime, Set<Integer>> byDateTime = 
+			new TreeMap<LocalDateTime, Set<Integer>>();
 		
 		IntIterator ids = table.rows();
 		while (ids.hasNext()) {
@@ -706,9 +725,9 @@ public class Slice implements Algorithm {
 				}
 			}
 			if (!byDateTime.containsKey(dateTime)) {
-				byDateTime.put(dateTime, new HashSet());
+				byDateTime.put(dateTime, new HashSet<Integer>());
 			}
-			((Set) byDateTime.get(dateTime)).add(new Integer(id));
+			byDateTime.get(dateTime).add(new Integer(id));
 		}
 		return byDateTime;
 	}

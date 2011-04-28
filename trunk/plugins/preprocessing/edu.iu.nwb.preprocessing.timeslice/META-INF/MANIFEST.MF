@@ -26,3 +26,4 @@ Import-Package: org.cishell.framework,
  prefuse.util.collections
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

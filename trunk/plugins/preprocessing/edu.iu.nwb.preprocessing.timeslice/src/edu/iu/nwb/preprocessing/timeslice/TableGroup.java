@@ -4,10 +4,9 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 
 public interface TableGroup {
+	void addTupleToAll(Tuple tuple);
 
-	public abstract void addTupleToAll(Tuple tuple);
-
-	public abstract void addTable(Table table);
+	void addTable(Table table);
 	
-	public abstract Table[] getTables();
+	Table[] getTables();
 }
