@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 //A dialog box which links to various online documentation.
 public class DocumentationDialog extends Dialog {
 	private static final String MAIN_DOC_PAGE_TEXT = "<A>EpiC Website</A>";
-	private static final String MAIN_DOC_PAGE_URL = "http://epic.slis.indiana.edu/";
+	private static final String MAIN_DOC_PAGE_URL = "http://epic.cns.iu.edu/";
 
 	private static final String ALL_ALGORITHMS_DOC_TEXT = "<A>Algorithms Documentation</A>";
 	private static final String ALL_ALGORITHMS_DOC_URL = "https://nwb.cns.iu.edu/community/?n=Algorithms.HomePage";
