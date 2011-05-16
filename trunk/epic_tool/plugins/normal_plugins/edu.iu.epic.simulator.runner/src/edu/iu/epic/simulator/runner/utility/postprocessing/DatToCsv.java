@@ -1,109 +1,125 @@
 package edu.iu.epic.simulator.runner.utility.postprocessing;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.List;
 
-import org.cishell.utilities.FileUtilities;
+import au.com.bytecode.opencsv.CSVWriter;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 public class DatToCsv {
 	public static final double HACK_THRESHOLD = 4e9;
-	public static final String CSV_FILE_EXTENSION = "csv";
+	public static final int HACK_SUBSTITUTE = 0;
+	
+	public static final String TEMP_CSV_FILE_PREFIX = "epic-simulator-output";
+	public static final String CSV_FILE_SUFFIX = ".csv";
 	public static final String DAT_FILE_COMMENT_MARKER = "#";
 	public static final String DAT_FILE_FIRST_COLUMN_NAME = "time";	
 	public static final String DAT_FILE_COLUMN_NAMES_LINE_PREFIX =
-		DAT_FILE_COMMENT_MARKER + " " + DAT_FILE_FIRST_COLUMN_NAME;
+		String.format("%s %s", DAT_FILE_COMMENT_MARKER, DAT_FILE_FIRST_COLUMN_NAME);
 	
-	private File datFile;
-
 	
-	public DatToCsv(File datFile) {
-		this.datFile = datFile;
-	}
-
-	
-	public File convert() throws IOException {
-		// TODO Fix ordering of columns?
-		File csvFile =
-			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-					"simulator_output", CSV_FILE_EXTENSION);
-		BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
+	public static File convert(File datFile) throws IOException {
+		File csvFile = File.createTempFile(TEMP_CSV_FILE_PREFIX, CSV_FILE_SUFFIX);
+		final CSVWriter csvWriter =
+			new CSVWriter(
+					Files.newWriter(csvFile, Charset.forName("UTF-8")),
+					CSVWriter.DEFAULT_SEPARATOR,
+					CSVWriter.NO_QUOTE_CHARACTER);
 		
-		BufferedReader reader = new BufferedReader(new FileReader(this.datFile));
+		BufferedReader datReader = Files.newReader(datFile, Charset.forName("UTF-8"));
 		
-		String line = reader.readLine();
-		do {
-			writer.write(convertDatFileLineToCSV(line));
-	
-			line = reader.readLine();
-		} while (line != null);
-	
-		reader.close();
-		writer.close();			
+		convert(datReader, csvWriter);
+		
+		datReader.close();
+		csvWriter.close();
 		
 		return csvFile;
 	}
-	
-	/** TODO Hack.  The shell code itself seems to overflow at times, especially on the first
-	 * timestep.  Until the shell code is fixed, this will attempt to correct for that. */
-	private static String fixOverflow(String csvLine) {
-		final String SEP = ",";
 
-		return Joiner.on(SEP).join(Collections2.transform(
-				Lists.newArrayList(csvLine.split(SEP)),
-				new Function<String, Float>() {
-					public Float apply(String token) {
-						Float value = Float.valueOf(token);
-						
-						if (value > HACK_THRESHOLD) {
-							System.err.println(
-									"Fixed a seemingly overflowing compartment population " +
-									"in postprocessing.");
-							return 0f;
-						} else {
-							return value;
-						}
-					}					
-				}
-			));
-	}
-
-	private String convertDatFileLineToCSV(String line) {
-		if (line.startsWith(DAT_FILE_COLUMN_NAMES_LINE_PREFIX)) {
-			// Skip the comment marker and take only the column names
-			String lineStartingWithColumns =
-				line.substring(line.indexOf(DAT_FILE_FIRST_COLUMN_NAME));
-			
-			return (commaSeparate(lineStartingWithColumns) + "\n");
-		} else if (line.startsWith(DAT_FILE_COMMENT_MARKER)) {
-			return "";
-		} else {
-			return fixOverflow(commaSeparate(line)) + "\n";
+	private static void convert(BufferedReader datReader, CSVWriter csvWriter) throws IOException {
+		String datLine = null;
+		while ((datLine = datReader.readLine()) != null) {
+			processLine(datLine, csvWriter);
 		}
 	}
 
-	private String commaSeparate(String spaceSeparated) {
-		String[] tokens = spaceSeparated.split(" +");
-		
-		StringBuilder builder = new StringBuilder();
-		
-		for (int ii = 0; ii < tokens.length; ii++) {
-			builder.append(tokens[ii]);
+	private static void processLine(String datLine, CSVWriter csvWriter) {
+		if (datLine.startsWith(DAT_FILE_COLUMN_NAMES_LINE_PREFIX)) {
+			// Skip the comment marker and take only the column names
+			String lineStartingWithColumns =
+				datLine.substring(datLine.indexOf(DAT_FILE_FIRST_COLUMN_NAME));
 			
-			boolean isFinalToken = (ii == tokens.length - 1);
-			if (!isFinalToken) {
-				builder.append(",");
+			csvWriter.writeNext(lineStartingWithColumns.split(" "));
+		} else if (datLine.startsWith(DAT_FILE_COMMENT_MARKER)) {
+			// Skip other comments
+		} else {
+			List<String> processedPopulations = processPopulationLine(datLine);
+			
+			/* If any entry (including time) is non-zero, write the line.
+			 * Otherwise skip it.
+			 * This is meant to suppress the "0,0,0,..." line that sometimes comes out first
+			 * in the "exact" simulator at the moment.
+			 */
+			if (anyNonZero(processedPopulations)) {
+				csvWriter.writeNext(
+						processedPopulations.toArray(new String[processedPopulations.size()]));
+			}			
+		}
+	}
+
+	private static List<String> processPopulationLine(String datLine) {
+		List<String> processedPopulations = Lists.newArrayList();
+		
+		Iterator<String> iterator = ImmutableList.of(datLine.split(" ")).iterator();
+		
+		int time = Integer.valueOf(iterator.next());		
+		processedPopulations.add(String.valueOf(time));
+		
+		while (iterator.hasNext()) {
+			String populationString = iterator.next();
+			
+			Number population = processPopulation(populationString);
+			processedPopulations.add(String.valueOf(population));
+		}
+		
+		return processedPopulations;
+	}
+
+	private static Number processPopulation(String populationString) {
+		// Interpret as an integer when possible
+		Number population;
+		try {
+			population = Integer.valueOf(populationString);
+		} catch (NumberFormatException e) {
+			population = Float.valueOf(populationString);
+		}
+		
+		/* TODO Hack. The core simulator code seems to overflow at times, especially on the first
+		 * timestep. Until the core code is fixed, this will attempt to correct for that.
+		 * See if Bruno knows how to fix the overflow or whether he could give us an expert opinion
+		 * on what to do here.
+		 */
+		if (population.floatValue() > HACK_THRESHOLD) {
+			return HACK_SUBSTITUTE;
+		} else {
+			return population;
+		}
+	}
+	
+	private static boolean anyNonZero(List<String> processedPopulations) {
+		for (String population : processedPopulations) {
+			if (Integer.valueOf(population) != 0) {
+				return true;
 			}
 		}
 		
-		return builder.toString();
+		return false;
 	}
 }

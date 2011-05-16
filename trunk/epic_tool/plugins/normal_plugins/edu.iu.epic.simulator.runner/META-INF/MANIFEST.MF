@@ -4,8 +4,10 @@ Bundle-Name: edu.iu.epic.simulator.runner
 Bundle-SymbolicName: edu.iu.epic.simulator.runner
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: com.google.common.base,
+Import-Package: au.com.bytecode.opencsv,
+ com.google.common.base,
  com.google.common.collect,
+ com.google.common.io,
  edu.iu.epic.modeling.compartment.model,
  edu.iu.epic.modeling.compartment.model.exception,
  edu.iu.nwb.util.nwbfile,

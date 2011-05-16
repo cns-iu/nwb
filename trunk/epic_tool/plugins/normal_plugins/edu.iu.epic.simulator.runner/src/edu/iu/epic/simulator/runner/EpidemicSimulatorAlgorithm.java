@@ -24,11 +24,13 @@ import com.google.common.collect.Maps;
 
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.simulator.runner.utility.CIShellParameterUtilities;
-import edu.iu.epic.simulator.runner.utility.postprocessing.DatToCsv;
 import edu.iu.epic.simulator.runner.utility.preprocessing.InFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.InfectionsFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.NetworkFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.SimulatorModelFileMaker;
+
+import edu.iu.epic.simulator.runner.utility.postprocessing.DatToCsv;
+
 public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
@@ -72,15 +74,17 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		
 		try {
 			File datFile = (File) datFileData[0].getData();
-			DatToCsv datToCSV = new DatToCsv(datFile);
-			File csvFile = datToCSV.convert();
+			File csvFile = DatToCsv.convert(datFile);
 	    	
 			String label = (String) datFileData[0].getMetadata().get(DataProperty.LABEL);
 			
 	    	return createOutData(csvFile, label, this.data[0]);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
-					"Error translating from .dat to .csv: " + e.getMessage(), e);
+					"Problem preparing results: " + e.getMessage(), e);
+		} catch (NumberFormatException e) {
+			throw new AlgorithmExecutionException(
+					"Problem preparing results: " + e.getMessage(), e);
 		}
 	}
 
