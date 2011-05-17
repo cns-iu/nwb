@@ -19,12 +19,13 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
  */
 public class NetworkFileMaker {
 	public static File make(File nwbFile) throws AlgorithmExecutionException {
+		Writer simulatorNetworkFileWriter = null;
 		try {
 			File simulatorNetworkFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 						"simulator_input_network", "dat");
 		
-			Writer simulatorNetworkFileWriter = new FileWriter(simulatorNetworkFile);
+			simulatorNetworkFileWriter = new FileWriter(simulatorNetworkFile);
 			
 			NWBFileParser nwbReader = new NWBFileParser(nwbFile);
 			
@@ -41,6 +42,14 @@ public class NetworkFileMaker {
 		} catch (ParsingException e) {
 			throw new AlgorithmExecutionException(
 					"Couldn't create network file for simulator: " + e.getMessage(), e);
+		} finally {
+			try {
+				if (simulatorNetworkFileWriter != null) {
+					simulatorNetworkFileWriter.close();
+				}
+			} catch (IOException e) {
+				throw new AlgorithmExecutionException(e.getMessage(), e);
+			}
 		}
 	}
 	

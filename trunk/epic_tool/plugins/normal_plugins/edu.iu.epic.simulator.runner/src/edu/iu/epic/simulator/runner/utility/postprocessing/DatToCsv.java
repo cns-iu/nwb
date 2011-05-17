@@ -7,6 +7,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
+import org.cishell.utilities.FileUtilities;
+
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.google.common.collect.ImmutableList;
@@ -17,8 +19,8 @@ public class DatToCsv {
 	public static final double HACK_THRESHOLD = 4e9;
 	public static final int HACK_SUBSTITUTE = 0;
 	
-	public static final String TEMP_CSV_FILE_PREFIX = "epic-simulator-output";
-	public static final String CSV_FILE_SUFFIX = ".csv";
+	public static final String TEMP_CSV_FILE_PREFIX = "epic-populations";
+	public static final String CSV_FILE_EXTENSION = "csv";
 	public static final String DAT_FILE_COMMENT_MARKER = "#";
 	public static final String DAT_FILE_FIRST_COLUMN_NAME = "time";	
 	public static final String DAT_FILE_COLUMN_NAMES_LINE_PREFIX =
@@ -26,7 +28,9 @@ public class DatToCsv {
 	
 	
 	public static File convert(File datFile) throws IOException {
-		File csvFile = File.createTempFile(TEMP_CSV_FILE_PREFIX, CSV_FILE_SUFFIX);
+		File csvFile =
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					TEMP_CSV_FILE_PREFIX, CSV_FILE_EXTENSION);
 		final CSVWriter csvWriter =
 			new CSVWriter(
 					Files.newWriter(csvFile, Charset.forName("UTF-8")),
