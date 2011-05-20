@@ -136,7 +136,7 @@ INSTALLED_APPS = (
 )
 
 GOOGLE_KEY = \
-    'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
+    'ABQIAAAAGfs37W0paJHSAkG_6nFTJRRGxhoRU2jcEM7N9J-RUWDgHfTUZhQJ_PPrSXn376xsMJMdkDQtKnWf_Q'
 
 # This is needed for checking for a readme file as the user uploads.  The only
 #  way to check for a compressed archieve requires the upload to be on disk, 
