@@ -218,6 +218,10 @@
 		<antcall target="pre_add_extra-files">
 			<param name="myArch" value="solaris.gtk.sparc" />	
 		</antcall>
+		
+		<antcall target="pre_add_extra-files">
+							<param name="myArch" value="macosx.cocoa.x86_64" />
+						</antcall>
 			
 		<antcall target="runTests"/>
 		<copy todir="${buildResultsDirectory}" flatten="true">
