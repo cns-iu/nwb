@@ -80,6 +80,11 @@ public class LineGraphAlgorithm implements Algorithm {
 		StencilData stencilDatum =
 			collectStencilData(title, inputTable, timeStepColumnName, lineColumnNames);
 		this.stencilGUI.addStencilDataToGraph(title, stencilDatum);
+		
+		/*
+		 * To show the stencil gui in which the data is being added.
+		 * */
+		showStencilGUI();
 
 		runStencilGUI();
 	}

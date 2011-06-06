@@ -81,15 +81,15 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
     					/* (There is no need to do any operation in this algorithm.
     					 * The important stuff was added to the other algorithm.)
     					 */
+    					
     					return new Data[0];
     				}
     			};
     		} else {
-    			String format =
-    				"The Line Graph \"%s\" is no longer active.  " +
-    				"(It was closed in between when you chose this algorithm and when you " +
-    				"finished entering your input parameters.)  A new window will be created " +
-    				"for you with just this data.";
+    			String format = "The Line Graph \"%s\" is no longer active.  "
+		    				+ "(It was closed in between when you chose this algorithm and " 
+		    				+ "when you finished entering your input parameters.)  A new " 
+		    				+ "window will be created for you with just this data.";
     			String exceptionMessage = String.format(format, activeAlgorithmTitle);
     			this.logger.log(LogService.LOG_WARNING, exceptionMessage);
     		}
@@ -114,6 +114,7 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
        	LineGraphAlgorithm algorithm = new LineGraphAlgorithm(
        		inputTable, title, timeStepColumnName, lineColumnNames, new ActiveAlgorithmHook() {
        			public void nowActive(LineGraphAlgorithm algorithm) {
+       				
        				LineGraphAlgorithmFactory.activeAlgorithmsByTitle.put(
        					algorithm.getTitle(), algorithm);
        				LineGraphAlgorithmFactory.activeLineGraphAlgorithmTitles.add(
@@ -121,6 +122,7 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
        			}
 
        			public void nowInactive(LineGraphAlgorithm algorithm) {
+       				
        				LineGraphAlgorithmFactory.activeAlgorithmsByTitle.remove(algorithm.getTitle());
        				LineGraphAlgorithmFactory.activeLineGraphAlgorithmTitles.remove(
        					algorithm.getTitle());
@@ -132,7 +134,7 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
     
     public ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters) {
-    	Table inputTable = (Table)data[0].getData();
+    	Table inputTable = (Table) data[0].getData();
     
     	/*
     	 * In the input table, 
@@ -186,8 +188,8 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
     						if (LineGraphAlgorithmFactory.activeAlgorithmsByTitle.containsKey(
     								value)) {
     							String format =
-    								"%s is already the title of a Line Graph visualization.  " +
-    								"Please choose a unique title.";
+    								"%s is already the title of a Line Graph visualization.  " 
+    								+ "Please choose a unique title.";
     							String errorMessage = String.format(format, value);
 
     							return errorMessage;
@@ -201,8 +203,17 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
     			if (LineGraphAlgorithmFactory.activeAlgorithmsByTitle.size() > 0) {
     				List<String> optionList = new ArrayList<String>();
     				optionList.addAll(LineGraphAlgorithmFactory.activeLineGraphAlgorithmTitles);
-    				optionList.add(NEW_LINE_GRAPH_WINDOW_VALUE);
+    				
+    				/*
+    				 * To make sure that most recently opened line graph gui is shown first in the 
+    				 * dropdown box.
+    				 * */
     				Collections.reverse(optionList);
+    				
+    				/*
+    				 * Always add the "New Line Graph Window" as the last option.
+    				 * */
+    				optionList.add(NEW_LINE_GRAPH_WINDOW_VALUE);
     				String[] options = optionList.toArray(new String[0]);
     				newAttributeDefinition = new BasicAttributeDefinition(
     					oldAttributeDefinition.getID(),
@@ -242,7 +253,7 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		for (int ii = 0; ii < schema.getColumnCount(); ii++) {
 			String columnName = schema.getColumnName(ii);
 			String keyName = BASE_LINE_ID + columnName;
-			Boolean value = (Boolean)parameters.get(keyName);
+			Boolean value = (Boolean) parameters.get(keyName);
 			
 			if ((value != null) && value.booleanValue()) {
 				lineColumnNames.add(columnName);
@@ -254,8 +265,8 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
 
 	private boolean shouldGraphDataInExistingLineGraph(String activeAlgorithmTitle) {
 		return
-			!StringUtilities.isNull_Empty_OrWhitespace(activeAlgorithmTitle) &&
-			!NEW_LINE_GRAPH_WINDOW_VALUE.equals(activeAlgorithmTitle);
+			!StringUtilities.isNull_Empty_OrWhitespace(activeAlgorithmTitle) 
+			&& !NEW_LINE_GRAPH_WINDOW_VALUE.equals(activeAlgorithmTitle);
 	}
 
 	private boolean chosenLineGraphStillExists(String activeAlgorithmTitle) {

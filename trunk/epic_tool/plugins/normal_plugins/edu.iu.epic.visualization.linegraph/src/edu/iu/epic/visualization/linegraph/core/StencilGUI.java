@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,6 +91,17 @@ public class StencilGUI {
 
 	public void show() {
 		this.frame.setVisible(true);
+		
+		/*
+		 * This to make sure that when a user chooses to run a simulation in already opened
+		 * line graph window, which was minimised earlier, the line graph window being used 
+		 * is shown. So that the user knows that it's simulation is being run in that line graph
+		 * window. 
+		 * */
+		if (this.frame.getState() == Frame.ICONIFIED) {
+			this.frame.setState(Frame.NORMAL);
+		}
+		
 	}
 
 	public void hide() {
@@ -241,7 +253,7 @@ public class StencilGUI {
 				graphics.setColor(color);
 			    graphics.fillRect(x, y, getIconWidth(), getIconHeight());
 			}
-		}.colorIcon(COLOR_ICON_SIZE, colorRegistry.getColorOf(lineName));
+		} .colorIcon(COLOR_ICON_SIZE, colorRegistry.getColorOf(lineName));
 		
 		return new JLabel(lineName, colorIcon, JLabel.LEFT);
 	}

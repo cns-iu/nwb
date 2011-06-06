@@ -14,7 +14,7 @@ import java.net.URL;
  * there is no guarantee that you will get a 'clean' environment).
  *
  */
-public class Configure2 {
+public final class Configure2 {
 	private static final String DEFAULT_STENCIL_CONFIGURATION_FILE = "Stencil.properties";
 
 	public static String stencilConfig = DEFAULT_STENCIL_CONFIGURATION_FILE;
@@ -40,7 +40,7 @@ public class Configure2 {
 		URL baseURL;
 		
 		try {
-			baseURL = new URL("file://" + System.getProperty("user.dir")+"/");
+			baseURL = new URL("file://" + System.getProperty("user.dir") + "/");
 		} catch (Exception exception) {
 			throw new Error("Error initailizing context.");
 		}

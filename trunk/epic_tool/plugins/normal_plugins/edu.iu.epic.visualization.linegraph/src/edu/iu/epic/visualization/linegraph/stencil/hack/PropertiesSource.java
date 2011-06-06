@@ -8,7 +8,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public interface PropertiesSource {
-	public Properties loadProperties() throws LoadPropertiesException;
+	Properties loadProperties() throws LoadPropertiesException;
 	
 	public class InputStreamPropertiesSource implements PropertiesSource {
 		private InputStream propertiesInputStream;

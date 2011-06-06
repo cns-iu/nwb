@@ -25,7 +25,7 @@ public class PartialModuleCache2 {
 	 */
 	public static void registerModules(Properties props) {
 		for (Object keyString : props.keySet()) {
-			String key = (String)keyString;
+			String key = (String) keyString;
 			
 			if (key.startsWith(MODULE_KEY)) {
 				String fileName = props.getProperty(key);

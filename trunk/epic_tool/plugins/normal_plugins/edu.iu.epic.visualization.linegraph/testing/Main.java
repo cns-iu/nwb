@@ -18,7 +18,7 @@ import edu.iu.epic.visualization.linegraph.LineGraphAlgorithmFactory;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 
 
-public class Main {
+public final class Main {
 	public static final String TEST_TIME_STEP_COLUMN_NAME = "Date";
 	public static final String TEST_LINE_COLUMN_NAME_1 = "Open";
 	public static final String TEST_LINE_COLUMN_NAME_2 = "High";
@@ -28,6 +28,8 @@ public class Main {
 	
 	public static final String TEST_DATA_PATH = "/";
 	public static final String TEST_DATASET_1_PATH = TEST_DATA_PATH + "TestDataset1.csv";
+	
+	private Main() { }
 	
 	public static void main(String[] arguments) {
 		try {

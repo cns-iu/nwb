@@ -10,14 +10,14 @@ import javax.swing.filechooser.FileFilter;
  * TODO: Make this a utility class?
  */
 public class ExtensionFileFilter extends FileFilter {
-	String description;
-	String extensions[];
+	private String description;
+	private String[] extensions;
 
 	public ExtensionFileFilter(String description, String extension) {
 		this(description, new String[] { extension });
 	}
 
-	public ExtensionFileFilter(String description, String extensions[]) {
+	public ExtensionFileFilter(String description, String[] extensions) {
 		if (description == null) {
 			this.description = extensions[0];
 		} else {
@@ -48,7 +48,7 @@ public class ExtensionFileFilter extends FileFilter {
 		return false;
 	}
 	
-	private void toLower(String array[]) {
+	private void toLower(String[] array) {
 		for (int i = 0, n = array.length; i < n; i++) {
 			array[i] = array[i].toLowerCase();
 		}
@@ -58,7 +58,7 @@ public class ExtensionFileFilter extends FileFilter {
 		int targetDotStringPosition = path.length() - extension.length() - 1;
 
 		return
-			path.endsWith(extension) &&
-			(path.charAt(targetDotStringPosition) == '.');
+			path.endsWith(extension) 
+			&& (path.charAt(targetDotStringPosition) == '.');
 	}
 }

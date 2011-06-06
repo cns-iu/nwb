@@ -175,7 +175,7 @@ public class PropertyManager2 {
 		Map<String, String> adapterMap = new TreeMap<String, String>();
 		
 		for (Object keyObject : allProperties.keySet()) {
-			String key = (String)keyObject;
+			String key = (String) keyObject;
 
 			if (key.startsWith(ADAPTER_PREFIX)) {
 				String name = key.substring(ADAPTER_PREFIX.length());
@@ -200,7 +200,7 @@ public class PropertyManager2 {
 		if (allProperties.containsKey(FONT_SIZE_KEY)) {
 			try {
 				Interactive.FONT_SIZE = Float.parseFloat(allProperties.getProperty(FONT_SIZE_KEY));
-			} catch(Exception exception) {
+			} catch (Exception exception) {
 				System.err.println("Error setting font size from settings file.");
 			}
 		}
@@ -209,7 +209,7 @@ public class PropertyManager2 {
 			try {
 				Application.EXPORT_RESOLUTION =
 					Integer.parseInt(allProperties.getProperty(RASTER_RESOLUTION_KEY));
-			} catch(Exception exception) {
+			} catch (Exception exception) {
 				System.err.println("Error setting raster resolution from settings file.");
 			}
 		}
@@ -218,7 +218,7 @@ public class PropertyManager2 {
 			try {
 				Application.CONCURRENT_BIAS =
 					Integer.parseInt(allProperties.getProperty(CONCURRENT_BIAS_KEY));
-			} catch(Exception exception) {
+			} catch (Exception exception) {
 				System.err.println("Error setting concurrent bias from settings file.");
 			}
 		}
@@ -226,7 +226,7 @@ public class PropertyManager2 {
 		if (allProperties.containsKey(WORKING_DIR_KEY)) {
 			try {
 				WorkingDirectory.setWorkingDir(allProperties.getProperty(WORKING_DIR_KEY));
-			} catch(Exception exception) {
+			} catch (Exception exception) {
 				System.err.println("Error setting last file from settings file.");
 			}
 		} else {
