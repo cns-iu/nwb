@@ -184,9 +184,13 @@
 	</top_menu>
     
     <top_menu name="Simulation">
-    	<menu pid="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm"/>
-    	<menu pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm"/>
-    	<menu pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm"/>
+    	<menu name="Single-Population" type="group">
+    		<menu pid="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm"/>
+    		<menu pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm"/>
+    	</menu>
+    	<menu name="Network" type="group">
+    		<menu pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm"/>
+    	</menu>
     </top_menu>
     
     <top_menu name="Visualization">
