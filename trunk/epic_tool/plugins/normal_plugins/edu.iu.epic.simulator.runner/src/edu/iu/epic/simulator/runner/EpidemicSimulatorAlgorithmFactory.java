@@ -31,7 +31,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 	
 	// TODO Move into METADATA.xml
 	public static final String NUMBER_OF_DAYS_ID = "days";
-	public static final int DEFAULT_NUMBER_OF_DAYS = 730;
+	public static final int DEFAULT_NUMBER_OF_DAYS = 365;
 	public static final BasicAttributeDefinition NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION =
 		new BasicAttributeDefinition(
 				NUMBER_OF_DAYS_ID,
@@ -67,7 +67,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 	public static final String MODEL_PARAMETER_PREFIX = "MODEL_PARAMETER_";
 	
 	public static final String INFECTOR_SEED_POPULATION_PREFIX = "INFECTOR_SEED_POPULATION_";
-	public static final int DEFAULT_INFECTOR_SEED_POPULATION = 0;
+	public static final int DEFAULT_INFECTOR_SEED_POPULATION = 10;
 	
 	public static final String INITIAL_DISTRIBUTION_PREFIX = "INITIAL_DISTRIBUTION_";
 	private static final float DEFAULT_INITIAL_DISTRIBUTION_FRACTION = 0.0f;
