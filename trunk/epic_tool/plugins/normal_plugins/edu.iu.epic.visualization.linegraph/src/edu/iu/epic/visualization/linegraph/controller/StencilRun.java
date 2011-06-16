@@ -1,4 +1,4 @@
-package edu.iu.epic.visualization.linegraph.core;
+package edu.iu.epic.visualization.linegraph.controller;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,16 +21,21 @@ import stencil.adapters.java2D.Panel;
 import stencil.tuple.PrototypedTuple;
 import stencil.tuple.Tuple;
 import stencil.types.color.ColorTuple;
+import edu.iu.epic.visualization.linegraph.model.StencilData;
+import edu.iu.epic.visualization.linegraph.model.TimestepBounds;
+import edu.iu.epic.visualization.linegraph.model.tuple.TupleStream;
 import edu.iu.epic.visualization.linegraph.utilities.DoubleStartException;
 import edu.iu.epic.visualization.linegraph.utilities.ExtensionFileFilter;
-import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
-import edu.iu.epic.visualization.linegraph.utilities.TupleStream;
 
 /*
  * This class performs a single run of a Stencil. 
  */
 public class StencilRun {
+	
+	public static enum RUN_TYPE {
+		COMPLETE, SUBSET
+	};
 	
 	public static final Dimension ESP_DIMENSION = new Dimension(400, 1600);
 	public static final int DOTS_PER_INCH = 64;
@@ -49,7 +54,7 @@ public class StencilRun {
 			Adapter displayAdapter = Adapter.INSTANCE;
 			Panel stencilPanel = displayAdapter.compile(stencilScript);
 			stencilPanel.preRun();
-
+			
 			this.panel = stencilPanel;
 		} catch (Exception exception) {
 			// TODO Handle this exception better?
@@ -57,18 +62,16 @@ public class StencilRun {
 		}
 	}
 
-	public void start() {
+	public void start(TimestepBounds timestepBounds) {
 		if (this.hasStarted) {
 			throw new DoubleStartException("StencilRun can only be started once.");
 		}
-		(new TupleFeeder(this.stencilData)).execute();
+		(new TupleFeeder(this.stencilData, timestepBounds)).execute();
 		this.hasStarted = true;
 	}
 
 
-	public void dispose() {
-
-	}
+	public void dispose() { }
 	
 	/*
 	 * (Let's try not to expose the full 'Panel' class. 
@@ -160,6 +163,7 @@ public class StencilRun {
 					"LineColor",
 					Arrays.asList(new String[] { "Line", "Color" }), 
 					Arrays.asList(new String[] { lineName, ColorTuple.toString(color) }));
+				
 			this.panel.processTuple(colorTuple);
 		} catch (Exception exception) {
 			// TODO Handle this exception better.
@@ -171,13 +175,14 @@ public class StencilRun {
 	 * TODO: The first half-second of drawing looks odd because the graph is so
 	 * small. We might want to do something about it eventually.
 	 */
-	private void feedTuplesToStencilPanel(Collection<StencilData> stencilData)
+	private void feedTuplesToStencilPanel(Collection<StencilData> stencilData, 
+										  TimestepBounds timestepBounds)
 			throws StencilException {
 
 		List<TupleStream> streams = new ArrayList<TupleStream>();
 
 		for (StencilData stencilDatum : stencilData) {
-			streams.addAll(stencilDatum.createStreams());
+			streams.addAll(stencilDatum.createStreams(timestepBounds));
 		}
 
 		/*
@@ -227,14 +232,17 @@ public class StencilRun {
 
 	private class TupleFeeder extends SwingWorker<Object, Object> {
 		private Collection<StencilData> stencilData;
+		private TimestepBounds timestepBounds;
 
-		public TupleFeeder(Collection<StencilData> stencilData) {
+		public TupleFeeder(Collection<StencilData> stencilData, 
+						   TimestepBounds timestepBounds) {
 			this.stencilData = stencilData;
+			this.timestepBounds = timestepBounds;
 		}
 
 		public String doInBackground() {
 			try {
-				StencilRun.this.feedTuplesToStencilPanel(this.stencilData);
+				StencilRun.this.feedTuplesToStencilPanel(this.stencilData, this.timestepBounds);
 
 				// TODO: Should this return null or empty string?
 				return null;

@@ -1,4 +1,4 @@
-package edu.iu.epic.visualization.linegraph.utilities;
+package edu.iu.epic.visualization.linegraph.model.tuple;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

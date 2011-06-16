@@ -18,11 +18,12 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
 
 import prefuse.data.Table;
-import edu.iu.epic.visualization.linegraph.core.StencilGUI;
+import edu.iu.epic.visualization.linegraph.model.StencilData;
+import edu.iu.epic.visualization.linegraph.model.StencilStreamMetadata;
+import edu.iu.epic.visualization.linegraph.model.table.TableStreamSource;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource;
-import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
-import edu.iu.epic.visualization.linegraph.utilities.TableStreamSource;
+import edu.iu.epic.visualization.linegraph.view.StencilGUI;
 
 public class LineGraphAlgorithm implements Algorithm {
 	public static final String WINDOW_TITLE = "Line Graph Visualization";
@@ -60,35 +61,6 @@ public class LineGraphAlgorithm implements Algorithm {
 		this.activeAlgorithmHook = activeAlgorithmHook;
 	}
 
-	public String getTitle() {
-		return this.title;
-	}
-
-	public void addDataToGraph(
-			String title,
-			Table inputTable,
-			String timeStepColumnName,
-			Collection<String> lineColumnNames) throws AlgorithmExecutionException {
-		try {
-			while (this.stencilGUI == null) {
-				this.dummy.wait();
-			}
-		} catch (InterruptedException e) {
-			/* TODO: Should this be thrown as a new AlgorithmExecutionException? */
-		}
-
-		StencilData stencilDatum =
-			collectStencilData(title, inputTable, timeStepColumnName, lineColumnNames);
-		this.stencilGUI.addStencilDataToGraph(title, stencilDatum);
-		
-		/*
-		 * To show the stencil gui in which the data is being added.
-		 * */
-		showStencilGUI();
-
-		runStencilGUI();
-	}
-
 	public Data[] execute() throws AlgorithmExecutionException {
 		this.activeAlgorithmHook.nowActive(this);
 
@@ -114,6 +86,35 @@ public class LineGraphAlgorithm implements Algorithm {
 		return new Data[0];
 	}
 	
+	public void addDataToGraph(
+			String title,
+			Table inputTable,
+			String timeStepColumnName,
+			Collection<String> lineColumnNames) throws AlgorithmExecutionException {
+		try {
+			while (this.stencilGUI == null) {
+				this.dummy.wait();
+			}
+		} catch (InterruptedException e) {
+			/* TODO: Should this be thrown as a new AlgorithmExecutionException? */
+		}
+	
+		StencilData stencilDatum =
+			collectStencilData(title, inputTable, timeStepColumnName, lineColumnNames);
+		this.stencilGUI.addStencilDataToGraph(title, stencilDatum);
+		
+		/*
+		 * To show the stencil gui in which the data is being added.
+		 * */
+		showStencilGUI();
+	
+		runStencilGUI();
+	}
+
+	public String getTitle() {
+		return this.title;
+	}
+
 	private StencilData collectStencilData(
 			String title,
 			Table inputTable,
@@ -127,9 +128,8 @@ public class LineGraphAlgorithm implements Algorithm {
 
 		// Return the Stencil streams together as "Stencil data".
 
-		final StencilData stencilDatum = new StencilData(streamSources);
+		return new StencilData(streamSources);
 
-		return stencilDatum;
 	}
 
 	private StencilGUI createStencilGUI(final String stencilScript, final StencilData initialData)
@@ -201,7 +201,7 @@ public class LineGraphAlgorithm implements Algorithm {
 	
 	private void runStencilGUI() throws AlgorithmExecutionException {
 		try {
-			this.stencilGUI.run();
+			this.stencilGUI.runShowingActiveSegment();
 		} catch (StencilException stencilException) {
 			throw new AlgorithmExecutionException(stencilException.getMessage(), stencilException);
 		}
@@ -248,10 +248,12 @@ public class LineGraphAlgorithm implements Algorithm {
 				inputTable,
 				timeStepColumnName,
 				lineColumnName,
-				STENCIL_STREAM_NAME,
-				STENCIL_TIMESTEP_NAME,
-				STENCIL_LINE_NAME,
-				STENCIL_VALUE_NAME);
+				new StencilStreamMetadata(
+					STENCIL_STREAM_NAME,
+					STENCIL_TIMESTEP_NAME,
+					STENCIL_LINE_NAME,
+					STENCIL_VALUE_NAME)
+				);
 			streams.add(stream);
 		}
 

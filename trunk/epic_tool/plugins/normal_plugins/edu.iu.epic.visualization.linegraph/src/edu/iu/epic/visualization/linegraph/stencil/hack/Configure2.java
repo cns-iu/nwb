@@ -1,7 +1,7 @@
 package edu.iu.epic.visualization.linegraph.stencil.hack;
 
-import java.util.Properties;
 import java.net.URL;
+import java.util.Properties;
 
 
 /**

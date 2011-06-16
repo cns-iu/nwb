@@ -1,6 +1,7 @@
 package edu.iu.epic.visualization.linegraph.utilities;
 
 import java.awt.Color;
+
 import org.cishell.utilities.color.ColorSchema;
 
 /**

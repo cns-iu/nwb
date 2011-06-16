@@ -1,4 +1,4 @@
-package edu.iu.epic.visualization.linegraph.utilities;
+package edu.iu.epic.visualization.linegraph.model.tuple;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,8 +8,11 @@ import prefuse.data.Table;
 import prefuse.util.collections.IntIterator;
 import stencil.tuple.PrototypedTuple;
 import stencil.tuple.Tuple;
+import edu.iu.epic.visualization.linegraph.model.StencilStreamMetadata;
+import edu.iu.epic.visualization.linegraph.model.TimestepBounds;
+import edu.iu.epic.visualization.linegraph.model.table.TableSubsetIterator;
 
-public class TableTupleStream implements TupleStream {
+public class TableSubsetTupleStream implements TupleStream {
 //	private String title;
 	private Table table;
 	private String timeStepColumnName;
@@ -17,30 +20,38 @@ public class TableTupleStream implements TupleStream {
 	private String lineColumnDisplayName;
 	private String stencilStreamName;
 	private List<String> stencilNames;
-	private IntIterator rows;
+	private TableSubsetIterator rows;
 	private int lastRow = -1;
+	
+	private TimestepBounds timestepBounds;
 	
 	/* TODO: Just use constants for a lot of these arguments?  I don't know how
 	 * general-use this should be.
 	 */
-	public TableTupleStream(
-//			String title,
+	public TableSubsetTupleStream(
 			Table table,
 			String timeStepColumnName,
 			String lineColumnName,
 			String lineColumnDisplayName,
-			String stencilStreamName,
-			String stencilTimeStepID,
-			String stencilLineID,
-			String stencilValueID) {
-//		this.title = title;
+			StencilStreamMetadata stencilStreamMetadata,
+			TimestepBounds timestepBounds) {
 		this.table = table;
+		
+		this.timestepBounds = timestepBounds == null 
+									? new TimestepBounds() 
+									: timestepBounds;
+		
 		this.timeStepColumnName = timeStepColumnName;
 		this.lineColumnName = lineColumnName;
 		this.lineColumnDisplayName = lineColumnDisplayName;
-		this.stencilStreamName = stencilStreamName;
+		
+		this.stencilStreamName = stencilStreamMetadata.stencilStreamName;
+		
 		this.stencilNames = Arrays.asList(
-			Tuple.SOURCE_KEY, stencilTimeStepID, stencilLineID, stencilValueID);
+			Tuple.SOURCE_KEY, 
+			stencilStreamMetadata.stencilTimeStepID, 
+			stencilStreamMetadata.stencilLineID, 
+			stencilStreamMetadata.stencilValueID);
 
 		reset();
 	}
@@ -59,7 +70,6 @@ public class TableTupleStream implements TupleStream {
 	
 	public Tuple nextTuple() throws NoSuchElementException {
 		if (!hasNext()) {
-			// TODO: Meaningful exception message.
 			throw new NoSuchElementException();
 		}
 		
@@ -70,17 +80,29 @@ public class TableTupleStream implements TupleStream {
 
 		return new PrototypedTuple(
 			this.stencilNames, Arrays.asList(new String[] {
-				this.stencilStreamName, timeStep, this.lineColumnDisplayName, value
+				this.stencilStreamName, 
+				timeStep, 
+				this.lineColumnDisplayName, 
+				value
 			}));
 	}
 	
 	public void reset() {
-		this.rows = this.table.rows();
+		
+		this.rows = new TableSubsetIterator(table, 
+				 							this.table.rows(),
+				 							this.timeStepColumnName,
+				 							this.timestepBounds);
 		this.lastRow = -1;
 	}
 	
 	public long streamSize() {
-		IntIterator fakeRows = this.table.rows();
+		IntIterator fakeRows = new TableSubsetIterator(
+										table,
+										this.table.rows(),
+										this.timeStepColumnName,
+										this.timestepBounds);
+		
 		long size = 0;
 		
 		while (fakeRows.hasNext()) {
