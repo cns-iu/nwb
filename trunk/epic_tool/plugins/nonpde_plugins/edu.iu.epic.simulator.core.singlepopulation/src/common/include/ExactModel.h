@@ -22,13 +22,14 @@ typedef struct
 {
   std::vector<Transition> transList;
   unsigned NStates;
+  unsigned transCount;
 } PARAMETERS;
 
 class ExactModel
 {
 private:
   PARAMETERS Parameters;
-	const gsl_odeiv_step_type * T;
+  const gsl_odeiv_step_type * T;
   gsl_odeiv_step *s;
   gsl_odeiv_control *c;
   gsl_odeiv_evolve *e;
@@ -41,6 +42,7 @@ private:
 		
 		unsigned NTrans = (*parameters).transList.size();
 		unsigned NStates = (*parameters).NStates;
+		unsigned transCount = (*parameters).transCount;
 		
 		t = 0;
 		double N = 0;
@@ -51,6 +53,9 @@ private:
 			N += population[i];
 		}
 		
+		for(unsigned i=NStates; i< NStates + transCount; ++i)
+		    f[i] = 0;
+		
 		for(unsigned i=0;i<NTrans; ++i)
 		{
 			unsigned start = (*parameters).transList[i].i;
@@ -58,9 +63,12 @@ private:
 			double rate = (*parameters).transList[i].rate;
 			
 			if((*parameters).transList[i].type == SPONTANEOUS)
-			{
+			{   
 				f[start] -= rate*population[start];
 				f[end] += rate*population[start];
+				
+				f[NStates + i] += rate*population[start];
+				
 			}
 			else if((*parameters).transList[i].type == INTERACTION)
 			{
@@ -68,6 +76,8 @@ private:
 				
 				f[start] -= rate*population[start]*population[agent]/N;
 				f[end] += rate*population[start]*population[agent]/N;
+				
+				f[NStates + i] += rate*population[start]*population[agent]/N;
 			}
 		}
 		
@@ -80,6 +90,7 @@ private:
 		
 		unsigned NTrans = (*parameters).transList.size();
 		unsigned NStates = (*parameters).NStates;
+		unsigned transCount = (*parameters).transCount;
 		
 		std::vector<std::vector<double> > jaco;
 		
@@ -89,13 +100,15 @@ private:
 		
 		double N = 0;
 		
-		for(unsigned i=0;i<NStates; ++i)
+		for(unsigned i=0;i< NStates + transCount; ++i)
 		{
 			jaco[i].resize(NStates, 0);
 			dfdy[i] = 0;
 			dfdt[i] = 0;
-			N += population[i];
 		}
+		
+		for(unsigned i=0;i<NStates; ++ i)
+		    N += population[i];
 		
 		for(unsigned i=0;i<NTrans; ++i)
 		{
@@ -107,6 +120,8 @@ private:
 			{
 				jaco[start][start] -= rate;
 				jaco[end][start] += rate;
+				
+				jaco[NStates + i][start] += rate;
 			}
 			else if((*parameters).transList[i].type == INTERACTION)
 			{
@@ -117,13 +132,15 @@ private:
 				
 				jaco[end][start] += rate*population[agent]/N;
 				jaco[end][agent] += rate*population[start]/N;
+				
+				jaco[NStates + i][agent] += rate*population[start]/N;
 			}
 		}
 		
-		gsl_matrix_view dfdy_mat = gsl_matrix_view_array (dfdy, NStates, NStates);
+		gsl_matrix_view dfdy_mat = gsl_matrix_view_array (dfdy, 2*NStates, NStates);
 		gsl_matrix *m = &dfdy_mat.matrix; 
 		
-		for(unsigned i=0; i<NStates; ++i)
+		for(unsigned i=0; i< NStates + transCount; ++i)
 			for(unsigned j=0; j<NStates; ++j)
 				gsl_matrix_set (m, i, j, jaco[i][j]);
 		

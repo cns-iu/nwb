@@ -10,10 +10,11 @@
 #include <cstdlib>
 #include <vector>
 #include <stdint.h>
-#include <Output.h>
 #include <string>
 #include <cstdio>
 #include <cstdlib>
+
+#include "Output.h"
 
 void Output::initVector(std::vector<std::vector<uint64_t> > &vec, unsigned size, unsigned time)
 {

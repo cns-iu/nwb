@@ -12,7 +12,7 @@
 
 enum TYPE{
   INTERACTION = 0,
-  SPONTANEOUS = 1,
+  SPONTANEOUS = 1
 };
 
 typedef struct

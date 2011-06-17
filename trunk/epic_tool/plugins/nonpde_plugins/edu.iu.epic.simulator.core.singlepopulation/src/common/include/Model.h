@@ -10,13 +10,15 @@
 #ifndef _MODEL_H_
 #define _MODEL_H_
 
-#include <defs.h>
-#include <Parser.h>
 #include <vector>
 #include <map>
-#include <Rand.h>
 #include <stdint.h>
 #include <sstream>
+
+#include "defs.h"
+#include "Rand.h"
+#include "Parser.h"
+
 
 /**
  * @class Model

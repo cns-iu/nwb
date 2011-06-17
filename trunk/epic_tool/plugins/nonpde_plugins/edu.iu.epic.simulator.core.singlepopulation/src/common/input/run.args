@@ -1,0 +1,1 @@
+/home/cdtank/Desktop/epic-crap/spem-src/SPEM simul.in -outVal "I;" -infections infections.txt -initial initial.txt -output "/home/cdtank/Desktop/epic-crap/spem-src/input/output" -maxRuns 100 -name 0 -output_frames none

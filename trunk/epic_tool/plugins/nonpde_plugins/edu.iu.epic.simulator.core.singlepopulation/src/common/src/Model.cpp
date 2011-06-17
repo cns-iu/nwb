@@ -11,15 +11,17 @@
 #define _MODEL_CPP_
 
 #include <defs.h>
-#include <Parser.h>
 #include <vector>
 #include <map>
-#include <Rand.h>
-#include <Model.h>
 #include <stdint.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+#include "Parser.h"
+#include "Rand.h"
+#include "Model.h"
+
 
 /**
  * @class Model
@@ -156,7 +158,7 @@
 	  {
 	    unsigned end = transitions[i][k].j;
 	    unsigned start = i;
-	    unsigned agent = transitions[i][k].agent;
+	    //unsigned agent = transitions[i][k].agent;
 	   
 	   	unsigned id = transitions[i][k].id;
 

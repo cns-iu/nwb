@@ -80,6 +80,8 @@ class Graph
 	
   bool add(unsigned x, unsigned y, unsigned t=1, double w=1.0, bool directed=false, bool remap = true);
   
+  void saveHeader(FILE *fpstate);
+  
   Graph(std::string filename);
    
   Graph(std::vector<std::vector<NODE> > G);

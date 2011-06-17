@@ -76,9 +76,6 @@ bool Graph::add(unsigned x, unsigned y, unsigned t, double w, bool directed, boo
 	
 	if(y>=graph.size())
 		graph.resize(y+1);
-
-	/*if(graph[x].size() == 5 or graph[y].size() == 5)
-		return false;*/
 	
 	for(unsigned i=0;i<graph.at(x).size();i++)
 		if(graph.at(x).at(i).endNode == y)
@@ -128,6 +125,16 @@ bool Graph::add(unsigned x, unsigned y, unsigned t, double w, bool directed, boo
 
 	nnz++;
 	return true;
+}
+
+void Graph::saveHeader(FILE *fpstate)
+{
+    fprintf(fpstate, "# time");
+    
+    for(unsigned i=0; i<graph.size(); ++i)
+        fprintf(fpstate, " %u", revDict[i]);
+        
+    fprintf(fpstate, "\n");
 }
 
 bool Graph::isNeighbor(unsigned nodeA, unsigned nodeB)

@@ -3,16 +3,6 @@
 #ifndef RAND_H
 #define RAND_H
 
-#ifdef SWIG
-%include "Rand.h"
-%{
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <Rand.h>
-#include <math.h>
-  %}
-#endif
-
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_math.h>
@@ -155,73 +145,11 @@ class Rand
     return gsl_ran_flat(r,a,b);
   }
 
-  /**
-   * Exponential distirbution of base 2
-   * \f[
-   *     y=-\frac{\log\left[1-r\left(1-2^{-N\left(\tau-1\right)}\right)\right]}{\log\left(2\right)\left(\tau-1\right)}   
-   * \f]
-   */
-  inline unsigned exp2(unsigned N,double tau)
-  {
-    unsigned y;
-	 
-    while((y=unsigned(floor(log(1-gsl_rng_uniform(r)*(1-pow(2.0,(1.0-tau)*N)))/((1.0-tau)*log(2.0)))))>=N){};
-	  
-    return y;
-  }
-
-  /**
-   * Generates a random integer that obeys a power-law distribution with exponet \f$\tau\f$.
-   * The numbers are generated using GSLs implementation of a Pareto
-   * distribution of order \f$\tau-1\f$. Pareto distribution is of the form:
-   * \f[p(x)\mathrm{d}x=\frac{\frac{a}{b}}{\left(\frac{x}{b}\right)^{a+1}}\mathrm{d}x \f]
-   * By setting \f$a\f$ to \f$\tau-1\f$ and \f$b\f$ to \f$1\f$, we obtain the
-   * desired power-law distribution:
-   * \f[p(x)\mathrm{d}x=\frac{\tau-1}{x^\tau}\mathrm{d}x\f]
-   * we then round the resulting double to the lowest integer and return it
-   * as an int after having shifted it so as to include the value 0.
-   * The claim that the resulting distribution is the expected one has been
-   * verified by analysing the results in Matlab. If the value of \f$\tau\f$
-   * specified is negative, its absolute value is used instead.
-   *
-   * @param tau The absolute value of the exponent of the power-law distribution.
-   * @param N The upper limit for which the distribution should be defined
-   * @return x An integer that obeys the power law distribution defined above.
-   */
-  inline int power(double tau,unsigned N=RAND_MAX)
-  {
-    tau=fabs(tau);
-
-    if(N==RAND_MAX)
-      return int(floor(gsl_ran_pareto(r,tau-1.0,1.0)-1.0));
-    else
-      {
-	double temp;
-		  
-	do{
-	  temp=gsl_ran_pareto(r,tau-1.0,1.0)-1.0;
-	}while(temp>=N);
-		  
-	return int(floor(temp/(1-pow(double(N),1.0-tau))));
-      }
-  }
-
   inline void circle(double &x,double &y)
   {
     gsl_ran_dir_2d(r,&x,&y);
   }
-  
-  inline void sphere(double &x,double &y,double &z)
-  {
-    //double phi=2.0*M_PI*gsl_rng_uniform(r);
-    double phi=gsl_ran_flat(r,0.0,2.0*M_PI);
-	  
-    //z=(2*gsl_rng_uniform(r)-1);
-    z=gsl_ran_flat(r,-1.0,1.0);
-    x=sqrt(1-z*z)*cos(phi);
-    y=sqrt(1-z*z)*sin(phi);
-  }
-  
+    
   inline double gamma(double a,double b)
   {
     return gsl_ran_gamma(r,a,b);

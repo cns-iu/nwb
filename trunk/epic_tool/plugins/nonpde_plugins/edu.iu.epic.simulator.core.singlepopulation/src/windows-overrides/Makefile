@@ -1,11 +1,13 @@
-CPP = g++
-INCLUDE = -s -O2 -static -Iinclude/
+# 06/17/2011 Static compilation for Windows is not working. So for now we have lib*.dll files
+# alongside the executables in the repository.
+CPP_32 = g++ -m32 -march=i386 -static
+INCLUDE32 = -Iinclude/ -I./
 DEBUG = -g -Wall -Wextra --pedantic --ansi 
-GSL = 
-GSL_LIB = ./libgsl.a ./libgslcblas.a
-RM = rm
+GSL_LIB32 = -L./ -lgsl -lgslcblas 
+RM = del
 MKDIR = mkdir
-CP = cp
+CP = copy
+
 SPEM_EXECUTABLE = SPEM.exe
 SPEM_DEBUG_EXECUTABLE = SPEM_dbg.exe
 EXACTEM_EXECUTABLE = ExactEM.exe
@@ -15,40 +17,41 @@ NETEM_DEBUG_EXECUTABLE = NetEM_dbg.exe
 
 FILE = $*
 
-all: SPEM ExactEM NetEM
+all: SPEM32 ExactEM32 NetEM32
 
-NetEM: src/ModelNetwork.o src/Parse.o src/input.o src/Graph.o src/Population.o src/Calculator.o src/Output.o src/Calendar.o
-	$(CPP) $(INCLUDE) $(GSL) NetEM.cpp $^ -o $(NETEM_EXECUTABLE) $(GSL_LIB)
+NetEM32: src/ModelNetwork32.o src/Parse32.o src/input32.o src/Graph32.o src/Population32.o src/Calculator32.o src/Output32.o src/Calendar32.o NetEM32.o
+	$(CPP_32) $(INCLUDE32) $^ $(GSL_LIB32) -w -o $(NETEM_EXECUTABLE)
 
-ExactEM: src/ExactModel.o src/Parse.o src/input.o src/Calculator.o
-	$(CPP) $(INCLUDE) $(GSL) ExactEM.cpp $^ -o $(EXACTEM_EXECUTABLE) $(GSL_LIB)
+ExactEM32: src/ExactModel32.o src/Parse32.o src/input32.o src/Calculator32.o ExactEM32.o
+	$(CPP_32) $(INCLUDE32) $^ $(GSL_LIB32) -w -o $(EXACTEM_EXECUTABLE)
+
+SPEM32: src/Output32.o src/Model32.o src/Calendar32.o src/Parse32.o src/input32.o src/Calculator32.o SPEM32.o
+	$(CPP_32) $(INCLUDE32) $^ $(GSL_LIB32) -w -o $(SPEM_EXECUTABLE)
 	
-
-SPEM: src/Output.o src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o 
-	$(CPP) $(INCLUDE) $(GSL) SPEM.cpp $^ -o $(SPEM_EXECUTABLE) $(GSL_LIB)
-
-
-dbg: SPEM_dbg ExactEM_dbg
+dbg: SPEM_dbg ExactEM_dbg NetEM_dbg
 
 archive:
 	git archive --format=tar --prefix=EpiC/ EpiC > EpiC-1.0.tar
 	tar -rvf EpiC-1.0.tar ../EpiC/ShellFramework/*.py
 	gzip EpiC-1.0.tar
 
-NetEM_dbg: src/ModelNetwork_dbg.o src/Parse_dbg.o src/input_dbg.o src/Graph_dbg.o src/Population_dbg.o src/Calculator_dbg.o src/Output_dbg.o src/Calendar_dbg.o
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) NetEM.cpp $^ -o $(NETEM_DEBUG_EXECUTABLE) $(GSL_LIB)
+NetEM32_dbg: src/ModelNetwork32_dbg.o src/Parse32_dbg.o src/input32_dbg.o src/Graph32_dbg.o src/Population32_dbg.o src/Calculator32_dbg.o src/Output32_dbg.o src/Calendar32_dbg.o NetEM32_dbg.o
+	$(CPP_32) $(DEBUG) $(INCLUDE32) $(GSL) $(GSL_LIB32) $^ -o $(NETEM_EXECUTABLE)
 	
-SPEM_dbg: src/Output_dbg.o src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o 
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) SPEM.cpp $^ -o $(SPEM_DEBUG_EXECUTABLE) $(GSL_LIB)
+SPEM32_dbg: src/Output32_dbg.o src/Model32_dbg.o src/Calendar32_dbg.o src/Parse32_dbg.o src/input32_dbg.o src/Calculator32_dbg.o SPEM32_dbg.o
+	$(CPP_32) $(DEBUG) $(INCLUDE32) $(GSL) $(GSL_LIB32) $^ -o $(SPEM_EXECUTABLE)
 
-ExactEM_dbg: src/ExactModel_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) ExactEM.cpp $^ -o $(EXACTEM_DEBUG_EXECUTABLE) $(GSL_LIB)
+ExactEM32_dbg: src/ExactModel32_dbg.o src/Parse32_dbg.o src/input32_dbg.o src/Calculator32_dbg.o ExactEM32_dbg.o
+	$(CPP_32) $(DEBUG) $(INCLUDE32) $(GSL) $(GSL_LIB32) $^ -o $(EXACTEM_EXECUTABLE)
 
-%_dbg.o: %.cpp
-	$(CPP) -c $(DEBUG) $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE)_dbg.o
+%32_dbg.o: %.cpp
+	$(CPP_32) -c $(DEBUG) $(INCLUDE32) $(GSL) $(FILE).cpp -o $(FILE)32_dbg.o
 
-%.o: %.cpp
-	$(CPP) -c $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE).o
+%32.o: %.cpp
+	$(CPP_32) -c $(INCLUDE32) $(FILE).cpp -o $(FILE)32.o
+
+%ppc.o: %.cpp
+	$(CPP_PPC) -c $(INCLUDE32) $(FILE).cpp -o $(FILE)ppc.o
 
 test_dir:
 	$(MKDIR) -p runs/multi/1247499707714.A0C/output
@@ -69,14 +72,9 @@ test_dir:
 	$(CP) input/req_multi.cfg runs/network/2346246152606.1EE/req.cfg
 
 clean:
-	$(RM) -f src/*.o
-	$(RM) -f *$(SPEM_EXECUTABLE) 
-	$(RM) -f *$(EXACTEM_EXECUTABLE)
-	$(RM) -f *$(NETEM_EXECUTABLE)
-	$(RM) -f *$(SPEM_DEBUG_EXECUTABLE)
-	$(RM) -rf *$(EXACTEM_DEBUG_EXECUTABLE)
-	$(RM) -rf *$(NETEM_DEBUG_EXECUTABLE)
-	$(RM) -rf runs/
+	$(RM) src\*.o
+	$(RM) *.exe 
+	$(RM) runs\
 
 clean_run:
-	$(RM) -rf runs/
+	$(RM) runs\

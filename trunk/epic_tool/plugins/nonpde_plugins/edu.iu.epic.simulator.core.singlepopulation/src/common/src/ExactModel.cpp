@@ -14,15 +14,16 @@ ExactModel::ExactModel(Parse &parse)
 {
 	Parameters.transList = parse.getTransitions();
 	Parameters.NStates = parse.NStates();
+	Parameters.transCount = Parameters.transList.size();
 	
 	T = gsl_odeiv_step_rk8pd;
-	s = gsl_odeiv_step_alloc (T, Parameters.NStates);
+	s = gsl_odeiv_step_alloc (T, Parameters.NStates + Parameters.transCount);
 	c = gsl_odeiv_control_y_new (1e-6, 0.0);
-	e = gsl_odeiv_evolve_alloc (Parameters.NStates);
+	e = gsl_odeiv_evolve_alloc (Parameters.NStates + Parameters.transCount);
 	
 	h = 1e-6;
 	
-	gsl_odeiv_system sys2 = {func, jac, Parameters.NStates, &Parameters};
+	gsl_odeiv_system sys2 = {func, jac, Parameters.NStates + Parameters.transCount, &Parameters};
 	
 	sys = sys2;
 }
