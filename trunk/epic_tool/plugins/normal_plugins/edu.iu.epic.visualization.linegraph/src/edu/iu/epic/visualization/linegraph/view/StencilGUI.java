@@ -363,6 +363,7 @@ public class StencilGUI {
 		checkBox.setSelected(true);
 		checkBox.setName(lineName);
 		checkBox.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent event) {
 				try {
 					boolean visible = true;
