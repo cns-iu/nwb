@@ -29,8 +29,6 @@ import edu.iu.epic.simulator.runner.utility.preprocessing.InfectionsFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.NetworkFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.SimulatorModelFileMaker;
 
-import edu.iu.epic.simulator.runner.utility.postprocessing.DatToCsv;
-
 public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
@@ -39,6 +37,7 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	protected Dictionary<String, Object> parameters;
 	protected CIShellContext ciContext;
 	protected BundleContext bundleContext;
+	protected File nwbFile;
 	protected static LogService logger;
 
 	
@@ -58,12 +57,11 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	
 	
 	public Data[] execute() throws AlgorithmExecutionException {		
-		Data[] datFileData;
+		Data[] simulationOutputData;
 		try {
 			Data[] simulatorInputData =
 				createSimulatorInputData(this.data, this.parameters);
-			datFileData = executeSimulator(simulatorInputData, ciContext, bundleContext);
-			
+			simulationOutputData = executeSimulator(simulatorInputData, ciContext, bundleContext);			
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error formatting input data for simulation: " + e.getMessage(), e);
@@ -72,21 +70,12 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 					"Error parsing the given start date: " + e.getMessage(), e);
 		}
 		
-		try {
-			File datFile = (File) datFileData[0].getData();
-			File csvFile = DatToCsv.convert(datFile);
-	    	
-			String label = (String) datFileData[0].getMetadata().get(DataProperty.LABEL);
-			
-	    	return createOutData(csvFile, label, this.data[0]);
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(
-					"Problem preparing results: " + e.getMessage(), e);
-		} catch (NumberFormatException e) {
-			throw new AlgorithmExecutionException(
-					"Problem preparing results: " + e.getMessage(), e);
-		}
+		return prepareForDataManager(simulationOutputData);
 	}
+
+
+	protected abstract Data[] prepareForDataManager(Data[] simulationOutputData)
+		throws AlgorithmExecutionException;
 
 	private Data[] createSimulatorInputData(
 			Data[] runnerData, Dictionary<String, Object> runnerParameters)
@@ -143,7 +132,8 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		 * we assume that it is a network. */
 		String simulatorNetworkFilePath = null;
 		if (runnerData.length >= 2) {
-			File runnerNetworkFile = (File) runnerData[1].getData();			
+			File runnerNetworkFile = (File) runnerData[1].getData();
+			this.nwbFile = runnerNetworkFile;
 			File simulatorNetworkFile =
 				NetworkFileMaker.make(runnerNetworkFile);
 			simulatorNetworkFilePath = simulatorNetworkFile.getPath();
@@ -189,14 +179,15 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		}
 	}
 
-	private static Data[] createOutData(File outDatFile, String label, Data parentData) {
-		Data outData = new BasicData(outDatFile, CSV_MIME_TYPE);
+	protected static Data datafyCsvFile(File csvFile, String label, Data parentData) {
+		Data outData = new BasicData(csvFile, CSV_MIME_TYPE);
+		
 		Dictionary<String, Object> metadata = outData.getMetadata();
 		metadata.put(DataProperty.LABEL, label);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		metadata.put(DataProperty.PARENT, parentData);
 		
-		return new Data[]{ outData };
+		return outData;
 	}
 
 	public static StringTemplateGroup loadTemplates(String templatePath) {

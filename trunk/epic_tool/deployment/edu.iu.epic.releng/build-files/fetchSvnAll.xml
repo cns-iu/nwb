@@ -118,15 +118,20 @@
 		<param name="project.name" value="edu.iu.epic.simulator.runner"/>
 		<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
 	</antcall>
+	
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="edu.iu.epic.preprocessing.extracttimestep"/>
+		<param name="project.name" value="edu.iu.epic.preprocessing.extracttimestep"/>
+		<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
+	</antcall>
   		
-  	
-  		
-  		<antcall target="svn.co">
-  		  	  	  	  <param name="target" value="plugins"/>
-  		  	  	  	  <param name="element.id" value="edu.iu.epic.visualization.linegraph"/>
-  		  	  	  	  <param name="project.name" value="edu.iu.epic.visualization.linegraph"/>
-  		  	  	  	  <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
-  		  	</antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.epic.visualization.linegraph"/>
+  	  <param name="project.name" value="edu.iu.epic.visualization.linegraph"/>
+  	  <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
+  	</antcall>
   	
   	 <antcall target="svn.co">
   	          <param name="target" value="features"/>

@@ -26,8 +26,14 @@ public class DatToCsv {
 	public static final String DAT_FILE_COLUMN_NAMES_LINE_PREFIX =
 		String.format("%s %s", DAT_FILE_COMMENT_MARKER, DAT_FILE_FIRST_COLUMN_NAME);
 	
+	private File datFile;
+	private List<String> compartments;
 	
-	public static File convert(File datFile) throws IOException {
+	public DatToCsv(File datFile) {
+		this.datFile = datFile;
+	}
+	
+	public File convert() throws IOException {
 		File csvFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 					TEMP_CSV_FILE_PREFIX, CSV_FILE_EXTENSION);
@@ -46,19 +52,27 @@ public class DatToCsv {
 		
 		return csvFile;
 	}
+	
+	public List<String> getCompartments() {
+		return compartments;
+	}
 
-	private static void convert(BufferedReader datReader, CSVWriter csvWriter) throws IOException {
+	private void convert(BufferedReader datReader, CSVWriter csvWriter) throws IOException {
 		String datLine = null;
 		while ((datLine = datReader.readLine()) != null) {
 			processLine(datLine, csvWriter);
 		}
 	}
 
-	private static void processLine(String datLine, CSVWriter csvWriter) {
+	private void processLine(String datLine, CSVWriter csvWriter) {
 		if (datLine.startsWith(DAT_FILE_COLUMN_NAMES_LINE_PREFIX)) {
 			// Skip the comment marker and take only the column names
 			String lineStartingWithColumns =
 				datLine.substring(datLine.indexOf(DAT_FILE_FIRST_COLUMN_NAME));
+			
+			String lineStartingWithCompartments =
+				lineStartingWithColumns.substring(DAT_FILE_FIRST_COLUMN_NAME.length()).trim();
+			compartments = Lists.newArrayList(lineStartingWithCompartments.split(" "));
 			
 			csvWriter.writeNext(lineStartingWithColumns.split(" "));
 		} else if (datLine.startsWith(DAT_FILE_COMMENT_MARKER)) {

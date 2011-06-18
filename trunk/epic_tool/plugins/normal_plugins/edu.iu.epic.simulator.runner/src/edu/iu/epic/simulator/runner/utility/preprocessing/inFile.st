@@ -67,7 +67,7 @@ maxRuns 100
 name 0
 
 # set frame
-output_frames none
+frames .
 
 # initial compartment populations
 initial <initialFile>

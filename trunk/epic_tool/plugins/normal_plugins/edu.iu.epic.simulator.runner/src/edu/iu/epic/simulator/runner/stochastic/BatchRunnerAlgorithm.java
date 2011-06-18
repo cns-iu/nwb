@@ -5,6 +5,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -18,6 +19,8 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.framework.BundleContext;
+
+import com.google.common.collect.Lists;
 
 public abstract class BatchRunnerAlgorithm implements Algorithm {
 	public static final int THREAD_POOL_SIZE = 4;
@@ -83,15 +86,17 @@ public abstract class BatchRunnerAlgorithm implements Algorithm {
 		try {
 			Collection<Future<Data[]>> futureOutputData = pool.invokeAll(runTasks);
 			
-			Data[] outputDataArray = new Data[numberOfRuns];
-			int outputDataIndex = 0;
+			List<Data> outputData = Lists.newArrayList();
+			int runIndex = 0;
 			for (Future<Data[]> futureOutputDatum : futureOutputData) {
 				try {
 					Data[] singleOutputDataArray = futureOutputDatum.get();
-					Data singleOutputData = singleOutputDataArray[0];
-					setSingleOutputDataLabel(singleOutputData, outputDataIndex);
-					outputDataArray[outputDataIndex] = singleOutputData;
-					outputDataIndex++;
+					for (Data singleOutputData : singleOutputDataArray) {
+						addRunNumberToLabel(singleOutputData, runIndex);
+						outputData.add(singleOutputData);
+					}
+					
+					runIndex++;
 				} catch (ExecutionException e) {
 					String message =
 						"Error getting simulation results for some run: " + e.getMessage();
@@ -100,15 +105,17 @@ public abstract class BatchRunnerAlgorithm implements Algorithm {
 			}
 
 			// TODO Eventually, summarize the output.
-			return outputDataArray;
+			return outputData.toArray(new Data[]{});
 		} catch (InterruptedException e) {
 			String message = "Error: Interrupted while running simulation: " + e.getMessage();
 			throw new AlgorithmExecutionException(message, e);
 		}
 	}
 
-	private void setSingleOutputDataLabel(Data data, int runIndex) {
-		data.getMetadata().put(DataProperty.LABEL, createSingleOutputDataLabel(data, runIndex));
+	private void addRunNumberToLabel(Data coreData, int runIndex) {
+		coreData.getMetadata().put(
+				DataProperty.LABEL,
+				createSingleOutputDataLabel(coreData, runIndex));
 	}	
 	private String createSingleOutputDataLabel(Data coreOutData, int runIndex) {
 		String originalLabel = (String) coreOutData.getMetadata().get(DataProperty.LABEL);
@@ -117,7 +124,7 @@ public abstract class BatchRunnerAlgorithm implements Algorithm {
 		return originalLabel + ": Run " + userFriendlyRunIndex;
 	}
 	
-	// Note that key and value are not cloned.
+	// Key and value are not cloned.
 	private static <K, V> Dictionary<K, V> createShallowCopy(
 			Dictionary<K, V> originalDictionary) {
 		Dictionary<K, V> newDictionary = new Hashtable<K, V>();
