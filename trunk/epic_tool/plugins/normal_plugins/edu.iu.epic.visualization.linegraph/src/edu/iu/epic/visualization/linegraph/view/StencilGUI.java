@@ -363,7 +363,6 @@ public class StencilGUI {
 		checkBox.setSelected(true);
 		checkBox.setName(lineName);
 		checkBox.addItemListener(new ItemListener() {
-			@Override
 			public void itemStateChanged(ItemEvent event) {
 				try {
 					boolean visible = true;
@@ -471,8 +470,6 @@ public class StencilGUI {
 		JSlider slider = new JSlider(min, max, max);
 
 		slider.addChangeListener(new ChangeListener() {
-
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider) e.getSource();
 
