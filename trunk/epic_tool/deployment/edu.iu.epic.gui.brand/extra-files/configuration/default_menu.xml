@@ -197,6 +197,7 @@
     
     <top_menu name="Visualization">
 	    <menu pid="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm"/>
+		<menu pid="edu.iu.nwb.visualization.guess" name="GUESS Network Visualization"/>
 	</top_menu>
 
 	<top_menu name="R">
