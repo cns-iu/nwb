@@ -2,6 +2,7 @@
 
 echo "cd /home/epic_website/epic_code/epic" > remote.sh
 echo "export PYTHONPATH=/home/epic_website:/home/epic_website/epic_code" >> remote.sh
+echo "pwd" >> remote.sh
 echo "ls -la" >> remote.sh
 echo "python2.6 manage.py shell --settings=$EPIC_SETTINGS < get_environment_info.py" >> remote.sh
 
