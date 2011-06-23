@@ -1,0 +1,6 @@
+{% if item.category %}
+ <p class="category"> Category:
+  <a href="{% url categories.views.view_items_for_category item.category.name %}">
+    {{ item.category.name }}
+  </a> </p> 
+{% endif %}
