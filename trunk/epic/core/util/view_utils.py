@@ -102,3 +102,34 @@ def logged_view(view):
         view.__name__ = view.__name__()
         view.func_name = view.__name__
     return functools.update_wrapper(decorated_view, view)
+
+def send_mail_via_system_call(to_email, subject, body, from_email=None):
+    '''This method is used to send email using system calls instead of the 
+    User.email_user() method provided in User model. We need to do this because
+    email_user uses direct email_host & email_port information for sending emails
+    but we need to route emails via ssmtp, as suggested by Jon.
+    Hence we create system command in the form of -
+    
+    echo "EMAIL_BODY" | mail -s "EMAIL_SUBJECT" --append=FROM:from@email.com to@email.com
+    
+    '''
+    import subprocess
+    import settings
+    
+    echo_body_command_call = subprocess.Popen(
+        ['echo', body],
+        stderr=subprocess.STDOUT,
+        stdout=subprocess.PIPE
+     ) 
+    
+    from_email = from_email or settings.DEFAULT_FROM_EMAIL
+    from_email_header = "--append=FROM:%s" % from_email 
+    
+    mail_command = ['mail', '-s', subject, from_email_header, to_email]
+    
+    mail_command_call = subprocess.Popen(
+        mail_command,
+        stdin=echo_body_command_call.stdout,
+        stderr=subprocess.STDOUT,
+        stdout=subprocess.PIPE
+    )

@@ -22,7 +22,7 @@ from epic.core.forms import UserForm
 from epic.core.models import Author
 from epic.core.models import Profile
 from epic.core.util import active_user_required
-from epic.core.util.view_utils import paginate, request_user_is_authenticated
+from epic.core.util.view_utils import paginate, request_user_is_authenticated, send_mail_via_system_call
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet, DataSetFile, DataSetDownload
 from epic.projects.models import Project, ProjectDownload
@@ -401,14 +401,18 @@ REGISTRATION_EMAIL_SUBJECT = 'EpiC Account Registration'
 
 def _email_user_about_registration(request, user, profile):
     rendered_email = form_email_about_registration(request, user, profile)
-    user.email_user(REGISTRATION_EMAIL_SUBJECT, rendered_email)
+#   user.email_user(REGISTRATION_EMAIL_SUBJECT, rendered_email)
+    send_mail_via_system_call(user.email, 
+                              REGISTRATION_EMAIL_SUBJECT,
+                              rendered_email)
 
 def _email_user_about_password_changed(request, user, new_password):
     rendered_email = _form_email_about_password_changed(request, user, new_password)
-    user.email_user('EpiC Account Password Reset', rendered_email)
-
+#    user.email_user('EpiC Account Password Reset', rendered_email)
+    send_mail_via_system_call(user.email, 
+                              'EpiC Account Password Reset',
+                              rendered_email)
     success_message = _form_success_message(user)
-
     return success_message
 
 def form_email_about_registration(request, user, profile):
@@ -421,8 +425,8 @@ def form_email_about_registration(request, user, profile):
         'user': user, 'activation_url': activation_url, 'login_url': login_url
     }
     template_context = Context(template_context_data)
+    
     rendered_email = email_body.render(template_context)
-
     return rendered_email
 
 def _form_email_about_password_changed(request, user, new_password):
