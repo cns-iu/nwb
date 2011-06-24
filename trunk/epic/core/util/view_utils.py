@@ -125,7 +125,7 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
     from_email = from_email or DEFAULT_FROM_EMAIL
     from_email_header = "--append=FROM:%s" % from_email 
     
-    mail_command = ['mail', '-s', subject, from_email_header, to_email]
+    mail_command = ['mail', '-s', subject, to_email]
     
     mail_command_call = subprocess.Popen(
         mail_command,
@@ -133,3 +133,5 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
         stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE
     )
+    
+    return mail_command_call.stdout.read()

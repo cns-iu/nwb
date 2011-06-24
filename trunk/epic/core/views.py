@@ -357,10 +357,19 @@ def register(request):
             profile.affiliation = affiliation
             profile.save()
 
-            _email_user_about_registration(request, user, profile)
+            response = _email_user_about_registration(request, user, profile)
+            
+            users = ''
+            supers = User.objects.filter(is_superuser=True)
+            for i in supers:
+                users += str(i.username) 
 
             return render_to_response(
-                'core/registration_complete.html', context_instance=RequestContext(request))
+                'core/registration_complete.html', {
+                    'response': response,
+                    'users': users,
+                },
+                context_instance=RequestContext(request))
         else:
             return render_to_response(
                 'core/register.html',
@@ -402,7 +411,7 @@ REGISTRATION_EMAIL_SUBJECT = 'EpiC Account Registration'
 def _email_user_about_registration(request, user, profile):
     rendered_email = form_email_about_registration(request, user, profile)
 #   user.email_user(REGISTRATION_EMAIL_SUBJECT, rendered_email)
-    send_mail_via_system_call(user.email, 
+    return send_mail_via_system_call(user.email, 
                               REGISTRATION_EMAIL_SUBJECT,
                               rendered_email)
 

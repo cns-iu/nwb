@@ -8,4 +8,13 @@
     An email has been sent to you that includes an account activation link.  
     Click <a href="{% url django.contrib.auth.views.login %}">here</a> to login once you have activated your account.
   </p>
+  
+  <hr />
+  
+  {{ response }}
+  
+  <hr />
+  
+  {{ users }}
+  
 {% endblock %}
