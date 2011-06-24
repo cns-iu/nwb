@@ -334,11 +334,6 @@ REGISTRATION_FORM_NAME = 'form'
 
 def register(request):
     
-#    send_mail_via_system_call('tankchintan@gmail.com', 
-#                              'Email send test subject',
-#                              'Email send body')
-    
-    
     if request_user_is_authenticated(request):
         return HttpResponseRedirect(reverse('epic.core.views.view_profile',))
 
@@ -363,22 +358,10 @@ def register(request):
             profile.affiliation = affiliation
             profile.save()
 
-            try:
-                response = _email_user_about_registration(request, user, profile)
-            except Exception as e:
-                response = e
-            
-            users = ''
-            supers = User.objects.filter(is_superuser=True)
-            for i in supers:
-                users += str(i.username) 
+            _email_user_about_registration(request, user, profile)
 
             return render_to_response(
-                'core/registration_complete.html', {
-                    'response': response,
-                    'users': users,
-                },
-                context_instance=RequestContext(request))
+                'core/registration_complete.html', context_instance=RequestContext(request))
         else:
             return render_to_response(
                 'core/register.html',
@@ -419,14 +402,12 @@ REGISTRATION_EMAIL_SUBJECT = 'EpiC Account Registration'
 
 def _email_user_about_registration(request, user, profile):
     rendered_email = form_email_about_registration(request, user, profile)
-#   user.email_user(REGISTRATION_EMAIL_SUBJECT, rendered_email)
-    return send_mail_via_system_call(user.email, 
+    send_mail_via_system_call(user.email, 
                               REGISTRATION_EMAIL_SUBJECT,
                               rendered_email)
 
 def _email_user_about_password_changed(request, user, new_password):
     rendered_email = _form_email_about_password_changed(request, user, new_password)
-#    user.email_user('EpiC Account Password Reset', rendered_email)
     send_mail_via_system_call(user.email, 
                               'EpiC Account Password Reset',
                               rendered_email)
