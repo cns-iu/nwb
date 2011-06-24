@@ -114,7 +114,7 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
     
     '''
     import subprocess
-    import epic.settings
+    from epic.settings import DEFAULT_FROM_EMAIL 
     
     echo_body_command_call = subprocess.Popen(
         ['echo', body],
@@ -122,7 +122,7 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
         stdout=subprocess.PIPE
      ) 
     
-    from_email = from_email or settings.DEFAULT_FROM_EMAIL
+    from_email = from_email or DEFAULT_FROM_EMAIL
     from_email_header = "--append=FROM:%s" % from_email 
     
     mail_command = ['mail', '-s', subject, from_email_header, to_email]
