@@ -333,6 +333,12 @@ def forgot_password(request):
 REGISTRATION_FORM_NAME = 'form'
 
 def register(request):
+    
+    send_mail_via_system_call('tankchintan@gmail.com', 
+                              'Email send test subject',
+                              'Email send body')
+    
+    
     if request_user_is_authenticated(request):
         return HttpResponseRedirect(reverse('epic.core.views.view_profile',))
 
