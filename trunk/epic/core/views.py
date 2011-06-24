@@ -363,7 +363,10 @@ def register(request):
             profile.affiliation = affiliation
             profile.save()
 
-            response = _email_user_about_registration(request, user, profile)
+            try:
+                response = _email_user_about_registration(request, user, profile)
+            except Exception as e:
+                response = e
             
             users = ''
             supers = User.objects.filter(is_superuser=True)
