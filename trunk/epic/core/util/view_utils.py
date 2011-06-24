@@ -114,7 +114,7 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
     
     '''
     import subprocess
-    import settings
+    import epic.settings
     
     echo_body_command_call = subprocess.Popen(
         ['echo', body],
