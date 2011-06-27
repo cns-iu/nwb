@@ -123,10 +123,10 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
         stdout=subprocess.PIPE
      ) 
     
-    if from_email:
-        mail_command = ['nail', '-s', subject, '-r', from_email, to_email]
-    else:
-        mail_command = ['mail', '-s', subject, to_email]
+#    if from_email:
+#        mail_command = ['nail', '-s', subject, '-r', from_email, to_email]
+#    else:
+    mail_command = ['mail', '-s', subject, to_email]
     
     mail_command_call = subprocess.Popen(
         mail_command,
