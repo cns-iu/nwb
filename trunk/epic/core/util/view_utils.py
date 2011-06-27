@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 import functools
 import logging
 import inspect
-
+import subprocess
 
 def request_user_is_authenticated(request):
     if request.user is not None and request.user.is_authenticated():
@@ -103,7 +103,7 @@ def logged_view(view):
         view.func_name = view.__name__
     return functools.update_wrapper(decorated_view, view)
 
-def send_mail_via_system_call(to_email, subject, body):
+def send_mail_via_system_call(to_email, subject, body, from_email=None):
     '''This method is used to send email using system calls instead of the 
     User.email_user() method provided in User model. We need to do this because
     email_user uses direct email_host & email_port information for sending emails
@@ -112,8 +112,10 @@ def send_mail_via_system_call(to_email, subject, body):
     
     echo "EMAIL_BODY" | mail -s "EMAIL_SUBJECT" to@email.com
     
+    Or, if the from_email is provided then use this foramt,
+    echo "EMAIL_BODY" | nail -s "EMAIL_SUBJECT" -r "from_email" to@email.com
+    
     '''
-    import subprocess
     
     echo_body_command_call = subprocess.Popen(
         ['echo', body],
@@ -121,7 +123,10 @@ def send_mail_via_system_call(to_email, subject, body):
         stdout=subprocess.PIPE
      ) 
     
-    mail_command = ['mail', '-s', subject, to_email]
+    if from_email:
+        mail_command = ['nail', '-s', subject, '-r', '"%s"' % from_email, to_email]
+    else:
+        mail_command = ['mail', '-s', subject, to_email]
     
     mail_command_call = subprocess.Popen(
         mail_command,

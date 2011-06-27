@@ -26,7 +26,7 @@ from epic.core.util.view_utils import paginate, request_user_is_authenticated, s
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet, DataSetFile, DataSetDownload
 from epic.projects.models import Project, ProjectDownload
-from epic.settings import DEACTIVATED_ACCOUNT_VIEW
+from epic.settings import DEACTIVATED_ACCOUNT_VIEW, DEFAULT_FROM_EMAIL
 from xmlrpclib import datetime
 
 
@@ -404,13 +404,15 @@ def _email_user_about_registration(request, user, profile):
     rendered_email = form_email_about_registration(request, user, profile)
     send_mail_via_system_call(user.email, 
                               REGISTRATION_EMAIL_SUBJECT,
-                              rendered_email)
+                              rendered_email,
+                              DEFAULT_FROM_EMAIL)
 
 def _email_user_about_password_changed(request, user, new_password):
     rendered_email = _form_email_about_password_changed(request, user, new_password)
     send_mail_via_system_call(user.email, 
                               'EpiC Account Password Reset',
-                              rendered_email)
+                              rendered_email,
+                              DEFAULT_FROM_EMAIL)
     success_message = _form_success_message(user)
     return success_message
 

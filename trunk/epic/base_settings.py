@@ -144,7 +144,8 @@ GOOGLE_KEY = \
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
 # For registration.
-DEFAULT_FROM_EMAIL = 'NOREPLY@epic.cns.iu.edu'
+#DEFAULT_FROM_EMAIL = 'NOREPLY@epic.cns.iu.edu'
+DEFAULT_FROM_EMAIL = 'cns-epic-l@listserv.indiana.edu'
 
 DEACTIVATED_ACCOUNT_VIEW = 'epic.core.views.deactivated_account'
 
