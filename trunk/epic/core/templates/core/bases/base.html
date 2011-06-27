@@ -137,7 +137,10 @@ function hideLogin() {
         {% block footer %}
           <center>
             <p>
-              Use of this site constitutes acceptance of our <a href='{% url epic.core.views.terms_and_conditions %}'>Terms & Conditions</a> and <a href='{% url epic.core.views.privacy_policy %}'>Privacy Policy</a>. (c) 2010 Indiana University. All rights reserved.
+			  {% comment %}
+              Use of this site constitutes acceptance of our <a href='{% url epic.core.views.terms_and_conditions %}'>Terms & Conditions</a> and <a href='{% url epic.core.views.privacy_policy %}'>Privacy Policy</a>.
+              {% endcomment %} 
+              &copy; 2011 Indiana University. All rights reserved.
             </p>
           </center>
         {% endblock %}

@@ -113,24 +113,30 @@ def send_mail_via_system_call(to_email, subject, body, from_email=None):
     echo "EMAIL_BODY" | mail -s "EMAIL_SUBJECT" to@email.com
     
     Or, if the from_email is provided then use this foramt,
-    echo "EMAIL_BODY" | nail -s "EMAIL_SUBJECT" -r "from_email" to@email.com
-    
+    #echo "EMAIL_BODY" | nail -s "EMAIL_SUBJECT" -r "from_email" to@email.com
+    /usr/local/bin/ezmailer "to@email.com" "from@email.com" "subject_email" "body_email"
     '''
     
-    echo_body_command_call = subprocess.Popen(
-        ['echo', body],
-        stderr=subprocess.STDOUT,
-        stdout=subprocess.PIPE
-     ) 
-    
-#    if from_email:
+    if from_email:
 #        mail_command = ['nail', '-s', subject, '-r', from_email, to_email]
-#    else:
-    mail_command = ['mail', '-s', subject, to_email]
+        mail_command = ['/usr/local/bin/ezmailer', 
+                        '"%s"' % to_email,
+                        '"%s"' % from_email, 
+                        subject, 
+                        body]
+        mail_stdin = None
+    else:
+        echo_body_command_call = subprocess.Popen(
+            ['echo', body],
+            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE
+        ) 
+        mail_command = ['mail', '-s', subject, to_email]
+        mail_stdin = echo_body_command_call.stdout
     
     mail_command_call = subprocess.Popen(
         mail_command,
-        stdin=echo_body_command_call.stdout,
+        stdin=mail_stdin,
         stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE
     )
