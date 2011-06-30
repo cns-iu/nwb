@@ -176,15 +176,16 @@ DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
                         '<br />[u] ... [/u] <u> underline </u> ' + \
                         '<br />[img]URL[/img] to display an image from URL'
 
-class CategoryChoiceField(forms.ModelChoiceField):
+class CategoryChoiceField(forms.ModelMultipleChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(
-            empty_label=None, queryset=Category.objects.all().order_by('name'))
+			required=False,
+            queryset=Category.objects.all().order_by('name'))
     
     def clean(self, value):
-        if value is None:
+    	
+        if not value:
             no_category = default_category()
-            
-            return super(CategoryChoiceField, self).clean(no_category.id)
+            return super(CategoryChoiceField, self).clean([no_category.id])
         
         return super(CategoryChoiceField, self).clean(value)

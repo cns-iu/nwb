@@ -145,8 +145,9 @@ class NoReadMeException(Exception):
     pass
 
 def _save_new_dataset(form, user):
+    
     name = form.cleaned_data['name']
-    category = form.cleaned_data['category']
+    categories = form.cleaned_data['category']
     description = form.cleaned_data['description']
     previous_version = form.cleaned_data['previous_version']
     
@@ -154,9 +155,12 @@ def _save_new_dataset(form, user):
         creator=user, 
         name=name,
         description=description,
-        category=category,
         previous_version=previous_version, 
         is_active=False)
+
+#    We need to save the categories as step 2 because it is a m2m relationship.
+    new_dataset.categories = categories
+    new_dataset.save()
 
     return new_dataset
 
@@ -434,8 +438,7 @@ def edit_dataset(request, item_id, slug=None):
             'tags': current_tags,
         }
         
-        if dataset.category is not None:
-            initial_dataset_data['category'] = dataset.category.id
+        initial_dataset_data['category'] = dataset.categories.values_list('id', flat=True)
         
         form = EditDataSetForm(initial=initial_dataset_data)
         initial_location_data = []
@@ -471,7 +474,7 @@ def edit_dataset(request, item_id, slug=None):
         if form.is_valid() and author_formset.is_valid() and ref_formset.is_valid():     
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
-            dataset.category = form.cleaned_data['category']
+            dataset.categories = form.cleaned_data['category']
             dataset.save()
             
             tag_names = form.cleaned_data["tags"]

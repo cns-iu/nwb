@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.template.defaultfilters import slugify
 
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.constants import NO_CATEGORY_DESCRIPTION
@@ -9,6 +10,7 @@ class Category(models.Model):
     name = models.CharField(max_length=256, unique=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    slug = models.SlugField()
         
     def __unicode__(self):
         return '%s' % self.name
@@ -20,6 +22,10 @@ class Category(models.Model):
         no_category = default_category()
         self.item_set.update(category=no_category)
         super(Category, self).delete()
+        
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save()
 
 class CannotDeleteNoCategoryException(Exception):
     def __init__(self):

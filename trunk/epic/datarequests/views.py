@@ -50,6 +50,10 @@ def new_datarequest(request):
             datarequest.is_active = True
             datarequest.save()
             
+            #    We need to save the categories as step 2 because it is a m2m relationship.
+            datarequest.categories = form.cleaned_data['category']
+            datarequest.save()
+            
             tag_names = form.cleaned_data['tags']
             Tagging.objects.update_tags(tag_names=tag_names, 
                                         item=datarequest, 
@@ -80,9 +84,15 @@ def edit_datarequest(request, item_id, slug):
         if request.method != 'POST':
             current_tags = \
                 Tagging.objects.get_edit_string(item=datarequest, user=user)
+                
+            initial_datarequest_data = {
+                'tags': current_tags
+            }
             
-            form = DataRequestForm(
-                instance=datarequest, initial={'tags': current_tags})
+            initial_datarequest_data['category'] = datarequest.categories.values_list('id', flat=True)
+            
+            form = DataRequestForm(instance=datarequest, 
+                                   initial=initial_datarequest_data)
         else:
             form = DataRequestForm(request.POST, instance=datarequest)
             
@@ -92,6 +102,7 @@ def edit_datarequest(request, item_id, slug):
                                         item=datarequest, 
                                         user=user)
                 datarequest = form.save(commit=False) 
+                datarequest.categories = form.cleaned_data['category']
                 datarequest.save()
                 
                 view_datarequest_url = get_item_url(

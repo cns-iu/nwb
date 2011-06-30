@@ -137,19 +137,19 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
-            kwargs={'category_id': self.category1.name})
+            kwargs={'category_id': self.category1.slug})
         
         self.view_datasets_url = reverse(
             'epic.categories.views.view_datasets_for_category',
-            kwargs={'category_id': self.category1.name})
+            kwargs={'category_id': self.category1.slug})
         
         self.view_projects_url = reverse(
             'epic.categories.views.view_projects_for_category',
-            kwargs={'category_id': self.category1.name})
+            kwargs={'category_id': self.category1.slug})
         
         self.view_datarequests_url = reverse(
             'epic.categories.views.view_datarequests_for_category',
-            kwargs={'category_id': self.category1.name})
+            kwargs={'category_id': self.category1.slug})
     
     def testInvalidCategory(self):
         invalid_all_items_for_category_url = reverse(
@@ -234,7 +234,7 @@ class CategoryTemplateTagsTestCase(CustomTestCase):
         self.view_categories_url = reverse('epic.categories.views.view_categories')
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
-            kwargs={'category_id': self.category1.name})
+            kwargs={'category_id': self.category1.slug})
         
         self.view_dataset_url = get_item_url(self.dataset, 'epic.datasets.views.view_dataset')
         self.view_project_url = get_item_url(self.project, 'epic.projects.views.view_project')

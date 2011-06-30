@@ -1,0 +1,254 @@
+[
+   {
+      "pk":1,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-25 15:26:43",
+         "name":"Uncategorized",
+         "description":"Items that do not fall under any other category"
+      }
+   },
+   {
+      "pk":2,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:06",
+         "name":"Behavioral sciences",
+         "description":"Behavioral sciences"
+      }
+   },
+   {
+      "pk":3,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:14",
+         "name":"Computer science",
+         "description":"Computer science"
+      }
+   },
+   {
+      "pk":4,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:21",
+         "name":"Critical care medicine",
+         "description":"Critical care medicine"
+      }
+   },
+   {
+      "pk":5,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:28",
+         "name":"Demography",
+         "description":"Demography"
+      }
+   },
+   {
+      "pk":6,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:32",
+         "name":"Epidemiology",
+         "description":"Epidemiology"
+      }
+   },
+   {
+      "pk":7,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:37",
+         "name":"Geography",
+         "description":"Geography"
+      }
+   },
+   {
+      "pk":8,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:44",
+         "name":"Health policy & services",
+         "description":"Health policy & services"
+      }
+   },
+   {
+      "pk":9,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:49",
+         "name":"Healthcare sciences & services",
+         "description":"Healthcare sciences & services"
+      }
+   },
+   {
+      "pk":10,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:17:54",
+         "name":"Immunology",
+         "description":"Immunology"
+      }
+   },
+   {
+      "pk":11,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:00",
+         "name":"Information science & library science",
+         "description":"Information science & library science"
+      }
+   },
+   {
+      "pk":12,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:09",
+         "name":"International health",
+         "description":"International health"
+      }
+   },
+   {
+      "pk":13,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:15",
+         "name":"Mathematical & computational biology",
+         "description":"Mathematical & computational biology"
+      }
+   },
+   {
+      "pk":14,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:22",
+         "name":"Medicine",
+         "description":"Medicine"
+      }
+   },
+   {
+      "pk":15,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:27",
+         "name":"Parasitology",
+         "description":"Parasitology"
+      }
+   },
+   {
+      "pk":16,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:32",
+         "name":"Pathology",
+         "description":"Pathology"
+      }
+   },
+   {
+      "pk":17,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:38",
+         "name":"Pediatrics",
+         "description":"Pediatrics"
+      }
+   },
+   {
+      "pk":18,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:44",
+         "name":"Public health",
+         "description":"Public health"
+      }
+   },
+   {
+      "pk":19,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:18:50",
+         "name":"Psychology",
+         "description":"Psychology"
+      }
+   },
+   {
+      "pk":20,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:02",
+         "name":"Substance abuse",
+         "description":"Substance abuse"
+      }
+   },
+   {
+      "pk":21,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:12",
+         "name":"Survey",
+         "description":"Survey"
+      }
+   },
+   {
+      "pk":22,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:19",
+         "name":"Transportation science & technology",
+         "description":"Transportation science & technology"
+      }
+   },
+   {
+      "pk":23,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:23",
+         "name":"Virology",
+         "description":"Virology"
+      }
+   },
+   {
+      "pk":24,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:31",
+         "name":"Emotion",
+         "description":"Emotion"
+      }
+   },
+   {
+      "pk":25,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:37",
+         "name":"Beliefs",
+         "description":"Beliefs"
+      }
+   },
+   {
+      "pk":26,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:41",
+         "name":"Memory",
+         "description":"Memory"
+      }
+   },
+   {
+      "pk":27,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:47",
+         "name":"Attitudes",
+         "description":"Attitudes"
+      }
+   },
+   {
+      "pk":28,
+      "model":"categories.category",
+      "fields":{
+         "created_at":"2011-06-27 15:19:53",
+         "name":"Behavior",
+         "description":"Behavior"
+      }
+   }
+]

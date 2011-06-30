@@ -25,7 +25,7 @@ def view_categories(request):
         context_instance=RequestContext(request))
 
 def view_items_for_category(request, category_id):
-    category = get_object_or_404(Category, name=category_id)
+    category = get_object_or_404(Category, slug=category_id)
     datasets = _get_datasets_for_category(category)[:3]
     projects = _get_projects_for_category(category)[:3]
     datarequests = _get_datarequests_for_category(category)[:3]
@@ -41,7 +41,7 @@ def view_items_for_category(request, category_id):
         context_instance=RequestContext(request))
 
 def view_datasets_for_category(request, category_id):
-    category = get_object_or_404(Category, name=category_id)
+    category = get_object_or_404(Category, slug=category_id)
     datasets_page = paginate(_get_datasets_for_category(category), request.GET)    
     
     return render_to_response(
@@ -50,7 +50,7 @@ def view_datasets_for_category(request, category_id):
         context_instance=RequestContext(request))
 
 def view_projects_for_category(request, category_id):
-    category = get_object_or_404(Category, name=category_id)
+    category = get_object_or_404(Category, slug=category_id)
     projects_page = paginate(_get_projects_for_category(category), request.GET)
     
     return render_to_response(
@@ -59,7 +59,7 @@ def view_projects_for_category(request, category_id):
         context_instance=RequestContext(request))
 
 def view_datarequests_for_category(request, category_id):
-    category = get_object_or_404(Category, name=category_id)
+    category = get_object_or_404(Category, slug=category_id)
     datarequests_page = paginate(_get_datarequests_for_category(category), request.GET)
     
     return render_to_response(
@@ -68,15 +68,15 @@ def view_datarequests_for_category(request, category_id):
         context_instance=RequestContext(request))
 
 def _get_datasets_for_category(category):
-    return DataSet.objects.active().filter(category=category).order_by('-created_at')
+    return DataSet.objects.active().filter(categories=category).order_by('-created_at')
 
 def _get_projects_for_category(category):
     datasets = _get_datasets_for_category(category)
     projects_from_datasets = get_projects_containing_datasets(datasets)
     projects_from_category = \
-        Project.objects.active().filter(category=category).order_by('-created_at').distinct()
+        Project.objects.active().filter(categories=category).order_by('-created_at').distinct()
 
     return (projects_from_datasets | projects_from_category).order_by('-created_at')
 
 def _get_datarequests_for_category(category):
-    return DataRequest.objects.active().filter(category=category).order_by('-created_at')
+    return DataRequest.objects.active().filter(categories=category).order_by('-created_at')

@@ -5,7 +5,7 @@ from epic.core.forms import CategoryChoiceField
 from epic.core.forms import DESCRIPTION_HELP_TEXT
 from epic.core.models import Item
 from epic.datarequests.models import DataRequest
-
+from epic.core.util.multicategory import MultiCategoryField
 
 class DataRequestForm(ModelForm):
     name_attrs = {
@@ -34,6 +34,8 @@ class DataRequestForm(ModelForm):
 #        help_text=DESCRIPTION_HELP_TEXT)
     
     category = CategoryChoiceField()
+#    category = MultiCategoryField()
+    
     
     tags_attrs = {
         'size': 42,
@@ -48,6 +50,9 @@ class DataRequestForm(ModelForm):
         model = DataRequest
         exclude = [
             'creator',
+#            Using the custom Field for categories instead of the default CategoryChoiceField
+#            which takes care of cleanup & custom GUI.
+            'categories',
             'rendered_description',
             'tagless_description',
             'status',

@@ -31,14 +31,17 @@ def create_project(request):
         
         if new_project_form.is_valid() and project_datasets.is_valid():
             name = new_project_form.cleaned_data['name']
-            category = new_project_form.cleaned_data['category']
+            categories = new_project_form.cleaned_data['category']
             description = new_project_form.cleaned_data['description']
             new_project = Project.objects.create(
                 creator=request.user,
                 name=name,
-                category=category,
                 description=description,
                 is_active=True)
+            
+#            We need to save the categories as step 2 because it is a m2m relationship.
+            new_project.categories = categories
+            new_project.save()
             
             for dataset_form in project_datasets.forms:
                 if dataset_form.is_valid() and 'dataset' in dataset_form.cleaned_data:
@@ -101,8 +104,7 @@ def edit_project(request, item_id, slug):
     if request.method != "POST":
         initial_edit_project_data = {'name': project.name, 'description': project.description,}
        
-        if project.category is not None:
-            initial_edit_project_data['category'] = project.category.id
+        initial_edit_project_data['category'] = project.categories.values_list('id', flat=True)            
         
         edit_form = ProjectForm(initial=initial_edit_project_data)
         initial_project_datasets = []
@@ -120,7 +122,7 @@ def edit_project(request, item_id, slug):
             
         if edit_form.is_valid() and project_datasets.is_valid():
             project.name = edit_form.cleaned_data['name']
-            project.category = edit_form.cleaned_data['category']
+            project.categories = edit_form.cleaned_data['category']
             project.description = edit_form.cleaned_data['description']
             project.save()
 

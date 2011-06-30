@@ -41,9 +41,9 @@ from epic.categories.constants import NO_CATEGORY
 from epic.categories.constants import NO_CATEGORY_DESCRIPTION
 from epic.categories.models import Category
 from epic.categories.models import default_category
+
 from epic.core.util.model_exists_utils import profile_exists
 from epic.core.util.postmarkup import PostMarkup
-
 
 class Item(models.Model):
     MAX_ITEM_NAME_LENGTH = 256
@@ -62,7 +62,10 @@ class Item(models.Model):
     rendered_description = models.TextField(blank=True, null=True)
     tagless_description = models.TextField(blank=True, null=True)
     
-    category = models.ForeignKey(Category, default=default_category)
+#    category = models.ForeignKey(Category, default=default_category)
+    categories = models.ManyToManyField(Category, 
+                                        related_name='categories', 
+                                        blank=True)
     
     slug = models.SlugField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -106,9 +109,6 @@ class Item(models.Model):
         self.tagless_description = self._strip_tags_from_description()
         self.slug = slugify(self.name)
         
-        if not self.category:
-            self.category = default_category()
-
         super(Item, self).save()
 
     def _render_description(self):
