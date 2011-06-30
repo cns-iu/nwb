@@ -190,7 +190,7 @@ def _create_c_datarequests(social_contagion,
 ######################################
 
 def _create_fulfilled_datarequest(
-        creator, name, description, category, fulfilling_dataset_name):
+        creator, name, description, fulfilling_dataset_name):
     fulfilling_dataset = DataSet.objects.get(name=fulfilling_dataset_name)
     fulfilled_datarequest = DataRequest.objects.create(
         creator=creator,
