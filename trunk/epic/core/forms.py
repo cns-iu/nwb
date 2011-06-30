@@ -180,7 +180,7 @@ class CategoryChoiceField(forms.ModelMultipleChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(
 			required=False,
-            queryset=Category.objects.all().order_by('name'))
+            queryset=Category.objects.exclude(id=default_category().id).order_by('name'))
     
     def clean(self, value):
     	
