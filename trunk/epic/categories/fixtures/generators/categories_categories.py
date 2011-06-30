@@ -33,9 +33,11 @@ def _create_dataset1(category):
         creator=bob,
         name='Dataset1',
         description='Dataset1 Description',
-        category=category,
         slug='Dataset1',
         is_active=True)
+
+    dataset1.categories.add(category) 
+    dataset1.save()
 
     return dataset1
 
@@ -62,9 +64,13 @@ def _create_project1(category):
         creator=bob,
         name='Project1',
         description='Project1 Description',
-        category=category,
+        
         slug='Project1',
         is_active=True)
+    
+    
+    project1.categories.add(category)
+    project1.save()
     
     return project1
 
@@ -91,9 +97,12 @@ def _create_datarequest1(category):
         creator=bob,
         name='Datarequest1',
         description='Datarequest1 Description',
-        category=category,
+        
         slug='Datarequest1',
         is_active=True)
+    
+    datarequest1.categories.add(category)
+    datarequest1.save()
     
     return datarequest1
 

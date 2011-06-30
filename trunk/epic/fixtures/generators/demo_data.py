@@ -134,45 +134,56 @@ def _create_c_datarequests(social_contagion,
         name='Leishmaniasis', 
         description='Need dataset for the 2004 Leishmaniasis epidemic ' + \
                     'that happened in Afghanistan.',
-        category=infectious_diseases,
         status='C', 
         is_active=True)
+    
+    canceled_datarequest1.categories.add(infectious_diseases)
+    canceled_datarequest1.save()
 
     canceled_datarequest2 = DataRequest.objects.create(
         creator=chintan, 
         name='Avian influenza', 
         description='Need dataset for the 1968 - 1969 Avian influenza or ' + \
                     'Hong Kong flu that happened in Hong Kong.',
-        category=infectious_diseases,
         status='C', 
         is_active=True)
+    
+    canceled_datarequest2.categories.add(infectious_diseases)
+    canceled_datarequest2.save()
     
     canceled_datarequest3 = DataRequest.objects.create(
         creator=patrick, 
         name='Dengue fever', 
         description='Need dataset for the 2004 Dengue fever epidemic ' + \
                     'that happened in Indonesia.',
-        category=infectious_diseases,  
         status='C', 
         is_active=True)    
+
+    canceled_datarequest3.categories.add(infectious_diseases)
+    canceled_datarequest3.save()
+
 
     canceled_datarequest4 = DataRequest.objects.create(
         creator=russell, 
         name='Infantile paralysis', 
         description='Need dataset for the 2007 Infantile paralysis ' + \
                     'epidemic that happened in Nigeria.',
-        category=infectious_diseases,  
         status='C', 
         is_active=True)
+    
+    canceled_datarequest4.categories.add(infectious_diseases)
+    canceled_datarequest4.save()    
     
     canceled_datarequest5 = DataRequest.objects.create(
         creator=micah, 
         name='Menigitis', 
         description='Need dataset for the 1996 Menigitis epidemic ' + \
                     'that happened in West Africa.',
-        category=infectious_diseases,
         status='C', 
         is_active=True)
+    
+    canceled_datarequest5.categories.add(infectious_diseases)
+    canceled_datarequest5.save()      
 
 ######################################
 # Create the Fulfilled DataRequests. #
@@ -185,10 +196,12 @@ def _create_fulfilled_datarequest(
         creator=creator,
         name=name,
         description=description,
-        category=category,
         fulfilling_item=fulfilling_dataset,
         status='F',
         is_active=True)
+    
+    fulfilled_datarequest.categories.add(infectious_diseases)
+    fulfilled_datarequest.save()     
     
     return fulfilled_datarequest
 
@@ -199,29 +212,39 @@ def _create_f_datarequests(social_contagion,
         creator=jim, 
         name='HIV/AIDS', 
         description='Need data on HIV.',
-        category=infectious_diseases,
         fulfilling_dataset_name='HIV/AIDS')
+    
+    fulfilled_datarequest1.categories.add(infectious_diseases)
+    fulfilled_datarequest1.save()     
+    
+    return fulfilled_datarequest
     
     fulfilled_datarequest2 = _create_fulfilled_datarequest(
         creator=katy, 
         name='Flu', 
         description='Need data on all strains of the flu virus.',
-        category=infectious_diseases,
         fulfilling_dataset_name='Spanish Flu')
+    
+    fulfilled_datarequest2.categories.add(infectious_diseases)
+    fulfilled_datarequest2.save()     
     
     fulfilled_datarequest3 = _create_fulfilled_datarequest(
         creator=elisha, 
         name='Infant diseases', 
         description='Need data on all types of infant diseases.',
-        category=infectious_diseases, 
         fulfilling_dataset_name='Poliomyelitis')
+    
+    fulfilled_datarequest3.categories.add(infectious_diseases)
+    fulfilled_datarequest3.save()     
     
     fulfilled_datarequest4 = _create_fulfilled_datarequest(
         creator=micah, 
         name='Historical Chinese Pandemics', 
         description='Need data on pandemics in Chinese history',
-        category=infectious_diseases, 
         fulfilling_dataset_name='Third Pandemic')
+    
+    fulfilled_datarequest4.categories.add(infectious_diseases)
+    fulfilled_datarequest4.save()    
 
 ########################################
 # Create the unfulfilled DataRequests. #
@@ -235,45 +258,57 @@ def _create_u_datarequests(social_contagion,
         name='Malaria - Groningen', 
         description='Need dataset for the 1829 Malaria - Groningen ' + \
                     'epidemic that happened in Netherlands.',
-        category=infectious_diseases, 
         status='U',
         is_active=True)
+    
+    unfulfilled_datarequest1.categories.add(infectious_diseases)
+    unfulfilled_datarequest1.save()        
     
     unfulfilled_datarequest2 = DataRequest.objects.create(
         creator=chintan, 
         name='Plague Riot', 
         description='Need dataset for the 1771 Plague Riot epidemic that ' + \
                     'happened in Moscow possibly caused by bubonic plague.',
-        category=infectious_diseases, 
         status='U',
         is_active=True)
+
+    unfulfilled_datarequest2.categories.add(infectious_diseases)
+    unfulfilled_datarequest2.save()  
     
     unfulfilled_datarequest3 = DataRequest.objects.create(
         creator=katy, 
         name='Smallpox', 
         description='Need dataset for the 1770s Smallpox ' + \
                     'epidemic that happened in Northwest Coast Indians.',
-        category=infectious_diseases, 
         status='U',
         is_active=True)
+    
+    unfulfilled_datarequest3.categories.add(infectious_diseases)
+    unfulfilled_datarequest3.save()  
         
     unfulfilled_datarequest4 = DataRequest.objects.create(
         creator=bruno, 
         name='Bilious disorder', 
         description='Need dataset for the 1783 Bilious disorder ' + \
                     'epidemic that happened in Dover, Delaware.',
-        category=infectious_diseases, 
         status='U',
         is_active=True)
+    
+    unfulfilled_datarequest4.categories.add(infectious_diseases)
+    unfulfilled_datarequest4.save()  
+    
     
     unfulfilled_datarequest5 = DataRequest.objects.create(
         creator=patrick, 
         name='Chikungunya outbreaks in India', 
         description='Need dataset for the 2006 Chikungunya outbreaks ' + \
                     'that happened in India.',
-         category=infectious_diseases,
          status='U',
          is_active=True)
+    
+    
+    unfulfilled_datarequest5.categories.add(infectious_diseases)
+    unfulfilled_datarequest5.save()  
 
 ########################
 # Create the datasets. #
@@ -296,7 +331,6 @@ def _create_datasets(social_contagion,
                     'membrane or the bloodstream with a bodily fluid ' + \
                     'containing HIV, such as blood, semen, vaginal ' + \
                     'fluid, preseminal fluid, and breast milk.',
-        category=infectious_diseases,
         is_active=True)
     _tag_dataset1(dataset1)
     _geolocate_dataset1(dataset1)
@@ -317,7 +351,6 @@ def _create_datasets(social_contagion,
                     'The flu pandemic has also been implicated in the ' + \
                     'sudden outbreak of Encephalitis lethargica ' + \
                     'in the 1920s.',
-        category=infectious_diseases,
         is_active=True)
     _tag_dataset2(dataset2)
     _geolocate_dataset2(dataset2)
@@ -346,7 +379,6 @@ def _create_datasets(social_contagion,
                     'legs. Bulbar polio leads to weakness of muscles ' + \
                     'innervated by cranial nerves. Bulbospinal polio is ' + \
                     'a combination of bulbar and spinal paralysis.',
-        category=infectious_diseases,
         is_active=True)
     _tag_dataset3(dataset3)
     _geolocate_dataset3(dataset3)
@@ -362,7 +394,6 @@ def _create_datasets(social_contagion,
                     'alone. According to the World Health Organization, ' + \
                     'the pandemic was considered active until 1959, when ' + \
                     'worldwide casualties dropped to 200 per year.',
-        category=infectious_diseases,
         is_active=True)
     _tag_dataset4(dataset4)
     _geolocate_dataset4(dataset4)
@@ -382,7 +413,6 @@ def _create_datasets(social_contagion,
                     'nephropathia epidemica, whilst others, such as the ' + \
                     'African Ebola virus, can cause severe, ' + \
                     'life-threatening disease.',
-        category=infectious_diseases,
         is_active=True)
     _tag_dataset5(dataset5)
     _geolocate_dataset5(dataset5)
@@ -396,7 +426,6 @@ def _create_datasets(social_contagion,
                     'of drug abuse have jumped sharply, according to The ' + \
                     'National Center on Addiction and Substance Abuse at ' + \
                     'Columbia University.',
-        category=demographics,
         is_active=True)
     dataset6.save()
     
@@ -621,17 +650,22 @@ def _create_empty_projects(social_contagion,
         creator=alex,
         name='Depression in the US',
         description='Depression in the US %s' % PROJECT_DESCRIPTION,
-        category=social_contagion,
         is_active=True)
     project1.save()
+    
+    project1.categories.add(social_contagion)
+    project1.save()  
     
     project2 = Project.objects.create(
         creator=chintan,
         name='Historical H1N1',
         description='Historical H1N1 %s' % PROJECT_DESCRIPTION,
-        category=infectious_diseases,
         is_active=True)
     project2.save()
+    
+    project2.categories.add(infectious_diseases)
+    project2.save()  
+    
 
 def _create_non_empty_projects(social_contagion,
                                infectious_diseases,
@@ -640,34 +674,40 @@ def _create_non_empty_projects(social_contagion,
         creator=russell,
         name='HIV and You',
         description='HIV and You %s' % PROJECT_DESCRIPTION,
-        category=infectious_diseases,
         is_active=True)
     _add_dataset_to_project(project1, 'HIV/AIDS')
     project1.save()
+    
+    project1.categories.add(infectious_diseases)
+    project1.save()  
     
     project2 = Project.objects.create(
         creator=patrick,
         name='Drinking Habits',
         description='The %s of drinking Infections' % PROJECT_DESCRIPTION,
-        category=social_contagion,
         is_active=True)
     _add_dataset_to_project(project2, 'College Binge Drinking')
     project2.save()
+    
+    project2.categories.add(social_contagion)
+    project2.save() 
     
     project3 = Project.objects.create(
         creator=elisha,
         name='Death by Plague',
         description='Death by %s Plague' % PROJECT_DESCRIPTION,
-        category=infectious_diseases,
         is_active=True)
     _add_dataset_to_project(project3, 'Third Pandemic')
     project3.save()
+    
+    project3.categories.add(infectious_diseases)
+    project3.save() 
+    
     
     project4 = Project.objects.create(
         creator=alex,
         name='My favorite diseases',
         description='These diseases are just [i]so[/i] interesting[b]![/b]',
-        category=infectious_diseases,
         is_active=True)
     _add_dataset_to_project(project4, 'HIV/AIDS')
     _add_dataset_to_project(project4, 'Spanish Flu')
