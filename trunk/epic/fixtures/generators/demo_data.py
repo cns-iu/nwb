@@ -190,7 +190,7 @@ def _create_c_datarequests(social_contagion,
 ######################################
 
 def _create_fulfilled_datarequest(
-        creator, name, description, fulfilling_dataset_name):
+        creator, name, description, category, fulfilling_dataset_name):
     fulfilling_dataset = DataSet.objects.get(name=fulfilling_dataset_name)
     fulfilled_datarequest = DataRequest.objects.create(
         creator=creator,
@@ -200,7 +200,7 @@ def _create_fulfilled_datarequest(
         status='F',
         is_active=True)
     
-    fulfilled_datarequest.categories.add(infectious_diseases)
+    fulfilled_datarequest.categories.add(category)
     fulfilled_datarequest.save()     
     
     return fulfilled_datarequest
@@ -212,39 +212,29 @@ def _create_f_datarequests(social_contagion,
         creator=jim, 
         name='HIV/AIDS', 
         description='Need data on HIV.',
+        category=infectious_diseases,
         fulfilling_dataset_name='HIV/AIDS')
-    
-    fulfilled_datarequest1.categories.add(infectious_diseases)
-    fulfilled_datarequest1.save()     
-    
-    return fulfilled_datarequest
     
     fulfilled_datarequest2 = _create_fulfilled_datarequest(
         creator=katy, 
         name='Flu', 
         description='Need data on all strains of the flu virus.',
+        category=infectious_diseases,
         fulfilling_dataset_name='Spanish Flu')
-    
-    fulfilled_datarequest2.categories.add(infectious_diseases)
-    fulfilled_datarequest2.save()     
     
     fulfilled_datarequest3 = _create_fulfilled_datarequest(
         creator=elisha, 
         name='Infant diseases', 
         description='Need data on all types of infant diseases.',
+        category=infectious_diseases, 
         fulfilling_dataset_name='Poliomyelitis')
-    
-    fulfilled_datarequest3.categories.add(infectious_diseases)
-    fulfilled_datarequest3.save()     
     
     fulfilled_datarequest4 = _create_fulfilled_datarequest(
         creator=micah, 
         name='Historical Chinese Pandemics', 
         description='Need data on pandemics in Chinese history',
+        category=infectious_diseases, 
         fulfilling_dataset_name='Third Pandemic')
-    
-    fulfilled_datarequest4.categories.add(infectious_diseases)
-    fulfilled_datarequest4.save()    
 
 ########################################
 # Create the unfulfilled DataRequests. #
