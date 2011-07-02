@@ -23,11 +23,11 @@ def category_submenu(category, active=None):
         'active': active,
         'header': "Browse by category in",
         'all_url': reverse(
-            'view-items-for-category', kwargs={'category_id': category.slug}),
+            'view_items_for_category', kwargs={'category_id': category.slug}),
         'data_requests_url': reverse(
-            'view-datarequests-for-category', kwargs={'category_id': category.slug}),
+            'view_datarequests_for_category', kwargs={'category_id': category.slug}),
         'datasets_url': reverse(
-            'view-datasets-for-category', kwargs={'category_id': category.slug}),
+            'view_datasets_for_category', kwargs={'category_id': category.slug}),
         'projects_url': reverse(
-            'view-projects-for-category', kwargs={'category_id': category.slug}),
+            'view_projects_for_category', kwargs={'category_id': category.slug}),
     }
