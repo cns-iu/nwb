@@ -1,0 +1,16 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% load core_templatetags %}
+
+{% block content %}
+  <h2>
+    Edit Data Request
+  </h2>
+  
+  <form enctype="multipart/form-data" action="{% url datarequests.views.edit_datarequest item_id=datarequest.id slug=datarequest.slug %}" method="POST">
+    <table class="form">
+      {% form_as_table form 'True' %}
+    </table>
+    <p><input type="submit" value="Save" /></p>
+  </form>
+{% endblock %}

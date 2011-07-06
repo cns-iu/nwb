@@ -1,0 +1,7 @@
+<ul>
+  <li>{{ header }}:</li>
+  <li><a {% ifequal 'all' active %}class="active_submenu"{% endifequal %} href="{{ all_url }}">All</a></li>
+  <li><a {% ifequal 'data requests' active %}class="active_submenu"{% endifequal %} href="{{ data_requests_url }}">Data Requests</a></li>
+  <li><a {% ifequal 'datasets' active %}class="active_submenu"{% endifequal %} href="{{ datasets_url }}">Datasets</a></li>
+  <li><a {% ifequal 'projects' active %}class="active_submenu"{% endifequal %} href="{{ projects_url }}">Projects</a></li>
+</ul>
