@@ -87,10 +87,8 @@ def _create_project1(creator, category):
         creator=creator,
         name='Project1',
         description='Project1 Description',
-        
         slug='Project1',
-        is_active=True)
-    
+        is_active=True)    
     
     project1.categories.add(category)
     project1.save()
@@ -120,7 +118,6 @@ def _create_datarequest1(creator, category):
         creator=creator,
         name='Datarequest1',
         description='Datarequest1 Description',
-        
         slug='Datarequest1',
         is_active=True)
     
