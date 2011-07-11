@@ -13,17 +13,17 @@ from epic.core.models import Profile
 
 
 def email_address_already_used_message(email):
-	return u"The email address '%s' was already registered to an account." % email
-	
+    return u"The email address '%s' was already registered to an account." % email
+    
 def password_must_not_match_username_message():
-	return u"Your password may not match your username."
+    return u"Your password may not match your username."
 
 def confirm_password_does_not_match_message():
-	return u'The two passwords you entered are not the same.  Enter your password and confirm it here.'
+    return u'The two passwords you entered are not the same.  Enter your password and confirm it here.'
 
 def password_too_short_message(password):
-	return 'Ensure this value has at least %s characters (it has %s).' % \
-		(Profile.MIN_USER_PASSWORD_LENGTH, len(password))
+    return 'Ensure this value has at least %s characters (it has %s).' % \
+        (Profile.MIN_USER_PASSWORD_LENGTH, len(password))
 
 def username_already_used_message(username):
     return u"The username '%s' was already registered to an account." % username
@@ -105,44 +105,44 @@ class RegistrationForm(forms.Form):
         return cleaned_data
 
 class ForgotPasswordForm(forms.Form):
-	username_or_email = forms.CharField(
+    username_or_email = forms.CharField(
         max_length=Profile.MAX_USER_EMAIL_LENGTH, label="Username or e-mail address")
-	
-	def clean(self):
-		try:
-			cleaned_data = self.cleaned_data
-			username_or_email = cleaned_data['username_or_email']
-		except:
-			return self.cleaned_data
-		
-		# TODO: abstract this out
-		if username_or_email.count('@') > 0:
-			try:
-				user = User.objects.get(email=username_or_email)
-				cleaned_data['user'] = user
-			except:
-				msg = u"There is no user registered with the email address '%(email)s'." % {'email': username_or_email,}
-				self._errors['username_or_email'] = ErrorList([msg])
-				del cleaned_data['username_or_email']
-		else:
-			try:
-				user = User.objects.get(username=username_or_email)
-				cleaned_data['user'] = user
-			except:
-				msg = u"'%(username)s' is not a valid username." % {'username':username_or_email,}
-				self._errors['username_or_email'] = ErrorList([msg])
-				del cleaned_data['username_or_email']
-			
-		return cleaned_data
-	
+    
+    def clean(self):
+        try:
+            cleaned_data = self.cleaned_data
+            username_or_email = cleaned_data['username_or_email']
+        except:
+            return self.cleaned_data
+        
+        # TODO: abstract this out
+        if username_or_email.count('@') > 0:
+            try:
+                user = User.objects.get(email=username_or_email)
+                cleaned_data['user'] = user
+            except:
+                msg = u"There is no user registered with the email address '%(email)s'." % {'email': username_or_email,}
+                self._errors['username_or_email'] = ErrorList([msg])
+                del cleaned_data['username_or_email']
+        else:
+            try:
+                user = User.objects.get(username=username_or_email)
+                cleaned_data['user'] = user
+            except:
+                msg = u"'%(username)s' is not a valid username." % {'username':username_or_email,}
+                self._errors['username_or_email'] = ErrorList([msg])
+                del cleaned_data['username_or_email']
+            
+        return cleaned_data
+    
 class UserForm(ModelForm):
-	# This overwrites the email from the model.
+    # This overwrites the email from the model.
     # It is important that email is NOT in the exclude list though...
-	email = forms.EmailField(label='E-mail address')
+    email = forms.EmailField(label='E-mail address')
 
-	class Meta:
-		model = User
-		exclude = [
+    class Meta:
+        model = User
+        exclude = [
             'username',
             'password',
             'is_staff',
@@ -155,10 +155,10 @@ class UserForm(ModelForm):
         ]
 
 class ProfileForm(ModelForm):
-	class Meta:
-		model = Profile
-		exclude = ['user', 'activation_key']
-		
+    class Meta:
+        model = Profile
+        exclude = ['user', 'activation_key']
+        
 class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(
         label="Username",
@@ -179,13 +179,16 @@ DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
 class CategoryChoiceField(forms.ModelMultipleChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(
-			required=False,
+            required=False,
             queryset=Category.objects.exclude(id=default_category().id).order_by('name'))
     
     def clean(self, value):
-    	
+        
         if not value:
-            no_category = default_category()
-            return super(CategoryChoiceField, self).clean([no_category.id])
+#        	We have to reset the queryset to include the uncategorized category as well
+#			since it was excluded from the initial choices.
+        	self.queryset=Category.objects.all()
+        	no_category = default_category()
+         	return super(CategoryChoiceField, self).clean([unicode(no_category.id)])
         
         return super(CategoryChoiceField, self).clean(value)
