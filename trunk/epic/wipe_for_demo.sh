@@ -10,6 +10,6 @@ echo "echo 'y' | python2.6 manage.py rebuild_index --settings=$EPIC_SETTINGS " >
 echo "chmod -R 777 /tmp/whoosh" >> remote.sh
 echo "rm -rf /home/epic_website/epic_data/*" >> remote.sh
 
-scp remote.sh $EPIC_HOST:/tmp/remote.sh
-ssh $EPIC_HOST "chmod +x /tmp/remote.sh"
-ssh $EPIC_HOST "/tmp/remote.sh"
+scp remote.sh apache@$EPIC_HOST:/tmp/remote.sh
+ssh apache@$EPIC_HOST "chmod +x /tmp/remote.sh"
+ssh apache@$EPIC_HOST "/tmp/remote.sh"

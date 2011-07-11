@@ -15,6 +15,6 @@ echo "python2.6 manage.py migrate epic.messages --settings=$EPIC_SETTINGS " >> r
 echo "python2.6 manage.py migrate epic.geoloc --settings=$EPIC_SETTINGS " >> remote.sh
 echo "python2.6 manage.py migrate epic.search --settings=$EPIC_SETTINGS " >> remote.sh
 
-scp remote.sh $EPIC_HOST:/tmp/remote.sh
-ssh $EPIC_HOST "chmod +x /tmp/remote.sh"
-ssh $EPIC_HOST "/tmp/remote.sh"
+scp remote.sh apache@$EPIC_HOST:/tmp/remote.sh
+ssh apache@$EPIC_HOST "chmod +x /tmp/remote.sh"
+ssh apache@$EPIC_HOST "/tmp/remote.sh"
