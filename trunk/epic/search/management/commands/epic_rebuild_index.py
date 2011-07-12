@@ -17,7 +17,7 @@ from epic.search.management.commands import remove_if_exists
 
 class Command(BaseCommand):
     help = "Wraps haystack's rebuild_index command, but then alters permissions on generated directories so stuff actually works later on"
-    args = "No argmuments"
+    args = "No arguments"
     
     requires_model_validation = True
     
