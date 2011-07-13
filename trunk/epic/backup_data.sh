@@ -1,3 +1,5 @@
+#!/bin/bash
+
 CURRENT_DATETIME=$(date "+%F-%H-%M-%S")
 
 # Dump production database to an archive file
