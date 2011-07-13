@@ -1,0 +1,34 @@
+{% extends "core/bases/base.html" %}
+
+{% load category_templatetags %}
+{% load search_templatetags %}
+{% load tags_templatetags %}
+
+{% block maincontent %}
+  <div id="submenu">
+    {% block submenu %}
+    {% endblock %}
+  </div>
+  
+  <div id="leftsidebar">
+    {% block leftsidebar %}
+      {% search_box %}
+      {% categories_box %}
+      {% show_tag_cloud %}
+    {% endblock %}
+  </div>
+        
+  <div id="browsecontent">
+    {% block browsecontent %}
+      <div id="content">
+        {% block content %}
+          <br />
+        {% endblock %}
+        {% block request %}
+        {% endblock %}
+      </div>
+    {% endblock %}
+    
+    {{ block.super }}
+  </div>
+{% endblock %}
