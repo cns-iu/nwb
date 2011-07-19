@@ -1,0 +1,83 @@
+#!/bin/bash
+# Wipes the current target database and "epic_data" folder
+# and replaces them with the specified backup.
+# Compare with backup_data.sh.
+
+BACKUP_FILENAME=epic_backup_$BACKUP_DATETIME.tgz
+BACKUP_FILE_PATH=$BACKUP_DIRECTORY/$BACKUP_FILENAME
+
+# Determine DATABASE_HOST by examining EPIC_HOST
+if [ "$EPIC_HOST" == "cns-epic-dev" ]; then
+	DATABASE_HOST=cns-dbdev
+elif [ "$EPIC_HOST" == "cns-epic-stage" ]; then
+	DATABASE_HOST=cns-dbs
+elif [ "$EPIC_HOST" == "epic" ]; then
+	DATABASE_HOST=cns-dbp
+else
+	echo "Restore stopped: unexpected EPIC_HOST '$EPIC_HOST'; DATABASE_HOST could not be determined."
+	exit
+fi
+
+execute_on_host() {
+	SCRIPT=$1
+	USER=$2
+	HOST=$3
+	
+	scp $SCRIPT $USER@$HOST:/tmp/$SCRIPT
+	ssh $USER@$HOST "chmod +x /tmp/$SCRIPT"
+	ssh $USER@$HOST "/tmp/$SCRIPT"
+}
+
+# Unpack the database archive (already put on the target host), wipe the current database, and load the archive
+restore_database_backup() {
+	echo "# Unpack the database archive from the backup"                                                    > restore_database.sh
+	echo "DATABASE_ARCHIVE=epic_database_$BACKUP_DATETIME.archive"                                         >> restore_database.sh
+	echo "tar -xzf /tmp/$BACKUP_FILENAME \$DATABASE_ARCHIVE"                                               >> restore_database.sh
+	
+	echo "# Wipe current database using django.db commands"                                                >> restore_database.sh
+	echo "cd /home/epic_website/epic_code/epic"                                                            >> restore_database.sh
+	echo "export PYTHONPATH=/home/epic_website:/home/epic_website/epic_code"                               >> restore_database.sh
+	# WARNING: Notice that wipeout.py will be whichever revision is currently deployed to EPIC_HOST
+	# TODO Put warnings in wipeout.py itself, too?
+	echo "python2.6 manage.py shell --settings=$EPIC_SETTINGS < wipeout.py"                                >> restore_database.sh
+	
+	echo "# Load database backup"                                                                          >> restore_database.sh
+	echo "cd"                                                                                              >> restore_database.sh
+	echo "pg_restore --no-acl --no-owner -h $DATABASE_HOST -U epic_appuser -d epic_web \$DATABASE_ARCHIVE" >> restore_database.sh
+	
+	execute_on_host restore_database.sh apache $EPIC_HOST
+}
+
+# Unpack the data folder archive (already put on the target host), wipe the current data folder, and load the archive
+restore_data_folder_backup() {
+	echo "# Unpack data folder archive from the backup"              > restore_data_folder.sh
+	echo "DATA_FOLDER_NAME=epic_data_$BACKUP_DATETIME"              >> restore_data_folder.sh
+	echo "DATA_FOLDER_ARCHIVE=\$DATA_FOLDER_NAME.tgz"               >> restore_data_folder.sh
+	echo "tar -xzf /tmp/$BACKUP_FILENAME \$DATA_FOLDER_ARCHIVE"     >> restore_data_folder.sh
+
+	echo "# Wipe current data folder"                               >> restore_data_folder.sh
+	echo "rm -rf /home/epic_website/epic_data/*"                    >> restore_data_folder.sh
+	
+	echo "# Load data folder backup"                                >> restore_data_folder.sh
+	echo "tar -xzf \$DATA_FOLDER_ARCHIVE"                           >> restore_data_folder.sh
+	echo "cp -R \$DATA_FOLDER_NAME/* /home/epic_website/epic_data/" >> restore_data_folder.sh
+	
+	execute_on_host restore_data_folder.sh apache $EPIC_HOST
+}
+
+if [ ! -e "$BACKUP_FILE_PATH" ]; then
+	echo "Restore stopped: backup file '$BACKUP_FILE_PATH' does not exist."
+	exit
+elif [ ! -s "$BACKUP_FILE_PATH" ]; then
+	echo "Restore stopped: backup file '$BACKUP_FILE_PATH' is empty."
+	exit
+elif [ ! -r "$BACKUP_FILE_PATH" ]; then
+	echo "Restore stopped: backup file '$BACKUP_FILE_PATH' is not readable."
+	exit
+else
+	# Send backup to EPIC_HOST
+	scp $BACKUP_FILE_PATH apache@$EPIC_HOST:/tmp/$BACKUP_FILENAME
+
+	restore_database_backup	
+	restore_data_folder_backup
+fi
