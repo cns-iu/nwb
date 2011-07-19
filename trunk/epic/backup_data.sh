@@ -10,7 +10,7 @@ pg_dump -h cns-dbp -U epic_dumper --schema=public -Fc epic_web > $DATABASE_ARCHI
 
 # Dump production data to an archive directory then tar+gzip it
 DATA_FOLDER_LOCAL_COPY=epic_data_$CURRENT_DATETIME
-DATA_FOLDER_ARCHIVE=DATA_FOLDER_LOCAL_COPY.tgz
+DATA_FOLDER_ARCHIVE=$DATA_FOLDER_LOCAL_COPY.tgz
 mkdir -p $DATA_FOLDER_LOCAL_COPY
 rsync -avz apache@epic:/home/epic_website/epic_data/ $DATA_FOLDER_LOCAL_COPY
 tar -cvzf $DATA_FOLDER_ARCHIVE $DATA_FOLDER_LOCAL_COPY
