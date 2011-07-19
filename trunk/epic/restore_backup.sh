@@ -6,12 +6,15 @@
 BACKUP_FILENAME=epic_backup_$BACKUP_DATETIME.tgz
 BACKUP_FILE_PATH=$BACKUP_DIRECTORY/$BACKUP_FILENAME
 
-# Determine DATABASE_HOST by examining EPIC_HOST
+# Determine DATABASE_HOST and EPIC_SETTINGS by examining EPIC_HOST
 if [ "$EPIC_HOST" == "cns-epic-dev" ]; then
+	EPIC_SETTINGS=dev_settings
 	DATABASE_HOST=cns-dbdev
 elif [ "$EPIC_HOST" == "cns-epic-stage" ]; then
+	EPIC_SETTINGS=staging_settings
 	DATABASE_HOST=cns-dbs
 elif [ "$EPIC_HOST" == "epic" ]; then
+	EPIC_SETTINGS=production_settings
 	DATABASE_HOST=cns-dbp
 else
 	echo "Restore stopped: unexpected EPIC_HOST '$EPIC_HOST'; DATABASE_HOST could not be determined."
