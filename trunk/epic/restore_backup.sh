@@ -17,7 +17,7 @@ elif [ "$EPIC_HOST" == "epic" ]; then
 	EPIC_SETTINGS=production_settings
 	DATABASE_HOST=cns-dbp
 else
-	echo "Restore stopped: unexpected EPIC_HOST '$EPIC_HOST'; DATABASE_HOST could not be determined."
+	echo "Restore stopped: unexpected EPIC_HOST '$EPIC_HOST'."
 	exit
 fi
 
@@ -50,6 +50,9 @@ restore_database_backup() {
 	echo "cd"                                                                                              >> $SCRIPT
 	echo "pg_restore --no-acl --no-owner -h $DATABASE_HOST -U epic_appuser -d epic_web \$DATABASE_ARCHIVE" >> $SCRIPT
 	echo "echo   Done."                                                                                    >> $SCRIPT
+	echo "echo Rebuilding index.."                                                                         >> $SCRIPT
+	echo "echo 'y' | python2.6 manage.py rebuild_index --settings=$EPIC_SETTINGS "                         >> $SCRIPT
+	echo "chmod -R 777 /tmp/whoosh"                                                                        >> $SCRIPT
 	
 	execute_on_host $SCRIPT apache $EPIC_HOST
 }
@@ -85,7 +88,7 @@ elif [ ! -r "$BACKUP_FILE_PATH" ]; then
 	echo "Restore stopped: backup file '$BACKUP_FILE_PATH' is not readable."
 	exit
 else
-	# Send backup to EPIC_HOST
+	# Send backup to EPIC_HOST:/tmp/
 	scp $BACKUP_FILE_PATH apache@$EPIC_HOST:/tmp/$BACKUP_FILENAME
 
 	restore_database_backup	
