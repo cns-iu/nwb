@@ -18,7 +18,7 @@ echo "export PYTHONPATH=/home/epic_website:/home/epic_website/epic_code"     >> 
 echo "echo Wiping database.."                                                >> remote.sh
 echo "python2.6 manage.py shell --settings=$EPIC_SETTINGS < wipeout.py"      >> remote.sh
 echo "python2.6 manage.py syncdb --all --noinput --settings=$EPIC_SETTINGS " >> remote.sh
-echo "python2.6 manage.py migrate --fake --settings=$EPIC_SETTINGS "         >> remote.sh
+echo "python2.6 manage.py migrate --settings=$EPIC_SETTINGS "                >> remote.sh
 echo "echo Done."                                                            >> remote.sh
 echo "echo Wiping dataset files.."                                           >> remote.sh
 echo "rm -rf /home/epic_website/epic_data/*"                                 >> remote.sh
