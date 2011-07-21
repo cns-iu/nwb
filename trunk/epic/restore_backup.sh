@@ -51,6 +51,7 @@ restore_database_backup() {
 	echo "pg_restore --no-acl --no-owner -h $DATABASE_HOST -U epic_appuser -d epic_web \$DATABASE_ARCHIVE" >> $SCRIPT
 	echo "echo   Done."                                                                                    >> $SCRIPT
 	echo "echo Rebuilding index.."                                                                         >> $SCRIPT
+	echo "cd /home/epic_website/epic_code/epic"                                                            >> $SCRIPT
 	echo "echo 'y' | python2.6 manage.py rebuild_index --settings=$EPIC_SETTINGS "                         >> $SCRIPT
 	echo "chmod -R 777 /tmp/whoosh"                                                                        >> $SCRIPT
 	
