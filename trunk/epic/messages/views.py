@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -12,7 +11,7 @@ from epic.messages.models import Message
 from epic.messages.models import ReceivedMessage
 from epic.messages.models import SentMessage
 from epic.messages.forms import NewMessageForm
-
+from epic.core.util.view_utils import send_mail_via_system_call 
 
 @login_required
 @active_user_required
@@ -129,7 +128,7 @@ def send_message(request, user_id, recipient_id=None, in_reply_to_message_id=Non
 			email_subject = "New mail at EpiC from %s" % (new_received_message.sender.username)
 			#TODO: Set the get_absolute_url to actually return the domain (www.epic.org or what not)
 			email_message = "%s has sent you a message:\n\n-----------\n%s\n-----------\n\nTo view this email or reply please visit %s\n" % (new_received_message.sender.username, new_received_message.message, new_received_message.get_absolute_url())
-			send_mail(email_subject, email_message, 'no-reply@epic.edu', [recipient.email])
+			send_mail_via_system_call(recipient.email, email_subject, email_message, 'no-reply@epic.edu')
 			return HttpResponseRedirect(reverse('epic.messages.views.view_sent_message', kwargs={'user_id':sender.id, 'sentmessage_id':new_sent_message.id,}))
 		else:
 			return render_to_response(
