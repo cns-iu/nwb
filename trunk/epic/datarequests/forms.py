@@ -2,14 +2,14 @@ from django import forms
 from django.forms import ModelForm
 
 from epic.core.forms import CategoryChoiceField
-from epic.core.forms import DESCRIPTION_HELP_TEXT
+from epic.core.forms import DESCRIPTION_HELP_TEXT, MAX_TEXT_INPUT_DISPLAY_SIZE
 from epic.core.models import Item
 from epic.datarequests.models import DataRequest
 from epic.core.util.multicategory import MultiCategoryField
 
 class DataRequestForm(ModelForm):
     name_attrs = {
-        'size': 42,
+        'size': MAX_TEXT_INPUT_DISPLAY_SIZE,
         'onFocus': 'ClearField(this)',
     }
     
@@ -38,7 +38,7 @@ class DataRequestForm(ModelForm):
     
     
     tags_attrs = {
-        'size': 42,
+        'size': MAX_TEXT_INPUT_DISPLAY_SIZE,
         'onFocus': 'ClearField(this)',
     }
     

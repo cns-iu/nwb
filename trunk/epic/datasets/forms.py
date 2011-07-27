@@ -2,8 +2,8 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.formsets import formset_factory
 
-from epic.core.forms import CategoryChoiceField
-from epic.core.forms import DESCRIPTION_HELP_TEXT
+from epic.core.forms import CategoryChoiceField, RestrictedSizeSelectWidget
+from epic.core.forms import DESCRIPTION_HELP_TEXT, MAX_TEXT_INPUT_DISPLAY_SIZE, MAX_FILE_INPUT_DISPLAY_SIZE
 from epic.core.models import AcademicReference
 from epic.core.models import Author
 from epic.core.models import Item
@@ -12,9 +12,9 @@ from epic.datasets.models import DataSet
 from epic.datasets.models import RATING_SCALE
 from epic.djangoratings.forms import RatingField
 
-
 class EditDataSetForm(forms.Form):
-    name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, widget=forms.TextInput(attrs={'size': 50}))
+    name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, 
+                           widget=forms.TextInput(attrs={'size': MAX_TEXT_INPUT_DISPLAY_SIZE}))
     description = forms.CharField(
         max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
         widget=forms.Textarea(),
@@ -23,13 +23,13 @@ class EditDataSetForm(forms.Form):
     category = CategoryChoiceField()
     tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH,
                            required=False,
-                           widget=forms.TextInput(attrs={'size': 50}))
+                           widget=forms.TextInput(attrs={'size': MAX_TEXT_INPUT_DISPLAY_SIZE}))
 
 class NewDataSetForm(EditDataSetForm):
     def __init__(self, user, *args, **kwargs):
         super(NewDataSetForm, self).__init__(*args, **kwargs)
         self.fields['previous_version'].queryset = DataSet.objects.active().filter(creator=user)
-        
+    
     help_text = """Specify that this dataset is a newer version of a dataset
                     that you have previously added.  Please only use this as a
                     way to correct errors from past datasets."""
@@ -37,12 +37,15 @@ class NewDataSetForm(EditDataSetForm):
         queryset=DataSet.objects.none(),
         empty_label='(No Previous Version)',
         required=False,
-        help_text=help_text)
+        help_text=help_text,
+        widget=RestrictedSizeSelectWidget())
       
     help_text = """A "readme.txt" is required if you choose to upload files.  If one is not directly
                    provided, it must be in a compressed file that is directly added."""
     files = MultiFileField(
-        required=False, help_text=help_text, widget=MultiFileInput(attrs={'size': 40}))
+                required=False, 
+                help_text=help_text, 
+                widget=MultiFileInput(attrs={'size': MAX_FILE_INPUT_DISPLAY_SIZE}))
     
 class UploadReadMeForm(forms.Form):
     readme = forms.FileField(required=False)
@@ -62,7 +65,7 @@ class TagDataSetForm(forms.Form):
         max_length=Item.MAX_ITEM_TAGS_LENGTH,
         required=False, 
         help_text=help_text,
-        widget=forms.TextInput(attrs={'size': 50}))
+        widget=forms.TextInput(attrs={'size': MAX_TEXT_INPUT_DISPLAY_SIZE}))
     
 class GeoLocationHiddenFieldForm(forms.Form):
     add_location = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -75,7 +78,7 @@ RemoveGeoLocationFormSet = formset_factory(RemoveGeoLocationHiddenFieldForm, ext
 
 class AcademicReferenceForm(ModelForm):
     reference = forms.CharField(required=False,
-                                widget=forms.TextInput(attrs={'size': 50}))
+                                widget=forms.TextInput(attrs={'size': MAX_TEXT_INPUT_DISPLAY_SIZE}))
     
     EMPTY_REFERENCE_ERROR_MESSAGE = 'References must contain more than whitespace.'
     
@@ -98,7 +101,8 @@ class AcademicReferenceForm(ModelForm):
 AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)
 
 class AuthorForm(ModelForm):
-    author = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 50}))
+    author = forms.CharField(required=False, 
+                             widget=forms.TextInput(attrs={'size': MAX_TEXT_INPUT_DISPLAY_SIZE}))
     
     EMPTY_AUTHOR_ERROR_MESSAGE = 'Authors must contain more than whitespace.'
     

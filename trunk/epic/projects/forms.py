@@ -5,13 +5,18 @@ from django.forms.formsets import formset_factory
 from django.forms.util import ValidationError
 
 from epic.core.forms import CategoryChoiceField
-from epic.core.forms import DESCRIPTION_HELP_TEXT
+from epic.core.forms import DESCRIPTION_HELP_TEXT, MAX_TEXT_INPUT_DISPLAY_SIZE
 from epic.core.models import Item
 from epic.datasets.models import DataSet
 
 
 class ProjectForm(forms.Form):
-    name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
+    name_attrs = {
+        'size': MAX_TEXT_INPUT_DISPLAY_SIZE,
+        'onFocus': 'ClearField(this)',
+    }
+    name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, 
+                           widget=forms.TextInput(attrs=name_attrs))
     # TODO: Include help_text to talk about BBCode. 
     # This will probably involve displaying the entire Project forms manually.)
     description = forms.CharField(

@@ -1,8 +1,13 @@
+from itertools import chain
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login
 from django.forms import ModelForm
 from django.forms.util import ErrorList
+
+from django.utils.html import escape, conditional_escape
+from django.utils.encoding import force_unicode
 
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
@@ -10,7 +15,6 @@ from epic.categories.models import default_category
 from epic.core.util.model_exists_utils import user_exists
 from epic.core.models import Item
 from epic.core.models import Profile
-
 
 def email_address_already_used_message(email):
     return u"The email address '%s' was already registered to an account." % email
@@ -175,6 +179,10 @@ DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
                         '<br />[s] ... [/s] <strike> strike out </strike> ' + \
                         '<br />[u] ... [/u] <u> underline </u> ' + \
                         '<br />[img]URL[/img] to display an image from URL'
+                        
+MAX_TEXT_INPUT_DISPLAY_SIZE = 50
+MAX_FILE_INPUT_DISPLAY_SIZE = 40
+MAX_SELECT_OPTION_DISPLAY_SIZE = 60                        
 
 class CategoryChoiceField(forms.ModelMultipleChoiceField):
     def __init__(self, *args, **kwargs):
@@ -192,3 +200,27 @@ class CategoryChoiceField(forms.ModelMultipleChoiceField):
          	return super(CategoryChoiceField, self).clean([unicode(no_category.id)])
         
         return super(CategoryChoiceField, self).clean(value)
+
+class RestrictedSizeSelectWidget(forms.Select):
+    '''This widget is the same as normal Select widget, except
+    that it restricts the size of the option label.'''
+
+    def render_options(self, choices, selected_choices):
+        def render_option(option_value, option_label):
+            option_value = force_unicode(option_value)
+            selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
+            return u'<option value="%s"%s>%s</option>' % (
+                escape(option_value), selected_html,
+                conditional_escape(force_unicode(option_label[:MAX_SELECT_OPTION_DISPLAY_SIZE])))
+        # Normalize to strings.
+        selected_choices = set([force_unicode(v) for v in selected_choices])
+        output = []
+        for option_value, option_label in chain(self.choices, choices):
+            if isinstance(option_label, (list, tuple)):
+                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
+                for option in option_label:
+                    output.append(render_option(*option))
+                output.append(u'</optgroup>')
+            else:
+                output.append(render_option(option_value, option_label))
+        return u'\n'.join(output)

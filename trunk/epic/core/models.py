@@ -62,12 +62,11 @@ class Item(models.Model):
     rendered_description = models.TextField(blank=True, null=True)
     tagless_description = models.TextField(blank=True, null=True)
     
-#    category = models.ForeignKey(Category, default=default_category)
     categories = models.ManyToManyField(Category, 
                                         related_name='categories', 
                                         blank=True)
     
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=MAX_ITEM_NAME_LENGTH)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     is_active = models.BooleanField(default=False)
     
@@ -108,7 +107,6 @@ class Item(models.Model):
         self.rendered_description = self._render_description()
         self.tagless_description = self._strip_tags_from_description()
         self.slug = slugify(self.name)
-        
         super(Item, self).save()
 
     def _render_description(self):
