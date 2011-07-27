@@ -13,6 +13,8 @@ from epic.messages.models import SentMessage
 from epic.messages.forms import NewMessageForm
 from epic.core.util.view_utils import send_mail_via_system_call 
 
+from epic.settings import DEFAULT_FROM_EMAIL
+
 @login_required
 @active_user_required
 def index(request, user_id):
@@ -128,7 +130,11 @@ def send_message(request, user_id, recipient_id=None, in_reply_to_message_id=Non
 			email_subject = "New mail at EpiC from %s" % (new_received_message.sender.username)
 			#TODO: Set the get_absolute_url to actually return the domain (www.epic.org or what not)
 			email_message = "%s has sent you a message:\n\n-----------\n%s\n-----------\n\n" % (new_received_message.sender.username, new_received_message.message)
-			send_mail_via_system_call(recipient.email, email_subject, email_message)
+			send_mail_via_system_call(recipient.email, 
+									  email_subject, 
+									  email_message,
+									  DEFAULT_FROM_EMAIL)
+									  
 			return HttpResponseRedirect(reverse('epic.messages.views.view_sent_message', kwargs={'user_id':sender.id, 'sentmessage_id':new_sent_message.id,}))
 		else:
 			return render_to_response(
