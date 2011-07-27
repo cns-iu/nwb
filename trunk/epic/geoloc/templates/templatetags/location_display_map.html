@@ -2,12 +2,23 @@
 {{ block.super }}
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{ GOOGLE_KEY }}" type="text/javascript"></script>
 {% endblock %}
-<div style="clear:both;">
-	<script type="text/javascript">
-		window.onUnload = GUnload();
-	</script>
-	<div id="map" style="width: 500px; height: 360px"></div>
-</div>
+
+<style type="text/css">
+#map {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 500px; 
+    height: 360px;
+}
+</style>
+
+<script type="text/javascript">
+	window.onUnload = GUnload();
+</script>
+
+
+
+<div id="map"></div>
 {% block scripts_footer %}
 {{ block.super }}
 <script type="text/javascript">
