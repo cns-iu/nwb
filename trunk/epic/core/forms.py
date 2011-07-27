@@ -15,6 +15,7 @@ from epic.categories.models import default_category
 from epic.core.util.model_exists_utils import user_exists
 from epic.core.models import Item
 from epic.core.models import Profile
+from epic.core.models import HAS_ACTIVATED_ACCOUNT_FIELD_NAME
 
 def email_address_already_used_message(email):
     return u"The email address '%s' was already registered to an account." % email
@@ -161,7 +162,7 @@ class UserForm(ModelForm):
 class ProfileForm(ModelForm):
     class Meta:
         model = Profile
-        exclude = ['user', 'activation_key']
+        exclude = ['user', HAS_ACTIVATED_ACCOUNT_FIELD_NAME, 'activation_key']
         
 class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(
