@@ -3,39 +3,49 @@
 {% load core_templatetags %}
 {% load datarequest_templatetags %}
 
+{% block css %}
+  <link href="/media/core/css/apps/datarequest.css" rel="stylesheet" type="text/css" />
+  <link href="/media/core/css/jquery-ui/1.8.14/hot-sneaks/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css" />
+  {{ block.super }}
+{% endblock %}
+
 {% block nav %}
     {% nav_bar 'Request' %}
 {% endblock %}
 
 {% block content %}
   <div class="requestbox">
-    <h1>Make a Request</h1>
+    <h1 class="ui-corner-all">Make a Request</h1>
     
-    <form id="request_form" name="request_form" action="{% url datarequests.views.new_datarequest %}" method="POST" onsubmit="ClearAll()">
-      <br />
+    <form id="request_form" 
+    	  name="request_form" 
+    	  action="{% url datarequests.views.new_datarequest %}" 
+    	  method="POST" 
+    	  onsubmit="ClearAll()">
+    	  
+	  <fieldset>    	  
+    	  
       {{ form.name.errors }}
       <label>{{ form.name }}</label>
       
-      <br />
       {{ form.description.errors }}
       <label>{{ form.description }}</label>
       
-      <br />
       {{ form.category.errors }}
       <label>{{ form.category }}</label>
       
-      <br />
       {{ form.tags.errors }}
       <label>{{ form.tags }}</label>
       
-      <br />
       <input type="image" src="/media/core/images/makerequest_button.jpg" value="Make Request" alt="Make Request" />
       
-      <br/>
+	</fieldset>
+	      
     </form>
+    
   </div>
   
-  <script type="text/javascript">
+<script type="text/javascript">
 /** 
  * Code from http://www.mindpalette.com/tutorials/clear_defaults/index.php
  */
@@ -87,7 +97,13 @@ function ClearAll() {
   	}
   }
 }
-  </script>
+
+</script>
   
+  <div id="recently-fulfilled-requests">
   {% recently_fulfilled_requests %}
+  </div>
+  
+  <div style="clear:both;"></div>
+  
 {% endblock %}
