@@ -132,7 +132,7 @@ public class StandardNormalizer implements Algorithm {
 		Dictionary<String, Object> metadata = outputData.getMetadata();
 		String label =
 			String.format("with normalized %s", StringUtilities.implodeItems(columns, ", "));
-		metadata.put(DataProperty.LABEL, "with normalized " + label);
+		metadata.put(DataProperty.LABEL, label);
 		metadata.put(DataProperty.PARENT, this.inputData);
 		metadata.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 		
