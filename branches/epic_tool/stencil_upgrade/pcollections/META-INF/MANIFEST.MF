@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pcollections
+Bundle-SymbolicName: pcollections
+Bundle-Version: 1.0.0
+Bundle-ClassPath: pcollections-2.0.0.jar
+Export-Package: org.pcollections;version="1.0.0"
