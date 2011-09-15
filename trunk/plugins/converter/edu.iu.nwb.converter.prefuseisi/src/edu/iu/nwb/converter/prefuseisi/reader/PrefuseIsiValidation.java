@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Dictionary;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.cishell.framework.CIShellContext;
@@ -17,115 +19,126 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.UnicodeReader;
 
 /**
+ * All the ISI files start with a "FN" tag that identifies the file type.
+ * 
+ * The exact string emitted by the ISI/WebOfScience web page may change without
+ * warning, and this may signify differences in the file format. After one such
+ * change, too much specificity in this validator caused the tool to stop
+ * loading ISI files entirely, which was a problem. So our new strategy is to be
+ * loose in the validation, and then make a best effort in the loading stage.
+ * 
+ * See {@link edu.iu.nwb.shared.isiutil.ISITableReader}
+ * 
  * @author Weixia(Bonnie) Huang
+ * @author thgsmith
  */
 public class PrefuseIsiValidation implements AlgorithmFactory {
-	/*
-	 * All the ISI files have FN * ISI * pattern as it's starting line. This is used to identify 
-	 * whether or not it is an ISI file.
+	/**
+	 * ISI files begin with "FN {identifier string}".
 	 */
-	public static final String ISI_IDENTIFIER_SIGNATURE = "fn{1}.*isi{1}.*";
+	public static final Pattern ISI_FIRST_TAG = Pattern.compile(
+			"fn .*",
+			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.DOTALL);
 	public static final int NUMBER_LINES_CONSIDERED = 5;
 
-	public Algorithm createAlgorithm(
-			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
+	public Algorithm createAlgorithm(Data[] data,
+			Dictionary<String, Object> parameters, CIShellContext context) {
 		return new ISIValidationAlgorithm(data);
 	}
 
 	public class ISIValidationAlgorithm implements Algorithm {
 		public static final String ISI_MIME_TYPE = "file:text/isi";
 		
-		private String inISIFile;
+		private String inISIFileName;
 
 		
 		public ISIValidationAlgorithm(Data[] data) {
-			this.inISIFile = (String) data[0].getData();
+			this.inISIFileName = (String) data[0].getData();
 		}
 
 		
 		public Data[] execute() throws AlgorithmExecutionException {
-			File inputData = new File(inISIFile);
-			boolean isiIdentifierFound = false;
-
-			/*
-			 * ISIIdentifierFound variable tracks whether or not ISI signature
-			 * is found by using the isiSignatureSearcher method.
-			 * */
-			isiIdentifierFound = isiSignatureSearcher(inISIFile);
-
+			File inputFile = new File(inISIFileName);
 			/*
 			 * Depending upon whether ISI signature is found or not further
 			 * actions are taken.
-			 * */
-			if (isiIdentifierFound) {
-				try {
-					return createOutData(inputData);
-				} catch (SecurityException e) {
-					throw new AlgorithmExecutionException(e.getMessage(), e);
-				}
+			 */
+			if (fileHasISISignature(inputFile, NUMBER_LINES_CONSIDERED)) {
+				return createOutData(inputFile);
 			} else {
 				throw new AlgorithmExecutionException(
 						"Invalid ISI format file selected. "
 						+" Unable to continue loading "
-						+ inISIFile + " file.");
+						+ inISIFileName + " file.");
 			}
 
+		}
+
+
+		private boolean fileHasISISignature(File inputFile,
+				int numLines) throws AlgorithmExecutionException {
+			List<String> initialLines = readInitialLines(inputFile, numLines);
+			
+			for (String line : initialLines) {
+				if (lineMatchesSignature(line)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+
+		/**
+		 * Reads the first NUMBER_LINES_CONSIDERED non-blank lines in the
+		 * inFile.
+		 * 
+		 * @return the first N lines, in a String array.
+		 * @throws AlgorithmExecutionException
+		 */
+		private List<String> readInitialLines(File inFile, int numLines)
+				throws AlgorithmExecutionException {
+			BufferedReader inReader = null;
+			List<String> firstLines = new LinkedList<String>();
+			
+			int currentNumberOfLinesCounter = 0;
+			String lineContent;
+
+			try {
+				inReader = new BufferedReader(new UnicodeReader(
+						new FileInputStream(inFile)));
+				while ((lineContent = inReader.readLine()) != null
+						&& (currentNumberOfLinesCounter < numLines)) {
+					lineContent = lineContent.trim();
+					if (!lineContent.isEmpty()) {
+						firstLines.add(lineContent);
+						currentNumberOfLinesCounter++;
+					}
+				}
+			} catch (IOException e) {
+				throw new AlgorithmExecutionException(e.getMessage(), e);
+			} finally {
+				try {
+					inReader.close();
+				} catch (IOException e) {
+					throw new AlgorithmExecutionException(e.getMessage(), e);
+				}
+			}
+			return firstLines;
 		}
 
 		private Data[] createOutData(File inputData) {
 			Data[] validationData = new Data[] { new BasicData(inputData,
 			ISI_MIME_TYPE) };
 			validationData[0].getMetadata().put(DataProperty.LABEL,
-					"Prefuse ISI file: " + inISIFile);
+					"Prefuse ISI file: " + inISIFileName);
 			validationData[0].getMetadata().put(DataProperty.TYPE,
 					DataProperty.TABLE_TYPE);
 			return validationData;
 		}
 
-		/**
-		 * This method is used to search for ISI signature inside the input file. It disregards all the 
-		 * empty lines from top. Right now it searches for the ISI signature i.e. "FN * ISI *" only 
-		 * in the top 5 lines but this parameter is configurable.
-		 * @param fileHandler
-		 * @param ISIIdentifierFound
-		 * @return
-		 * @throws AlgorithmExecutionException
-		 */
-		//TODO: refactor isiIdentifier here too
-		private boolean isiSignatureSearcher(String fileHandler)
-				throws AlgorithmExecutionException {
-			boolean isiIdentifierFound = false;
-			try {
-				BufferedReader isiInputFileReader =
-					new BufferedReader(new UnicodeReader(new FileInputStream(fileHandler)));
-				String lineContent;
-				int currentNumberOfLinesCounter = 0;				
+	}
 
-				while ((lineContent = isiInputFileReader.readLine()) != null
-						&& !isiIdentifierFound 
-						&& (currentNumberOfLinesCounter < NUMBER_LINES_CONSIDERED)) {						
-					lineContent = lineContent.trim();
-					if (lineContent.length() > 0) {
-						/* Regex for searching for the ISI Signature in
-						 * a case insensitive manner. 
-						 */
-						isiIdentifierFound =
-							Pattern.compile(
-								ISI_IDENTIFIER_SIGNATURE,
-								Pattern.CASE_INSENSITIVE
-								| Pattern.UNICODE_CASE)
-									.matcher(lineContent).matches();
-
-						currentNumberOfLinesCounter++;
-					}
-				}
-				
-				isiInputFileReader.close();
-			} catch (IOException e) {
-				throw new AlgorithmExecutionException(e.getMessage(), e);
-			}
-			
-			return isiIdentifierFound;
-		}
+	static boolean lineMatchesSignature(String line) {
+		return ISI_FIRST_TAG.matcher(line).matches();
 	}
 }

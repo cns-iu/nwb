@@ -3,9 +3,13 @@ package edu.iu.nwb.shared.isiutil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.regex.Pattern;
 
+import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
@@ -21,13 +25,29 @@ import edu.iu.nwb.shared.isiutil.exception.ReadTableException;
  */
 public class ISITableReader {	
 	public static final String NORMALIZED_SEPARATOR = "|";
-	public static final int TAG_LENGTH = 2;
+	public static final int MIN_TAG_LENGTH = 2;
 	public static final String FILE_PATH_COLUMN_NAME = "File Name";
+	
+	/**
+	 * The Web of Knowledge web site changed its export format in September of
+	 * 2011, without changing the VN "version number" of the file. They changed
+	 * the first line FN "file type" from "ISI Export Format" to
+	 * "Thomson Reuters Web Of Knowledge".  This was accompanied by a change
+	 * in the semantics of the author address field, so we need to know what
+	 * version we are dealing with.
+	 */
+	public static enum ISI_VERSION {
+		OLD,      // Until September of 2011.
+		NEW_2011, // September of 2011, until...
+		UNKNOWN   // Whenever they decide they hate us, again. 
+	}
+	private String versionNumber = "";
+	private ISI_VERSION isiVersion = ISI_VERSION.UNKNOWN; // may handle this differently later...
+
 	
 	private LogService log;
 	private boolean normalizeAuthorNames;
 	private String fileType = "";
-	private String versionNumber = "";
 	
 	public ISITableReader(LogService log, boolean normalizeAuthorNames) {
 		this.log = log;
@@ -63,7 +83,8 @@ public class ISITableReader {
 			boolean shouldClean)
 			throws IOException, ReadTableException {
 		BufferedReader reader =
-			new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			new BufferedReader(new UnicodeReader(new FileInputStream(file)));
+					
 		TableData tableData = generateEmptyISITable();
 		String currentLine = moveToNextLineWithTag(reader);
 		
@@ -79,11 +100,10 @@ public class ISITableReader {
 				tableData.moveOnToNextRow();
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.FILE_TYPE)) {
-				// Tag ignored.
-				this.fileType = extractTagValue(currentLine);
+				this.setFileType(extractTagValue(currentLine));
+				
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.VERSION_NUMBER)) {
-				// Tag ignored.
 				this.versionNumber = extractTagValue(currentLine);
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.type.equals(ContentType.INTEGER)) {
@@ -118,7 +138,26 @@ public class ISITableReader {
 
 		return constructedTable;
 	}
+
+	
+	private void setFileType(String fileType) {
+		this.fileType = fileType;
 		
+		if (this.fileType.toLowerCase().contains("isi")) {
+			this.isiVersion = ISI_VERSION.OLD;
+			this.log.log(LogService.LOG_INFO,
+					"Found old-style ISI/Web Of Knowledge file.");
+		} else if (this.fileType.toLowerCase().contains("web of knowledge")) {
+			this.isiVersion = ISI_VERSION.NEW_2011;
+			this.log.log(LogService.LOG_INFO,
+					"Found new-style ISI/Web Of Knowledge file.");
+		} else {
+			this.isiVersion = ISI_VERSION.UNKNOWN;
+			this.log.log(LogService.LOG_WARNING,
+					"New ISI/Web of Knowledge file type?  " + fileType);
+		}
+	}
+
 	private String addIntTagData(
 			ISITag currentTag,
 			String currentLine,
@@ -281,19 +320,21 @@ public class ISITableReader {
 		return nextLineAfterThisTag;
 	}
 	
-	private String extractTagName(String line) {
-		
-		String tag;
-		if (line != null && line.length() >= TAG_LENGTH) {
-			tag = line.substring(0, TAG_LENGTH);
+	private String[] splitTagLine(String line) {
+		String[] lineParts = new String[] {"", ""}; // tag, rest
+		if (line != null && line.length() >= MIN_TAG_LENGTH) {
+			lineParts = line.split(" ", 2);
 		} else {
 			log.log(LogService.LOG_WARNING,
 					"Invalid line in isi file. Could not extract tag from line \r\n"
 					+ line + "\nSkipping line...");
-			tag = null;
 		}
 		
-		return tag;
+		return lineParts;
+	}
+	
+	private String extractTagName(String line) {
+		return splitTagLine(line)[0];
 	}
 
 	private String extractTagValue(String lineWithTag) {
@@ -328,7 +369,7 @@ public class ISITableReader {
 	}
 	
 	private String removeTag(String line) {
-		return line.substring(Math.min(TAG_LENGTH, line.length()));
+		return splitTagLine(line)[1];
 	}
 	
 	private ISITag getOrCreateNewTag(String tagName, TableData tableData) {

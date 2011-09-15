@@ -6,10 +6,14 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-public class ISITag {
+public final class ISITag {
 	/*
 	 * IMPORTANT: If you add a tag here, make sure to add it in the isiTagArray below as well.
 	 * Sorting these alphabetically is a little more sane.
+	 * 
+	 * Tag references:
+	 * http://images.webofknowledge.com/WOK45/help/RCI/WOK/hft_wos.html
+	 * http://isi-rb.rubyforge.org/
 	 */
 	
 	public static final ISITag ABSTRACT = new ISITag("AB", "Abstract", ContentType.TEXT);
@@ -58,7 +62,7 @@ public class ISITag {
 
 	public static final ISITag FILE_TYPE = new ISITag("FN", "File Type", ContentType.TEXT, true);
 	public static final ISITag FULL_JOURNAL_TITLE =
-		new ISITag("SO", "Journal Title (Full)",ContentType.TEXT);
+		new ISITag("SO", "Journal Title (Full)", ContentType.TEXT);
 	public static final ISITag FUNDING_AGENCY_AND_GRANT_NUMBER =
 		new ISITag("FU", "Funding Agency and Grant Number", ContentType.TEXT);
 	public static final ISITag FUNDING_TEXT = new ISITag("FX", "Funding Text", ContentType.TEXT);
@@ -100,7 +104,11 @@ public class ISITag {
 		new ISITag("RP", "Reprint Address", ContentType.TEXT);
 	public static final ISITag RESEARCH_ADDRESSES =
 		new ISITag("C1", "Research Addresses", ContentType.MULTI_VALUE_TEXT, "\n");
-
+	public static final ISITag RESEARCH_FIELD = 
+		new ISITag("WC", "Research Field", ContentType.MULTI_VALUE_TEXT, ";");
+	public static final ISITag RESEARCHER_ID =
+		new ISITag("RID", "Researcher ID", ContentType.TEXT); 
+	
 	public static final ISITag SPECIAL_ISSUE =
 		new ISITag("SI", "Special Issue",  ContentType.TEXT);
 	public static final ISITag SUBJECT_CATEGORY =
@@ -109,6 +117,8 @@ public class ISITag {
 
 	public static final ISITag TIMES_CITED = new ISITag("TC", "Times Cited", ContentType.INTEGER);
 	public static final ISITag TITLE = new ISITag("TI", "Title", ContentType.TEXT);
+	public static final ISITag TOTAL_TIMES_CITED = 
+			new ISITag("Z9", "Total Times Cited", ContentType.INTEGER);
 	public static final ISITag TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION =
 		new ISITag("J9", "Journal Name (Abbreviated)", ContentType.TEXT);
 
@@ -116,7 +126,7 @@ public class ISITag {
 
 	public static final ISITag VERSION_NUMBER =
 		new ISITag("VR", "Version Number", ContentType.TEXT, true);
-	public static final ISITag VOLUME = new ISITag("VL", "Volume", ContentType.TEXT);		
+	public static final ISITag VOLUME = new ISITag("VL", "Volume", ContentType.TEXT);
 	
 	private static final ISITag[] isiTagArray = {
 		ABSTRACT,
@@ -175,6 +185,8 @@ public class ISITag {
 
 		REPRINT_ADDRESS,
 		RESEARCH_ADDRESSES,
+		RESEARCH_FIELD,
+		RESEARCHER_ID,
 
 		SPECIAL_ISSUE,
 		SUBJECT_CATEGORY,
@@ -182,6 +194,7 @@ public class ISITag {
 
 		TIMES_CITED,
 		TITLE,
+		TOTAL_TIMES_CITED,
 		TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION,
 
 		UNIQUE_ID,
@@ -214,8 +227,11 @@ public class ISITag {
 				ISITag tag = (ISITag) isiTags.get(ii);
 				
 				if (newTag.tagName.equals(tag.tagName)) {
-					System.err.println("Attempted to add a tag tagNamed '" + newTag.tagName + "'" +
-							" when one with the same tagName is already known.");
+					System.err.println(
+							"Attempted to add a tag tagNamed '"
+							+ newTag.tagName
+							+ "'"
+							+ " when one with the same tagName is already known.");
 					System.err.println("Ignoring attempt to add new tag");
 					return;
 				}
@@ -254,11 +270,11 @@ public class ISITag {
 				ISITag tag = (ISITag) arbitraryISITags.get(ii);
 				
 				if (newTag.tagName.equals(tag.tagName)) {
-					System.err.println(
-						"Attempted to add an arbitrary tag tagNamed '" +
-						newTag.tagName +
-						"'" +
-						" when one with the same tagName is already known.");
+					System.err
+							.println("Attempted to add an arbitrary tag tagNamed '"
+									+ newTag.tagName
+									+ "'"
+									+ " when one with the same tagName is already known.");
 					System.err.println("Ignoring attempt to add new tag");
 
 					return;
@@ -301,7 +317,7 @@ public class ISITag {
 	public final boolean isFileUnique;
 
 	
-	private ISITag(String tagName, String name,ContentType type) {
+	private ISITag(String tagName, String name, ContentType type) {
 		this(tagName, name, type, null, false);
 	}
 	
@@ -312,10 +328,11 @@ public class ISITag {
 	private ISITag(String tagName, String name, ContentType type, String separator) {
 		this(tagName, name, type, separator, false);
 	}
-	
-	private ISITag(String tagName, String name, ContentType type, String separator, boolean isFileUnique) {
+
+	private ISITag(String tagName, String name, ContentType type,
+			String separator, boolean isFileUnique) {
 		this.tagName = tagName;
-		this.columnName = name;
+	this.columnName = name;
 		this.type = type;
 		this.separator = separator;
 		this.isFileUnique = isFileUnique;
@@ -343,8 +360,9 @@ public class ISITag {
 		ISITag newTag = new ISITag(tagName, name, type, separator);
 		addTagInternal(newTag, true);
 	}
-	
-	public static void addTag(String tagName, String name, ContentType type, String separator, boolean isFileUnique) {
+
+	public static void addTag(String tagName, String name, ContentType type,
+			String separator, boolean isFileUnique) {
 		ISITag newTag = new ISITag(tagName, name, type, separator, isFileUnique);
 		addTagInternal(newTag, true);
 	}
@@ -406,8 +424,10 @@ public class ISITag {
 		if (columnName != null) {
 			return columnName;
 		} else {
-			System.err.println("Unable to find column name for tag name '" + 
-					tagName + "' in class ISITag, in package edu.iu.nwb.shared.isiutil");
+			System.err
+					.println("Unable to find column name for tag name '"
+							+ tagName
+							+ "' in class ISITag, in package edu.iu.nwb.shared.isiutil");
 			return "";
 		}
 	}
