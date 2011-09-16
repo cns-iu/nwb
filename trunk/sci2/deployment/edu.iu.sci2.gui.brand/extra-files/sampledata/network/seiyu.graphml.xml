@@ -8,7 +8,7 @@
   <key id="show" for="node" attr.name="show" attr.type="string"/>
   <key id="showE" for="node" attr.name="showEnglish" attr.type="string"/>
   <key id="character" for="node" attr.name="character" attr.type="string"/>
-  <key id="total" for="node" attr.name="totalShows" attr.type="integer"/>
+  <key id="total" for="node" attr.name="totalShows" attr.type="int"/>
 
   <graph edgedefault="undirected">
     <!-- nodes -->
