@@ -3,6 +3,8 @@ package edu.iu.sci2.visualization.geomaps.legend;
 import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.numberformat.UnsignedZeroDecimalFormat;
 import edu.iu.sci2.visualization.geomaps.printing.Circle;
 import edu.iu.sci2.visualization.geomaps.utility.Constants;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
@@ -47,6 +49,7 @@ public class CircleAreaLegend implements LegendComponent {
 	private double lowerLeftY;
 	
 	private boolean hasPrintedDefinitions;
+	private String numberFormatName;
 
 
 	public CircleAreaLegend(Range<Double> areaRange,
@@ -57,7 +60,8 @@ public class CircleAreaLegend implements LegendComponent {
 					  String typeLabel,
 					  String keyLabel,
 					  double lowerLeftX,
-					  double lowerLeftY) {
+					  double lowerLeftY,
+					  String numberFormatName) {
 		this.rawRange = areaRange;
 		this.scalingLabel = scaling;
 		this.rawMidArea = rawMidArea;
@@ -67,6 +71,7 @@ public class CircleAreaLegend implements LegendComponent {
 		this.keyLabel = keyLabel;
 		this.lowerLeftX = lowerLeftX;
 		this.lowerLeftY = lowerLeftY;
+		this.numberFormatName = numberFormatName;
 		
 		this.hasPrintedDefinitions = false;
 	}
@@ -107,7 +112,8 @@ public class CircleAreaLegend implements LegendComponent {
 		invocationTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
 		
 		UnsignedZeroDecimalFormat doubleFormatter =
-			UnsignedZeroDecimalFormat.createDecimalFormatOver(
+			NumberFormatFactory.getNumberFormat(
+					numberFormatName,
 					rawRange.getMin(), rawMidArea, rawRange.getMax());
 		invocationTemplate.setAttribute(
 				"minLabel", doubleFormatter.format(rawRange.getMin()));

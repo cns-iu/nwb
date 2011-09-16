@@ -5,6 +5,8 @@ import java.awt.Color;
 import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.numberformat.UnsignedZeroDecimalFormat;
 import edu.iu.sci2.visualization.geomaps.utility.Constants;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 
@@ -54,6 +56,7 @@ public class ColorLegend implements LegendComponent {
 	private String typeLabel;
 	private String keyLabel;
 	private boolean hasPrintedDefinitions;
+	private String numberFormatName;
 	
 
 	public ColorLegend(Range<Double> rawRange,
@@ -65,7 +68,8 @@ public class ColorLegend implements LegendComponent {
 						   double lowerLeftX,
 						   double lowerLeftY,
 						   double width,
-						   double height) {
+						   double height,
+						   String numberFormatName) {
 		this.rawRange = rawRange;
 		this.scalingLabel = scaling;
 		this.rawMidColorQuantity = rawMidColorQuantity;
@@ -76,6 +80,7 @@ public class ColorLegend implements LegendComponent {
 		this.lowerLeftY = lowerLeftY;
 		this.gradientWidth = width;
 		this.gradientHeight = height;
+		this.numberFormatName = numberFormatName;
 		
 		this.hasPrintedDefinitions = false;
 	}
@@ -117,7 +122,8 @@ public class ColorLegend implements LegendComponent {
 		invocationTemplate.setAttribute("maxColorBlue", maxColorComponents[BLUE]);
 		
 		UnsignedZeroDecimalFormat doubleFormatter =
-			UnsignedZeroDecimalFormat.createDecimalFormatOver(
+			NumberFormatFactory.getNumberFormat(
+					numberFormatName, 
 					rawRange.getMin(), rawMidColorQuantity, rawRange.getMax());
 		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(rawRange.getMin()));
 		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(rawMidColorQuantity));

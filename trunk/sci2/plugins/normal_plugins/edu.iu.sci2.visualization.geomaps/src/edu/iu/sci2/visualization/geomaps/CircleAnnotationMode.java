@@ -24,6 +24,7 @@ import edu.iu.sci2.visualization.geomaps.legend.ColorLegend;
 import edu.iu.sci2.visualization.geomaps.legend.Legend;
 import edu.iu.sci2.visualization.geomaps.legend.LegendComponent;
 import edu.iu.sci2.visualization.geomaps.legend.NullLegendComponent;
+import edu.iu.sci2.visualization.geomaps.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.printing.Circle;
 import edu.iu.sci2.visualization.geomaps.printing.CirclePrinter;
 import edu.iu.sci2.visualization.geomaps.printing.colorstrategy.ColorStrategy;
@@ -55,6 +56,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 	public static final int OUTER_COLOR_GRADIENT_HEIGHT = INNER_COLOR_GRADIENT_HEIGHT;
 	
 	// User parameter IDs
+	// The *_ID values must match with the 'name' field in OSGI-INF/metatype/METADATA.XML
 	public static final String LATITUDE_ID = "latitude";
 	public static final String LONGITUDE_ID = "longitude";
 	public static final String AREA_ID = "circleArea";
@@ -101,6 +103,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 				CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, 
 				CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
 		
+		
 		String innerColorValueAttribute =
 			(String) parameters.get(INNER_COLOR_QUANTITY_ID);
 		boolean isUsingInnerColor = true;
@@ -110,7 +113,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 		String innerColorScaling = (String) parameters.get(INNER_COLOR_SCALING_ID);
 		Scaler innerColorValueScaler = ScalerFactory.createScaler(innerColorScaling);
 		String innerColorRangeKey = (String) parameters.get(INNER_COLOR_RANGE_ID);
-		Range<Color> innerColorRange = Constants.COLOR_RANGES.get(innerColorRangeKey);		
+		Range<Color> innerColorRange = Constants.COLOR_RANGES.get(innerColorRangeKey);
 		
 		String outerColorValueAttribute =
 			(String) parameters.get(OUTER_COLOR_QUANTITY_ID);
@@ -121,7 +124,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 		String outerColorScaling = (String) parameters.get(OUTER_COLOR_SCALING_ID);
 		Scaler outerColorValueScaler = ScalerFactory.createScaler(outerColorScaling);
 		String outerColorRangeKey = (String) parameters.get(OUTER_COLOR_RANGE_ID);
-		Range<Color> outerColorRange = Constants.COLOR_RANGES.get(outerColorRangeKey);		
+		Range<Color> outerColorRange = Constants.COLOR_RANGES.get(outerColorRangeKey);
+		
 		
 		
 		
@@ -133,7 +137,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 			new LinearInterpolator(
 					areaValueScaler.scale(areaValueScalableRange),
 					areaRange);
-		
+		String areaNumberFormat = NumberFormatFactory.guessNumberFormat(
+				areaValueAttribute, areaValueScalableRange);
 		
 		// Set up inner color interpolator
 		Range<Double> innerColorValueScalableRange = null;
@@ -147,6 +152,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 						innerColorValueScaler.scale(innerColorValueScalableRange),
 						innerColorRange);
 		}
+		String innerColorNumberFormat = NumberFormatFactory.guessNumberFormat(
+				innerColorValueAttribute, innerColorValueScalableRange);
 		
 		// Set up outer color interpolator
 		Range<Double> outerColorValueScalableRange = null;
@@ -161,6 +168,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 						outerColorValueScaler.scale(outerColorValueScalableRange),
 						outerColorRange);
 		}
+		String outerColorNumberFormat = NumberFormatFactory.guessNumberFormat(
+				outerColorValueAttribute, outerColorValueScalableRange);
 		
 		
 		// Read, scale, and interpolate data from inTable
@@ -261,7 +270,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 				areaValueScaler,
 				areaValueScalableRange,
 				areaInterpolator,
-				areaRange);		
+				areaRange,
+				areaNumberFormat);		
 		
 		LegendComponent innerColorLegend =
 			createInnerColorLegend(
@@ -271,7 +281,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 				innerColorValueScaler,
 				innerColorValueScalableRange,
 				innerColorQuantityInterpolator,
-				innerColorRange);
+				innerColorRange,
+				innerColorNumberFormat);
 		
 		LegendComponent outerColorLegend =
 			createOuterColorLegend(
@@ -281,7 +292,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 				outerColorValueScaler,
 				outerColorValueScalableRange,
 				outerColorQuantityInterpolator,
-				outerColorRange);
+				outerColorRange,
+				outerColorNumberFormat);
 		
 		postScriptWriter.setCircleAnnotations(
 				SUBTITLE,
@@ -297,7 +309,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Scaler scaler,
 			Range<Double> scalableRange,
 			Interpolator<Double> interpolator,
-			Range<Double> outputRange) throws AlgorithmExecutionException {
+			Range<Double> outputRange,
+			String numberFormat) throws AlgorithmExecutionException {
 		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
@@ -327,7 +340,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 						"Area",
 						attribute,
 						AREA_LEGEND_LOWER_LEFT_X,
-						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS);
+						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
+						numberFormat);
 		} catch (InterpolatorInversionException e) {
 			throw new AlgorithmExecutionException(
 					"Couldn't create circle area legend: "
@@ -345,7 +359,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Scaler scaler,
 			Range<Double> scalableRange,
 			Interpolator<Color> interpolator,
-			Range<Color> colorRange) throws AlgorithmExecutionException {
+			Range<Color> colorRange, String innerColorNumberFormat) throws AlgorithmExecutionException {
 		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
@@ -381,7 +395,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 							INNER_COLOR_LEGEND_LOWER_LEFT_X,
 							Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
 							INNER_COLOR_GRADIENT_WIDTH,
-							INNER_COLOR_GRADIENT_HEIGHT);
+							INNER_COLOR_GRADIENT_HEIGHT,
+							innerColorNumberFormat);
 			} catch (InterpolatorInversionException e) {
 				throw new AlgorithmExecutionException(
 						"Couldn't create circle inner color legend: "
@@ -400,7 +415,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 			Scaler scaler,
 			Range<Double> scalableRange,
 			Interpolator<Color> interpolator,
-			Range<Color> colorRange) throws AlgorithmExecutionException {
+			Range<Color> colorRange,
+			String numberFormat) throws AlgorithmExecutionException {
 		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
 		}
@@ -434,7 +450,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 							OUTER_COLOR_LEGEND_LOWER_LEFT_X,
 							Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
 							OUTER_COLOR_GRADIENT_WIDTH,
-							OUTER_COLOR_GRADIENT_HEIGHT);
+							OUTER_COLOR_GRADIENT_HEIGHT,
+							numberFormat);
 			} catch(InterpolatorInversionException e) {
 				throw new AlgorithmExecutionException(
 						"Couldn't create circle inner color legend: "

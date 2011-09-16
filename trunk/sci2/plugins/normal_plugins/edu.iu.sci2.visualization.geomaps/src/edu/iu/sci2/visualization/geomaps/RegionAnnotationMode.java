@@ -19,6 +19,7 @@ import edu.iu.sci2.visualization.geomaps.legend.ColorLegend;
 import edu.iu.sci2.visualization.geomaps.legend.Legend;
 import edu.iu.sci2.visualization.geomaps.legend.LegendComponent;
 import edu.iu.sci2.visualization.geomaps.legend.NullLegendComponent;
+import edu.iu.sci2.visualization.geomaps.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.printing.colorstrategy.ColorStrategy;
 import edu.iu.sci2.visualization.geomaps.printing.colorstrategy.FillColorStrategy;
 import edu.iu.sci2.visualization.geomaps.scaling.Scaler;
@@ -76,8 +77,9 @@ public class RegionAnnotationMode extends AnnotationMode {
 			new ColorInterpolator(
 					colorValueScaler.scale(colorValueScalableRange),
 					colorRange);
-		
-		
+		String colorNumberFormat = NumberFormatFactory.guessNumberFormat(
+				colorValueAttribute, colorValueScalableRange);
+	
 		int duplicateFeatureNames = 0;
 		int unreadableTableValues = 0;
 		Map<String, ColorStrategy> featureColors =
@@ -149,7 +151,8 @@ public class RegionAnnotationMode extends AnnotationMode {
 				colorValueScaler,
 				colorValueScalableRange,
 				colorInterpolator,
-				colorRange);
+				colorRange,
+				colorNumberFormat);
 		
 		shapefileToPostScript.setFeatureColorAnnotations(SUBTITLE, featureColors, legend);
 	}
@@ -160,7 +163,8 @@ public class RegionAnnotationMode extends AnnotationMode {
 			Scaler scaler,
 			Range<Double> scalableRange,
 			Interpolator<Color> colorInterpolator,
-			Range<Color> colorRange)
+			Range<Color> colorRange,
+			String colorNumberFormat)
 				throws AlgorithmExecutionException {
 		if (scalableRange == null || scalableRange.isEqual()) {
 			return new NullLegendComponent();
@@ -188,7 +192,8 @@ public class RegionAnnotationMode extends AnnotationMode {
 						COLOR_GRADIENT_LOWER_LEFT_X,
 						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
 						COLOR_GRADIENT_WIDTH,
-						COLOR_GRADIENT_HEIGHT);
+						COLOR_GRADIENT_HEIGHT,
+						colorNumberFormat);
 		} catch (InterpolatorInversionException e) {
 			throw new AlgorithmExecutionException(
 					"Couldn't create region color legend: "
