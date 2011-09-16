@@ -1,0 +1,212 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% load category_templatetags %}
+{% load comment_templatetags %}
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
+{% load geoloc_templatetags %}
+{% load tags_templatetags %}
+
+{% block css %}
+  {{ block.super }}
+<style type="text/css">
+
+#read-more-content {
+  display:none;
+}
+
+#read-more-link {
+  color: #d13165;
+  display: block;
+  padding-bottom: 9px;
+  cursor: pointer;
+}
+
+#read-less-link {
+  color: #d13165;
+  display: none;
+  padding-bottom: 9px;
+  cursor: pointer;
+}
+
+</style>
+{% endblock %}
+
+{% block scripts_footer %}
+  {{ block.super }}
+  <script type="text/javascript">
+    <!-- 
+$(document).ready(function() {
+  $("#read-more-link").click(function() {
+    $("#read-more-content").fadeIn();
+    $("#read-more-link").hide();
+    $("#read-less-link").css({'display':'block'});
+  });
+  
+  $("#read-less-link").click(function() {
+    $("#read-more-content").fadeOut();
+    $("#read-less-link").hide();
+    $("#read-more-link").show();
+  });
+});
+    //-->
+  </script>
+{% endblock %}
+
+{% block content %}
+  <div id="error-message">
+    {% block messages %}
+      {% for message in messages %}
+        {{ message }}
+      {%endfor%}
+    {% endblock %}
+  </div>
+  
+  {% if messages %}
+    <div class="highlight" id="message">
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  
+  {% if dataset.is_active %}
+    <div class="databox">
+      {% if dataset.next_version %}
+        <p>There is a newer version of this dataset:
+          <ul>
+            <li>
+              <a href="{{ dataset.next_version.get_absolute_url }}">{{ dataset.next_version }}</a>
+            </li>
+          </ul>
+        </p>
+      {% endif %}
+      
+      {% if dataset.previous_version %}
+        <p>There is an older version of this dataset:
+          <ul>
+            <li>
+              <a href="{{ dataset.previous_version.get_absolute_url }}">{{ dataset.previous_version }}</a>
+            </li>
+          </ul>
+        </p>
+      {% endif %}
+      
+      {% fulfills_request_button dataset %}
+      {% dataset_header dataset 'rating_allowed' %}
+      
+      {#% display_dataset_description dataset 1000 %#}
+      <p>
+        {% comment %}
+        Make sure that whitespace is not introduced between spans of "default-description", "read-more-link", 
+        "read-more-content". Else for long descriptions there will be a whitespace between original content \
+        & erst-hidden content. This will look bad when the hidden content starts from split word. Crazy? Yeah! 
+        {% endcomment %}
+        
+        <span id="default-description">
+          {{ dataset.rendered_description|safe|linebreaksbr|slice:":1000" }}
+        </span>
+        
+        {% if dataset.rendered_description|safe|linebreaksbr|slice:"1000:" %}
+          <span id="read-more-link">Read more &raquo;</span>
+          <span id="read-more-content">{{ dataset.rendered_description|safe|linebreaksbr|slice:"1000:" }}</span>
+          <span id="read-less-link">&laquo; Read less </span>
+        {% endif %}
+      </p>
+      
+      {% category_link dataset %}
+      {% list_item_tags dataset user 'True' %}
+      
+      <h4>
+        References
+        
+        {% if dataset.references.all %}
+          <ul>
+            {% for reference in dataset.references.all %}
+              <li>{{ reference.reference }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>There are no references for this dataset.
+        {% endif %}
+      </h4>
+      
+      <h4>
+        Authors
+        
+        {% if dataset.authors.all %}
+          <ul>
+            {% for author in dataset.authors.all %}
+              <li>
+                <a href="{% url core.views.view_items_for_author author_name=author.author %}">
+                  {{ author.author }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>There are no authors for this dataset.</p>
+        {% endif %}
+      </h4>
+    </div>
+    
+    {% if user.is_authenticated %}
+      <h3>Dataset Files</h3>
+      
+      <p>
+        {% if dataset.files.all %}
+          {% for file in dataset.files.all %}      
+              {# TODO: this should be a reverse? #}
+              {% if file.is_readme %}
+                <a href="{% url datasets.views.download_file file_id=file.id item_id=dataset.id slug=dataset.slug %}">
+	              <img src="/media/core/images/readme_icon.jpeg" width="69" height="17" align="texttop" />
+	            </a>  
+                {{ file.get_short_name }}
+              {% else %}
+                <a href="{% url datasets.views.download_file file_id=file.id item_id=dataset.id slug=dataset.slug %}">
+	              <img src="/media/core/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
+	            </a>  
+                {{ file.get_short_name }}
+              {% endif %}
+              <br />
+          {% endfor %}
+          
+          {% ifnotequal dataset.files.all|length 0 %}
+            <br />
+            
+            <a href="{% url datasets.views.download_all_files item_id=dataset.id slug=dataset.slug %}">
+              <img src="/media/core/images/download-all_19.jpg" width="87" height="18" />
+            </a>   
+                     
+            Download All Files
+            <br />
+            <br />
+          {% endifnotequal %}
+        {% else %}
+          <h2>The files for this dataset have been removed.</h2>
+        {% endif %}
+      </p>
+    {% else %}
+      {% if dataset.files.all %}
+        <h2>
+          {# TODO: Make this not a big fat hack. #}
+          {# We should be using the url template tag instead of the hardcoded url. #}
+          Please <a href="/login/?next={{ dataset.get_absolute_url }}">login</a> to download this dataset.
+        </h2>
+      {% else %}
+        <h2>The files for this dataset have been removed.</h2>
+      {% endif %}
+    {% endif %}
+    <h4>
+      Please Cite This Dataset As:<br/>"{{ dataset.name }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt;
+    </h4>
+    
+    {% location_display_map dataset.id %}
+    
+    {% comments_section dataset user form %}
+  {% else %}
+    <h2>This dataset is not available.</h2>
+  {% endif %}
+{% endblock %}
