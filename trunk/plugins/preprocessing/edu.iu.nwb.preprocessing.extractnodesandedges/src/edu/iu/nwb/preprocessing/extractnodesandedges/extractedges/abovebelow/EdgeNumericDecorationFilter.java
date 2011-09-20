@@ -4,6 +4,7 @@ import edu.uci.ics.jung.graph.Edge;
 
 public class EdgeNumericDecorationFilter extends EdgeThresholdFilter {
 
+	@Override
 	public boolean acceptEdge(Edge e) {
 		if (getDecorationKey() != null) {
 			Object value = e.getUserDatum(getDecorationKey());
@@ -18,6 +19,7 @@ public class EdgeNumericDecorationFilter extends EdgeThresholdFilter {
 		return true;
 	}
 
+	@Override
 	public String getName() {
 		return "Edge Threshold Filter";
 	}

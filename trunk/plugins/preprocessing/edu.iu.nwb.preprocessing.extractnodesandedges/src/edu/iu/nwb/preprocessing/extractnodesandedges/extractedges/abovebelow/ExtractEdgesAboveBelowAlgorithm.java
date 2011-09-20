@@ -38,7 +38,7 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
     	}
     }
 
-    private Graph filter(Graph originalGraph) {
+    private Graph filter(Graph graph) {
     	EdgeThresholdFilter filter = null;
 
     	if (belowInstead.booleanValue() == false) {
@@ -49,7 +49,7 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
     	
     	filter.setDecorationKey(column);
     	filter.setThreshold(startingNumber.doubleValue());
-    	Graph newGraph = filter.filter(originalGraph).assemble();
+    	Graph newGraph = filter.filter(graph).assemble();
 
     	return newGraph;
     }

@@ -29,7 +29,6 @@ public class ExtractEdgesAboveBelowAlgorithmFactory implements AlgorithmFactory,
     }
 
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
-		System.err.println("mutateParameters");
 		Graph graph = (Graph) data[0].getData();
 
 		try {

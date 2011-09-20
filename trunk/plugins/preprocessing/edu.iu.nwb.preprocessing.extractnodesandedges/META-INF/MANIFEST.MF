@@ -34,3 +34,4 @@ Import-Package: edu.uci.ics.jung.graph,
  prefuse.util.collections
 X-AutoStart: true
 Service-Component: OSGI-INF/extractedgesabovebelow.xml, OSGI-INF/extractedgestop.xml, OSGI-INF/extractnodesabovebelow.xml, OSGI-INF/extractnodestop.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

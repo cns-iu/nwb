@@ -1,10 +1,10 @@
 package edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow;
 
 import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.filters.GeneralEdgeAcceptFilter;
 
 public class InverseEdgeNumericDecorationFilter extends EdgeThresholdFilter {
 	
+	@Override
 	public boolean acceptEdge(Edge e) {
 		if (getDecorationKey() != null) {
 			Object value = e.getUserDatum(getDecorationKey());
@@ -19,6 +19,7 @@ public class InverseEdgeNumericDecorationFilter extends EdgeThresholdFilter {
 		return true;
 	}
 
+	@Override
 	public String getName() {
 		return "Below Edge Threshold Filter";
 	}

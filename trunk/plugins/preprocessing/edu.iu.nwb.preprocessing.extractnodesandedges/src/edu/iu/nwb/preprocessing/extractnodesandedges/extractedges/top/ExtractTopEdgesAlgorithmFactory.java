@@ -15,8 +15,9 @@ import edu.uci.ics.jung.graph.Graph;
 
 
 public class ExtractTopEdgesAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ExtractTopEdgesAlgorithm(data, parameters, context);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
+        return new ExtractTopEdgesAlgorithm(data, parameters);
     }
 
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
