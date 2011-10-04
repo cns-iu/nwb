@@ -11,14 +11,18 @@ if [ "$EPIC_HOST" == "cns-epic-dev" ]; then
 	EPIC_SETTINGS=dev_settings
 	DATABASE_HOST=cns-dbdev
 	DATABASE_USER=epic_appuser
+	RESTORE_FLAGS="--no-acl --no-owner"
 elif [ "$EPIC_HOST" == "cns-epic-stage" ]; then
 	EPIC_SETTINGS=staging_settings
 	DATABASE_HOST=cns-dbs
 	DATABASE_USER=epic_appuser
+	RESTORE_FLAGS="--no-acl --no-owner"
 elif [ "$EPIC_HOST" == "epic" ]; then
 	EPIC_SETTINGS=production_settings
 	DATABASE_HOST=cns-dbp
 	DATABASE_USER=epic_user
+	# For the production target, do not suppress restoration of privileges and ownership
+	RESTORE_FLAGS=
 else
 	echo "Restore stopped: unexpected EPIC_HOST '$EPIC_HOST'."
 	exit
@@ -40,23 +44,23 @@ restore_database_backup() {
 
 	# Notice that wipeout.py will be whichever revision is currently deployed to EPIC_HOST
 	# TODO Put warnings in wipeout.py itself, too?
-	echo "echo Unpacking the database archive from the backup.."                                              > $SCRIPT
-	echo "DATABASE_ARCHIVE=epic_database_$BACKUP_DATETIME.archive"                                           >> $SCRIPT
-	echo "tar -xzf /tmp/$BACKUP_FILENAME \$DATABASE_ARCHIVE"                                                 >> $SCRIPT
-	echo "echo   Done."                                                                                      >> $SCRIPT	
-	echo "echo Wiping current database using django.db commands.."                                           >> $SCRIPT
-	echo "cd /home/epic_website/epic_code/epic"                                                              >> $SCRIPT
-	echo "export PYTHONPATH=/home/epic_website:/home/epic_website/epic_code"                                 >> $SCRIPT
-	echo "python2.6 manage.py shell --settings=$EPIC_SETTINGS < wipeout.py"                                  >> $SCRIPT
-	echo "echo   Done."                                                                                      >> $SCRIPT	
-	echo "echo Loading database backup.."                                                                    >> $SCRIPT
-	echo "cd"                                                                                                >> $SCRIPT
-	echo "pg_restore --no-acl --no-owner -h $DATABASE_HOST -U $DATABASE_USER -d epic_web \$DATABASE_ARCHIVE" >> $SCRIPT
-	echo "echo   Done."                                                                                      >> $SCRIPT
-	echo "echo Rebuilding index.."                                                                           >> $SCRIPT
-	echo "cd /home/epic_website/epic_code/epic"                                                              >> $SCRIPT
-	echo "echo 'y' | python2.6 manage.py rebuild_index --settings=$EPIC_SETTINGS "                           >> $SCRIPT
-	echo "chmod -R 777 /tmp/whoosh"                                                                          >> $SCRIPT
+	echo "echo Unpacking the database archive from the backup.."                                         > $SCRIPT
+	echo "DATABASE_ARCHIVE=epic_database_$BACKUP_DATETIME.archive"                                      >> $SCRIPT
+	echo "tar -xzf /tmp/$BACKUP_FILENAME \$DATABASE_ARCHIVE"                                            >> $SCRIPT
+	echo "echo   Done."                                                                                 >> $SCRIPT	
+	echo "echo Wiping current database using django.db commands.."                                      >> $SCRIPT
+	echo "cd /home/epic_website/epic_code/epic"                                                         >> $SCRIPT
+	echo "export PYTHONPATH=/home/epic_website:/home/epic_website/epic_code"                            >> $SCRIPT
+	echo "python2.6 manage.py shell --settings=$EPIC_SETTINGS < wipeout.py"                             >> $SCRIPT
+	echo "echo   Done."                                                                                 >> $SCRIPT	
+	echo "echo Loading database backup.."                                                               >> $SCRIPT
+	echo "cd"                                                                                           >> $SCRIPT
+	echo "pg_restore $RESTORE_FLAGS -h $DATABASE_HOST -U $DATABASE_USER -d epic_web \$DATABASE_ARCHIVE" >> $SCRIPT
+	echo "echo   Done."                                                                                 >> $SCRIPT
+	echo "echo Rebuilding index.."                                                                      >> $SCRIPT
+	echo "cd /home/epic_website/epic_code/epic"                                                         >> $SCRIPT
+	echo "echo 'y' | python2.6 manage.py rebuild_index --settings=$EPIC_SETTINGS "                      >> $SCRIPT
+	echo "chmod -R 777 /tmp/whoosh"                                                                     >> $SCRIPT
 	
 	execute_on_host $SCRIPT apache $EPIC_HOST
 }
