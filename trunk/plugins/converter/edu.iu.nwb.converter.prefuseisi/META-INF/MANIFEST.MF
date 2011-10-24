@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.nwb.converter.prefuseisi
 Bundle-SymbolicName: edu.iu.nwb.converter.prefuseisi
-Bundle-Version: 0.7.0
+Bundle-Version: 0.8.0
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.shared.isiutil,
  edu.iu.nwb.shared.isiutil.exception,
