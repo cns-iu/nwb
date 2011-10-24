@@ -32,6 +32,7 @@ import edu.iu.nwb.preprocessing.duplicatenodedetector.util.ListMap;
 
 
 public class DuplicateNodeDetectorAlgorithm implements Algorithm {	
+	private static final String TEXT_TYPE = "file:text/plain";
 	public static final String SIMILARITY_COLUMN_NAME = "similarity";
 	public static final String UNIQUE_INDEX_COLUMN_NAME = "uniqueIndex";
 	public static final String COMBINE_VALUES_COLUMN_NAME = "combineValues";
@@ -354,7 +355,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 
 		//format nodeLog
 		final File nodeLogFile = this.stringToFile(noteLog.toString(), "nodeLog");
-		final Data nodeLogData = new BasicData(nodeLogFile, "file:text/txt");
+		final Data nodeLogData = new BasicData(nodeLogFile, TEXT_TYPE);
 		final Dictionary nodeAttr = nodeLogData.getMetadata();
 		nodeAttr.put(DataProperty.PARENT, inputData);
 		nodeAttr.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
@@ -362,7 +363,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 
 		//format mergeLog
 		final File mergeLogFile = this.stringToFile(mergeLog.toString(), "mergeLog");
-		final Data mergeLogData = new BasicData(mergeLogFile, "file:text/txt");
+		final Data mergeLogData = new BasicData(mergeLogFile, TEXT_TYPE);
 		final Dictionary mergeAttr = mergeLogData.getMetadata();
 		mergeAttr.put(DataProperty.PARENT, inputData);
 		mergeAttr.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
