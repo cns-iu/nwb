@@ -15,14 +15,15 @@ public class TextHandlerAlgorithm implements Algorithm {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	// TODO catch null, wrap in AEE
+    	if (textFile == null) {
+    		throw new AlgorithmExecutionException("Got Null instead of a file");
+    	}
     	if (!textFile.exists()) {
     		throw new AlgorithmExecutionException("Unable to find the file '"
     				+ textFile.getName() + "' for validation.");
     	}
     	
     	
-    	// TODO extract constant
-        return new Data[] { new BasicData(textFile, "file-ext:txt") }; 
+        return new Data[] { new BasicData(textFile, TextFormats.FILE_TYPE) }; 
     }
 }
