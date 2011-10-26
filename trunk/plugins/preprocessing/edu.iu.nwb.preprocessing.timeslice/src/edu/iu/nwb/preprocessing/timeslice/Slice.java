@@ -696,7 +696,7 @@ public class Slice implements Algorithm {
 				 * To get around this we get the table element as an object and then convert to 
 				 * string.
 				 * */
-				dateTimeString = table.get(id, dateColumn).toString();
+				dateTimeString = table.get(id, dateColumn).toString().trim();
 				dateTime = new LocalDateTime(format.parseDateTime(dateTimeString));
 			} catch (IllegalArgumentException e) {
 				
@@ -709,7 +709,7 @@ public class Slice implements Algorithm {
 				 * into a format acceptable by java.util.date. 
 				 * */
 				try {
-				dateTime = new LocalDateTime(dateTimeString);
+					dateTime = new LocalDateTime(dateTimeString);
 				} catch (DataTypeException dateTypeException) {
 					throw new AlgorithmExecutionException("Problem parsing " 
 							+ dateTimeString, dateTypeException);
