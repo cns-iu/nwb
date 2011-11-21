@@ -1,19 +1,29 @@
 package edu.iu.sci2.database.isi.merge.document_source;
 
+import java.util.Comparator;
+
 import prefuse.data.Tuple;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-import edu.iu.cns.database.merge.generic.maker.AlphabeticalColumn;
-import edu.iu.cns.database.merge.generic.maker.HasColumnValue;
-import edu.iu.cns.database.merge.generic.maker.LongerColumn;
-import edu.iu.cns.database.merge.generic.maker.PreferrableFormComparator;
-import edu.iu.cns.database.merge.generic.maker.ShorterColumn;
+import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.AlphabeticalColumn;
+import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.HasColumnValue;
+import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.LongerColumn;
+import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.ShorterColumn;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class DocumentSourceComparator implements PreferrableFormComparator {
-	@SuppressWarnings("unchecked") // parameterized varargs
+public class DocumentSourceComparator implements Comparator<Tuple> {
+	/* First, prefer having a source
+	 * Then, prefer the source that is shortest
+	 * Then, prefer the source that is first alphabetically
+	 * Then, all the random other columns
+	 * Then, prefer the j9 that is longest
+	 * Then, prefer the j9 that is first alphabetically
+	 * Note: a complete ordering over content is important,
+	 * so that if someone does this twice in the same way,
+	 * they get the same results, no matter what.
+	 */
 	public static final Ordering<Tuple> ordering =
 		Ordering.compound(
 				Lists.newArrayList(
@@ -47,13 +57,6 @@ public class DocumentSourceComparator implements PreferrableFormComparator {
 	
 
 	public int compare(Tuple tuple1, Tuple tuple2) {
-		//first, prefer having a source
-		//then, prefer the source that is shortest
-		//then, prefer the source that is first alphabetically
-		//then, all the random other columns
-		//then, prefer the j9 that is longest
-		//then, prefer the j9 that is first alphabetically
-		//note: a complete ordering over content is important, so that if someone does this twice in the same way, they get the same results, no matter what
 		return ordering.compare(tuple1, tuple2);
 	}
 }

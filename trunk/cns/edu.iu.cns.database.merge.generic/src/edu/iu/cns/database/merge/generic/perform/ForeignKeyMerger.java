@@ -1,4 +1,4 @@
-package edu.iu.cns.database.merge.generic;
+package edu.iu.cns.database.merge.generic.perform;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,11 +8,15 @@ import org.cishell.utilities.database.DatabaseTable;
 import org.cishell.utilities.database.ForeignKey;
 import org.cishell.utilities.database.Repointer;
 
-public class MergeUnit {
 
+/**
+ * MergeUnits are the units of work that will repoint the foreign keys
+ * referring to the entities merged away to point at the primary entities.
+ */
+public class ForeignKeyMerger {
 	private ForeignKey foreignKey;
 
-	public MergeUnit(ForeignKey foreignKey) {
+	public ForeignKeyMerger(ForeignKey foreignKey) {
 		this.foreignKey = foreignKey;
 	}
 
@@ -27,5 +31,4 @@ public class MergeUnit {
 	public DatabaseTable getTable() {
 		return foreignKey.otherTable;
 	}
-
 }

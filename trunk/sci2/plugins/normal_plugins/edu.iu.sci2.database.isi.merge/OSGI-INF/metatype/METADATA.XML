@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Suggest ISI Author Merges" id="edu.iu.sci2.database.isi.merge.SuggestPeopleMerges.OCD"
+	<OCD name="Suggest ISI Author Merges" id="edu.iu.sci2.database.isi.merge.people.suggest.SuggestPeopleMerges.OCD"
 		 description="This algorithm merges all authors with the same name, ignoring punctuation and capitalization. WARNING: the appropriate similarity level depends heavily on the algorithm selected.">
 		<AD name="Similarity 'Metric'" id="metric" type="String" description="The similarity scoring method to use. More information about these metrics and others is available at http://www.dcs.shef.ac.uk/%7Esam/stringmetrics.html" default="Jaro">
 			<Option label="Jaro" value="Jaro"/>
@@ -12,7 +12,7 @@
 		<AD name="Level of similarity required" id="similarity" type="Float" description="If two nodes are at least this similar, mark that they should be merged." default=".9"/>
 		<AD name="Number of shared first letters" id="numPrefixLetters" type="Integer" description="Only test two nodes if they share this number of their first letters in common" default="2"/>
 	</OCD>
-	<Designate pid="edu.iu.sci2.database.isi.merge.SuggestPeopleMerges">
-		<Object ocdref="edu.iu.sci2.database.isi.merge.SuggestPeopleMerges.OCD" />
+	<Designate pid="edu.iu.sci2.database.isi.merge.people.suggest.SuggestPeopleMerges">
+		<Object ocdref="edu.iu.sci2.database.isi.merge.people.suggest.SuggestPeopleMerges.OCD" />
 	</Designate>
 </metatype:MetaData>

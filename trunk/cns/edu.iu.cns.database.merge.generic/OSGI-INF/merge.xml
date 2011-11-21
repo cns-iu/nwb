@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.cns.database.merge.generic.MergeTable.component" immediate="false">
-	<implementation class="edu.iu.cns.database.merge.generic.MergeTableFactory"/>
+<component name="edu.iu.cns.database.merge.generic.perform.MergeTableAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.database.merge.generic.perform.MergeTableAlgorithm$Factory"/>
 	<properties entry="OSGI-INF/merge.properties"/>
 	
 	<service>

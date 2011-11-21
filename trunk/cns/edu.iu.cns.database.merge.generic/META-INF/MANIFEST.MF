@@ -55,9 +55,13 @@ Import-Package: com.google.common.annotations,
  prefuse.visual,
  prefuse.visual.expression,
  prefuse.visual.sort,
- prefuse.visual.tuple
+ prefuse.visual.tuple,
+ uk.ac.shef.wit.simmetrics.similaritymetrics
 X-AutoStart: true
 Service-Component: OSGI-INF/create.xml, OSGI-INF/merge.xml
-Export-Package: edu.iu.cns.database.merge.generic,
- edu.iu.cns.database.merge.generic.maker
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: edu.iu.cns.database.merge.generic.perform,
+ edu.iu.cns.database.merge.generic.prepare.marked,
+ edu.iu.cns.database.merge.generic.prepare.marked.grouping,
+ edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased,
+ edu.iu.cns.database.merge.generic.prepare.plain

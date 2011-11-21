@@ -1,4 +1,4 @@
-package edu.iu.cns.database.merge.generic;
+package edu.iu.cns.database.merge.generic.prepare.plain;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,15 +18,16 @@ import org.cishell.utilities.database.DatabaseTable;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMutator, DataValidator {
+public class CreateMergingTableFactory
+		implements AlgorithmFactory, ParameterMutator, DataValidator {
     public static final String TABLE_PARAMETER = "table";
 
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new CreateMergingTable(data, parameters, context);
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
+        return new CreateMergingTable(data, parameters);
     }
 
-	public ObjectClassDefinition mutateParameters(Data[] data,
-			ObjectClassDefinition parameters) {
+	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
 		
 		Database database = (Database) data[0].getData();
 		
@@ -34,11 +35,14 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		try {
 			tableNames = availableTableNames(database);
 		} catch (SQLException e) {
-			throw new RuntimeException("There was a problem connecting to the database! " + e.getMessage(), e);
+			throw new RuntimeException(
+					"There was a problem connecting to the database! " + e.getMessage(), e);
 		}
+		
 		if(tableNames.length == 0) {
 			throw new RuntimeException("There are no eligible tables, despite passing validation!");
 		}
+		
 		//TODO: if all schema are the same, don't show any schema
 		return makeDropdown(parameters, tableNames);
 	}
@@ -47,7 +51,8 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		try {
 			String[] availableTableNames = availableTableNames((Database) data[0].getData());
 			if(availableTableNames.length == 0) {
-				return "No tables with primary keys exist in the database. Merging tables can only be made for tables with primary keys.";
+				return "No tables with primary keys exist in the database. " +
+						"Merging tables can only be made for tables with primary keys.";
 			}
 		} catch (SQLException e) {
 			return "Unable to connect to this database.";
@@ -55,7 +60,7 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		return null;
 	}
 
-	private ObjectClassDefinition makeDropdown(
+	private static ObjectClassDefinition makeDropdown(
 			ObjectClassDefinition parameters, String[] tableNames) {
 		DropdownMutator mutator = new DropdownMutator();
 		String[] prefixes = determinePrefixes(tableNames);
@@ -70,7 +75,7 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		return mutator.mutate(parameters);
 	}
 
-	private String[] determineDisplayNames(String[] tableNames, String prefix) {
+	private static String[] determineDisplayNames(String[] tableNames, String prefix) {
 		String[] displayNames = new String[tableNames.length];
 		for(int ii = 0; ii < displayNames.length; ii++) {
 			displayNames[ii] = tableNames[ii].substring(prefix.length());
@@ -78,7 +83,7 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		return displayNames;
 	}
 
-	private boolean allPrefixesTheSame(String[] prefixes, String prefix) {
+	private static boolean allPrefixesTheSame(String[] prefixes, String prefix) {
 		boolean allPrefixesTheSame = true;
 		for(int ii = 1; ii < prefixes.length; ii++) {
 			if(!prefixes[ii].equals(prefix)) {
@@ -88,7 +93,7 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		return allPrefixesTheSame;
 	}
 
-	private String[] determinePrefixes(String[] tableNames) {
+	private static String[] determinePrefixes(String[] tableNames) {
 		String[] prefixes = new String[tableNames.length];
 		for(int ii = 0; ii < prefixes.length; ii++) {
 			String[] parts = tableNames[ii].split("\\.");
@@ -101,7 +106,7 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		return prefixes;
 	}
 
-	private String[] availableTableNames(Database database)
+	private static String[] availableTableNames(Database database)
 			throws SQLException {
 		String[] tableNames;
 		Connection connection = null;
@@ -114,16 +119,16 @@ public class CreateMergingTableFactory implements AlgorithmFactory, ParameterMut
 		return tableNames;
 	}
 
-	private String[] availableTableNames(Connection connection)
+	private static String[] availableTableNames(Connection connection)
 			throws SQLException {
 		DatabaseTable[] tables = DatabaseTable.availableTables(connection);
-		if(tables.length == 0) {
+		if (tables.length == 0) {
 			return new String[]{};
 		}
 		
 		List<String> tableNames = new ArrayList<String>();
-		for(int ii = 0; ii < tables.length; ii++) {
-			if(tables[ii].hasPrimaryKey(connection)) {
+		for (int ii = 0; ii < tables.length; ii++) {
+			if (tables[ii].hasPrimaryKey(connection)) {
 				// TODO tables[ii].name might be a little more refactor-friendly.
 				tableNames.add(tables[ii].toString());
 			}

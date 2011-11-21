@@ -16,11 +16,12 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
+import org.cishell.service.database.Database;
+import org.cishell.utilities.DataFactory;
 import org.osgi.service.log.LogService;
 
-import edu.iu.cns.database.merge.generic.maker.KeyMaker;
-import edu.iu.cns.database.merge.generic.maker.MergeMaker;
-import edu.iu.cns.database.merge.generic.maker.PreferrableFormComparator;
+import edu.iu.cns.database.merge.generic.prepare.marked.MergeMarker;
+import edu.iu.cns.database.merge.generic.prepare.marked.grouping.KeyBasedGroupingStrategy;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
 /* Each source in the given ISI database may specify a "J9", a canonical journal identifier
@@ -67,18 +68,18 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 			logLookupStatistics();
 		}
 
-    	KeyMaker keyMaker = new DocumentSourceKeyMaker(NAME_FORM_LOOKUP);
-    	PreferrableFormComparator documentSourceComparator = new DocumentSourceComparator();	    	
+		MergeMarker mergeMarker = new MergeMarker(
+				new KeyBasedGroupingStrategy<String>(
+						new DocumentSourceKeyFunction(NAME_FORM_LOOKUP)),
+				new DocumentSourceComparator());
+		
+		Database originalDatabase = (Database) originalDatabaseData.getData();
+		Database merged =
+				mergeMarker.performMergesOn(
+						SOURCE_TABLE_ID, originalDatabase, null, ciShellContext);
     	
-    	return MergeMaker.mergeTable(
-    			SOURCE_TABLE_ID,
-    			originalDatabaseData,
-    			keyMaker, 
-    			true,
-    			documentSourceComparator,
-    			ciShellContext,
-    			monitor,
-    			"with document sources merged");	    	
+		return new Data[]{ DataFactory.likeParent(
+				merged, originalDatabaseData, "with document sources merged") };
     }
 
     private void logLookupStatistics() {
