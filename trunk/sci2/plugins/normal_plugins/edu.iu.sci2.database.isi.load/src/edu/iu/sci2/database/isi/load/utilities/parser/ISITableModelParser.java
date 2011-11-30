@@ -56,6 +56,13 @@ public class ISITableModelParser {
 	 *  Person, Patent, and Document), create a master list of entities.
 	 */
 
+	/*
+	 * Surprising!
+	 * 
+	 * The .SCHEMA static attributes of these classes are actually mutable objects!
+	 * So any extra fields (e.g. in Document) do get conveyed to these EntityContainers,
+	 * through this backwards route.
+	 */
 	private RowItemContainer<ISIFile> isiFiles = new EntityContainer<ISIFile>(
 			ISI.ISI_FILE_DISPLAY_NAME, ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Publisher> publishers = new EntityContainer<Publisher>(
@@ -320,21 +327,6 @@ public class ISITableModelParser {
 			if (StringUtilities.isNull_Empty_OrWhitespace(cleanedAuthorString)) {
 				continue;
 			}
-
-			/*Person authorPerson;
-
-			if (authorStrings.length == authorFullNameStrings.length) {
-				String authorFullNameString = authorFullNameStrings[ii];
-				String cleanedAuthorFullNameString =
-					StringUtilities.simpleClean(authorFullNameString);
-				authorPerson = new Person(
-						this.people.getKeyGenerator(),
-						cleanedAuthorString,
-						cleanedAuthorFullNameString);
-			} else {
-				authorPerson = new Person(
-						this.people.getKeyGenerator(), cleanedAuthorString, "");
-			}*/
 
 			Person authorPerson =
 				parseAuthorPerson(authorStrings, authorFullNameStrings, cleanedAuthorString, ii);

@@ -4,8 +4,12 @@ Bundle-Name: edu.iu.sci2.loader.isi.db
 Bundle-SymbolicName: edu.iu.sci2.database.isi.load
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.cns.database.load.framework,
+Import-Package: com.google.common.collect;version="8.0.0",
+ edu.iu.cns.database.load.framework,
  edu.iu.cns.database.load.framework.utilities,
+ edu.iu.nwb.converter.prefusecsv.reader,
+ edu.iu.nwb.converter.prefusescopus,
+ edu.iu.nwb.converter.prefusescopus.util,
  edu.iu.nwb.shared.isiutil,
  edu.iu.nwb.shared.isiutil.database,
  edu.iu.nwb.shared.isiutil.exception,
@@ -13,6 +17,7 @@ Import-Package: edu.iu.cns.database.load.framework,
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.framework.userprefs;version="1.0.0",
+ org.cishell.service.conversion;version="1.0.0",
  org.cishell.service.database,
  org.cishell.utilities,
  org.cishell.utilities.dictionary,
@@ -29,7 +34,7 @@ Import-Package: edu.iu.cns.database.load.framework,
  prefuse.util,
  prefuse.util.collections
 X-AutoStart: true
-Service-Component: OSGI-INF/isi_load.xml, OSGI-INF/converter.xml
+Service-Component: OSGI-INF/isi_load.xml, OSGI-INF/converter.xml, OSGI-INF/scopus_load.xml
 Export-Package: edu.iu.sci2.database.isi.load,
  edu.iu.sci2.database.isi.load.model.entity,
  edu.iu.sci2.database.isi.load.model.entity.relationship,
@@ -37,3 +42,5 @@ Export-Package: edu.iu.sci2.database.isi.load,
  edu.iu.sci2.database.isi.load.utilities.exception,
  edu.iu.sci2.database.isi.load.utilities.parser,
  edu.iu.sci2.database.isi.load.utilities.parser.exception
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.junit4;bundle-version="4.8.1";resolution:=optional

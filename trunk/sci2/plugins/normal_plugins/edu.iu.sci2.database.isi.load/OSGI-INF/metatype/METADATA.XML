@@ -6,4 +6,10 @@
 	<Designate pid="edu.iu.sci2.database.isi.load.ISIDatabaseLoaderAlgorithm">
 		<Object ocdref="edu.iu.sci2.database.isi.load.ISIDatabaseLoaderAlgorithm.OCD" />
 	</Designate>
+	<OCD name="Scopus Database Loader" id="edu.iu.sci2.database.scopus.load.ScopusDatabaseLoaderAlgorithm.OCD"
+		 description="Loads a Scopus file into a database">
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.scopus.load.ScopusDatabaseLoaderAlgorithm">
+		<Object ocdref="edu.iu.sci2.database.scopus.load.ScopusDatabaseLoaderAlgorithm.OCD" />
+	</Designate>
 </metatype:MetaData>
