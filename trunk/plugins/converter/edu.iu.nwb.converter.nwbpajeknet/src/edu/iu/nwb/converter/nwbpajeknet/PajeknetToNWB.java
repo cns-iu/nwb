@@ -28,12 +28,6 @@ public class PajeknetToNWB implements Algorithm {
 	
 	public PajeknetToNWB(Data[] data, Dictionary<String, Object> parameters) {
 		inNetFile = (File) data[0].getData();
-
-		try {
-			System.err.println(FileUtilities.readEntireTextFile(inNetFile));
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
 	}
 
 
