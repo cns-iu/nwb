@@ -144,7 +144,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 		
 		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			out.print(key + NWBFileProperty.PRESERVED_STAR + schema.get(key));
 			
 			if (keys.hasNext()) {
@@ -166,7 +166,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 		
 		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			out.print(key + NWBFileProperty.PRESERVED_STAR + schema.get(key));
 			
 			if (keys.hasNext()) {
@@ -204,7 +204,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 		
 		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			out.print(key + NWBFileProperty.PRESERVED_STAR + schema.get(key));
 			
 			if (keys.hasNext()) {

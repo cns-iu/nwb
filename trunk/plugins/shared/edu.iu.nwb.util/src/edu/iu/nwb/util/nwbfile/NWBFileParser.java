@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,9 +61,13 @@ public class NWBFileParser {
 	}
 	
 	public NWBFileParser(InputStream input) throws IOException {
-		this.fileReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+		this(new InputStreamReader(input, "UTF-8"));
 	}
-
+	
+	public NWBFileParser(Reader input) {
+		this.fileReader = new BufferedReader(input);
+	}
+	
 	public void parse(NWBFileParserHandler handler) throws ParsingException, IOException {
 		this.handler = handler;
 		

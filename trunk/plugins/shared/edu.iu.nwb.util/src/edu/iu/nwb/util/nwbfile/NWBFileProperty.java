@@ -20,7 +20,7 @@ public class NWBFileProperty {
     public static final String TYPE_INT = "int";
     public static final String TYPE_STRING = "string";
     public static final String TYPE_FLOAT = "float";  
-    public static final String TYPE_REAL = "real";
+    public static final String TYPE_REAL = "real"; // XXX: not documented at http://wiki.cns.iu.edu/display/CISHELL/NWB+%28.nwb%29
     
     public static final Collection<String> NUMERIC_ATTRIBUTE_TYPES = Collections.unmodifiableList(
     	Arrays.asList(TYPE_INT, TYPE_FLOAT, TYPE_REAL));
