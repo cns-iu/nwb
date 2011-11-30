@@ -61,5 +61,12 @@ public abstract class RowItemContainer<T extends RowItem<T>> {
 		return (this.batchSize != NO_BATCHING);
 	}
 
+	/**
+	 * If the Entity is already in this collection, merges the Entity.  Otherwise, adds it.
+	 * 
+	 * Already in the collection is determined with {@link Entity.createMergeKey()}
+	 * @param newItem
+	 * @return
+	 */
 	public abstract T add(T newItem);
 }

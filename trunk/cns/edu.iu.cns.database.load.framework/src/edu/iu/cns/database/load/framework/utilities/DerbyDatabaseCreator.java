@@ -20,6 +20,7 @@ import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.ProgressMonitorUtilities;
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.load.framework.DBField;
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.RowItemContainer;
@@ -223,13 +224,13 @@ public class DerbyDatabaseCreator {
 			int fieldIndex = 1;
 			Dictionary<String, Object> attributes = item.getAttributesForInsertion();
 
-			for (Field field : schema.getFields()) {
-				Object value = attributes.get(field.getName());
+			for (DBField field : schema.getFields()) {
+				Object value = attributes.get(field.name());
 
 				if (value != null) {
 					insertStatement.setObject(fieldIndex, value);
 				} else {
-					insertStatement.setNull(fieldIndex, field.getType().getSQLType());
+					insertStatement.setNull(fieldIndex, field.type().getSQLType());
 				}
 		
 				fieldIndex++;
@@ -270,13 +271,13 @@ public class DerbyDatabaseCreator {
 				int fieldIndex = 1;
 				Dictionary<String, Object> attributes = item.getAttributesForInsertion();
 
-				for (Field field : schema.getFields()) {
-					Object value = attributes.get(field.getName());
+				for (DBField field : schema.getFields()) {
+					Object value = attributes.get(field.name());
 
 					if (value != null) {
 						insertStatement.setObject(fieldIndex, value);
 					} else {
-						insertStatement.setNull(fieldIndex, field.getType().getSQLType());
+						insertStatement.setNull(fieldIndex, field.type().getSQLType());
 					}
 
 					fieldIndex++;
@@ -321,8 +322,7 @@ public class DerbyDatabaseCreator {
 	// TODO: New name.
 	public static String schemaToFieldsForCreateTableQueryString(
 			Schema<? extends RowItem<?>> schema) {
-		List<Field> fields = schema.getFields();
-		int fieldCount = fields.size();
+		int fieldCount = schema.getFields().size();
 
 		if (fieldCount == 0) {
 			return "";
@@ -330,11 +330,11 @@ public class DerbyDatabaseCreator {
 
 		List<String> fieldsForSchema = new ArrayList<String>();
 
-		for (Field field : schema.getFields()) {
+		for (DBField field : schema.getFields()) {
 			String fieldForSchema = String.format(
 				"\"%s\" %s",
-				field.getName(),
-				field.getType().getDerbyQueryStringRepresentation());
+				field.name(),
+				field.type().getDerbyQueryStringRepresentation());
 			fieldsForSchema.add(fieldForSchema);
 		}
 
@@ -364,8 +364,8 @@ public class DerbyDatabaseCreator {
 	public static String schemaToFieldsForInsertQueryString(Schema<? extends RowItem<?>> schema) {
 		List<String> fieldNames = new ArrayList<String>();
 
-		for (Schema.Field field : schema.getFields()) {
-			fieldNames.add(field.getName());
+		for (DBField field : schema.getFields()) {
+			fieldNames.add(field.name());
 		}
 
 		return StringUtilities.implodeItems(fieldNames, ", ");
@@ -375,16 +375,16 @@ public class DerbyDatabaseCreator {
 			Schema<? extends RowItem<?>> schema, Dictionary<String, Comparable<?>> attributes) {
 		List<String> attributeValues = new ArrayList<String>();
 
-		for (Schema.Field field : schema.getFields()) {
-			attributeValues.add(valueFormattingForField(attributes.get(field.getName()), field));
+		for (DBField field : schema.getFields()) {
+			attributeValues.add(valueFormattingForField(attributes.get(field.name()), field));
 		}
 
 		return "(" + StringUtilities.implodeItems(attributeValues, ", ") + ")";
 	}
 
-	public static String valueFormattingForField(Object toString, Field field) {
+	public static String valueFormattingForField(Object toString, DBField field) {
 		String value = StringUtilities.emptyStringIfNull(toString);
-		DerbyFieldType type = field.getType();
+		DerbyFieldType type = field.type();
 
 		if (type == DerbyFieldType.PRIMARY_KEY) {
 			return "" + IntegerParserWithDefault.parse(value);

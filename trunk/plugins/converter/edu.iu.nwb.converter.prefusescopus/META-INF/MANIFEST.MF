@@ -30,3 +30,5 @@ Import-Package: edu.iu.nwb.converter.prefusecsv.validator,
  prefuse.util.io
 X-AutoStart: true
 Service-Component: OSGI-INF/validator.xml, OSGI-INF/reader.xml
+Export-Package: edu.iu.nwb.converter.prefusescopus;x-friends:="edu.iu.sci2.database.isi.load",
+ edu.iu.nwb.converter.prefusescopus.util;x-friends:="edu.iu.sci2.database.isi.load"

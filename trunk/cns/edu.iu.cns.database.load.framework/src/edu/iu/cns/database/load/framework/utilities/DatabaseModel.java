@@ -58,7 +58,7 @@ public class DatabaseModel {
 
 	@SuppressWarnings("unchecked")	// Cast ? To T.
 	public<T extends RowItem<T>> RowItemContainer<T> getRowItemListOfTypeByDatabaseTableName(
-			String humanReadableName) {
-		return (RowItemContainer<T>)getRowItemListByDatabaseTableName(humanReadableName);
+			String databaseTableName) {
+		return (RowItemContainer<T>)getRowItemListByDatabaseTableName(databaseTableName);
 	}
 }

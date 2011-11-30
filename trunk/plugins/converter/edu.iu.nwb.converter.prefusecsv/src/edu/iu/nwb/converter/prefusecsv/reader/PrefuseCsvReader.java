@@ -36,6 +36,9 @@ public class PrefuseCsvReader implements Algorithm {
         this.inCSVFile = (File) data[0].getData();
     }
     
+    public PrefuseCsvReader(File inFile) {
+        this.inCSVFile = inFile;
+    }
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {

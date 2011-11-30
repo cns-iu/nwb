@@ -8,16 +8,22 @@ import org.cishell.utilities.NumberUtilities;
 public class Schema <T extends RowItem<T>> {
 	public static final String PRIMARY_KEY = "PK";
 
-	private List<Field> fields = new ArrayList<Field>();
+	private List<DBField> fields = new ArrayList<DBField>();
 	private List<PrimaryKey> primaryKeys = new ArrayList<PrimaryKey>();
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
 
 	/* TODO: Refactor Schema/the constants/framework/etc. as discussed with Micah, and then Joseph.
-	 * TODO: I would very strongly prefer something along these lines:
-	public Schema(boolean addPrimaryKey, Field... fields) {
-	
+	 * TODO: I would very strongly prefer something along these lines: */
+	public Schema(boolean addPrimaryKey, DBField... fields) {
+		if (addPrimaryKey) {
+			this.fields.add(new Field(PRIMARY_KEY, DerbyFieldType.PRIMARY_KEY));
+			PRIMARY_KEYS(PRIMARY_KEY);
+		}
+		
+		for (DBField f : fields) {
+			addField(f);
+		}
 	}
-	*/
 	
 	public Schema(boolean addPrimaryKey, Object...  objects) throws IllegalArgumentException {
 		if (NumberUtilities.isOdd(objects.length)) {
@@ -40,8 +46,8 @@ public class Schema <T extends RowItem<T>> {
 		}
 	}
 
-	public List<Field> getFields() {
-		return this.fields;
+	public List<DBField> getFields() {
+		return fields;
 	}
 
 	public List<PrimaryKey> getPrimaryKeys() {
@@ -54,6 +60,10 @@ public class Schema <T extends RowItem<T>> {
 
 	public void addField(String fieldName, DerbyFieldType type) {
 		this.fields.add(new Field(fieldName, type));
+	}
+	
+	private void addField(DBField field) {
+		this.fields.add(field);
 	}
 
 	public Schema<T> PRIMARY_KEYS(String... primaryKeys) {
@@ -82,9 +92,9 @@ public class Schema <T extends RowItem<T>> {
 		return this;
 	}
 
-	public Field findField(String fieldName) {
-		for (Field field : this.fields) {
-			if (field.name.equals(fieldName)) {
+	public DBField findField(String fieldName) {
+		for (DBField field : this.fields) {
+			if (field.name().equals(fieldName)) {
 				return field;
 			}
 		}
@@ -93,14 +103,14 @@ public class Schema <T extends RowItem<T>> {
 	}
 
 	private void addForeignKey(String fieldName, String referenceTo_TableName) {
-		Field field = findField(fieldName);
+		DBField field = findField(fieldName);
 
 		if (field != null) {
 			this.foreignKeys.add(new ForeignKey(fieldName, referenceTo_TableName));
 		}
 	}
 
-	public static class Field {
+	public static class Field implements DBField {
 		private String name;
 		private DerbyFieldType type;
 
@@ -109,11 +119,11 @@ public class Schema <T extends RowItem<T>> {
 			this.type = type;
 		}
 
-		public String getName() {
+		public String name() {
 			return this.name;
 		}
 
-		public DerbyFieldType getType() {
+		public DerbyFieldType type() {
 			return this.type;
 		}
 	}
