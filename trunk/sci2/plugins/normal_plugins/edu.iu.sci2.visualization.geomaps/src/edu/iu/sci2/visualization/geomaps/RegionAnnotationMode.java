@@ -170,7 +170,7 @@ public class RegionAnnotationMode extends AnnotationMode {
 			return new NullLegendComponent();
 		}
 		
-		LegendComponent featureColorGradient = new NullLegendComponent();
+		LegendComponent featureColorGradient;
 		try {
 			Color colorMidrange =
 				Averager.mean(

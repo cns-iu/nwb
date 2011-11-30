@@ -140,18 +140,23 @@ public class ColorInterpolator implements Interpolator<Color> {
 		 * find a unique solution for x in 0*x = 0.  The information is gone.
 		 */
 		if (inversionSamples.isEmpty()) {
-			String message =
+			StringBuilder message = new StringBuilder(); 
+			message.append(
 				"Unexpected error: "
 				+ "Inversion failed for all three color coordinates. "
-				+ "This should only happen if " + this + " is trying "
-				+ " to interpolate into a degenerate Color Range. ";
+				+ "This should only happen if ");
+			message.append(this);
+			message.append(" is trying "
+				+ " to interpolate into a degenerate Color Range. ");
 			
-			message += ("Caught these exceptions in the attempt:" + "\n");
+			message.append("Caught these exceptions in the attempt:\n");
 			for (Exception exception : exceptions) {
-				message += ("  " + exception.getMessage() + "\n");
+				message.append("  ");
+				message.append(exception.getMessage());
+				message.append("\n");
 			}
 			
-			throw new InterpolatorInversionException(message);
+			throw new InterpolatorInversionException(message.toString());
 		}
 		
 		return inversionSamples;

@@ -21,8 +21,9 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
+import edu.iu.sci2.visualization.geomaps.metatype.Shapefiles;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
-import edu.iu.sci2.visualization.geomaps.utility.Constants;
+import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
 
 public class GeoMapsAlgorithm implements Algorithm {
 	public static final String CSV_MIME_TYPE = "file:text/csv";
@@ -46,7 +47,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 	private AnnotationMode annotationMode;
 	private String outputAlgorithmName;
 	// TODO: WTF?  public static?
-	public static LogService logger;
+	public static LogService logger = new StdErrLogService();
 	
 	public GeoMapsAlgorithm(
 			Data[] data,
@@ -68,32 +69,9 @@ public class GeoMapsAlgorithm implements Algorithm {
 			Table inTable = (Table) inDatum.getData();
 			String dataLabel =
 				(String) inDatum.getMetadata().get(DataProperty.LABEL);
-			
-			String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
-			String shapefilePath = Constants.SHAPEFILES.get(shapefileKey);
-			URL shapefileURL = getClass().getResource(shapefilePath);
-			
-			String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
-
-			String projectionName;
-			if (SHOULD_LET_USER_CHOOSE_PROJECTION) {
-				projectionName = (String) parameters.get(PROJECTION_ID);
-			} else {
-				if (shapefileKey.equals(Constants.COUNTRIES_SHAPEFILE_KEY)) {
-					projectionName = Constants.ECKERT_IV_DISPLAY_NAME;
-				} else if (shapefileKey.equals(Constants.US_STATES_SHAPEFILE_KEY)) {
-					projectionName = Constants.ALBERS_EQUAL_AREA_DISPLAY_NAME;
-				} else {
-					projectionName = Constants.MERCATOR_DISPLAY_NAME;
-				}
-			}
-
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
-			ShapefileToPostScriptWriter postScriptWriter;
-			postScriptWriter =
-				new ShapefileToPostScriptWriter(
-						shapefileURL, projectionName, featureNameKey);
+			ShapefileToPostScriptWriter postScriptWriter = Shapefiles.getPostScriptWriter(parameters);
 			
 			/* applyAnnotations side-effects postScriptWriter
 			 * to set annotation data and LegendComponents.
@@ -101,8 +79,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 			annotationMode.applyAnnotations(
 					postScriptWriter, inTable, parameters);
 			File geoMap =
-				postScriptWriter.writePostScriptToFile(
-						projectionName, authorName, dataLabel);
+				postScriptWriter.writePostScriptToFile(authorName, dataLabel);
 
 			Data[] outData = formOutData(geoMap, inDatum);
 
@@ -117,7 +94,8 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 		
 	}
-	
+
+
 	private static StringTemplateGroup loadTemplates() {
 		return new StringTemplateGroup(
 				new InputStreamReader(

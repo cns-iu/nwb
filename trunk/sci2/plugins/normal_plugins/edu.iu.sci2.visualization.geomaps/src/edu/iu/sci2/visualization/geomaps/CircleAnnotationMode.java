@@ -315,7 +315,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 			return new NullLegendComponent();
 		}
 		
-		LegendComponent areaLegend = new NullLegendComponent();
+		LegendComponent areaLegend;
 		try {
 			/* To determine how to label the middle of the legend component,
 			 * we figure the apparent size of the middle circle should be

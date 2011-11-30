@@ -114,28 +114,26 @@ public class NumberFormatFactory {
 	 * Try to guess what kind of number format should be used for a data column.
 	 * 
 	 * @param columnName
-	 * @param range 
+	 * @param range
 	 * @return
 	 */
 	public static String guessNumberFormat(String columnName, Range<Double> range) {
 		// default to something reasonable
-		String numberFormat = GENERAL_FORMAT;
-		
-		// handle missing data: catch NPE.
-		try {
-			// Examine column name
-			boolean nameContainsYear = columnName.toLowerCase().contains("year");
-			
-			// Examine number range
-			boolean rangeIsInThousands = range.getMin() >= 1000 && range.getMax() < 10000;
-	
-			if (nameContainsYear && rangeIsInThousands) {
-				numberFormat = YEAR_FORMAT;
-			}
-		} catch (NullPointerException e) {
-			// do nothing
+		if (columnName == null || range == null) {
+			return GENERAL_FORMAT;
 		}
-		
-		return numberFormat;
+
+		// Examine column name
+		boolean nameContainsYear = columnName.toLowerCase().contains("year");
+
+		// Examine number range
+		boolean rangeIsInThousands = range.getMin() >= 1000
+				&& range.getMax() < 10000;
+
+		if (nameContainsYear && rangeIsInThousands) {
+			return YEAR_FORMAT;
+		}
+
+		return GENERAL_FORMAT;
 	}
 }

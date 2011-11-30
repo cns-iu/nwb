@@ -16,8 +16,11 @@ import java.util.Map;
 import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.utilities.FileUtilities;
+import org.geotools.factory.Hints;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -26,6 +29,7 @@ import org.osgi.service.log.LogService;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import edu.iu.sci2.visualization.geomaps.legend.Legend;
 import edu.iu.sci2.visualization.geomaps.legend.LegendComponent;
@@ -64,6 +68,10 @@ public class ShapefileToPostScriptWriter {
 		new HashMap<String, ColorStrategy>();
 	private String shapefileFeatureNameKey;
 	private List<Circle> circles = new ArrayList<Circle>();
+	private String projectionName;
+
+	private GeometryFactory defaultGeometryFactory = JTSFactoryFinder.getGeometryFactory(
+			new Hints(Hints.CRS, DefaultGeographicCRS.WGS84));
 	
 	
 	public ShapefileToPostScriptWriter(
@@ -73,6 +81,7 @@ public class ShapefileToPostScriptWriter {
 			new ShapefileFeatureReader(shapefileURL);
 		this.featureCollection = shapefileFeatureReader.getFeatureCollection();
 		this.geometryProjector = makeGeometryProjecter(projectionName);
+		this.projectionName = projectionName;
 		this.mapDisplayer = calculateMapBoundingBox();
 		
 		this.pageHeightInPoints =
@@ -105,8 +114,7 @@ public class ShapefileToPostScriptWriter {
 		legend.add(circleAreaLegend);
 	}
 
-	public File writePostScriptToFile(
-			 String projectionName, String authorName, String dataLabel)
+	public File writePostScriptToFile(String authorName, String dataLabel)
 				throws IOException, AlgorithmExecutionException, TransformException {
 		
 		File psFile =
@@ -145,7 +153,7 @@ public class ShapefileToPostScriptWriter {
 		out.write("\n");
 		
 		PageMetadata pageMetadata = new PageMetadata(TITLE, subtitle);
-		pageMetadata.add(projectionName + " Projection");		
+		pageMetadata.add(this.projectionName + " Projection");		
 		pageMetadata.add(timestamp());
 		pageMetadata.add(authorName);
 		out.write(pageMetadata.toPostScript());
@@ -196,6 +204,28 @@ public class ShapefileToPostScriptWriter {
 		return new GeometryProjector(originalCRS, projectionName);
 	}
 	
+	/**
+	 * Given a latitude and longitude in a {@link Coordinate} object, projects it onto the
+	 * current map as well as possible.
+	 */
+	public Coordinate latLongToPagePosition(Coordinate inPoint) {
+		Geometry geometryOfPoint = defaultGeometryFactory.createPoint(inPoint);
+		
+		Coordinate intermediateCoord;
+		try {
+			intermediateCoord = geometryProjector.projectGeometry(geometryOfPoint).getCoordinate();
+		} catch (TransformException e) {
+			// I think this should only happen for particularly weird input coordinates
+			// http://docs.geotools.org/latest/javadocs/org/opengis/referencing/operation/TransformException.html
+			return null;
+		}
+		if (intermediateCoord != null) {
+			return mapDisplayer.getDisplayCoordinate(intermediateCoord);
+		} else {
+			// can happen if the point would not be displayed (so the Geometry becomes empty)
+			return null;
+		}
+	}
 	
 
 	private MapDisplayer calculateMapBoundingBox() throws TransformException {
