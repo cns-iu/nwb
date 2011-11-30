@@ -1,73 +1,93 @@
 package edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow;
 
-import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.data.Data;
+import java.io.File;
+import java.io.IOException;
+import java.util.Dictionary;
 
-import edu.iu.nwb.preprocessing.extractnodesandedges.GraphDataFormatter;
-import edu.uci.ics.jung.graph.Graph;
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.data.BasicData;
+import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
+import org.osgi.service.log.LogService;
+
+import edu.iu.nwb.util.nwbfile.NWBFileParser;
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
+import edu.iu.nwb.util.nwbfile.NWBFileUtilities;
+import edu.iu.nwb.util.nwbfile.ParsingException;
+import edu.iu.nwb.util.nwbfile.model.AttributePredicate;
+import edu.iu.nwb.util.nwbfile.model.AttributePredicates;
+import edu.iu.nwb.util.nwbfile.pipe.ParserPipe;
+import edu.iu.nwb.util.nwbfile.pipe.ParserStage;
 
 public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
-	private Data inputData;
-	private Graph originalGraph;
+    private Data[] data;
+    private double limit;
+    private boolean fromBottomInstead;
+    private String numericAttribute;
 
-    private Double startingNumber;
-    private Boolean belowInstead;
-    private String column;
-
-    public ExtractEdgesAboveBelowAlgorithm(
-    		Data inputData,
-    		Graph originalGraph,
-    		Double startingNumber,
-    		Boolean belowInstead,
-    		String column) {
-        this.inputData = inputData;
-        this.originalGraph = originalGraph;
-        this.startingNumber = startingNumber;
-        this.belowInstead = belowInstead;
-        this.column = column;
-    }
-
-    public Data[] execute() {
-    	try {
-    	Graph newGraph = filter(this.originalGraph);
-    	Data[] newGraphData = formatAsData(newGraph);
-
-    	return newGraphData;
-    	} catch (Exception e) {
-    		throw new RuntimeException(e.getMessage(), e);
-    	}
-    }
-
-    private Graph filter(Graph graph) {
-    	EdgeThresholdFilter filter = null;
-
-    	if (belowInstead.booleanValue() == false) {
-    		filter = new EdgeNumericDecorationFilter();
-    	} else {
-    		filter = new InverseEdgeNumericDecorationFilter();
-    	}
-    	
-    	filter.setDecorationKey(column);
-    	filter.setThreshold(startingNumber.doubleValue());
-    	Graph newGraph = filter.filter(graph).assemble();
-
-    	return newGraph;
-    }
+    private boolean noParams = false;
     
-    private Data[] formatAsData(Graph extractedGraph) {
-    	StringBuilder label = new StringBuilder();
-    	label.append("all edges with " + this.column);
-
-    	if (this.belowInstead.booleanValue() == false) {
-    		label.append(" above ");
-    	} else {
-    		label.append(" below ");
-    	}
-
-    	label.append("" + this.startingNumber);
-    	Data[] data = GraphDataFormatter.formatExtractedGraphAsData(
-    		extractedGraph, label.toString(), this.inputData);
-
-    	return data;
+	public ExtractEdgesAboveBelowAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
+        this.data = data;
+        
+        //if parameter values are not defined...
+        if (parameters.get("numericAttribute") == null) {
+        	//skip initialization and prepare to not execute
+        	LogService logger = (LogService) context.getService(LogService.class.toString());
+        	logger.log(LogService.LOG_WARNING, this.getClass().toString() + " called with empty parameter list");
+        	noParams = true;
+        	return; 
+        }
+        
+        this.limit = ((Number) parameters.get("fromThisNum")).doubleValue();
+        this.fromBottomInstead = ((Boolean) parameters.get("belowInstead")).booleanValue();
+        this.numericAttribute = (String) parameters.get("numericAttribute");
     }
+	
+	
+	public Data[] execute() throws AlgorithmExecutionException {
+		if (noParams) { return null; }
+        try {
+        	File inFile = (File) this.data[0].getData();
+        	File outFile = NWBFileUtilities.createTemporaryNWBFile();
+        	NWBFileParser reader = new NWBFileParser(inFile);
+        	AttributePredicate filter;
+        	if (this.fromBottomInstead) {
+        		filter = AttributePredicates.keepBelow(this.numericAttribute, this.limit);
+        	} else {
+        		filter = AttributePredicates.keepAbove(this.numericAttribute, this.limit);
+        	}
+        	ParserStage handler = ParserPipe.create()
+        			.requireEdgeAttribute(numericAttribute)
+        			.filterEdges(filter)
+        			.outputToFile(outFile);
+        	reader.parse(handler);
+        	return createOutputData(outFile);
+        } catch (IOException e) {
+        	throw new AlgorithmExecutionException(e);
+        } catch (ParsingException e) {
+        	throw new AlgorithmExecutionException(e);
+        }
+	}
+	
+    private Data[] createOutputData(File outputNWBFile) {
+    	String label = String.format(
+    			"Edges %s %f by %s", 
+    				this.fromBottomInstead ? "below" : "above",
+    				this.limit,
+    				this.numericAttribute);
+    	Data outputFileData =
+    		new BasicData(outputNWBFile, NWBFileProperty.NWB_MIME_TYPE);
+    	Dictionary<String,Object> outputFileMetadata = outputFileData.getMetadata();
+    	outputFileMetadata.put(DataProperty.LABEL, label);
+    	outputFileMetadata.put(DataProperty.PARENT, this.data[0]);
+    	outputFileMetadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+    	
+    	return new Data[]{ outputFileData };
+    }
+
+
 }

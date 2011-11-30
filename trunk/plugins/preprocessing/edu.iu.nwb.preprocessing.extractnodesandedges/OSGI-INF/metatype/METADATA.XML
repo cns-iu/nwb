@@ -11,7 +11,7 @@
 	</Designate>
 	
 	<OCD name="Extract Nodes Above or Below Value" id="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm.OCD"
-		 description="Extract all nodes with an attribute above a certain number">
+		 description="Extract all nodes with an attribute strictly above a certain number">
 		<AD name="Extract from this number" id="fromThisNum" type="Double" description="Extracts all nodes above or below this attribute value" default="1"/>
 		<AD name="Below?" id="belowInstead" type="Boolean" description="Extract nodes below this value instead of above?" default="false" />
 		<AD name="Numeric Attribute" id="numericAttribute" type="String" description="The attribute which the nodes will be sorted by" default=""/>
@@ -29,7 +29,7 @@
 		<Object ocdref="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm.OCD" />
 	</Designate>
 	<OCD name="Extract Edges Above or Below Value" id="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm.OCD"
-		 description="Extract all edges with an attribute above a certain number">
+		 description="Extract all edges with an attribute strictly above a certain number">
 		<AD name="Extract from this number" id="fromThisNum" type="Double" description="Extracts all edges above or below this attribute value" default="1"/>
 		<AD name="Below?" id="belowInstead" type="Boolean" description="Extract edges below this value instead of above?" default="false"/>
 		<AD name="Numeric Attribute" id="numericAttribute" type="String" description="The attribute which the edges will be sorted by" default=""/>
