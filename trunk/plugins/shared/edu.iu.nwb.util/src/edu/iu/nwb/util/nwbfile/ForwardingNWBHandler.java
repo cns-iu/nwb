@@ -3,6 +3,8 @@ package edu.iu.nwb.util.nwbfile;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+
 
 public class ForwardingNWBHandler implements NWBFileParserHandler {
 	private final NWBFileParserHandler delegate;
@@ -65,4 +67,9 @@ public class ForwardingNWBHandler implements NWBFileParserHandler {
 		return delegate.haltParsingNow();
 	}
 
+	public String toString() {
+		return Objects.toStringHelper(this)
+			.add("next", delegate)
+			.toString();
+	}
 }
