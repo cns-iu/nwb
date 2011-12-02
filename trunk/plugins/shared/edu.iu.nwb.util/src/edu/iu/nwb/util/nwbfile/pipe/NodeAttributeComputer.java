@@ -22,7 +22,10 @@ class NodeAttributeComputer extends NodeAttributeAdder {
 	@Override
 	public void addNode(int id, String label, Map<String, Object> attributes) {
 		HashMap<String, Object> copy = Maps.newHashMap(attributes);
-		copy.put(getFieldName(), computer.compute(getFieldName(), Collections.unmodifiableMap(copy)));
+		Object newValue = computer.compute(getFieldName(), Collections.unmodifiableMap(copy));
+		if (newValue != null) {
+			copy.put(getFieldName(), newValue);
+		}
 		super.addNode(id, label, copy);
 	}
 	
