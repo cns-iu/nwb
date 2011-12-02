@@ -130,8 +130,8 @@ public class GeoMapsNetwork implements Algorithm {
 			}
 			
 			ParserStage handler = pipe.addNodeAttribute(IS_ANCHOR_FIELD, NWBFileProperty.TYPE_INT, 0) // 0: default: not an anchor
-				.addComputedNodeAttribute(Y_POS_FIELD, NWBFileProperty.TYPE_INT, getLatitudeToYComputer())
-				.addComputedNodeAttribute(X_POS_FIELD, NWBFileProperty.TYPE_INT, getLongitudeToXComputer())
+				.addComputedNodeAttribute(Y_POS_FIELD, NWBFileProperty.TYPE_FLOAT, getLatitudeToYComputer())
+				.addComputedNodeAttribute(X_POS_FIELD, NWBFileProperty.TYPE_FLOAT, getLongitudeToXComputer())
 				.removeNodeAttribute(this.longitudeAttrib)
 				.removeNodeAttribute(this.latitudeAttrib)
 				.outputToFile(outFile);
