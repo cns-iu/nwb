@@ -12,12 +12,12 @@ public class LongDifferenceAggregator implements SingleFunctionAggregator<Long> 
 		long total = 0L;
 
 		for (Long currentValue : objectsToAggregate) {
-			// checkAdditionForOverOrUnderflow only works with addition, so make
-			// currentValue negative
-			LongAggregatorHelper.checkAdditionForOverOrUnderFlow(total,
-					-currentValue);
-			
-			total -= currentValue;
+			// checkAdditionForOverOrUnderflow only works with addition so
+			// update the values accordingly.
+			LongAggregatorHelper.checkAdditionForOverOrUnderFlow(-total,
+					currentValue);
+
+			total = currentValue - total;
 		}
 
 		return total;
