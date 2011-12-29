@@ -9,18 +9,18 @@ public class LongDifferenceAggregator implements SingleFunctionAggregator<Long> 
 	@Override
 	public Long aggregateValue(List<Long> objectsToAggregate) {
 		// For efficacy sake, the long primitive is used.
-		long total = 0L;
+		long difference = 0L;
 
 		for (Long currentValue : objectsToAggregate) {
 			// checkAdditionForOverOrUnderflow only works with addition so
 			// update the values accordingly.
-			LongAggregatorHelper.checkAdditionForOverOrUnderFlow(-total,
+			LongAggregatorHelper.checkAdditionForOverOrUnderFlow(-difference,
 					currentValue);
 
-			total = currentValue - total;
+			difference = currentValue - difference;
 		}
 
-		return total;
+		return difference;
 	}
 
 }
