@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+<!-- SAMPLE
+	<OCD name="SER Test" id="edu.iu.nwb.analysis.reciprocity.dyad.gui"
+		 description="Dyad">
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.reciprocity.dyad">
+		<Object ocdref="edu.iu.nwb.analysis.reciprocity.dyad.gui" />
+	</Designate>
+ -->
+</metatype:MetaData>

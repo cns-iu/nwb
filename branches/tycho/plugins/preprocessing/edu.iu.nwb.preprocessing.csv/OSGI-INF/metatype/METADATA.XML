@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Merge Node and Edge Files" id="edu.iu.nwb.preprocessing.csv.CsvAlgorithm.OCD"
+		 description=" ">
+		<AD name="Nodes CSV File" id="nodes" type="String" description="Provide the CSV file containing node data" default="file:"/>
+		<AD name="Edges CSV File" id="edges" type="String" description="Provide the CSV file containing edge data" default="file:"/>
+		<AD name="Node Identifier" id="nodeid" type="String" description="What column header uniquely identifies the nodes?" default="id"/>
+		<AD name="Edge Source Identifier" id="first" type="String" description="What column header specifies the starting node for each edge?" default="source"/>
+		<AD name="Edge Target Identifier" id="second" type="String" description="What column header specifies the stopping node for each edge?" default="target"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.csv.CsvAlgorithm">
+		<Object ocdref="edu.iu.nwb.preprocessing.csv.CsvAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

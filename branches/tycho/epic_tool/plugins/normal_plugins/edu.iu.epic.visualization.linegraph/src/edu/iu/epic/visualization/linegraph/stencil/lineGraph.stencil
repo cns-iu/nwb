@@ -1,0 +1,33 @@
+external stream Data(Timestep, Line, Value)
+external stream Visibility(Line, Visible)
+
+
+canvas Main
+	guide axis[sample="LINEAR", tickCount=10, label.SCALE_BY="NONE", label.FONT_SIZE=10, line.STROKE_WEIGHT=1, tickSize=5, textOffset=6, label.REGISTRATION="LEFT", axisOffset=10] from Lines X
+	guide axis[sample="LINEAR", tickCount=10, label.SCALE_BY="NONE", label.FONT_SIZE=10, line.STROKE_WEIGHT=1, tickSize=5, textOffset=6, label.REGISTRATION="RIGHT", axisOffset=-10] from Lines Y
+
+
+layer Lines[POLY_LINE]
+from Data
+	ID : Line
+	X.new : Index(Timestep) #-> Mult(_, 300)
+	Y.new : Add(Value, 0) #-> Height(VALUE)
+	STROKE_WEIGHT : 1.5
+	SCALE_BY : "NONE"
+	local(WidthOffset, HeightOffset) : ScreenToCanvasDimension(60, 20)
+	view(WIDTH) : Mult(canvas[WIDTH], 1.2)
+	view(HEIGHT) : Mult(canvas[HEIGHT], 1.2)
+	view(X) : Sub(canvas[X], WidthOffset)
+	view(Y) : Sub(canvas[Y], HeightOffset)
+from Visibility
+	ID : Line
+	VISIBLE : Visible
+from LineColor
+	ID : Line
+	STROKE_COLOR : Color
+
+operator Height (T) -> (Height)
+	all => (Height) : Mult(-1, T)
+
+operator Stride (T) -> (VALUE)
+	all => (VALUE) :  Index(T) -> Mult(VALUE, 3)

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Star database" id="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm.OCD"
+		 description="This algorithm loads a generic-CSV into a star database. ">
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm">
+		<Object ocdref="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

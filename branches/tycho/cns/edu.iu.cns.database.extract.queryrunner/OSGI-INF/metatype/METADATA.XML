@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Database Query Runner" id="edu.iu.cns.database.extract.queryrunner.DatabaseQueryRunnerAlgorithm.OCD"
+		 description="This algorithm provides a custom GUI for running multiple table/network extraction queries without needing to repeatedly invoke an algorithm. ">
+	</OCD>
+	<Designate pid="edu.iu.cns.database.extract.queryrunner.DatabaseQueryRunnerAlgorithm">
+		<Object ocdref="edu.iu.cns.database.extract.queryrunner.DatabaseQueryRunnerAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

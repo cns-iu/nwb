@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Longitudinal Summary" id="edu.iu.sci2.database.isi.extract.table.longitudinalsummary.OCD"
+		 description="Provides a per-year summary of a variety of figures ">
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.isi.extract.table.longitudinalsummary">
+		<Object ocdref="edu.iu.sci2.database.isi.extract.table.longitudinalsummary.OCD" />
+	</Designate>
+</metatype:MetaData>

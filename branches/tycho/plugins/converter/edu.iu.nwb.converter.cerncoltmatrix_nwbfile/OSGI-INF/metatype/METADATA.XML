@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Convert Cern Colt Matrix To NWB File" id="edu.iu.nwb.converter.cerncoltmatrix_nwbfile.CernColtMatrixToNWBFileAlgorithm.OCD"
+		 description="This algorithm converts a Cern Colt matrix to an NWB file. ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.converter.cerncoltmatrix_nwbfile.CernColtMatrixToNWBFileAlgorithm">
+		<Object ocdref="edu.iu.nwb.converter.cerncoltmatrix_nwbfile.CernColtMatrixToNWBFileAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

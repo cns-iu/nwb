@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Fast Pathfinder Network Scaling" id="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm.OCD"
+		 	description="Performs Fast Pathfinder Network Scaling.">
+		<AD name="Value of R parameter" id="rparameter" type="Float" 
+			description="Value of Minkowski r-metric. Larger r value provides better network scaling. Range of r = (1.0, infinity)." default="1" min="1.0"/>
+		<AD name="Value of R parameter = Infinity ?" id="rinfinity" type="Boolean" 
+			description="Value of Minkowski r-metric. r = inifnity provides the optimal scaling solution when q = n - 1." default="true"/>	
+		<AD name="Edge Weight Attribute" id="weightcolumn" type="String" 
+			description="Column with edge weight value." default="weight"/>
+		<AD name="Weight Attribute measures" id="weighttypecolumn" type="String" 
+			description="Algorithm assumes edge weights to be a measure of dissimilarity i.e. More the weight 
+			more is the dissimilarity. If the input edge weights are a measure of Similarity i.e. More the 
+			weight less is the similarity then select 'Similarity' option from the drop-down box." 
+			default="DISSIMILARITY" required="true">
+			<Option label="Dissimilarity" value="DISSIMILARITY"></Option>
+			<Option label="Similarity" value="SIMILARITY"></Option>
+		</AD>		
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm">
+		<Object ocdref="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

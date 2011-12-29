@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Barabási-Albert Scale-Free" id="edu.iu.nwb.modeling.barabasialbert.gui"
+		 description="Barabasi-Albert">
+		<AD name="Number of nodes" id="NumNodes" 
+			type="Integer" default="1000" min="0"
+                        description="Number of nodes of the network"/> 
+<!-- Put extremes of range, if unknown leave blank -->
+<!-- Can be required from users for information -->
+		<AD name="Links set by new node" id="NewLinks" 
+			type="Integer" default="2" min="2"                        
+                        description="Number of links set by new node, must be at least 2"/> 
+		<AD name="Seed of random number generator" id="RandomSeed" 
+			type="Integer" default="1" min="1"                        
+                        description="Seed of random number generator, must be at least 1"/> 
+	</OCD>
+	<Designate pid="edu.iu.nwb.modeling.barabasialbert">
+		<Object ocdref="edu.iu.nwb.modeling.barabasialbert.gui" />
+	</Designate>
+</metatype:MetaData>

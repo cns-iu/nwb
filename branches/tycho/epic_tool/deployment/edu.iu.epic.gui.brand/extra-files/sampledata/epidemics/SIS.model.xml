@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<compartmentalModel xmlns="http://www.gleamviz.org/xmlns/gleamviz_v2">
+    <compartments>
+        <compartment id="Susceptible" isSecondary="false" x="170.866" y="58"/>
+        <compartment id="Infectious" isSecondary="true" x="170.733" y="196"/>
+    </compartments>
+    <ratioTransitions>
+        <ratioTransition source="Infectious" target="Susceptible" ratio="gamma"/>
+    </ratioTransitions>
+    <infections>
+        <infection source="Susceptible" target="Infectious">
+            <infector source="Infectious" ratio="beta"/>
+        </infection>
+    </infections>
+    <variables>
+        <variable name="beta" value="0.66"/>
+        <variable name="gamma" value="0.33"/>
+    </variables>
+</compartmentalModel>

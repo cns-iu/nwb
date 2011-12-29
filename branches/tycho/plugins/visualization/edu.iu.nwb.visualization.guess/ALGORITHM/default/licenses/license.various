@@ -1,0 +1,33 @@
+----------- YaTiSeWoBe -----------------------
+The GUESS distribution contains code from the YaTiSeWoBe project
+(http://www-iis.unil.ch/~jiglesia/index.php?show=28&language=fr) which
+is licensed under GPL.  (see license.gpl)
+
+----------- GVF ------------------------------
+We have made use of a number of layouts from GVF
+(http://gvf.sourceforge.net/) which is distributed under the GPL
+license. (see license.gpl)
+
+----------- FREEHEP --------------------------
+The FREEHEP library (http://java.freehep.org) is licensed under LGPL:
+
+FREEHEP - Copyright 2000-2005
+
+Copyright Holders:
+
+CERN, Geneva, Switzerland
+SLAC, Stanford, California, U.S.A.
+University of California Santa Cruz, U.S.A.
+
+This software is distributed under the LGPL license, see
+the file LGPL.txt (see licence.lgpl)
+
+----------- RSERVE -----------------------------
+The GUESS distribution also contains the Rserve code by Simon
+Urbanek in a seperate jar file.  More information on his project is
+available at: http://stats.math.uni-augsburg.de/Rserve/ and is licensed by GPL
+(see license.gpl)
+
+
+---------- JFREECHART AND JCOMMON ---------------
+See: www.jfree.org (see license.lgpl) 

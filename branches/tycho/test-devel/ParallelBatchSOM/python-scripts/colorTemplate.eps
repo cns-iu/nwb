@@ -1,0 +1,33 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: undefined
+%%Creator: planes
+%%BoundingBox: 0 0 11020 9350
+%%Pages: 0
+%%EndComments
+/myLN {
+gsave
+	setrgbcolor
+	0.01 setlinewidth
+	translate
+	%radius radius scale
+	newpath		
+		0  radius moveto
+		0.86603 radius mul  0.5 radius mul lineto
+		0.86603 radius mul -0.5 radius mul lineto
+		0 -1 radius mul lineto
+		-0.86603 radius mul -0.5 radius mul lineto
+		-0.86603 radius mul  0.5 radius mul lineto
+		0  radius lineto
+	closepath
+	gsave fill grestore
+	0.5 setgray stroke
+grestore
+} def
+
+/radius 22.75 def
+
+
+NEURONS GO HERE
+
+
+0 setgray

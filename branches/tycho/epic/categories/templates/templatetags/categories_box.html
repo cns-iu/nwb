@@ -1,0 +1,18 @@
+<div id="categorybox">
+  <h3>Categories</h3>
+  
+  {% if categories %}
+    <ul id="category_list">
+      {% for category in categories %}
+        <li>
+        
+          <a href="{% url categories.views.view_items_for_category category_id=category.slug %}">
+            {{ category.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are currently no categories available.</p>
+  {% endif %}
+</div>

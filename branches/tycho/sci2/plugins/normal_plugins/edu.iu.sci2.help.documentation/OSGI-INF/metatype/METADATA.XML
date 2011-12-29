@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Documentation" id="edu.iu.sci2.help.documentation.Documentation.OCD"
+		 description="Displays links to Sci^2 Documentation ">
+	</OCD>
+	<Designate pid="edu.iu.sci2.help.documentation.Documentation">
+		<Object ocdref="edu.iu.sci2.help.documentation.Documentation.OCD" />
+	</Designate>
+</metatype:MetaData>

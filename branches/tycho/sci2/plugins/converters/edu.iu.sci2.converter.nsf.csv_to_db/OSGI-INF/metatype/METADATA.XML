@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="NSF csv to db" id="edu.iu.sci2.converter.nsf.csv_to_db.CSVtoDBAlgorithm.OCD"
+		 description="Converts an NSF csv file to a nsf database ">
+	</OCD>
+	<Designate pid="edu.iu.sci2.converter.nsf.csv_to_db.CSVtoDBAlgorithm">
+		<Object ocdref="edu.iu.sci2.converter.nsf.csv_to_db.CSVtoDBAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

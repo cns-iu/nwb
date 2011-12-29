@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Keywords By Year" id="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractEntitiesByYearAlgorithm.OCD"
+		 description="This algorithm extracts entities out of an ISI database into tables by year.">
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractEntitiesByYearAlgorithm">
+		<Object ocdref="edu.iu.sci2.database.isi.extract.table.entities_by_year.ExtractEntitiesByYearAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

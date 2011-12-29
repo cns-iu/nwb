@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.converter.nsf.csv_to_db.CSVtoDBAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.converter.nsf.csv_to_db.CSVtoDBAlgorithmFactory"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

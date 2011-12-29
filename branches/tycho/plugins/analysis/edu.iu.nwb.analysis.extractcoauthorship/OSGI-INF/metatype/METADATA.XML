@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Co-Author Network" id="edu.iu.nwb.analysis.extractcoauthorship.OCD"
+		 description="Extracts a co-authorship network from one of several supported file types.">
+		<AD type="String" name="File Format" id="fileFormat" default="isi" description="The file format of the original data"></AD>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.extractcoauthorship">
+		<Object ocdref="edu.iu.nwb.analysis.extractcoauthorship.OCD" />
+	</Designate>
+</metatype:MetaData>

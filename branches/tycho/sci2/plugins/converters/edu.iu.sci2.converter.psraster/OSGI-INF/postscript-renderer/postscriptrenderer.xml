@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.converter.psraster.postscript.postscriptrenderer.PostScriptRenderer.component" immediate="false">
+	<implementation class="edu.iu.sci2.converter.psraster.postscript.postscriptrenderer.PostScriptRendererFactory"/>
+	<properties entry="OSGI-INF/postscript-renderer/postscriptrenderer.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

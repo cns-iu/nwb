@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Remove Rows with Multitudinous Fields" id="edu.iu.nwb.preprocessing.tablefilter.Filter.OCD"
+		 description="Remove those with more than a certain number">
+		<AD name="Column" id="column" type="String" description="Column to filter on" default="AU"/>
+		<AD name="Separator" id="separator" type="String" description="Separator between values in the column" default="|"/>
+		<AD name="Keep if less than" id="cutoff" type="Integer" description="Keep if there are this many" default="100"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.tablefilter.Filter">
+		<Object ocdref="edu.iu.nwb.preprocessing.tablefilter.Filter.OCD" />
+	</Designate>
+</metatype:MetaData>

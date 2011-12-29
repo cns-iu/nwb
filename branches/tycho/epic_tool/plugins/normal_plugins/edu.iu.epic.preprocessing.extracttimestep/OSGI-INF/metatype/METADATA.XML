@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Timestep" id="edu.iu.epic.preprocessing.extracttimestep.ExtractTimestepAlgorithm.OCD"
+		 description="Extract one timestep from a time-valued network">
+		<AD name="Timestep" id="timestep" type="Integer"
+			description="Timestep to extract" default="0" min="0"/>
+		<AD name="Timestep column name prefix" id="timestepColumnNamePrefix" type="String"
+			description="Time-valued node attribute name prefix" default=""/>
+	</OCD>
+	<Designate pid="edu.iu.epic.preprocessing.extracttimestep.ExtractTimestepAlgorithm">
+		<Object ocdref="edu.iu.epic.preprocessing.extracttimestep.ExtractTimestepAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

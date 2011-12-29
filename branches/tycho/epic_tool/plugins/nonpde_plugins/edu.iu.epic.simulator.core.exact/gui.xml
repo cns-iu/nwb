@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="edu.iu.epic.simulator.core.exact" id="edu.iu.epic.simulator.core.exact.gui"
+		 description="/edu.iu.epic.simulator.runner/OSGI-INF/exact.properties">
+		 
+	</OCD>
+	<Designate pid="edu.iu.epic.simulator.core.exact">
+		<Object ocdref="edu.iu.epic.simulator.core.exact.gui" />
+	</Designate>
+</metatype:MetaData>

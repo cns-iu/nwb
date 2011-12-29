@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.scipolicy.database.extract.example.ExtractGraphProgrammatically" immediate="false">
+	<implementation class="edu.iu.scipolicy.database.extract.example.ExtractGraphProgrammatically"/>
+	<properties entry="OSGI-INF/programmatic_algorithm.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

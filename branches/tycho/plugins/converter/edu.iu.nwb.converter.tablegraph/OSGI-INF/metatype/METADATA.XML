@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Split Graph to Node and Edge Files" id="edu.iu.nwb.converter.tablegraph.TableGraph.OCD"
+		 description="Perform Burst Detection on time-series textual data.">
+		<AD name="Metadata File" id="metadata" type="String" description="File containing specifications on metadata joining" default="file:"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.converter.tablegraph.TableGraph">
+		<Object ocdref="edu.iu.nwb.converter.tablegraph.TableGraph.OCD" />
+	</Designate>
+</metatype:MetaData>

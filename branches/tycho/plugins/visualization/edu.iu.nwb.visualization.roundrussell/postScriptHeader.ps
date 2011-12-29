@@ -1,0 +1,291 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%Title: Hierarchical
+%%BoundingBox:-1200 -1200 1200 1200
+%%EndComments
+
+gsave
+
+	300 400 translate
+	.25 .25 scale
+	/Garamond findfont
+	/fontsize 15 def
+	fontsize scalefont
+	setfont
+	
+	0 setlinewidth
+	
+	/node { % (label) x y node
+	    gsave
+	    /oldfontsize fontsize def
+	    3 2 roll
+	    1 add dup fontsize mul /fontsize exch def
+	    currentfont exch scalefont setfont % undone by grestore, and I should really not even have the fontsize variable
+	    exch
+	    atan
+	    dup
+	    rotate
+	    radius 10 add 0 translate
+	    0 0 moveto
+	    dup 90 gt exch 270 lt and {180 rotate dup 0 exch stringwidth pop sub 0 rmoveto} if
+	    0 fontsize 3 div neg rmoveto
+	    4 1 roll
+		setrgbcolor
+	    show
+	    /fontsize oldfontsize def
+	    grestore
+	} def
+	
+	/flatten {
+	    {} forall
+	} def
+	
+	/array-node {
+	    flatten node
+	} def
+	
+	/divider { % angle divider
+	    gsave
+	    rotate
+	    3 setlinewidth
+	    radius 150 add 0 moveto
+	    radius 200 add 0 lineto
+	    stroke
+	    grestore
+	} def
+	
+	
+	/colors [
+	    [228 26 28]
+	    [55 126 184]
+	    [77 175 74]
+	    [152 78 163]
+	    [255 127 0]
+	    [255 255 51]
+	    [166 86 40]
+	    [241 140 210]
+	    [0 28 168]
+	    [174 165 0]
+	    [68 217 177]
+	    [255 222 98]
+	    [164 0 70]
+	    [139 155 147]
+	] def
+	
+	
+	/level {
+	    gsave
+	    5 setlinewidth
+	    1 add 20 mul radius add 200 add /levelradius exch def
+	    /dividers exch def
+	    dividers length 1 sub dividers exch get /previous exch def % trick to make colors go all the way around
+	    0 1 dividers length 1 sub {
+	        dup colors length mod colors exch get {255 div} forall setrgbcolor
+	        levelradius previous cos mul levelradius previous sin mul moveto
+	        dividers exch get dup 0 0 levelradius previous 4 index arc
+	        dup dup levelradius 20 sub exch cos mul exch levelradius 20 sub exch sin mul lineto
+	        stroke
+	        /previous exch def
+	    } for
+	    
+	    grestore
+	} def
+	
+	/edge {
+	    gsave
+	    5 mul 1 add setlinewidth
+	    dup length 8 lt {.95} {.7} ifelse setgray
+	    b
+	    grestore
+	} def
+	
+	/twodup {
+	    1 index 1 index
+	} def
+	
+	
+	/beziercatmull {
+	    /y3 exch def
+	    /x3 exch def
+	    /y2 exch def
+	    /x2 exch def
+	    /y1 exch def
+	    /x1 exch def
+	    /y0 exch def
+	    /x0 exch def
+	
+	    0 1 6 div sub x0 mul
+	    x1 add
+	    1 6 div x2 mul add
+	
+	    0 1 6 div sub y0 mul
+	    y1 add
+	    1 6 div y2 mul add
+	
+	    1 6 div x1 mul
+	    x2 add
+	    0 1 6 div sub x3 mul add
+	
+	    1 6 div y1 mul
+	    y2 add
+	    0 1 6 div sub y3 mul add
+	
+	    x2
+	
+	    y2
+	
+	    curveto
+	    
+	} def
+	
+	/catmull {
+	    /points exch def
+	    newpath
+	    points 0 get points 1 get
+	    1 index 1 index moveto
+	    0 1 5 {
+	        points exch get
+	    } for
+	    beziercatmull
+	
+	    0 2 points length 8 sub {
+	        8 {
+	            dup 1 add exch
+	            points exch get
+	            exch
+	        } repeat
+	        pop
+	        beziercatmull
+	    } for
+	
+	    
+	    points length 6 sub 1 points length 1 sub {
+	        points exch get
+	    } for
+	    points points length 2 sub get points points length 1 sub get
+	    beziercatmull
+	
+	    stroke
+	} def
+	
+	/bezierb {
+	    /y3 exch def
+	    /x3 exch def
+	    /y2 exch def
+	    /x2 exch def
+	    /y1 exch def
+	    /x1 exch def
+	    /y0 exch def
+	    /x0 exch def
+	
+	    1 6 div x0 mul
+	    2 3 div x1 mul add
+	    1 6 div x2 mul add
+	
+	    1 6 div y0 mul
+	    2 3 div y1 mul add
+	    1 6 div y2 mul add
+	
+	    moveto
+	
+	    2 3 div x1 mul
+	    1 3 div x2 mul add
+	    
+	    2 3 div y1 mul
+	    1 3 div y2 mul add
+	
+	    1 3 div x1 mul
+	    2 3 div x2 mul add
+	
+	    1 3 div y1 mul
+	    2 3 div y2 mul add
+	
+	    1 6 div x1 mul
+	    2 3 div x2 mul add
+	    1 6 div x3 mul add
+	
+	    1 6 div y1 mul
+	    2 3 div y2 mul add
+	    1 6 div y3 mul add
+	
+	    curveto
+	    
+	} def
+	
+	/b {
+	    gsave
+	    /points exch def
+	    
+	    points length 4 eq { % if only four members, duplicate the first
+	        /points [
+	            points 0 get
+	            points 1 get
+	            points {} forall
+	        ] def
+	    } if
+	    
+	    newpath
+	    3 {
+	        points 0 get
+	        points 1 get
+	    } repeat
+	    points 2 get
+	    points 3 get
+	    bezierb
+	
+	    points 0 get
+	    points 1 get
+	    0 1 5 {
+	        points exch get
+	    } for
+	    bezierb
+	
+	    0 2 points length 8 sub {
+	        8 {
+	            dup 1 add exch
+	            points exch get
+	            exch
+	        } repeat
+	        pop
+	        bezierb
+	    } for
+	
+	    points length 6 sub 1 points length 1 sub {
+	        points exch get
+	    } for
+	    points points length 2 sub get points points length 1 sub get
+	    bezierb
+	
+	    points length 4 sub 1 points length 1 sub {
+	        points exch get
+	    } for
+	    points points length 2 sub get points points length 1 sub get
+	    points points length 2 sub get points points length 1 sub get
+	    bezierb
+	    
+	    <<
+	        /ShadingType 2
+	        /ColorSpace /DeviceRGB
+	        /Coords [-1000 -1000 1000 1000]
+	        /BBox [-1000 -1000 1000 1000]
+	        /Function
+	            <<
+	                /FunctionType 2
+	                /Domain [0 1]
+	                /c0 [1 0 0]
+	                /c1 [0 1 0]
+	                /N 1
+	            >>
+	    >>
+	    gsave
+	    currentlinewidth 1 add setlinewidth
+	    1 setgray
+	    stroke
+	    grestore
+	    stroke
+	    grestore
+	} def
+	
+	
+	
+	
+	

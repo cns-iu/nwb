@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.persistence.session.restore.ImportSessionAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.persistence.session.restore.ImportSessionAlgorithmFactory"/>
+	<properties entry="OSGI-INF/import/import.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

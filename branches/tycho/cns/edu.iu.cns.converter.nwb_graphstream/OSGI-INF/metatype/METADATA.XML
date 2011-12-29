@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Convert NWB Network to Graph Stream Graph" id="edu.iu.cns.converter.nwb_graphstream.NWBToGraphStreamAlgorithm.OCD"
+		 description="This algorithm converts an NWB network to a Graph Stream Graph object. ">
+	</OCD>
+	<Designate pid="edu.iu.cns.converter.nwb_graphstream.NWBToGraphStreamAlgorithm">
+		<Object ocdref="edu.iu.cns.converter.nwb_graphstream.NWBToGraphStreamAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

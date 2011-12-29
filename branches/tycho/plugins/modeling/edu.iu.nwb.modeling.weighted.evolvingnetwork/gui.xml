@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Modeling Weighted Networks" id="edu.iu.nwb.modeling.weighted.evolvingnetwork.gui"
+		 description="Generate a weighted network using a growth algorithm with homogenous coupling">
+		 <AD name="Number of nodes" id="NumNodes" 
+			type="Integer" default="1000" min="1"
+				description="Number of nodes; must not be negative"/>
+		<AD name="Number of links set by newly added node." id="NumNewEdges" 
+			type="Integer" default="2" min="1"
+				description="Number of links set by newly added node; must not be negative; must be less than number of nodes"/>
+		<AD name="Delta" id="Delta" 
+			type="Double" default="1.0" min="0.0"
+				description="Total increase of weights on the existing edges of a node as a result of gaining a new connection; must not be negative"/>
+		<AD name="Seed of random number generator" id="Seed" 
+			type="Integer" default="1" min="1"
+				description="Seed of random number generator; must not be negative"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.modeling.weighted.evolvingnetwork">
+		<Object ocdref="edu.iu.nwb.modeling.weighted.evolvingnetwork.gui" />
+	</Designate>
+</metatype:MetaData>

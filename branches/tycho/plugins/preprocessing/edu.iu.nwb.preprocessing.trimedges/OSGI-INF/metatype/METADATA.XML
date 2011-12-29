@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Trim by Degree" id="edu.iu.nwb.preprocessing.trimedges.Trim.OCD"
+		 description="Remove edges to reduce maximum degree to a certain number">
+		<AD name="Leave Per Node" id="leave" type="Integer" description="Leave this many per node, deleting excess at random." default="5"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.trimedges.Trim">
+		<Object ocdref="edu.iu.nwb.preprocessing.trimedges.Trim.OCD" />
+	</Designate>
+</metatype:MetaData>

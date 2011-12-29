@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Weighted Pagerank" id="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank.OCD"
+		 description="Compute weighted pagerank.">
+		<AD name="Damping Factor" id="d" type="Double" description="Probability of a random websurfer continuing to click through links." default=".85" min="0" max="1"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank">
+		<Object ocdref="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank.OCD" />
+	</Designate>
+</metatype:MetaData>

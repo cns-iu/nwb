@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="PRU" id="edu.iu.iv.modeling.p2p.pru.PruAlgorithm.OCD">
+		<AD name="Number of nodes" description="Enter number of nodes in the network, must be &gt; 0" id="networkSize" type="Integer" default="2" min="1"/>
+		<AD name="Number to keep in Cache" description="Enter number of nodes to be kept in the cache, must be &gt; 0" id="cacheSize" type="Integer" default="1" min="1"/>
+		<AD name="Min degree of Nodes" description="Enter minimum degree of nodes allowed, must be &gt; 0" id="lowerBound" type="Integer" default="1" min="1" />
+		<AD name="Max degree of Nodes" description="Enter maximum degree of nodes allowed, must be &gt; 0" id="upperBound" type="Integer" default="1" min="1" />
+	</OCD>
+	<Designate pid="edu.iu.iv.modeling.p2p.pru.PruAlgorithm">
+		<Object ocdref="edu.iu.iv.modeling.p2p.pru.PruAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

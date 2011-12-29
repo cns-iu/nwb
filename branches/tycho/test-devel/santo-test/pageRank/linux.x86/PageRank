@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo $@
+
+cp $4 network
+wc -l network > inputfile
+wc -l network >> inputfile
+echo $2 >> inputfile
+
+./PageRankAlgorithm
