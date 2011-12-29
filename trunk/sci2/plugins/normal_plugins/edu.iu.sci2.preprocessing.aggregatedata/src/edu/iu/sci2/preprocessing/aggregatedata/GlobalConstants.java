@@ -1,9 +1,10 @@
 package edu.iu.sci2.preprocessing.aggregatedata;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.Serializable;
 
-public class GlobalConstants {
+import com.google.common.collect.ImmutableSet;
+
+public final class GlobalConstants {
 
 	public static final String NONE_NUMERICAL_AGGREGATION_TYPE_VALUE = "NONE";
 	public static final String SUM_AGGREGATION_TYPE_VALUE = "SUM";
@@ -14,37 +15,28 @@ public class GlobalConstants {
 	
 	public static final String NONE_AGGREGATION_TEXT_DELIMITER = "";
 	
-	public static final Set INTEGER_CLASS_TYPES = new HashSet() {{
-		add(int.class);
-		add(int[].class);
-		add(Integer.class);
-		add(Integer[].class);
-	}};
+	public static final ImmutableSet<Class<? extends Serializable>> INTEGER_CLASS_TYPES 
+		= ImmutableSet.of(int.class, int[].class, Integer.class, Integer[].class);	
 	
-	public static final Set FLOAT_CLASS_TYPES = new HashSet() {{
-		add(float.class);
-		add(float[].class);
-		add(Float.class);
-		add(Float[].class);
-	}}; 
+	public static final ImmutableSet<Class<? extends Serializable>> FLOAT_CLASS_TYPES 
+		= ImmutableSet.of(float.class, float[].class, Float.class, Float[].class);
 	
-	public static final Set DOUBLE_CLASS_TYPES = new HashSet() {{
-		add(double.class);
-		add(double[].class);
-		add(Double.class);
-		add(Double[].class);
-	}}; 
+	public static final ImmutableSet<Class<? extends Serializable>> DOUBLE_CLASS_TYPES 
+		= ImmutableSet.of(double.class, double[].class, Double.class, Double[].class);
 	
+	public static final ImmutableSet<Class<? extends Serializable>> LONG_CLASS_TYPES 
+		= ImmutableSet.of(long.class, long[].class, Long.class, Long[].class);
 	
-	public static final Set NUMBER_CLASS_TYPES = new HashSet() {
-		{
-			addAll(INTEGER_CLASS_TYPES);
-			addAll(DOUBLE_CLASS_TYPES);
-			addAll(FLOAT_CLASS_TYPES);
-		}
+	public static final ImmutableSet<Class<? extends Serializable>> NUMBER_CLASS_TYPES = 
+			new ImmutableSet.Builder<Class<? extends Serializable>>()
+				.addAll(INTEGER_CLASS_TYPES)
+				.addAll(FLOAT_CLASS_TYPES)
+				.addAll(DOUBLE_CLASS_TYPES)
+				.addAll(LONG_CLASS_TYPES)
+				.build();
+	
+	// Utility class, so don't instantiate.
+	private GlobalConstants() {
 	};
 	
-
-	
-
 }

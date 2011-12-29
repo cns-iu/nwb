@@ -25,6 +25,9 @@ import edu.iu.sci2.preprocessing.aggregatedata.aggregators.FloatSumAggregator;
 import edu.iu.sci2.preprocessing.aggregatedata.aggregators.IntegerAverageAggregator;
 import edu.iu.sci2.preprocessing.aggregatedata.aggregators.IntegerDifferenceAggregator;
 import edu.iu.sci2.preprocessing.aggregatedata.aggregators.IntegerSumAggregator;
+import edu.iu.sci2.preprocessing.aggregatedata.aggregators.LongAverageAggregator;
+import edu.iu.sci2.preprocessing.aggregatedata.aggregators.LongDifferenceAggregator;
+import edu.iu.sci2.preprocessing.aggregatedata.aggregators.LongSumAggregator;
 import edu.iu.sci2.preprocessing.aggregatedata.aggregators.MaxAggregator;
 import edu.iu.sci2.preprocessing.aggregatedata.aggregators.MinAggregator;
 import edu.iu.sci2.preprocessing.aggregatedata.aggregators.NoneNumericalAggregator;
@@ -503,7 +506,30 @@ public class AggregateDataComputation {
 					columnNumberToAggregationFunction.put(
 						currentColumnNumber, new DoubleAverageAggregator());
 				} 
-			}				
+			} else if (GlobalConstants.LONG_CLASS_TYPES
+					.contains(currentColumnClass)) {
+				/*
+				 * Handle the cases when the aggregation is to be performed on a long column.
+				 */
+				if (GlobalConstants.SUM_AGGREGATION_TYPE_VALUE
+						.equalsIgnoreCase(aggregationType)) {
+					columnNumberToAggregationFunction.put(currentColumnNumber,
+							new LongSumAggregator());
+				} else if (GlobalConstants.DIFFERENCE_AGGREGATION_TYPE_VALUE
+						.equalsIgnoreCase(aggregationType)) {
+					columnNumberToAggregationFunction.put(currentColumnNumber,
+							new LongDifferenceAggregator());
+				} else if (GlobalConstants.AVERAGE_AGGREGATION_TYPE_VALUE
+						.equalsIgnoreCase(aggregationType)) {
+					columnNumberToAggregationFunction.put(currentColumnNumber,
+							new LongAverageAggregator());
+				}
+
+			} else {
+				logger.log(LogService.LOG_ERROR,
+						"The column's class type could not be found for "
+								+ currentColumnClass.getName() + ".");
+			}
 		}
 		
 		/*
@@ -713,9 +739,8 @@ public class AggregateDataComputation {
 			groupedOnValueString = groupedOnValue.toString();
 		}
 
-		String format =
-			"Aggregated by \'%s\': %d row(s) of %s column were skipped " +
-			"due to non-existent values.";
+		String format = "Aggregated by \'%s\': %d row(s) of %s column were skipped "
+				+ "due to non-existent values.";
 		logger.log(LogService.LOG_WARNING, String.format(
 			format, groupedOnValueString, totalSkipped, columnName));
 	}
