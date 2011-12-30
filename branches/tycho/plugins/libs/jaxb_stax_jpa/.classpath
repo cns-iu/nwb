@@ -8,5 +8,5 @@
 	<classpathentry exported="true" kind="lib" path="org.dynamicjava.jpa-api-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="org.dynamicjava.stax-api-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="stax-1.2.0.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

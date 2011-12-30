@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.nwb.preprocessing</groupId>
+  <artifactId>preprocessing</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>edu.iu.iv.errortolerance</module>
+    <module>edu.iu.iv.preprocessing.directoryhierarchyreader</module>
+    <module>edu.iu.nwb.preprocessing.bibcouplingsimilarity</module>
+    <module>edu.iu.nwb.preprocessing.cocitationsimilarity</module>
+    <module>edu.iu.nwb.preprocessing.csv</module>
+    <module>edu.iu.nwb.preprocessing.deleteisolates</module>
+    <module>edu.iu.nwb.preprocessing.duplicatenodedetector</module>
+    <module>edu.iu.nwb.preprocessing.extractnodesandedges</module>
+    <module>edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix</module>
+    <module>edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast</module>
+    <module>edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst</module>
+    <module>edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader</module>
+    <module>edu.iu.nwb.preprocessing.removeedgeattributes</module>
+    <module>edu.iu.nwb.preprocessing.removegraphattributes</module>
+    <module>edu.iu.nwb.preprocessing.tablefilter</module>
+    <module>edu.iu.nwb.preprocessing.text.normalization</module>
+    <module>edu.iu.nwb.preprocessing.timeslice</module>
+    <module>edu.iu.nwb.preprocessing.trimedges</module>
+    <module>edu.iu.nwb.tools.mergenodes</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.13.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+  <parent>
+  	<groupId>edu.iu.nwb</groupId>
+  	<artifactId>plugins</artifactId>
+  	<version>1.0.0</version>
+  	<relativePath>..</relativePath>
+  </parent>
+</project>

@@ -4,10 +4,7 @@ Bundle-Name: Generic Merging of Single Database Tables
 Bundle-SymbolicName: edu.iu.cns.database.merge.generic
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: com.google.common.annotations,
- com.google.common.base,
- com.google.common.collect,
- org.cishell.framework;version="1.0.0",
+Import-Package: org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.framework.userprefs;version="1.0.0",
@@ -65,3 +62,4 @@ Export-Package: edu.iu.cns.database.merge.generic.perform,
  edu.iu.cns.database.merge.generic.prepare.marked.grouping,
  edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased,
  edu.iu.cns.database.merge.generic.prepare.plain
+Require-Bundle: google_guava;bundle-version="0.8.0"

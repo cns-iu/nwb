@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.nwb.libs</groupId>
+  <artifactId>libs</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>VectorGraphics</module>
+    <module>google-collections</module>
+    <module>javabib</module>
+    <module>jaxb_stax_jpa</module>
+    <module>lucene</module>
+    <module>lucene-snowball</module>
+    <module>uk.ac.shef.wit.simmetrics</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.13.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+  <parent>
+  	<groupId>edu.iu.nwb</groupId>
+  	<artifactId>plugins</artifactId>
+  	<version>1.0.0</version>
+  	<relativePath>..</relativePath>
+  </parent>
+</project>

@@ -3,4 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Freehep_psviewer Plug-in
 Bundle-SymbolicName: freehep_psviewer
 Bundle-Version: 0.0.1
+Bundle-ClassPath: freehep-psviewer-2.0-SNAPSHOT.jar
 Export-Package: org.freehep.postscript
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

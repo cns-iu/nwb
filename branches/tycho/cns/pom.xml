@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.cns</groupId>
+  <artifactId>cns</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>edu.iu.cns.converter.nwb_graphstream</module>
+    <module>edu.iu.cns.database.extract.generic</module>
+    <module>edu.iu.cns.database.extract.queryrunner</module>
+    <module>edu.iu.cns.database.load.framework</module>
+    <module>edu.iu.cns.database.merge.generic</module>
+    <module>edu.iu.cns.graphstream.common</module>
+    <module>edu.iu.cns.inspectdata</module>
+    <module>edu.iu.cns.persistence.session</module>
+    <module>edu.iu.cns.r</module>
+    <module>edu.iu.cns.shared.utilities</module>
+    <module>edu.iu.cns.tool.metadata_report</module>
+    <module>edu.iu.cns.visualization</module>
+    <module>lib</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.13.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

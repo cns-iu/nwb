@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.nwb.composite</groupId>
+  <artifactId>composite</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>edu.iu.nwb.composite.extractauthorpapernetwork</module>
+    <module>edu.iu.nwb.composite.extractcowordfromtable</module>
+    <module>edu.iu.nwb.composite.extractpapercitationnetwork</module>
+    <module>edu.iu.nwb.composite.isiloadandclean</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.13.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+  <parent>
+  	<groupId>edu.iu.nwb</groupId>
+  	<artifactId>plugins</artifactId>
+  	<version>1.0.0</version>
+  	<relativePath>..</relativePath>
+  </parent>
+</project>

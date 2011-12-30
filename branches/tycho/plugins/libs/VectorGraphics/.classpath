@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="freehep-xml-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="freehep-graphicsio-emf-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="freehep-graphicsio-swf-2.0.jar"/>
@@ -18,7 +20,5 @@
 	<classpathentry exported="true" kind="lib" path="freehep-graphicsio-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="junit-3.8.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="freehep-graphicsio-svg-2.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

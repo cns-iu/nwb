@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: duns
+Build-Jdk: 1.5.0_06
+Extension-Name: freehep-psviewer
+Specification-Title: Stand-alone and Embeddable PostScript Viewer
+Specification-Vendor: FreeHEP
+Implementation-Vendor: FreeHEP
+Implementation-Title: freehep-psviewer
+Implementation-Version: 2.0-SNAPSHOT
+
