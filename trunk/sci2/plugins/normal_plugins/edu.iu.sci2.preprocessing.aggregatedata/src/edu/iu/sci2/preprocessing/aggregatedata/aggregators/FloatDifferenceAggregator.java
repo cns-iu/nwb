@@ -10,6 +10,8 @@ public class FloatDifferenceAggregator implements SingleFunctionAggregator<Float
 		float difference = 0F;
 
 		for (Float currentValue : objectsToAggregate) {
+			FloatAggregatorHelper.checkAdditionForOverOrUnderFlow(-difference,
+					currentValue);
 			difference = currentValue - difference;
 		}
 

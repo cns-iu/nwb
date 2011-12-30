@@ -9,8 +9,9 @@ public class DoubleDifferenceAggregator implements
 
 	public Double aggregateValue(List<Double> objectsToAggregate) {
 		double difference = 0D;
-
+		
 		for (double currentValue : objectsToAggregate) {
+			DoubleAggregatorHelper.checkAdditionForOverOrUnderFlow(-difference, currentValue);
 			difference = currentValue - difference;
 		}
 

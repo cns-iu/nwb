@@ -10,6 +10,8 @@ public class IntegerSumAggregator implements SingleFunctionAggregator<Integer> {
 		int total = 0;
 
 		for (int currentValue : objectsToAggregate) {
+			IntegerAggregatorHelper.checkAdditionForOverOrUnderFlow(total,
+					currentValue);
 			total += currentValue;
 		}
 
