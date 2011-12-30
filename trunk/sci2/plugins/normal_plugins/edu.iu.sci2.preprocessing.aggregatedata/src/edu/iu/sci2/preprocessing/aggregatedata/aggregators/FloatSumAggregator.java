@@ -7,14 +7,13 @@ import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 public class FloatSumAggregator implements SingleFunctionAggregator<Float> {
 
 	public Float aggregateValue(List<Float> objectsToAggregate) {
-		Float currentSummmationValue = new Float(0);
-		
-		for (Float currentValue : objectsToAggregate) {
-			currentSummmationValue = currentSummmationValue.floatValue() 
-										+ currentValue.floatValue();
+		float total = 0F;
+
+		for (float currentValue : objectsToAggregate) {
+			total += currentValue;
 		}
-		
-		return currentSummmationValue.floatValue();
+
+		return total;
 	}
 
 }

@@ -10,9 +10,9 @@ public class IntegerAverageAggregator
 
 	public Integer aggregateValue(List<Integer> objectsToAggregate) {
 		
-		Integer currentSummmationValue = super.aggregateValue(objectsToAggregate);
-		Integer averageValue = currentSummmationValue.intValue() / objectsToAggregate.size();
+		int total = super.aggregateValue(objectsToAggregate);
+		int average = total / objectsToAggregate.size();
 		
-		return averageValue.intValue();
+		return average;
 	}
 }

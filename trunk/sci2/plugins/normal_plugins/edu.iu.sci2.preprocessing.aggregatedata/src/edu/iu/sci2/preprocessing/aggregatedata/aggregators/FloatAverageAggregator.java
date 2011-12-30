@@ -10,9 +10,9 @@ public class FloatAverageAggregator
 
 	public Float aggregateValue(List<Float> objectsToAggregate) {
 		
-		Float currentSummmationValue = super.aggregateValue(objectsToAggregate);
-		Float averageValue = currentSummmationValue.floatValue() / objectsToAggregate.size();
+		float total = super.aggregateValue(objectsToAggregate);
+		float averageValue = total / objectsToAggregate.size();
 		
-		return averageValue.floatValue();
+		return averageValue;
 	}
 }

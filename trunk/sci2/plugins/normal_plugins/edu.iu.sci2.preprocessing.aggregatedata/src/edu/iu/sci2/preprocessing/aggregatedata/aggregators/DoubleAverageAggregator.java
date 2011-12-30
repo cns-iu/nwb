@@ -10,9 +10,9 @@ public class DoubleAverageAggregator
 
 	public Double aggregateValue(List<Double> objectsToAggregate) {
 		
-		Double currentSummmationValue = super.aggregateValue(objectsToAggregate);
-		Double averageValue = currentSummmationValue.doubleValue() / objectsToAggregate.size();
+		double total = super.aggregateValue(objectsToAggregate);
+		double averageValue = total / objectsToAggregate.size();
 		
-		return averageValue.doubleValue();
+		return averageValue;
 	}
 }
