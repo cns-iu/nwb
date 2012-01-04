@@ -4,10 +4,7 @@ Bundle-Name: Text Normalization
 Bundle-SymbolicName: edu.iu.nwb.preprocessing.text.normalization
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Import-Package: org.apache.lucene.analysis,
- org.apache.lucene.analysis.snowball,
- org.apache.lucene.analysis.standard,
- org.cishell.framework,
+Import-Package: org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
  org.cishell.reference.service.metatype,
@@ -21,3 +18,5 @@ Import-Package: org.apache.lucene.analysis,
  prefuse.data.column
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Require-Bundle: lucene;bundle-version="2.3.2",
+ lucene_snowball;bundle-version="1.0.0"

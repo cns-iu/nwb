@@ -15,5 +15,6 @@
 		<module>plugins</module>
 		<module>cns</module>
 		<module>deployment</module>
+		<module>sci2</module>
 	</modules>
 </project>

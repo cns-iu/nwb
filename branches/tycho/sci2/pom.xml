@@ -7,9 +7,10 @@
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<parent>
-		<groupId>org.cishell</groupId>
+		<groupId>edu.iu.nwb</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.1</version>
+		<version>1.0.0</version>
+		<relativePath>..</relativePath>
 	</parent>
 	<modules>
 		<module>deployment</module>

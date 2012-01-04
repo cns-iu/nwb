@@ -31,4 +31,9 @@
       </plugin>
     </plugins>
   </build>
+  <parent>
+  	<groupId>edu.iu.nwb</groupId>
+  	<artifactId>parent</artifactId>
+  	<version>1.0.0</version>
+  </parent>
 </project>

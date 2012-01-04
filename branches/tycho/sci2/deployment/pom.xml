@@ -24,4 +24,9 @@
       </plugin>
     </plugins>
   </build>
+  <parent>
+  	<groupId>edu.iu.sci2</groupId>
+  	<artifactId>parent</artifactId>
+  	<version>1.0.0</version>
+  </parent>
 </project>

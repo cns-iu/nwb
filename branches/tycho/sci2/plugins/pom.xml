@@ -7,16 +7,16 @@
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<parent>
-		<groupId>org.cishell</groupId>
+		<groupId>edu.iu.sci2</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.1</version>
+		<version>1.0.0</version>
 	</parent>
 	<modules>
-		<module>sci2/plugins/converters</module>
-		<module>sci2/plugins/shared</module>
-		<module>sci2/plugins/unittests</module>
-		<module>plugins/libs</module>
-		<module>sci2/plugins/normal_plugins</module>
-		<module>sci2/plugins/testing</module>
+		<module>converters</module>
+		<module>shared</module>
+		<module>unittests</module>
+		<module>libs</module>
+		<module>normal_plugins</module>
+		<module>testing</module>
 	</modules>
 </project>
