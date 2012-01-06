@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.epic.normal_plugins</groupId>
+  <artifactId>normal_plugins</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>edu.iu.epic.help.documentation</module>
+    <module>edu.iu.epic.modelbuilder.gui</module>
+    <module>edu.iu.epic.modeling.compartment</module>
+    <module>edu.iu.epic.preprocessing.extracttimestep</module>
+    <module>edu.iu.epic.simulator.runner</module>
+    <module>edu.iu.epic.visualization.linegraph</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.13.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+  <parent>
+  	<groupId>edu.iu.epic.plugins</groupId>
+  	<artifactId>epic_plugins</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
+  	<relativePath>..</relativePath>
+  </parent>
+</project>

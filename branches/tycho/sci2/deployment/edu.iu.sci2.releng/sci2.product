@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="Sci2 Tool" id="edu.iu.sci2.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true">
+<product name="Sci2 Tool" uid="Sci2" id="edu.iu.sci2.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/edu.iu.sci2.gui.brand/icons/about.gif"/>
@@ -10,12 +10,7 @@
       </text>
    </aboutInfo>
 
-   <configIni use="default">
-      <linux>/edu.iu.sci2.gui.brand/extra-files/configuration/config.ini</linux>
-      <macosx>/edu.iu.sci2.gui.brand/extra-files/configuration/config.ini</macosx>
-      <solaris>/edu.iu.sci2.gui.brand/extra-files/configuration/config.ini</solaris>
-      <win32>/edu.iu.sci2.gui.brand/extra-files/configuration/config.ini</win32>
-   </configIni>
+   <configIni use="default"/>
 
    <launcherArgs>
    </launcherArgs>
@@ -41,7 +36,6 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -49,14 +43,25 @@
    </plugins>
 
    <features>
-      <feature id="org.cishell.environment.equinox.feature" version="0.0.0"/>
-      <feature id="org.cishell.feature" version="0.3.0"/>
+      <feature id="org.cishell.environment.equinox.feature"/>
+      <feature id="org.cishell.feature"/>
       <feature id="org.cishell.reference.feature" version="1.0.0"/>
       <feature id="org.cishell.reference.database.feature" version="1.0.0"/>
-      <feature id="org.cishell.reference.gui.feature" version="0.4.0"/>
-      <feature id="edu.iu.sci2.gui.brand.feature" version="0.6.0"/>
+      <feature id="org.cishell.reference.gui.feature"/>
+      <feature id="edu.iu.sci2.gui.brand.feature"/>
       <feature id="edu.iu.sci2.javaalgorithms.feature" version="1.0.0"/>
       <feature id="edu.iu.sci2.converter.feature" version="1.0.0"/>
    </features>
 
+	<configurations>
+      <plugin id="org.cishell.service.autostart" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.cm" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.equinox.log" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.equinox.metatype" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />
+   </configurations>
 </product>

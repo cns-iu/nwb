@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Simmetrics Plug-in
 Bundle-SymbolicName: uk.ac.shef.wit.simmetrics
 Bundle-Version: 1.0.0
-Bundle-ClassPath: .
 Export-Package: uk.ac.shef.wit.simmetrics,
  uk.ac.shef.wit.simmetrics.arbitrators,
  uk.ac.shef.wit.simmetrics.basiccontainers,
@@ -16,3 +15,4 @@ Export-Package: uk.ac.shef.wit.simmetrics,
  uk.ac.shef.wit.simmetrics.utils,
  uk.ac.shef.wit.simmetrics.wordhandlers
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: built/

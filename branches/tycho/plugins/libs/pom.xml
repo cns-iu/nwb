@@ -8,7 +8,6 @@
   <packaging>pom</packaging>
   <modules>
     <module>VectorGraphics</module>
-    <module>google-collections</module>
     <module>javabib</module>
     <module>jaxb_stax_jpa</module>
     <module>lucene</module>

@@ -12,3 +12,4 @@ Import-Package: cern.colt.matrix,
  org.cishell.framework.data;version="1.0.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
