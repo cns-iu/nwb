@@ -18,34 +18,34 @@
 				<fileset dir="${basedir}/..">
 					<include name="**/build.xml" />
 					<exclude name="**/deploy*/**" />
-					<exclude name="**/ant-parent/**" /> <!-- don't build self, that's silly -->
+					<!-- don't build self, that's silly -->
+					<exclude name="**/ant-parent/**" />
 					<exclude name="**/*test-devel*/**" />
 				</fileset>
 			</path>
 		</foreach>
-
+	</target>
+	<target name="publish">
 		<!-- Publish the plugins into a p2 repository -->
 		<delete dir="${basedir}/repository" />
 		<exec executable="${env.ECLIPSE}">
-			<arg
-				line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
+			<arg line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
 			<arg line="-metadataRepository file:/${basedir}/repository" />
 			<arg line="-artifactRepository file:/${basedir}/repository" />
-			<arg line="-source ${basedir}" /> <!-- looks in plugins/ -->
+			<arg line="-source ${basedir}" />
+			<!-- looks in plugins/ -->
 			<arg line="-compress" />
 			<arg line="-nosplash" />
 			<arg line="-publishArtifacts" />
 		</exec>
 
-		<zip destfile="${basedir}/nonpde-plugins-p2.zip" basedir="${basedir}"
-			includes="repository/**" />
+		<zip destfile="${basedir}/nonpde-plugins-p2.zip" basedir="${basedir}" includes="repository/**" />
 
 	</target>
 
 	<target name="each-one">
 		<!-- Transform a/b/c/build.xml into a/b/c/ so we can call ant on it. -->
-		<propertyregex property="dir.to.build" input="${build.xml.to.build}"
-			regexp="(.*)build\.xml" replace="\1" casesensitive="false" />
+		<propertyregex property="dir.to.build" input="${build.xml.to.build}" regexp="(.*)build\.xml" replace="\1" casesensitive="false" />
 		<echo>Going to build plugin in ${dir.to.build}</echo>
 		<ant dir="${dir.to.build}" />
 
