@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="crush" default="build">
+	<target name="build">
+		<!-- <for param="childBuild"> <path> <fileset dir="${buildDirectory}/.."> 
+			<include name="**/build.xml" /> <exclude name="**/*deploy*" /> <exclude name="**/*test-devel*" 
+			/> </fileset> </path> <sequential> <echo>Build File @{childBuild}</echo> 
+			</sequential> </for> -->
+
+		<ant dir="../deprecated/algorithms/edu.iu.nwb.transformations.randomize" />
+		<ant
+			dir="../deprecated/algorithms/edu.iu.nwb.transformations.symmetrizemax" />
+		<ant
+			dir="../deprecated/algorithms/edu.iu.nwb.transformations.symmetrizemin" />
+		<ant
+			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapgeometricdirected" />
+		<ant
+			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapgeometricundirected" />
+		<ant
+			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapmeetmindirected" />
+		<ant
+			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapmeetminundirected" />
+		<ant
+			dir="../epic_tool/plugins/nonpde_plugins/edu.iu.epic.simulator.core.exact" />
+		<ant
+			dir="../epic_tool/plugins/nonpde_plugins/edu.iu.epic.simulator.core.network" />
+		<ant
+			dir="../epic_tool/plugins/nonpde_plugins/edu.iu.epic.simulator.core.singlepopulation" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.averageshortestpath" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.clustering" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.clustering_vs_k" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.connectedcomponents" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.diameter" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.directedknn" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.indegreedistribution" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.indegreesequence" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.onepointcorrelations" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.outdegreedistribution" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.outdegreesequence" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.pagerank" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.reciprocity.arc" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.reciprocity.dyad" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.shortestpathdistr" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.sitebetweenness" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.totaldegreedistribution" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.totaldegreesequence" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.transitivity.adjacency" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.undirectedknn" />
+		<ant
+			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient" />
+		<ant
+			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.averagenearestneighbor" />
+		<ant
+			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.degreeaveragestrength" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.degreestrength" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.endpointdegree" />
+		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.randomweight" />
+		<ant
+			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.strengthdistribution" />
+		<ant
+			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.weightdistribution" />
+		<ant dir="../plugins/datasets/org.mediavirus.parvis.sampledata" />
+		<ant dir="../plugins/modeling/edu.iu.nwb.modeling.barabasialbert" />
+		<ant dir="../plugins/modeling/edu.iu.nwb.modeling.erdosrandomgraph" />
+		<ant dir="../plugins/modeling/edu.iu.nwb.modeling.smallworld" />
+		<ant
+			dir="../plugins/modeling/edu.iu.nwb.modeling.weighted.evolvingnetwork" />
+		<ant dir="../plugins/shared/edu.iu.nwb.shared.blondelexecutable" />
+		<ant dir="../plugins/visualization/edu.iu.nwb.visualization.gnuplot" />
+		<ant dir="../plugins/visualization/edu.iu.nwb.visualization.guess" />
+		<ant dir="../plugins/visualization/edu.iu.nwb.visualization.xmgrace" />
+		<ant dir="../plugins/visualization/nwb.visualization.lanet" />
+		<ant dir="../test-devel/dataset-test" />
+		<ant dir="../test-devel/executable-test" />
+		<ant dir="../test-devel/santo-test" />
+
+		<delete dir="${basedir}/nonpde_plugins" />
+		<mkdir dir="${basedir}/nonpde_plugins" />
+
+		<copy todir="${basedir}/nonpde_plugins" overwrite="true" flatten="true">
+			<fileset dir="${basedir}/.." includes="**/build/*.jar" />
+		</copy>
+	</target>
+
+</project>
