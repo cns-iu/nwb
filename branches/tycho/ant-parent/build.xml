@@ -1,83 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="crush" default="build">
+
+	<!-- Build non-Java plugins for NWB, EPIC, Sci2, etc. This ant script finds 
+		all build.xml scripts in the source tree, except a few listed below inside 
+		the <fileset/>, and executes them and copies any jar files from the build/ 
+		directory into a directory here. Then, it makes a p2 repository out of them 
+		and zips it up into "nonpde-plugins-p2.zip". -->
+
+	<property environment="env" />
 	<target name="build">
-		<!-- <for param="childBuild"> <path> <fileset dir="${buildDirectory}/.."> 
-			<include name="**/build.xml" /> <exclude name="**/*deploy*" /> <exclude name="**/*test-devel*" 
-			/> </fileset> </path> <sequential> <echo>Build File @{childBuild}</echo> 
-			</sequential> </for> -->
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
 
-		<ant dir="../deprecated/algorithms/edu.iu.nwb.transformations.randomize" />
-		<ant
-			dir="../deprecated/algorithms/edu.iu.nwb.transformations.symmetrizemax" />
-		<ant
-			dir="../deprecated/algorithms/edu.iu.nwb.transformations.symmetrizemin" />
-		<ant
-			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapgeometricdirected" />
-		<ant
-			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapgeometricundirected" />
-		<ant
-			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapmeetmindirected" />
-		<ant
-			dir="../deprecated/algorithms/edu.iu.nwb.transformations.topooverlapmeetminundirected" />
-		<ant
-			dir="../epic_tool/plugins/nonpde_plugins/edu.iu.epic.simulator.core.exact" />
-		<ant
-			dir="../epic_tool/plugins/nonpde_plugins/edu.iu.epic.simulator.core.network" />
-		<ant
-			dir="../epic_tool/plugins/nonpde_plugins/edu.iu.epic.simulator.core.singlepopulation" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.averageshortestpath" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.clustering" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.clustering_vs_k" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.connectedcomponents" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.diameter" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.directedknn" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.indegreedistribution" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.indegreesequence" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.onepointcorrelations" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.outdegreedistribution" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.outdegreesequence" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.pagerank" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.reciprocity.arc" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.reciprocity.dyad" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.shortestpathdistr" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.sitebetweenness" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.totaldegreedistribution" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.totaldegreesequence" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.transitivity.adjacency" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.undirectedknn" />
-		<ant
-			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient" />
-		<ant
-			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.averagenearestneighbor" />
-		<ant
-			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.degreeaveragestrength" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.degreestrength" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.endpointdegree" />
-		<ant dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.randomweight" />
-		<ant
-			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.strengthdistribution" />
-		<ant
-			dir="../plugins/analysis/edu.iu.nwb.analysis.weighted.weightdistribution" />
-		<ant dir="../plugins/datasets/org.mediavirus.parvis.sampledata" />
-		<ant dir="../plugins/modeling/edu.iu.nwb.modeling.barabasialbert" />
-		<ant dir="../plugins/modeling/edu.iu.nwb.modeling.erdosrandomgraph" />
-		<ant dir="../plugins/modeling/edu.iu.nwb.modeling.smallworld" />
-		<ant
-			dir="../plugins/modeling/edu.iu.nwb.modeling.weighted.evolvingnetwork" />
-		<ant dir="../plugins/shared/edu.iu.nwb.shared.blondelexecutable" />
-		<ant dir="../plugins/visualization/edu.iu.nwb.visualization.gnuplot" />
-		<ant dir="../plugins/visualization/edu.iu.nwb.visualization.guess" />
-		<ant dir="../plugins/visualization/edu.iu.nwb.visualization.xmgrace" />
-		<ant dir="../plugins/visualization/nwb.visualization.lanet" />
-		<ant dir="../test-devel/dataset-test" />
-		<ant dir="../test-devel/executable-test" />
-		<ant dir="../test-devel/santo-test" />
+		<delete dir="${basedir}/plugins" />
+		<mkdir dir="${basedir}/plugins" />
+		<foreach target="each-one" param="build.xml.to.build">
+			<path>
+				<fileset dir="${basedir}/..">
+					<include name="**/build.xml" />
+					<exclude name="**/deploy*/**" />
+					<exclude name="**/ant-parent/**" /> <!-- don't build self, that's silly -->
+					<exclude name="**/*test-devel*/**" />
+				</fileset>
+			</path>
+		</foreach>
 
-		<delete dir="${basedir}/nonpde_plugins" />
-		<mkdir dir="${basedir}/nonpde_plugins" />
+		<!-- Publish the plugins into a p2 repository -->
+		<delete dir="${basedir}/repository" />
+		<exec executable="${env.ECLIPSE}">
+			<arg
+				line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
+			<arg line="-metadataRepository file:/${basedir}/repository" />
+			<arg line="-artifactRepository file:/${basedir}/repository" />
+			<arg line="-source ${basedir}" /> <!-- looks in plugins/ -->
+			<arg line="-compress" />
+			<arg line="-nosplash" />
+			<arg line="-publishArtifacts" />
+		</exec>
 
-		<copy todir="${basedir}/nonpde_plugins" overwrite="true" flatten="true">
-			<fileset dir="${basedir}/.." includes="**/build/*.jar" />
+		<zip destfile="${basedir}/nonpde-plugins-p2.zip" basedir="${basedir}"
+			includes="repository/**" />
+
+	</target>
+
+	<target name="each-one">
+		<!-- Transform a/b/c/build.xml into a/b/c/ so we can call ant on it. -->
+		<propertyregex property="dir.to.build" input="${build.xml.to.build}"
+			regexp="(.*)build\.xml" replace="\1" casesensitive="false" />
+		<echo>Going to build plugin in ${dir.to.build}</echo>
+		<ant dir="${dir.to.build}" />
+
+		<copy todir="${basedir}/plugins">
+			<fileset dir="${dir.to.build}/build" includes="*.jar" />
 		</copy>
 	</target>
 
