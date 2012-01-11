@@ -2,11 +2,11 @@
 <project name="addAntBuiltPlugins" default="build">
 	<property name="input.dir" relative="true">${basedir}/target/products</property>
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
-	
+
 	<target name="build">
 		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
-		<delete dir="${output.dir}"/>
-		<mkdir dir="${output.dir}"/>
+		<delete dir="${output.dir}" />
+		<mkdir dir="${output.dir}" />
 
 		<foreach target="each-product-zip" param="product.zip">
 			<path>
@@ -16,13 +16,28 @@
 	</target>
 
 	<target name="each-product-zip">
-		<basename property="product.filename" file="${product.zip}"/>
+		<basename property="product.filename" file="${product.zip}" />
 		<property name="product.zip.out">${output.dir}/${product.filename}</property>
 		<echo>Going to use ${product.zip} to make ${product.zip.out}</echo>
-		
-		<zip destfile="${product.zip.out}">
-			<zipfileset src="${product.zip}" />
-			<zipfileset dir="../../../ant-parent" includes="plugins/*.jar" erroronmissingdir="true"/>
+
+		<tempfile property="temp.dir" />
+		<mkdir dir="${temp.dir}" />
+
+		<unzip src="${product.zip}" dest="${temp.dir}">
+			<patternset>
+				<include name="**/configuration/config.ini" />
+			</patternset>
+		</unzip>
+
+		<replaceregexp match="org\.eclipse\.update\.reconcile=false" replace="org\.eclipse\.update\.reconcile=true">
+			<fileset dir="${temp.dir}" includes="**/configuration/config.ini" />
+		</replaceregexp>
+
+		<zip destfile="${product.zip.out}" duplicate="fail">
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini" />
+			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="sci2-nonpde-plugins.txt" prefix="plugins"/>
+			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
 		</zip>
+		<delete dir="${temp.dir}" />
 	</target>
 </project>
