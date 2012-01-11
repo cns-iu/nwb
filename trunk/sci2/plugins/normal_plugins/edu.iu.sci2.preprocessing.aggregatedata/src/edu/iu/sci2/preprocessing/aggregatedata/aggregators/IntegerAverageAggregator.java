@@ -2,12 +2,8 @@ package edu.iu.sci2.preprocessing.aggregatedata.aggregators;
 
 import java.util.List;
 
-import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
-
-public class IntegerAverageAggregator 
-	extends IntegerSumAggregator 
-	implements SingleFunctionAggregator<Integer> {
-
+public class IntegerAverageAggregator extends IntegerSumAggregator {
+	@Override
 	public Integer aggregateValue(List<Integer> objectsToAggregate) {
 		
 		int total = super.aggregateValue(objectsToAggregate);

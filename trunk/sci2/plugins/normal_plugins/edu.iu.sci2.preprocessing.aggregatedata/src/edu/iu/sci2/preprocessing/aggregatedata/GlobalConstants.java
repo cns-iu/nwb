@@ -36,7 +36,5 @@ public final class GlobalConstants {
 				.build();
 	
 	// Utility class, so don't instantiate.
-	private GlobalConstants() {
-	};
-	
+	private GlobalConstants() {}	
 }

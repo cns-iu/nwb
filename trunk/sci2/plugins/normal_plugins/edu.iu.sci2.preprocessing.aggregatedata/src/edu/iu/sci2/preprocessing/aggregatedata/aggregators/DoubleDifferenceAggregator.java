@@ -4,9 +4,9 @@ import java.util.List;
 
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
-public class DoubleDifferenceAggregator implements
-		SingleFunctionAggregator<Double> {
+public class DoubleDifferenceAggregator implements SingleFunctionAggregator<Double> {
 
+	@Override
 	public Double aggregateValue(List<Double> objectsToAggregate) {
 		double difference = 0D;
 		
