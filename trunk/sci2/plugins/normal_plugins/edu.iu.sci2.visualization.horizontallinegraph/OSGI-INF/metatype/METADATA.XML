@@ -7,9 +7,9 @@
 		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
 		 <AD name="Size By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
 		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
-		 <AD name="Page Width" id="page_width" type="double" description="The width of the page the output PostScript should be scaled to" default="8.5"/>
-		 <AD name="Page Height" id="page_height" type="double" description="The height of the page the output PostScript should be scaled to" default="11"/>
-		 <AD name="Scale Output?" id="should_scale_output" type="boolean" description="The format of the start and end dates" default="true"/>
+		 <AD name="Page Orientation" id="page_orientation" type="String" description="The orientation of the page." default="" />
+		 <AD name="Query" id="query" type="String" description="The query that created the data." default="" />
+		 <AD name="Scale Output?" id="should_scale_output" type="boolean" description="If selected, all the bars will be fit into a single page.  If not, 50 bars per page will be used." default="false"/>
 	</OCD>
 	<Designate pid="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm">
 		<Object ocdref="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm.OCD" />

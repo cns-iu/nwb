@@ -24,10 +24,51 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
-	public static final String PAGE_WIDTH_FIELD_ID = "page_width";
-	public static final String PAGE_HEIGHT_FIELD_ID = "page_height";
+	public static final String PAGE_ORIENTATION_ID = "page_orientation";
 	public static final String SHOULD_SCALE_OUTPUT_FIELD_ID = "should_scale_output";
+	private static final String QUERY_ID = "query";
+	private static final double PAGE_SHORT_DIMENTION = 8.5;
+	private static final double PAGE_LONG_DIMENTION = 11;
+	/**
+	 * Pages can be landscapes or portrait. They are fixed at letter size for
+	 * now, but all of the code correctly uses the height and width for
+	 * arbitrary page sizes if this needs to be changed later
+	 * 
+	 */
+	public enum PageOrientation {
+		LANDSCAPE(PAGE_SHORT_DIMENTION, PAGE_LONG_DIMENTION), PORTRAIT(PAGE_LONG_DIMENTION, PAGE_SHORT_DIMENTION);
+		private final double height;
+		private final double width;
+		
+		PageOrientation(double height, double width){
+			this.height = height;
+			this.width = width;
+		}
+		
+		public String getLabel() {
+			
+			String label = this.toString();
+			String firstLetter = label.substring(0, 1);
+			String labelWithoutFirstLetter = label.toLowerCase().substring(1, label.length());
+			firstLetter.toUpperCase();
+			
+			return firstLetter + labelWithoutFirstLetter;
 
+		}
+		
+		public String getValue() {
+			return this.toString();
+		}
+
+		public double getHeight() {
+			return height;
+		}
+
+		public double getWidth() {
+			return width;
+		}				
+	}
+	
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
     	Data inputData = data[0];
@@ -39,12 +80,17 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
     	String sizeByColumn = parameters.get(SIZE_BY_FIELD_ID).toString();
     	String startDateFormat = (String) parameters.get(DATE_FORMAT_FIELD_ID);
     	String endDateFormat = (String) parameters.get(DATE_FORMAT_FIELD_ID);
-    	double pageWidth = ((Double) parameters.get(PAGE_WIDTH_FIELD_ID)).doubleValue();
-    	double pageHeight = ((Double) parameters.get(PAGE_HEIGHT_FIELD_ID)).doubleValue();
+    	String pageOrientation = (String) parameters.get(PAGE_ORIENTATION_ID);
+    	String query = (String) parameters.get(QUERY_ID);
     	boolean shouldScaleOutput =
         	((Boolean) parameters.get(SHOULD_SCALE_OUTPUT_FIELD_ID)).booleanValue();
+    	
+    	PageOrientation orientation = PageOrientation.valueOf(pageOrientation);
 
-        return new HorizontalLineGraphAlgorithm(
+    	Double pageWidth = orientation.getWidth();
+    	Double pageHeight = orientation.getHeight();
+    	
+    	return new HorizontalLineGraphAlgorithm(
         	inputData,
         	inputTable,
         	logger,
@@ -54,6 +100,7 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
         	sizeByColumn,
         	startDateFormat,
         	endDateFormat,
+        	query,
         	pageWidth,
         	pageHeight,
         	shouldScaleOutput);
@@ -84,6 +131,8 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 			} else if (oldAttributeDefinitionID.equals(SIZE_BY_FIELD_ID)) {
 				newAttributeDefinition = MutateParameterUtilities.formNumberAttributeDefinition(
 					oldAttributeDefinition, table);
+			} else if  (oldAttributeDefinitionID.equals(PAGE_ORIENTATION_ID)) {
+				newAttributeDefinition = MutateParameterUtilities.cloneToDropdownAttributeDefinition(oldAttributeDefinition, formOrientationLabels(), formOrientationValues());
 			} else if (oldAttributeDefinitionID.equals(DATE_FORMAT_FIELD_ID)) {
 				Collection<String> dateFormatLabels = formDateFormatOptionLabels();
 				Collection<String> dateFormatOptions = formDateFormatOptionValues();
@@ -100,6 +149,22 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 		}
 		
     	return newParameters;
+    }
+    
+    private static Collection<String> formOrientationLabels() {
+    	Collection<String> orientationLabels = new ArrayList<String>(PageOrientation.values().length);
+    	for (PageOrientation orientation : PageOrientation.values()){
+    		orientationLabels.add(orientation.getLabel());
+    	}
+    	return orientationLabels;
+    }
+    
+    private static Collection<String> formOrientationValues() {
+    	Collection<String> orientationValues = new ArrayList<String>(PageOrientation.values().length);
+    	for (PageOrientation orientation : PageOrientation.values()){
+    		orientationValues.add(orientation.getValue());
+    	}
+    	return orientationValues;
     }
     
     private static Collection<String> formDateFormatOptionLabels() {

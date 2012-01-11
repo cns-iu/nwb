@@ -5,9 +5,9 @@ import java.util.Date;
 
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
-import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Tuple;
+import edu.iu.sci2.visualization.horizontallinegraph.utilities.PostScriptFormationUtilities;
 
 public class Record implements Comparable<Record> {
 	private String label;
@@ -31,7 +31,7 @@ public class Record implements Comparable<Record> {
 				  String sizeByKey,
 				  String startDateFormat,
 				  String endDateFormat) throws InvalidRecordException {
-		this.label = fixLabel((String)tableRow.get(labelKey));
+		this.label = PostScriptFormationUtilities.matchParentheses((String)tableRow.get(labelKey));
 		
 		try {
 			this.startDate = DateUtilities.interpretObjectAsDate(
@@ -102,30 +102,6 @@ public class Record implements Comparable<Record> {
 	
 	public int compareTo(Record otherGrant) {		
 		return getStartDate().compareTo(otherGrant.getStartDate());
-	}
-	
-	// TODO: Test this.
-	private String fixLabel(String originalLabel) {
-		int openingParenthesisCount =
-			StringUtilities.countOccurrencesOfChar(originalLabel, '(');
-		int closingParenthesisCount =
-			StringUtilities.countOccurrencesOfChar(originalLabel, ')');
-		
-		if (openingParenthesisCount > closingParenthesisCount) {
-			int closingParenthesisToAddCount =
-				(openingParenthesisCount - closingParenthesisCount);
-			
-			return originalLabel +
-				StringUtilities.multiply(")", closingParenthesisToAddCount);
-		} else if (openingParenthesisCount < closingParenthesisCount) {
-			int openingParenthesisToAddCount =
-				(closingParenthesisCount - openingParenthesisCount);
-			
-			return originalLabel +
-				StringUtilities.multiply("(", openingParenthesisToAddCount);
-		} else {
-			return originalLabel;
-		}
 	}
 	
 	private void fixDateYears() {

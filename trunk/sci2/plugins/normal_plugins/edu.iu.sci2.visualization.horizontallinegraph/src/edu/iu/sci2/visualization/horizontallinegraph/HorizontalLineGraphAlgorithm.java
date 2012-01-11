@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.horizontallinegraph;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Dictionary;
 
 import org.cishell.framework.algorithm.Algorithm;
@@ -16,11 +17,10 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class HorizontalLineGraphAlgorithm implements Algorithm {
-	public static final double DEFAULT_PAGE_WIDTH = 8.5;
-	public static final double DEFAULT_PAGE_HEIGTH = 11.0;
-	public static final int MINIMUM_NUMBER_OF_DAYS_FOR_BAR = 15;
+import com.google.common.io.Files;
 
+public class HorizontalLineGraphAlgorithm implements Algorithm {
+	 // TODO import external settings if possible
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String EPS_FILE_EXTENSION = "eps";
@@ -35,9 +35,10 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     private String sizeByColumn;
     private String startDateFormat;
     private String endDateFormat;
-    private double pageWidth = DEFAULT_PAGE_WIDTH;
-    private double pageHeight = DEFAULT_PAGE_HEIGTH;
-    private boolean shouldScaleOutput = false;
+    private double pageWidth;
+    private double pageHeight;
+    private boolean shouldScaleOutput;
+	private String query;
     
     public HorizontalLineGraphAlgorithm(
     		Data inputData,
@@ -49,6 +50,7 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     		String sizeByColumn,
     		String startDateFormat,
     		String endDateFormat,
+    		String query,
     		double pageWidth,
     		double pageHeight,
     		boolean shouldScaleOutput) {
@@ -61,6 +63,7 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
         this.sizeByColumn = sizeByColumn;
         this.startDateFormat = startDateFormat;
         this.endDateFormat = endDateFormat;
+        this.query = query;
         this.pageWidth = pageWidth;
         this.pageHeight = pageHeight;
         this.shouldScaleOutput = shouldScaleOutput;
@@ -79,106 +82,78 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     		};
     		csvWriter.writeNext(header);
     		String postScriptCode = createPostScriptCode(csvWriter);
+    		csvWriter.close();
+
     		File temporaryPostScriptFile =
     			writePostScriptCodeToTemporaryFile(postScriptCode, "horizontal-line-graph");
-    		csvWriter.close();
 
 			return formOutData(temporaryPostScriptFile, barSizesFile, inputData);
     	} catch (IOException e) {
-    		String exceptionMessage = String.format(
-    			"An error occurred when creating the bar sizes CSV file for %s.",
+    		String message = String.format(
+    			"An error occurred when creating %s.",
     			getLabel(this.inputData.getMetadata()));
-    		throw new AlgorithmExecutionException(exceptionMessage, e);
+    		message += e.getMessage();
+    		throw new AlgorithmExecutionException(message, e);
     	} catch (PostScriptCreationException e) {
     		String exceptionMessage = String.format(
     			"An error occurred when creating the PostScript for the %s.",
-    			getLabel(this.inputData.getMetadata()));
+    			getLabel(this.inputData.getMetadata()) + e.getMessage());
     		throw new AlgorithmExecutionException(exceptionMessage, e);
     	} finally {
     		if (csvWriter != null) {
     			try {
     				csvWriter.close();
-    			} catch (Exception e) {
+    			} catch (IOException e) {
     				throw new AlgorithmExecutionException(e.getMessage(), e);
     			}
     		}
     	}
     }
 
-    private String createPostScriptCode(CSVWriter csvWriter) throws PostScriptCreationException {
-    	HorizontalLineGraphPostScriptCreator postScriptCreator =
-    		new HorizontalLineGraphPostScriptCreator(
-    			this.labelColumn,
-    			this.startDateColumn,
-    			this.endDateColumn,
-    			this.sizeByColumn,
-    			this.startDateFormat,
-    			this.endDateFormat,
-    			this.pageWidth,
-    			this.pageHeight,
-    			this.shouldScaleOutput);
+	private String createPostScriptCode(CSVWriter csvWriter)
+			throws PostScriptCreationException {
+		DocumentPostScriptCreator postScriptCreator = new DocumentPostScriptCreator(
+				labelColumn, startDateColumn, endDateColumn, sizeByColumn,
+				startDateFormat, endDateFormat, query, pageWidth, pageHeight,
+				shouldScaleOutput);
 
-		String postScriptCode = postScriptCreator.createPostScript(
-			this.inputTable, MINIMUM_NUMBER_OF_DAYS_FOR_BAR, this.logger, csvWriter);
+		String postScriptCode = postScriptCreator.createPostScript(this.inputTable, this.logger, csvWriter);
 
 		return postScriptCode;
-    }
+	}
 
-    private File writePostScriptCodeToTemporaryFile(
-    		String postScriptCode, String temporaryFileName) throws AlgorithmExecutionException {
-    	File temporaryPostScriptFile = null;
+    private static File writePostScriptCodeToTemporaryFile(
+    		String postScriptCode, String temporaryFileName) throws IOException {
+    	File psFile = File.createTempFile(temporaryFileName, EPS_FILE_EXTENSION);
+    	psFile.deleteOnExit();
     	
-    	try {
-    		temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-				temporaryFileName, EPS_FILE_EXTENSION);
-    	} catch (IOException e) {
-    		String exceptionMessage = "Error creating temporary PostScript file.";
-    		throw new AlgorithmExecutionException(exceptionMessage, e);
-    	}
-
-    	FileWriter writer = null;
-
-		try {		
-			writer = new FileWriter(temporaryPostScriptFile);
-			
-			writer.write(postScriptCode);
-			writer.flush();
-			writer.close();
-		} catch (IOException e) {
-			String exceptionMessage = "Error writing PostScript out to temporary file";
-			throw new AlgorithmExecutionException(exceptionMessage, e);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					String exceptionMessage = "Error writing PostScript out to temporary file";
-					throw new AlgorithmExecutionException(exceptionMessage, e);
-				}
-			}
-		}
-		
-		return temporaryPostScriptFile;
+    	Files.write(postScriptCode, psFile, Charset.defaultCharset());
+    	
+    	return psFile;
     }
 
-    private Data[] formOutData(File postScriptFile, File barSizesFile, Data inputData) {
+    private static Data[] formOutData(File postScriptFile, File barSizesFile, Data inputData) {
 		Data postScriptData = new BasicData(postScriptFile, POSTSCRIPT_MIME_TYPE);
+		
 		Dictionary<String, Object> postScriptMetaData = postScriptData.getMetadata();
 		postScriptMetaData.put(
 			DataProperty.LABEL, "visualized with Horizontal Line Graph");
 		postScriptMetaData.put(DataProperty.PARENT, inputData);
 		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
 
+		
 		Data barSizesData = new BasicData(barSizesFile, CSV_MIME_TYPE);
+		
 		Dictionary<String, Object> barSizesMetadata = barSizesData.getMetadata();
 		barSizesMetadata.put(DataProperty.LABEL, "bar sizes");
 		barSizesMetadata.put(DataProperty.PARENT, inputData);
 		barSizesMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 
+		
         return new Data[] { postScriptData, barSizesData };
     }
 
-    private String getLabel(Dictionary<String, Object> metadata) {
+    private static String getLabel(Dictionary<String, Object> metadata) {
     	Object label = metadata.get(DataProperty.LABEL);
 
     	if (label != null) {
