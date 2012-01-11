@@ -791,7 +791,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.sci2.visualization.horizontallinegraph"
+         id="edu.iu.sci2.visualization.temporalbargraph"
          download-size="0"
          install-size="0"
          version="0.0.0"

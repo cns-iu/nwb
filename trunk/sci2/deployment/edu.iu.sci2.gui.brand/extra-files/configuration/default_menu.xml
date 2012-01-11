@@ -211,7 +211,7 @@
 	    </menu>
 
 		<menu name="Temporal" type="group">
-	         <menu pid="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>
+	         <menu pid="edu.iu.sci2.visualization.temporalbargraph.TemporalBarGraphAlgorithm"/>
 	    </menu>
 	    
 	    <!--
