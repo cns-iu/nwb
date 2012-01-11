@@ -208,7 +208,7 @@ public class DocumentPostScriptCreator {
 	 */
 	private static String getPageTitle() {
 		StringBuilder pageTitle = new StringBuilder();
-		pageTitle.append(PostScriptFormationUtilities.line("(Horizontal Bar Graph) title"));
+		pageTitle.append(PostScriptFormationUtilities.line("(Temporal Bar Graph) title"));
 		return pageTitle.toString();
 	}
 
@@ -228,7 +228,7 @@ public class DocumentPostScriptCreator {
 		}
 		
 		pageInfo.append(PostScriptFormationUtilities.line(
-				string(query) + " (NIH funding data rendered by using 'Horizontal Bar Graph' on " 
+				string(query) + " (NIH funding data rendered by using 'Temporal Bar Graph' on " 
 				+ new DateTime().toLocalDate().toString("yyyy.MM.dd")
 				+ ") queryInfo"));
 		return pageInfo.toString();
@@ -289,7 +289,7 @@ public class DocumentPostScriptCreator {
 		StringBuilder header = new StringBuilder();
 		header.append(PostScriptFormationUtilities.line("%!PS-Adobe-3.0 EPSF-3.0") 
 				+ PostScriptFormationUtilities.line("%%Pages: " + pages)
-				+ PostScriptFormationUtilities.line("%%Title: (Horizontal Line Graph)")
+				+ PostScriptFormationUtilities.line("%%Title: (Temporal Line Graph)")
 				+ PostScriptFormationUtilities.line("%%Creator: (Sci2)")
 				+ PostScriptFormationUtilities.line("%%CreationDate: (01/05/2001)")
 				+ PostScriptFormationUtilities.line("%%BeginFeature: *PageSize Letter") 
