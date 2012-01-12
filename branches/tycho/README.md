@@ -11,8 +11,10 @@ process.
 ## Building CIShell (prerequisite)
 
 To build Sci2 from source, you will first need to build CIShell. CIShell is
-available from GitHub at https://github.com/CIShell/CIShell . You should be able
-to build CIShell by running:
+available from GitHub at https://github.com/CIShell/CIShell . Unfortunately, the
+first time you build CIShell, it takes FOREVER as Maven downloads itself, the
+Tycho plug-in builder, and a good part of Eclipse. But be patient! Anyway, You
+should be able to build CIShell by running:
 
     git clone git://github.com/CIShell/CIShell.git
     cd CIShell
@@ -29,10 +31,8 @@ release. Let's start with the Maven side.
 
 ### Sci2 Maven Build
 
-If all is well, this should be pretty easy. Unfortunately, the first time you
-run it, it takes FOREVER as Maven downloads itself, the Tycho plug-in builder,
-and a good part of Eclipse. But be patient! Anyway, simply change to the
-directory containing this README file, and run
+If all is well, this should be pretty easy. Simply change to the directory
+containing this README file, and run
 
     mvn clean install
 
