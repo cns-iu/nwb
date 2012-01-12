@@ -5,7 +5,6 @@ import java.util.List;
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
 public class DoubleSumAggregator implements SingleFunctionAggregator<Double> {
-	@Override
 	public Double aggregateValue(List<Double> objectsToAggregate) {
 		double total = 0D;
 		

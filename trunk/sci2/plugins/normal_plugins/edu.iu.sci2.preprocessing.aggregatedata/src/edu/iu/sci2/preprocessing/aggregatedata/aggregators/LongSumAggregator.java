@@ -5,8 +5,6 @@ import java.util.List;
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
 public class LongSumAggregator implements SingleFunctionAggregator<Long> {
-
-	@Override
 	public Long aggregateValue(List<Long> objectsToAggregate) {
 		// For efficacy sake, the long primitive is used.
 		long total = 0L;
@@ -18,5 +16,4 @@ public class LongSumAggregator implements SingleFunctionAggregator<Long> {
 		}
 		return total;
 	}
-
 }

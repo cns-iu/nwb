@@ -49,8 +49,7 @@ public class AggregateDataAlgorithm implements Algorithm {
 		this.logger = (LogService) context.getService(LogService.class.getName());
 	}
 
-    @Override
-	public Data[] execute() throws AlgorithmExecutionException {
+    public Data[] execute() throws AlgorithmExecutionException {
 
 		String aggregateOnColumnName = (String) parameters.get(AGGREGATE_ON_COLUMN);
 		

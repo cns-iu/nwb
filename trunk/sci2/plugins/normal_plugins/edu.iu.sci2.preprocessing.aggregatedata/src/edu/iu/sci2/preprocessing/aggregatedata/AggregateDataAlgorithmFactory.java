@@ -42,7 +42,6 @@ public class AggregateDataAlgorithmFactory implements AlgorithmFactory, Paramete
 	};
 	
 	
-	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		return new AggregateDataAlgorithm(data, 
@@ -52,7 +51,6 @@ public class AggregateDataAlgorithmFactory implements AlgorithmFactory, Paramete
 										  inputStringParameterIDs);
 	}
 
-	@Override
 	public ObjectClassDefinition mutateParameters(
 			Data[] data, ObjectClassDefinition oldParameters) {
 		/*

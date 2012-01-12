@@ -19,4 +19,4 @@ Import-Package: com.google.common.collect,
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

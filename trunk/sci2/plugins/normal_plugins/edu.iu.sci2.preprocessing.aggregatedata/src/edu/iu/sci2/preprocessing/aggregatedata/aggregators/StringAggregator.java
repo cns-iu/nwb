@@ -12,7 +12,6 @@ public class StringAggregator implements SingleFunctionAggregator<String> {
 		this.textDelimiter = textDelimiter;
 	}
 
-	@Override
 	public String aggregateValue(List<String> objectsToAggregate) {
 
 		StringBuffer currentAggregatedText = new StringBuffer();
@@ -24,5 +23,4 @@ public class StringAggregator implements SingleFunctionAggregator<String> {
 		
 		return currentAggregatedText.toString();
 	}
-
 }
