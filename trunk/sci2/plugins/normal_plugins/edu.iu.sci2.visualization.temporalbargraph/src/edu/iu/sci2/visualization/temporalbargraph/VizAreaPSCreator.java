@@ -136,7 +136,7 @@ public class VizAreaPSCreator {
 					"You must provide some records for the PostScriptRecordManager to work");
 		}
 		
-		Date endDate = Ordering.natural().min(records).getEndDate();
+		Date endDate = Ordering.natural().max(records).getEndDate();
 		
 		// FIXME Switch to joda-time
 		int year = endDate.getYear() + 1;
