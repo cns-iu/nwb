@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="crush" default="build">
+<project name="ant-parent" default="build">
 
 	<!-- Build non-Java plugins for NWB, EPIC, Sci2, etc. This ant script finds 
 		all build.xml scripts in the source tree, except a few listed below inside 
@@ -33,25 +33,34 @@
 			<arg line="-metadataRepository file:/${basedir}/repository" />
 			<arg line="-artifactRepository file:/${basedir}/repository" />
 			<arg line="-source ${basedir}" />
-			<!-- looks in plugins/ -->
+			<!-- If you say ${basedir}, it looks in ${basedir}/plugins/ -->
 			<arg line="-compress" />
 			<arg line="-nosplash" />
 			<arg line="-publishArtifacts" />
 		</exec>
 
-		<zip destfile="${basedir}/nonpde-plugins-p2.zip" basedir="${basedir}" includes="repository/**" />
+		<zip destfile="${basedir}/nonpde-plugins-p2.zip" basedir="${basedir}"
+			includes="repository/**" />
 
 	</target>
 
 	<target name="each-one">
 		<!-- Transform a/b/c/build.xml into a/b/c/ so we can call ant on it. -->
-		<propertyregex property="dir.to.build" input="${build.xml.to.build}" regexp="(.*)build\.xml" replace="\1" casesensitive="false" />
+		<propertyregex property="dir.to.build" input="${build.xml.to.build}"
+			regexp="(.*)build\.xml" replace="\1" casesensitive="false" />
 		<echo>Going to build plugin in ${dir.to.build}</echo>
 		<ant dir="${dir.to.build}" />
 
 		<copy todir="${basedir}/plugins">
 			<fileset dir="${dir.to.build}/build" includes="*.jar" />
 		</copy>
+
+		<ant dir="${dir.to.build}" target="clean" />
 	</target>
 
+	<target name="clean">
+		<delete dir="${basedir}/plugins" />
+		<delete dir="${basedir}/repository" />
+		<delete file="nonpde-plugins-p2.zip" />
+	</target>
 </project>

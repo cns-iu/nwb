@@ -29,13 +29,14 @@
 			</patternset>
 		</unzip>
 
+		<!-- Tycho / Eclipse don't honor this option if you set it to true in the .product definition file.  You have to change it after the fact.  *pout* -->
 		<replaceregexp match="org\.eclipse\.update\.reconcile=false" replace="org\.eclipse\.update\.reconcile=true">
 			<fileset dir="${temp.dir}" includes="**/configuration/config.ini" />
 		</replaceregexp>
 
 		<zip destfile="${product.zip.out}" duplicate="fail">
 			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini" />
-			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="sci2-nonpde-plugins.txt" prefix="plugins"/>
+			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="sci2-nonpde-plugins.txt" prefix="plugins" />
 			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
 		</zip>
 		<delete dir="${temp.dir}" />
