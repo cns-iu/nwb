@@ -12,6 +12,9 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import au.com.bytecode.opencsv.CSVWriter;
+import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
+import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
+import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.string;
 
@@ -555,6 +558,7 @@ public class DocumentPostScriptCreator {
 	 * @return A Record[] of all the records found in the table
 	 * @throws ParseException
 	 */
+	// TODO pull up
 	private Record[] readRecordsFromTable(Table table, LogService logger)
 			throws ParseException {
 		List<Record> workingRecordSet = new ArrayList<Record>();
@@ -591,7 +595,7 @@ public class DocumentPostScriptCreator {
 		Record[] sortedRecords = Arrays.copyOf(originalRecords,
 				originalRecords.length);
 
-		Arrays.sort(sortedRecords, Record.startDateOrdering());
+		Arrays.sort(sortedRecords, Record.START_DATE_ORDERING);
 
 		return sortedRecords;
 	}

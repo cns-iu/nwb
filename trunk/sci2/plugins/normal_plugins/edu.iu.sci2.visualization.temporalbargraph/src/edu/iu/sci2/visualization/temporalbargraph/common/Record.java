@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.common;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -13,6 +13,20 @@ import prefuse.data.Tuple;
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
 
 public class Record {
+	public static final Ordering<Record> START_DATE_ORDERING =
+			Ordering.from(new Comparator<Record>(){
+				@Override
+				public int compare(Record r1, Record r2) {
+					return r1.getStartDate().compareTo(r2.getStartDate());
+				}});
+	public static final Ordering<Record> END_DATE_ORDERING =
+			Ordering.from(new Comparator<Record>(){
+				@Override
+				public int compare(Record r1, Record r2) {
+					return r1.getEndDate().compareTo(r2.getEndDate());
+				}});
+
+	
 	private String label;
 	private Date startDate;
 	private Date endDate;
@@ -101,26 +115,6 @@ public class Record {
 	
 	public double getAmount() {
 		return this.amount;
-	}
-	
-	public static Ordering<Record> startDateOrdering(){
-		
-		return Ordering.from(new Comparator<Record>(){
-
-			@Override
-			public int compare(Record r1, Record r2) {
-				return r1.getStartDate().compareTo(r2.getStartDate());
-			}});
-	}
-	
-	public static Ordering<Record> endDateOrdering(){
-		
-		return Ordering.from(new Comparator<Record>(){
-
-			@Override
-			public int compare(Record r1, Record r2) {
-				return r1.getEndDate().compareTo(r2.getEndDate());
-			}});
 	}
 	
 	private void fixDateYears() {

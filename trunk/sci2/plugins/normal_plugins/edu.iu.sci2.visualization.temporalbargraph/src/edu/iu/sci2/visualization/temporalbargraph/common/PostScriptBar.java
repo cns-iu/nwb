@@ -1,4 +1,6 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.common;
+
+import com.google.common.base.Objects;
 
 
 public class PostScriptBar {
@@ -40,4 +42,14 @@ public class PostScriptBar {
 	public double getArea() {
 		return lengthInDays * amountPerDay;
 	}
+	
+	public String toString(){
+		return Objects.toStringHelper(this)
+				.add("name", name)
+				.add("daysSinceEarliest", daysSinceEarliest)
+				.add("lengthInDays", lengthInDays)
+				.toString();
+	}
+	
+	// TODO use string templating to let the bar output it's own postscript requirements
 }

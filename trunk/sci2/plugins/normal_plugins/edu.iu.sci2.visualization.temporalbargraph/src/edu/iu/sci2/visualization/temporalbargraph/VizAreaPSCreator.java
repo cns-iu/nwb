@@ -15,6 +15,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
+import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptBar;
+import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
+import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
 
 public class VizAreaPSCreator {
@@ -136,7 +139,7 @@ public class VizAreaPSCreator {
 					"You must provide some records for the PostScriptRecordManager to work");
 		}
 		
-		Date endDate = Ordering.natural().max(records).getEndDate();
+		Date endDate = Record.END_DATE_ORDERING.max(records).getEndDate();
 		
 		// FIXME Switch to joda-time
 		int year = endDate.getYear() + 1;
@@ -160,7 +163,7 @@ public class VizAreaPSCreator {
 					"You must provide some records for the PostScriptRecordManager to work");
 		}
 		
-		Date startDate = Ordering.natural().min(records).getStartDate();
+		Date startDate = Record.START_DATE_ORDERING.min(records).getStartDate();
 		
 		// FIXME Switch to joda-time
 		int year = startDate.getYear();

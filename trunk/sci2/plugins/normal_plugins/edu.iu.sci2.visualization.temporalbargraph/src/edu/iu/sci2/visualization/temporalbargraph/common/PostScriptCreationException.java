@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.common;
 
 public class PostScriptCreationException extends Exception {
 	private static final long serialVersionUID = 1L;
