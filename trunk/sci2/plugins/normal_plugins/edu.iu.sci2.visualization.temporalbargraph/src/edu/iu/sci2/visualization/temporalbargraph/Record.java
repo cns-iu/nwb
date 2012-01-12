@@ -1,15 +1,18 @@
 package edu.iu.sci2.visualization.temporalbargraph;
 
 import java.text.ParseException;
+import java.util.Comparator;
 import java.util.Date;
 
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
 
+import com.google.common.collect.Ordering;
+
 import prefuse.data.Tuple;
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
 
-public class Record implements Comparable<Record> {
+public class Record {
 	private String label;
 	private Date startDate;
 	private Date endDate;
@@ -100,8 +103,24 @@ public class Record implements Comparable<Record> {
 		return this.amount;
 	}
 	
-	public int compareTo(Record otherGrant) {		
-		return getStartDate().compareTo(otherGrant.getStartDate());
+	public static Ordering<Record> startDateOrdering(){
+		
+		return Ordering.from(new Comparator<Record>(){
+
+			@Override
+			public int compare(Record r1, Record r2) {
+				return r1.getStartDate().compareTo(r2.getStartDate());
+			}});
+	}
+	
+	public static Ordering<Record> endDateOrdering(){
+		
+		return Ordering.from(new Comparator<Record>(){
+
+			@Override
+			public int compare(Record r1, Record r2) {
+				return r1.getEndDate().compareTo(r2.getEndDate());
+			}});
 	}
 	
 	private void fixDateYears() {

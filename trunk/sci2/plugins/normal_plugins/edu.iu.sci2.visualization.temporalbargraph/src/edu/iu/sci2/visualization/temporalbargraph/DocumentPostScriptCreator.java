@@ -591,7 +591,7 @@ public class DocumentPostScriptCreator {
 		Record[] sortedRecords = Arrays.copyOf(originalRecords,
 				originalRecords.length);
 
-		Arrays.sort(sortedRecords);
+		Arrays.sort(sortedRecords, Record.startDateOrdering());
 
 		return sortedRecords;
 	}
