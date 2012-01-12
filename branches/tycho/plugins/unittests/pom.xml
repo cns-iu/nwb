@@ -8,17 +8,53 @@
   <packaging>pom</packaging>
   <modules>
     <module>edu.iu.nwb.converter.prefuseisi.tests</module>
+    <module>edu.iu.nwb.util.nwbfile.tests</module>
   </modules>
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>0.13.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tychoVersion}</version>
+				<configuration>
+					<dependencies>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.cishell.environment.equinox.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.cishell.reference.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.cishell.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+					</dependencies>
+					<bundleStartLevel>
+						<bundle>
+							<id>org.eclipse.equinox.metatype</id>
+							<level>4</level>
+							<autoStart>true</autoStart>
+						</bundle>
+						<bundle>
+							<id>org.cishell.service.autostart</id>
+							<level>4</level>
+							<autoStart>true</autoStart>
+						</bundle>
+						<bundle>
+							<id>org.eclipse.equinox.log</id>
+							<level>4</level>
+							<autoStart>true</autoStart>
+						</bundle>
+					</bundleStartLevel>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
   <parent>
   	<groupId>edu.iu.nwb</groupId>
   	<artifactId>plugins</artifactId>
