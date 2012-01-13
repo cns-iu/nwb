@@ -47,6 +47,11 @@ These extra algorithms are added in the next step:
 
 ### Finishing the Sci2 Build with Ant
 
+There are Ant build files that complete the Sci2 tool, by adding some important
+plug-ins that aren't built by Maven.
+
+#### Adding Ant-Contrib
+
 Before this will work, you will need to add the [Ant-Contrib]
 (http://ant-contrib.sourceforge.net/) library to Ant. You do this by downloading
 the library, unzipping it, and placing the jar in one of [several locations]
@@ -54,6 +59,8 @@ the library, unzipping it, and placing the jar in one of [several locations]
 straightforward of which is ANT_INSTALLATION/lib/. In Eclipse, you can add the
 jar to Ant's classpath from "Window -> Preferences -> Ant -> Runtime ->
 Classpath".
+
+#### Running Ant
 
 There are two ant build files you need to run. The first one is located in
 ant-parent/, and its task is to build and collect all the ant-built plugins in
