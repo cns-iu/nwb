@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>edu.iu.nwb.converter.prefuseisi.tests</module>
-    <module>edu.iu.nwb.util.nwbfile.tests</module>
+    <module>edu.iu.nwb.converter.nwbgraphml.tests</module>
   </modules>
   <build>
 		<plugins>
