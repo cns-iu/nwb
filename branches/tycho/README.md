@@ -21,7 +21,9 @@ should be able to build CIShell by running:
     mvn clean install
     
 This will install CIShell's libraries and things into your local Maven
-repository, so that they can be used by the Sci2 build.
+repository, so that they can be used by the Sci2 build. In the future, we may be
+able to provide CIShell's components in a public p2 repository, so that you can
+build Sci2 without having to take this step.
 
 ## Building Sci2
 
@@ -45,6 +47,14 @@ These extra algorithms are added in the next step:
 
 ### Finishing the Sci2 Build with Ant
 
+Before this will work, you will need to add the [Ant-Contrib]
+(http://ant-contrib.sourceforge.net/) library to Ant. You do this by downloading
+the library, unzipping it, and placing the jar in one of [several locations]
+(http://ant.apache.org/manual/install.html#optionalTasks), the most
+straightforward of which is ANT_INSTALLATION/lib/. In Eclipse, you can add the
+jar to Ant's classpath from "Window -> Preferences -> Ant -> Runtime ->
+Classpath".
+
 There are two ant build files you need to run. The first one is located in
 ant-parent/, and its task is to build and collect all the ant-built plugins in
 the source tree (with a few exceptions, see the file itself for more). To do
@@ -54,8 +64,8 @@ this step, run
     
 Now all the plugins should be present in the ant-parent/plugins directory.
 
-The second step is to process the runnable versions of Sci2, which lack these
-plugins. This ant script,
+The second script processes the Maven-built, runnable versions of Sci2, which
+lack these plugins. This ant script,
 sci2/deployment/edu.iu.sci2.releng/addAntBuiltPlugins.xml, consults a file
 (sci2-nonpde-plugins.txt in that same directory) and adds all the plugins named
 there into the zip files produced by the Maven build. The resulting complete
