@@ -1,4 +1,4 @@
-package edu.iu.sci2.tycho.tests;
+package edu.iu.nwb.converter.nwbgraphml.tests;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.LocalCIShellContext;

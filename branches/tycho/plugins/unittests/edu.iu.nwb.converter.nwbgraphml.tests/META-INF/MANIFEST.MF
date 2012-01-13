@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.sci2.trytest
-Bundle-SymbolicName: edu.iu.nwb.util.nwbfile.tests
+Bundle-SymbolicName: edu.iu.nwb.converter.nwbgraphml.tests
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.iu.sci2.tycho.tests.Activator
+Bundle-Activator: edu.iu.nwb.converter.nwbgraphml.tests.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: edu.iu.nwb.util.nwbfile,

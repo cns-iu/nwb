@@ -1,4 +1,4 @@
-package edu.iu.sci2.tycho.tests;
+package edu.iu.nwb.converter.nwbgraphml.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,7 +14,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.Converter;
 import org.cishell.service.conversion.DataConversionService;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.InvalidSyntaxException;
