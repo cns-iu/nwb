@@ -52,13 +52,14 @@ plug-ins that aren't built by Maven.
 
 #### Adding Ant-Contrib
 
-Before this will work, you will need to add the [Ant-Contrib]
-(http://ant-contrib.sourceforge.net/) library to Ant. You do this by downloading
-the library, unzipping it, and placing the jar in one of [several locations]
-(http://ant.apache.org/manual/install.html#optionalTasks), the most
-straightforward of which is ANT_INSTALLATION/lib/. In Eclipse, you can add the
-jar to Ant's classpath from "Window -> Preferences -> Ant -> Runtime ->
-Classpath".
+Before this will work, you will need to add the 
+[Ant-Contrib](http://ant-contrib.sourceforge.net/)
+library to Ant. You do this by downloading
+the library, unzipping it, and placing the jar in one of 
+[several locations](http://ant.apache.org/manual/install.html#optionalTasks), 
+the most straightforward of which is ANT_INSTALLATION/lib/. In Eclipse, 
+you can add the jar to Ant's classpath from "Window -> Preferences -> 
+Ant -> Runtime -> Classpath".
 
 #### Running Ant
 
