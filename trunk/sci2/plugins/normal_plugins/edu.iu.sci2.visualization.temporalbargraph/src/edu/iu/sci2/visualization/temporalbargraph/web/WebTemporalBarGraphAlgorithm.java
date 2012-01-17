@@ -7,14 +7,13 @@ import java.util.List;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Table;
+import prefuse.data.Tuple;
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
 import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
-
-import prefuse.data.Table;
-import prefuse.data.Tuple;
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class WebTemporalBarGraphAlgorithm extends
 		AbstractTemporalBarGraphAlgorithm {
@@ -64,7 +63,9 @@ public class WebTemporalBarGraphAlgorithm extends
 	@Override
 	protected String createPostScriptCode(CSVWriter csvWriter)
 			throws PostScriptCreationException {
-		WebDocumentPostScriptCreator documentPostScriptCreator = new WebDocumentPostScriptCreator(csvWriter, this.records, shouldScaleOutput);
+		String legendText = "Area size equals \"" + this.sizeByColumn + "\"";
+		String footerText = "NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
+		WebDocumentPostScriptCreator documentPostScriptCreator = new WebDocumentPostScriptCreator(csvWriter, this.records, shouldScaleOutput, legendText, footerText);
 		
 		String documentPostScript = documentPostScriptCreator.createPostScript();
 		

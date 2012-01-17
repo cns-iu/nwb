@@ -16,8 +16,15 @@ import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptBar;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 
+/**
+ * This is the Visualization Area of a the postscript document for the web. It
+ * includes things like the bars, labels for the bar, ticks for the dates, and
+ * labels for those ticks.  It also manages things like font sizes and margins
+ * 
+ */
 public class WebVizArea extends AbstractVizArea{
 	
+	private static final int MAX_LINEDATES = 15;
 	private static Date vizAreaStartDate;
 	private static Date vizAreaEndDate;
 	
@@ -40,6 +47,7 @@ public class WebVizArea extends AbstractVizArea{
 		
 		vizAreaStartDate = getStartDate(records);
 		vizAreaEndDate = getEndDate(records);	
+		
 		Collections.sort(records, Record.START_DATE_ORDERING);
 		List<PostScriptBar> bars = createBars(records, csvWriter, vizAreaStartDate);		
 		
@@ -57,8 +65,6 @@ public class WebVizArea extends AbstractVizArea{
 		vizAreaTotalDays = getTotalDays(vizAreaStartDate, vizAreaEndDate);
 
 
-		vizAreaDefinitions = new StringBuilder();
-		vizAreaDefinitions.append(loadVisualizationDefinitions());
 		
 		if (scaleToOnePage) {
 			pages = new ArrayList<String>();
@@ -75,8 +81,9 @@ public class WebVizArea extends AbstractVizArea{
 				pages.add(page);
 			}
 		}
-		
-		
+
+		vizAreaDefinitions = new StringBuilder();
+		vizAreaDefinitions.append(loadVisualizationDefinitions());
 		
 	}
 	
@@ -131,11 +138,49 @@ public class WebVizArea extends AbstractVizArea{
 		return barsArea.toString();
 	}
 	
+	/**
+	 * This will return a new list of dates that is smaller or equal to the maxDates
+	 * @param dates The dates you wish to prune.
+	 * @param maxDates The maximum number of dates to allow.
+	 * @return
+	 */
+	protected static List<Date> reduceDates(List<Date> dates, int maxDates){
+		Collections.sort(dates);
+		
+		assert(maxDates >= 2);  // you need more than 2 per page
+		List<Date> reducedDates = new ArrayList<Date>(maxDates);
+		
+		// Keep the first and last dates always
+		reducedDates.add(dates.get(0));
+		reducedDates.add(dates.get(dates.size() - 1));
+		
+		// How many datelines are left
+		int yearsLeft = dates.size() - 2;
+		int datelinesNeeded = maxDates - 2;
+		
+		// Make sure to round so the graph is nicely spaced, but never exceeds maxDates.
+		int yearsBetweenTicks = (int) Math.ceil((double) yearsLeft / (double) datelinesNeeded);
+		
+		for(int ii = yearsBetweenTicks; ii < dates.size(); ii += yearsBetweenTicks){
+			reducedDates.add(dates.get(ii));
+		}
+		
+		Collections.sort(reducedDates);
+		
+		return reducedDates;
+	}
+	
 	protected static String getDateLinesArea(){
 		StringBuilder datelineArea = new StringBuilder();
 		List<String> dateLines = new LinkedList<String>();
 		
 		List<Date> newYearsDates = getNewYearsDates(vizAreaStartDate, vizAreaEndDate);
+		
+		if(newYearsDates.size() > MAX_LINEDATES){
+			newYearsDates = reduceDates(newYearsDates, MAX_LINEDATES);
+			
+		}
+		
 		for(Date newYear : newYearsDates){
 			
 			double usableXPoints = vizAreaWidth;
@@ -198,6 +243,11 @@ public class WebVizArea extends AbstractVizArea{
 		return pages;
 	}
 	
+	
+	/**
+	 * This returns the postscript definitions needed for the VizArea.  This should be called after the VizArea has been set up so all the information needed is available.
+	 * @return
+	 */
 	private static String loadVisualizationDefinitions(){
 		StringTemplate definitionsTemplate =
 				group.getInstanceOf("visualizationAreaDefinitions");

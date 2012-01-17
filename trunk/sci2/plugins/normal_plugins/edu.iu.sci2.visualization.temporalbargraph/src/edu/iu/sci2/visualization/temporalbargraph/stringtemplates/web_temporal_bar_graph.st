@@ -42,6 +42,23 @@ pageUtilities() ::= <<
 % Utilities
 %%%%%%%%%%%
 
+/textheight { % (text) => [text_height]
+    gsave                                  % save graphic context
+    {                            
+        100 100 moveto                     % move to some point 
+        true charpath pathbbox      	   % gets text path bounding box (LLx LLy URx URy)
+        exch pop 3 -1 roll pop             % keeps LLy and URy
+        exch sub                           % URy - LLy
+    }
+    stopped                                % did the last block fail?
+    {
+        pop pop                            % get rid of "stopped" junk
+        currentfont /FontMatrix get 3 get  % gets alternative text height
+    }
+    if
+    grestore                               % restore graphic context
+} bind def
+
 /center { % (text) x y => -
 	moveto dup stringwidth pop -2 div 0 rmoveto
 } def
@@ -99,10 +116,13 @@ visualizationAreaDefinitions(topVizPosition, leftVizMargin) ::= <<
 	bar
 } def
 /labelbarSpacing { 14.0 } def
-/labelbarLabel { % (label) => -
+/labelbarLabel { % (label) [x] [y] => -
 	moveto
 	leftVizMargin exch righttrim
-	dup stringwidth pop neg labelbarSpacing sub 0 rmoveto
+	dup stringwidth pop neg labelbarSpacing sub % (label) x
+	exch dup textheight 2 div neg % x (label) y
+	3 -1 roll exch % (label) x y
+	rmoveto
 	show
 } def
 
@@ -112,18 +132,20 @@ visualizationAreaDefinitions(topVizPosition, leftVizMargin) ::= <<
 	gsave
 	dup
 	0 moveto
-	.75 .75 .75 setrgbcolor
+	0.75 0.75 0.75 setrgbcolor
 	[datelineDashSize] 0 setdash
 	datelineLineWidth setlinewidth
 	0 topVizPosition rlineto
 	stroke
+	0 0 0 setrgbcolor
 	datelinelabel
 	grestore
 } def
 
-/datelineLabelFontSize { 6.0 } def
+/datelineLabelFont { /Arial } def
+/datelineLabelFontSize { 12.0 } def
 /datelinelabel { % (label) x => -
-	/Arial datelineLabelFontSize selectfont
+	datelineLabelFont datelineLabelFontSize selectfont
 	datelineLabelFontSize neg center
 	show
 } def
@@ -133,7 +155,6 @@ visualizationAreaDefinitions(topVizPosition, leftVizMargin) ::= <<
 visualizationAreaSetup(leftMargin, bottomMargin) ::= <<
 
 gsave
-/Arial 16 selectfont
 <leftMargin> <bottomMargin> translate
 
 >>
@@ -179,7 +200,7 @@ scalebarAreaDefinitions(scaleBarLeftPosition, scaleBarBottomPosition, scaleBarWi
 
 /scalebar { % (title) (start year) (end year) => -
 	gsave
-	.75 .75 .75 setrgbcolor
+	0 0 0 setrgbcolor
 	scaleBarLeftPosition scaleBarBottomPosition translate
 	0 0 moveto
 	/Arial scaleBarTitleFontSize selectfont

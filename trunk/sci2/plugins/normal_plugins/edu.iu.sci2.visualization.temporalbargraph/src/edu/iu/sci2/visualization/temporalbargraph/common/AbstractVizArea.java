@@ -15,7 +15,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-
+/**
+ * This is the Visualization Area of a the postscript document.
+ * 
+ */
 public abstract class AbstractVizArea {
 
 

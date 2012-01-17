@@ -10,11 +10,14 @@ import org.joda.time.LocalDate;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.matchParentheses;
 
 public class WebDocumentPostScriptCreator {
 	private CSVWriter csvWriter;
 	private List<Record> records;
 	private boolean scaleToOnePage;
+	private String legendText;
+	private String footerText;
 	
 	private static double PIXELS_PER_INCH = 72;
 	private static double POINTS_PER_INCH = 72;
@@ -25,10 +28,12 @@ public class WebDocumentPostScriptCreator {
 	public static StringTemplateGroup group = WebTemporalBarGraphAlgorithmFactory.loadTemplates();
 	
 	public WebDocumentPostScriptCreator(CSVWriter csvWriter,
-			List<Record> records, boolean scaleToOnePage) {
+			List<Record> records, boolean scaleToOnePage, String legendText, String footerText) {
 		this.csvWriter = csvWriter;
 		this.records = records;
 		this.scaleToOnePage = scaleToOnePage;
+		this.legendText = matchParentheses(legendText);
+		this.footerText = matchParentheses(footerText);
 	}
 
 	
@@ -68,7 +73,7 @@ public class WebDocumentPostScriptCreator {
 		return documentTrailerTemplate.toString();
 	}
 
-	private static String getPage(String vizAreaOfPage, int pageNumber){
+	private String getPage(String vizAreaOfPage, int pageNumber){
 		StringBuilder pagePostScript = new StringBuilder();
 		
 		StringTemplate pageSetupTemplate =
@@ -78,13 +83,13 @@ public class WebDocumentPostScriptCreator {
 		
 		StringTemplate scalebarScaleBarTemplate =
 				group.getInstanceOf("scalebarScaleBar");
-		scalebarScaleBarTemplate.setAttribute("title", "Area size equals numberical value");
+		scalebarScaleBarTemplate.setAttribute("title", this.legendText);
 		scalebarScaleBarTemplate.setAttribute("startYearLabel", "Start Year");
 		scalebarScaleBarTemplate.setAttribute("endYearLabel", "End Year");
 		pagePostScript.append(scalebarScaleBarTemplate.toString());
 		
 		StringTemplate footer = group.getInstanceOf("footer");
-		footer.setAttribute("footer", "NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)");
+		footer.setAttribute("footer", this.footerText);
 		pagePostScript.append(footer.toString());
 		
 		pagePostScript.append(vizAreaOfPage);
@@ -98,8 +103,6 @@ public class WebDocumentPostScriptCreator {
 	private String getPages(double pageHeight, double pageWidth, WebVizArea vizArea) {
 		
 		StringBuilder pagesPostScript = new StringBuilder();
-		
-		Collections.sort(records, Record.START_DATE_ORDERING);
 		
 		StringTemplate pageUtilitiesTemplate =
 				group.getInstanceOf("pageUtilities");
