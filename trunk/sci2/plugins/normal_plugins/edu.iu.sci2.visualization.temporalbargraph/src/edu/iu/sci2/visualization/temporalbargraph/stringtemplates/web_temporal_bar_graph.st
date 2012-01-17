@@ -194,8 +194,8 @@ scalebarAreaDefinitions(scaleBarLeftPosition, scaleBarBottomPosition, scaleBarWi
 /scaleBarWidth { <scaleBarWidth> } def
 
 /scaleBarRightPosition { scaleBarWidth } def
-/scaleBarYearFontSize { 10.0 } def
-/scaleBarTitleFontSize { 10.0 } def
+/scaleBarYearFontSize { 12.0 } def
+/scaleBarTitleFontSize { 12.0 } def
 /scaleBarThickness { 10.0 } def
 
 /scalebar { % (title) (start year) (end year) => -

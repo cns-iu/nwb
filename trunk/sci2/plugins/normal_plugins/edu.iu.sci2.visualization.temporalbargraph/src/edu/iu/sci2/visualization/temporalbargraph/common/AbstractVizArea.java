@@ -24,7 +24,7 @@ public abstract class AbstractVizArea {
 
 	protected static final int MAX_BARS_PER_PAGE = 50;
 
-	public static final int MAX_LABEL_FONT_SIZE = 16;
+	public static final int MAX_LABEL_FONT_SIZE = 12;
 	public static final int LABEL_BAR_SPACING = 15;
 
 	protected static final Function<PostScriptBar, Double> AMOUNT_PER_DAY_GETTER =
