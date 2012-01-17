@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.temporalbargraph;
 
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.string;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +18,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.string;
+
 
 public class DocumentPostScriptCreator {
 	
@@ -560,7 +562,7 @@ public class DocumentPostScriptCreator {
 	 * @return A Record[] of all the records found in the table
 	 * @throws ParseException
 	 */
-	// TODO pull up
+	// TODO put into algorithm
 	private Record[] readRecordsFromTable(Table table, LogService logger)
 			throws ParseException {
 		List<Record> workingRecordSet = new ArrayList<Record>();
