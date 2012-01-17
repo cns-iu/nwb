@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.cishell.utilities.DateUtilities;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.Days;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -161,10 +164,24 @@ public abstract class AbstractVizArea {
 		List<PostScriptBar> bars = new ArrayList<PostScriptBar>(records.size());
 		for(Record record : records){
 			double daysSinceEarliest = Math.abs(DateUtilities.calculateDaysBetween(startDate, record.getStartDate()));
-
 			int daysBetweenStartAndStop = Math.abs(DateUtilities.calculateDaysBetween(record.getStartDate(), record.getEndDate()));
+			
 			if (daysBetweenStartAndStop == 0){
-				continue;
+				
+				// Assume that the user would want one year length if the start and stop days are the same.
+				int year = record.getStartDate().getYear();
+				int monthOfYear = DateTimeConstants.JANUARY;
+				int dayOfMonth = 1;
+				int hourOfDay = 12;
+				int minuteOfHour = 0;
+				int secondOfMinute = 0;
+				int millisOfSecond = 000;
+				
+				DateTime recordYear = new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
+				
+				DateTime yearAfterRecordYear = new DateTime(year + 1, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
+				
+				daysBetweenStartAndStop = Days.daysBetween(recordYear, yearAfterRecordYear).getDays();
 			}
 
 			double area = record.getAmount();

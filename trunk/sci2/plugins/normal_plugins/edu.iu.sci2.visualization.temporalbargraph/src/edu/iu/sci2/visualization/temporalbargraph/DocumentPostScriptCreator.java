@@ -122,20 +122,22 @@ public class DocumentPostScriptCreator {
 		documentPostScript.append(getHeader(numberOfPages));
 		documentPostScript.append(getProcedureDefinitions());
 		documentPostScript.append(getDocumentSetup());
-		documentPostScript.append(getPages(vizAreas, query));
+		documentPostScript.append(getPages(vizAreaPsCreator, query));
 		documentPostScript.append(getDocumentTrailer());
 		return documentPostScript.toString();
 	}
 
 	/**
 	 * Create the postscript for the pages area.
-	 * @param visualizations
+	 * @param vizArea
 	 * @param query
 	 * @return
 	 */
-	private String getPages(List<String> visualizations, String query) {
+	private String getPages(VizAreaPSCreator vizArea, String query) {
 		StringBuilder pagesPostScript = new StringBuilder();
-		pagesPostScript.append(getDocumentDefinitions());
+		pagesPostScript.append(getDocumentDefinitions(vizArea));
+		
+		List<String> visualizations = vizArea.getPages();
 		
 		for (String visualization : visualizations) {
 			int pageNumber = visualizations.indexOf(visualization) + 1;
@@ -308,7 +310,7 @@ public class DocumentPostScriptCreator {
 	 * This returns all the "headers" that are needed to define a document.
 	 * @return
 	 */
-	private String getDocumentDefinitions() {
+	private String getDocumentDefinitions(VizAreaPSCreator vizArea) {
 		StringBuilder headers = new StringBuilder();
 		// The left viz margin
 		headers.append(PostScriptFormationUtilities.definition("leftvizmargin", Double.toString(leftVizMargin)));
@@ -334,7 +336,7 @@ public class DocumentPostScriptCreator {
 		
 		headers.append(getFooterDefinitions());
 		
-		headers.append(getVisualizationDefinitions());
+		headers.append(getVisualizationDefinitions(vizArea));
 	
 		headers.append(getScaleBoxDefinitions());
 		
@@ -451,10 +453,10 @@ public class DocumentPostScriptCreator {
 	 * Get the definitions needed for the visualization area.
 	 * @return
 	 */
-	private static String getVisualizationDefinitions() {
+	private static String getVisualizationDefinitions(VizAreaPSCreator vizArea) {
 		StringBuilder visualization = new StringBuilder();
 
-		visualization.append(VizAreaPSCreator.getPostScriptVisualizationDefinitions());
+		visualization.append(vizArea.getPostScriptVisualizationDefinitions());
 		
 		return visualization.toString();
 	}
