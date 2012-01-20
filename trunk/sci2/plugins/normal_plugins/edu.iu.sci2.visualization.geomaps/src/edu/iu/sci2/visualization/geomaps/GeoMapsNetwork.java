@@ -69,6 +69,7 @@ public class GeoMapsNetwork implements Algorithm {
 		}
 	}
 
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
 			Data inDatum = this.data[0];
@@ -152,6 +153,7 @@ public class GeoMapsNetwork implements Algorithm {
 	private FieldMakerFunction getLongitudeToXComputer() {
 		return new FieldMakerFunction() {
 			
+			@Override
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
@@ -165,13 +167,14 @@ public class GeoMapsNetwork implements Algorithm {
 		
 	}
 	
-	private double getDoubleValue(Object o) {
+	private static double getDoubleValue(Object o) {
 		return ((Number) o).doubleValue();
 	}
 	
 	private FieldMakerFunction getLatitudeToYComputer() {
 		return new FieldMakerFunction() {
 			
+			@Override
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
@@ -188,7 +191,7 @@ public class GeoMapsNetwork implements Algorithm {
 		};
 	}
 
-	private Data[] formOutData(File postScriptFile, File outNetwork,
+	private static Data[] formOutData(File postScriptFile, File outNetwork,
 			Data inDatum) {
 		Dictionary<String, Object> inMetaData = inDatum.getMetadata();
 
@@ -216,7 +219,7 @@ public class GeoMapsNetwork implements Algorithm {
 		return new Data[] { postScriptData, nwbData };
 	}
 
-	private void drawAnchorPoints(ShapefileToPostScriptWriter postScriptWriter,
+	private static void drawAnchorPoints(ShapefileToPostScriptWriter postScriptWriter,
 			ImmutableCollection<Coordinate> anchorPoints) {
 
 		List<Circle> circles = Lists.newArrayList();
@@ -229,7 +232,7 @@ public class GeoMapsNetwork implements Algorithm {
 		postScriptWriter.setCircleAnnotations("", circles, noLegend, noLegend, noLegend);
 	}
 
-	private ImmutableMap<String, Coordinate> getAnchorPoints(String shapefileKey)
+	private static ImmutableMap<String, Coordinate> getAnchorPoints(String shapefileKey)
 			throws AlgorithmExecutionException {
 		if (shapefileKey.equals(Constants.COUNTRIES_SHAPEFILE_KEY)) {
 			return ImmutableMap.of(

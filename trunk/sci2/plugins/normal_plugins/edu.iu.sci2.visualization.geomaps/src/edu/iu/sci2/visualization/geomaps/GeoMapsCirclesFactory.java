@@ -59,7 +59,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		return mutator.mutate(oldParameters);
 	}
 
-	private void addInnerColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+	private static void addInnerColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
 		numericColumnNames = Lists.newArrayList(numericColumnNames);
 
 		numericColumnNames.add(
@@ -74,7 +74,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 	}
 
-	private void addOuterColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+	private static void addOuterColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
 		numericColumnNames = Lists.newArrayList(numericColumnNames);
 		
 		numericColumnNames.add(
@@ -89,7 +89,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 	}
 
-	private void addAreaParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+	private static void addAreaParameters(DropdownMutator mutator, List<String> numericColumnNames) {
 		numericColumnNames = Lists.newArrayList(numericColumnNames);
 		
 		mutator.add(CircleAnnotationMode.AREA_ID, numericColumnNames);

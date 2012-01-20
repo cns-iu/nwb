@@ -80,6 +80,7 @@ public class CircleAreaLegend implements LegendComponent {
 	/* TODO? Draw circles using the line width set
 	 * in CirclePrinter.CIRCLE_LINE_WIDTH?
 	 */
+	@Override
 	public String toPostScript() {
 		String s = "";
 		

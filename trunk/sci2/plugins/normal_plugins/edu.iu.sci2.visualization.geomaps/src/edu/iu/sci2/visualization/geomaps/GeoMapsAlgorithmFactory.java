@@ -30,6 +30,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 public abstract class GeoMapsAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {
+	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
         return new GeoMapsAlgorithm(data, parameters, context, getAnnotationMode(), getOutputAlgorithmName());
@@ -39,6 +40,7 @@ public abstract class GeoMapsAlgorithmFactory
     
     protected abstract String getOutputAlgorithmName();
     
-    public abstract ObjectClassDefinition mutateParameters(
+    @Override
+	public abstract ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters);
 }

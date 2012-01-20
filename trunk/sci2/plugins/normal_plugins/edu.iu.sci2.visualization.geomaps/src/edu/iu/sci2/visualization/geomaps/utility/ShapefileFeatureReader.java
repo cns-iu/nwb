@@ -38,7 +38,7 @@ public class ShapefileFeatureReader {
 	/* GeoTools boilerplate.
 	 * Returns the Features in the shapefile at shapefileURL
 	 */
-	private FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(URL shapefileURL)
+	private static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(URL shapefileURL)
 			throws AlgorithmExecutionException {
 		FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
 		
@@ -58,7 +58,7 @@ public class ShapefileFeatureReader {
 		return featureSource;
 	}
 
-	private DataStore getDataStore(URL shapefileURL) throws IOException {
+	private static DataStore getDataStore(URL shapefileURL) throws IOException {
 		Map<String, Serializable> connectParameters =
 			new HashMap<String, Serializable>();
 

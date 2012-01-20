@@ -51,13 +51,13 @@ public class MapDisplayer {
 		return displayHeightInPoints;
 	}
 
-	private double calculateDisplayCenterY(double displayHeightInPoints) {
+	private static double calculateDisplayCenterY(double displayHeightInPoints) {
 		return (Constants.PAGE_FOOTER_HEIGHT_IN_POINTS
 				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS + (displayHeightInPoints / 2.0));
 	}
 
 	// Transform ordinate z from the data space to the display space.
-	private double positionOnDisplay(double z, double displayCenterInPoints,
+	private static double positionOnDisplay(double z, double displayCenterInPoints,
 			double scale, double dataCenter) {
 		return displayCenterInPoints + (scale * (z - dataCenter));
 	}
@@ -68,7 +68,7 @@ public class MapDisplayer {
 				coordinate.y, displayCenterYInPoints, scale, dataCenterY));
 	}
 
-	private double calculateScale(double dataMinX, double dataMaxX) {
+	private static double calculateScale(double dataMinX, double dataMaxX) {
 		double dataWidth = dataMaxX - dataMinX;
 
 		return (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataWidth);

@@ -35,7 +35,7 @@ public class PageHeader {
 		return s;
 	}
 
-	private boolean stringSpecified(String string) {
+	private static boolean stringSpecified(String string) {
 		return ((string != null) && (!("".equals(string))));
 	}
 	

@@ -6,6 +6,7 @@ import org.cishell.framework.CIShellContext;
  * The LogService simply writes to System.err.
  */
 public class LogOnlyCIShellContext implements CIShellContext {
+	@Override
 	public Object getService(String service) {
 		return new StdErrLogService();
 	}

@@ -85,6 +85,7 @@ public class ColorLegend implements LegendComponent {
 		this.hasPrintedDefinitions = false;
 	}
 
+	@Override
 	public String toPostScript() {
 		String s = "";
 		
