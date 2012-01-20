@@ -16,7 +16,7 @@ public final class StdErrLogService implements LogService {
 	}
 
 	@Override
-	public void log(ServiceReference sr, int level, String message) {
+	public void log(@SuppressWarnings("rawtypes") ServiceReference sr, int level, String message) {
 		log(level, message);
 	}
 
@@ -27,7 +27,7 @@ public final class StdErrLogService implements LogService {
 
 	@Override
 	public void log(
-			ServiceReference sr,
+			@SuppressWarnings("rawtypes") ServiceReference sr,
 			int level,
 			String message,
 			Throwable cause) {

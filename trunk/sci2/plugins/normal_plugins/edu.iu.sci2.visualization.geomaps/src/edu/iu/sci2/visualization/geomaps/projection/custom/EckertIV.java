@@ -58,7 +58,7 @@ public class EckertIV extends MapProjection {
 			super(PARAMETERS);
 		}
 
-		@SuppressWarnings("unchecked") // Raw Class
+		@SuppressWarnings({ "unchecked", "rawtypes" }) // Raw Class
 		@Override
 		public Class getOperationType() {
 			// Actually, pseudo-cylindrical
