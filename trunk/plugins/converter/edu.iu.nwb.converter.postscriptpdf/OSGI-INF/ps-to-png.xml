@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.nwb.converter.postscript.gs.png.PostScriptToPNGAlgorithmFactory.component" immediate="false">
+	<implementation class="edu.iu.nwb.converter.postscript.gs.png.PostScriptToPNGAlgorithmFactory"/>
+	<properties entry="OSGI-INF/ps-to-png.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

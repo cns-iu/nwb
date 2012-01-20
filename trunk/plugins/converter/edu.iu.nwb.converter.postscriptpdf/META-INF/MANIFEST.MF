@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.nwb.converter.postscriptpdf
-Bundle-SymbolicName: edu.iu.nwb.converter.postscriptpdf
+Bundle-Name: edu.iu.nwb.converter.postscript.gs
+Bundle-SymbolicName: edu.iu.nwb.converter.postscript.gs
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: com.google.common.base,
@@ -13,5 +13,8 @@ Import-Package: com.google.common.base,
  org.cishell.service.conversion,
  org.cishell.utilities.process
 X-AutoStart: true
-Service-Component: OSGI-INF/ps-to-pdf.xml, OSGI-INF/pdf-handler.xml
+Service-Component: OSGI-INF/ps-to-pdf.xml,
+ OSGI-INF/pdf-handler.xml,
+ OSGI-INF/ps-to-png.xml,
+ OSGI-INF/png-handler.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
