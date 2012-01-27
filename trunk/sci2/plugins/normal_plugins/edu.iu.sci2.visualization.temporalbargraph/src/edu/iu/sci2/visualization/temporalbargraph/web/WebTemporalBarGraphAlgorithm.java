@@ -1,53 +1,71 @@
 package edu.iu.sci2.visualization.temporalbargraph.web;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.Color;
 import java.util.List;
 
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.color.ColorRegistry;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import prefuse.data.Tuple;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
-import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
+import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
+import edu.iu.sci2.visualization.temporalbargraph.common.TemporalBarGraphColorSchema;
 
 public class WebTemporalBarGraphAlgorithm extends
 		AbstractTemporalBarGraphAlgorithm {
 
 	private LogService logger;
 	private Data inputData;
-	private String labelColumn;
-	private String startDateColumn;
-	private String endDateColumn;
-	private String sizeByColumn;
-	private String startDateFormat;
-	private String endDateFormat;
-	private Boolean shouldScaleOutput;
 
+	private String legendText;
+
+	private Boolean shouldScaleOutput;
+	private ColorRegistry<String> colorRegistry;
 	private List<Record> records;
-	
+	private String categoryColumn;
+
 	public WebTemporalBarGraphAlgorithm(Data inputData, Table inputTable,
 			LogService logger, String labelColumn, String startDateColumn,
 			String endDateColumn, String sizeByColumn, String startDateFormat,
-			String endDateFormat, Boolean shouldScaleOutput) {
-		
+			String endDateFormat, Boolean shouldScaleOutput,
+			String categoryColumn) {
+
 		this.logger = logger;
 		this.inputData = inputData;
-		this.labelColumn = labelColumn;
-		this.startDateColumn = startDateColumn;
-		this.endDateColumn = endDateColumn;
-		this.sizeByColumn = sizeByColumn;
-		this.startDateFormat = startDateFormat;
-		this.endDateFormat = endDateFormat;
+
+		/*
+		 * FIXME I don't want to pass the column label down all the way, but I
+		 * really shouldn't care what the legend text is at this point.  If you 
+		 * find a good solution, please apply it to the colorRegistry too.
+		 */
+		legendText = "Area size equals \"" + sizeByColumn + "\"";
+
 		this.shouldScaleOutput = shouldScaleOutput;
-		
-		
-		this.records = readRecordsFromTable(inputTable, logger);
-		
+		this.categoryColumn = categoryColumn;
+
+		if (this.categoryColumn
+				.equals(AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE)) {
+			colorRegistry = new ColorRegistry<String>(
+					new TemporalBarGraphColorSchema(
+							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
+							TemporalBarGraphColorSchema.DEFAULT_COLOR));
+		} else {
+			colorRegistry = new ColorRegistry<String>(
+					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
+
+		}
+
+		this.records = readRecordsFromTable(inputTable, logger, labelColumn,
+				startDateColumn, endDateColumn, sizeByColumn, startDateFormat,
+				endDateFormat, categoryColumn);
+
+		for (Record record : records) {
+			colorRegistry.getColorOf(record.getCategory());
+		}
 	}
 
 	@Override
@@ -63,38 +81,11 @@ public class WebTemporalBarGraphAlgorithm extends
 	@Override
 	protected String createPostScriptCode(CSVWriter csvWriter)
 			throws PostScriptCreationException {
-		String legendText = "Area size equals \"" + this.sizeByColumn + "\"";
-		String footerText = "NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
-		WebDocumentPostScriptCreator documentPostScriptCreator = new WebDocumentPostScriptCreator(csvWriter, this.records, shouldScaleOutput, legendText, footerText);
-		
-		String documentPostScript = documentPostScriptCreator.createPostScript();
-		
-		return documentPostScript;
-	}
-	
-	private List<Record> readRecordsFromTable(Table table, LogService logger) {
-		List<Record> workingRecordSet = new ArrayList<Record>();
-		
-		for(Iterator<?> rows = table.tuples(); rows.hasNext();) {
-			Tuple row = (Tuple) rows.next();
-			
-			try {
-				Record newRecord = new Record(
-					row,
-					this.labelColumn,
-					this.startDateColumn,
-					this.endDateColumn,
-					this.sizeByColumn,
-					this.startDateFormat,
-					this.endDateFormat);
-				
-				workingRecordSet.add(newRecord);
-			} catch (InvalidRecordException e) {
-				logger.log(LogService.LOG_WARNING, e.getMessage(), e);
-			}
-		}
 
-		return workingRecordSet;
+		PostscriptDocument postscriptDocument = new PostscriptDocument(csvWriter, this.records,
+				shouldScaleOutput, legendText, colorRegistry);
+
+		return postscriptDocument.renderPostscript();
 	}
 
 }

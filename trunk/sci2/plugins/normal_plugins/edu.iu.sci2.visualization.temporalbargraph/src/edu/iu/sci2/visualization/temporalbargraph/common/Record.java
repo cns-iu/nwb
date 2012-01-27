@@ -7,12 +7,14 @@ import java.util.Date;
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
 
+import prefuse.data.Tuple;
+
 import com.google.common.collect.Ordering;
 
-import prefuse.data.Tuple;
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
 
 public class Record {
+	public static enum Category { DEFAULT };
 	public static final Ordering<Record> START_DATE_ORDERING =
 			Ordering.from(new Comparator<Record>(){
 				@Override
@@ -31,25 +33,55 @@ public class Record {
 	private Date startDate;
 	private Date endDate;
 	private double amount;
+	private String category;
 	
-	public Record(String label, Date startDate, Date endDate, double amount) {
+	/**
+	 * TODO
+	 * @param label
+	 * @param startDate
+	 * @param endDate
+	 * @param amount
+	 */
+	public Record(String label, Date startDate, Date endDate, double amount, String category) {
 		this.label = label;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.amount = amount;
-		
+		this.category = category;
 		fixDateYears();
 	}
 	
+	/**
+	 * 
+	 * @param tableRow
+	 * @param labelKey
+	 * @param startDateKey
+	 * @param endDateKey
+	 * @param sizeByKey
+	 * @param startDateFormat
+	 * @param endDateFormat
+	 * @throws InvalidRecordException
+	 */
 	public Record(Tuple tableRow,
 				  String labelKey,
 				  String startDateKey,
 				  String endDateKey,
 				  String sizeByKey,
 				  String startDateFormat,
-				  String endDateFormat) throws InvalidRecordException {
+				  String endDateFormat,
+				  String categoryKey) throws InvalidRecordException {
+		
 		this.label = PostScriptFormationUtilities.matchParentheses((String)tableRow.get(labelKey));
 		
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
+				.equals(categoryKey)) {
+			this.category = PostScriptFormationUtilities
+					.matchParentheses(Category.DEFAULT.toString());
+		} else {
+			this.category = PostScriptFormationUtilities
+					.matchParentheses((String) tableRow.get(categoryKey));
+		}
+
 		try {
 			this.startDate = DateUtilities.interpretObjectAsDate(
 				tableRow.get(startDateKey), startDateFormat);
@@ -127,4 +159,13 @@ public class Record {
 			this.endDate.setYear(this.endDate.getYear() + 1900);
 		}
 	}
+	
+	/**
+	 * Returns the category for the record.  The default is defined by 'Category.DEFAULT'.
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+
 }

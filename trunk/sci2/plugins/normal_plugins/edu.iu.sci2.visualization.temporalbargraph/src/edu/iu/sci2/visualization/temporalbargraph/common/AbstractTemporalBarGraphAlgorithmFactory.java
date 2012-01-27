@@ -20,6 +20,8 @@ public abstract class AbstractTemporalBarGraphAlgorithmFactory implements Algori
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 	public static final String PAGE_ORIENTATION_ID = "page_orientation";
 	public static final String SHOULD_SCALE_OUTPUT_FIELD_ID = "should_scale_output";
+	public static final String CATEGORY_FIELD_ID = "category";
+	public static final String DO_NOT_PROCESS_CATEGORY_VALUE = "No Category Coloring";
 	
 	public abstract Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext);

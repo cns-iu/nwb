@@ -1,11 +1,16 @@
 package edu.iu.sci2.visualization.temporalbargraph.common;
 
+import java.awt.Color;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.DateUtilities;
+import org.cishell.utilities.color.ColorRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
@@ -22,14 +27,22 @@ import com.google.common.collect.Ordering;
  * This is the Visualization Area of a the postscript document.
  * 
  */
-public abstract class AbstractVizArea {
+public abstract class AbstractVisualization {
 
-
+	protected static final int MAX_LINEDATES = 15;
 	protected static final int MAX_BARS_PER_PAGE = 50;
 
 	public static final int MAX_LABEL_FONT_SIZE = 12;
 	public static final int LABEL_BAR_SPACING = 15;
 
+	public static final String STRING_TEMPLATE_FILE_PATH = "/edu/iu/sci2/visualization/temporalbargraph/common/stringtemplates/visualization.st";
+	public static final StringTemplateGroup group;	
+	static {
+		group = new StringTemplateGroup(new InputStreamReader(
+				AbstractTemporalBarGraphAlgorithmFactory.class
+						.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
+	}
+	
 	protected static final Function<PostScriptBar, Double> AMOUNT_PER_DAY_GETTER =
 			new Function<PostScriptBar, Double>() {
 		public Double apply(PostScriptBar bar) {
@@ -66,12 +79,44 @@ public abstract class AbstractVizArea {
 	}
 
 	/**
+	 * This will return a new list of dates that is smaller or equal to the maxDates
+	 * @param dates The dates you wish to prune.
+	 * @param maxDates The maximum number of dates to allow.
+	 * @return
+	 */
+	protected static List<Date> reduceDates(List<Date> dates, int maxDates){
+		Collections.sort(dates);
+		
+		assert(maxDates >= 2);  // you need more than 2 per page
+		List<Date> reducedDates = new ArrayList<Date>(maxDates);
+		
+		// Keep the first and last dates always
+		reducedDates.add(dates.get(0));
+		reducedDates.add(dates.get(dates.size() - 1));
+		
+		// How many datelines are left
+		int yearsLeft = dates.size() - 2;
+		int datelinesNeeded = maxDates - 2;
+		
+		// Make sure to round so the graph is nicely spaced, but never exceeds maxDates.
+		int yearsBetweenTicks = (int) Math.ceil((double) yearsLeft / (double) datelinesNeeded);
+		
+		for(int ii = yearsBetweenTicks; ii < dates.size(); ii += yearsBetweenTicks){
+			reducedDates.add(dates.get(ii));
+		}
+		
+		Collections.sort(reducedDates);
+		
+		return reducedDates;
+	}
+	
+	/**
 	 * Given a list of records, it will return a date object that represents Jan 1st of the year after the last year.
 	 * @param records
 	 * @return A date object that represents Jan 1st of the year after the last year.
 	 * @throws PostScriptCreationException
 	 */
-	protected static Date getEndDate(List<Record> records)
+	protected static Date getFirstNewYearAfterLastEndDate(List<Record> records)
 			throws PostScriptCreationException {
 		if (records.size() <= 0) {
 			throw new PostScriptCreationException(
@@ -84,7 +129,7 @@ public abstract class AbstractVizArea {
 		// FIXME Switch to joda-time
 		int year = endDate.getYear() + 1;
 		int month = 0; // Jan
-		int day = 11; // 1st
+		int day = 1; // 1st
 		Date lastYear = new Date(year, month, day);
 		return lastYear;
 	}
@@ -95,7 +140,7 @@ public abstract class AbstractVizArea {
 	 * @return A Date object that represents jan 1 the earliest year.
 	 * @throws PostScriptCreationException
 	 */
-	protected static Date getStartDate(List<Record> records)
+	protected static Date getFirstNewYearBeforeStartDate(List<Record> records)
 			throws PostScriptCreationException {
 		if (records.size() <= 0) {
 			throw new PostScriptCreationException(
@@ -160,10 +205,10 @@ public abstract class AbstractVizArea {
 	 * @param startDate The starting date of the graph
 	 * @return A list of all the postscriptbars
 	 */
-	protected static List<PostScriptBar> createBars(List<Record> records, CSVWriter csvWriter, Date startDate) {
+	protected static List<PostScriptBar> createBars(List<Record> records, CSVWriter csvWriter, Date startDate, ColorRegistry<String> colorRegistry) {
 		List<PostScriptBar> bars = new ArrayList<PostScriptBar>(records.size());
+		
 		for(Record record : records){
-			double daysSinceEarliest = Math.abs(DateUtilities.calculateDaysBetween(startDate, record.getStartDate()));
 			int daysBetweenStartAndStop = Math.abs(DateUtilities.calculateDaysBetween(record.getStartDate(), record.getEndDate()));
 			
 			if (daysBetweenStartAndStop == 0){
@@ -187,9 +232,17 @@ public abstract class AbstractVizArea {
 			double area = record.getAmount();
 
 			double amountPerDay = area / daysBetweenStartAndStop;
-
-			PostScriptBar psBar = new PostScriptBar(daysSinceEarliest, daysBetweenStartAndStop, amountPerDay, record);
-
+			
+			Color barColor;
+			if(record.getCategory().equals(Record.Category.DEFAULT.toString())){
+				barColor = colorRegistry.getDefaultColor();
+			}else {
+				barColor = colorRegistry.getColorOf(record.getCategory());
+			}
+			 
+			double daysSinceEarliest = Math.abs(DateUtilities.calculateDaysBetween(startDate, record.getStartDate()));
+			PostScriptBar psBar = new PostScriptBar(daysSinceEarliest, daysBetweenStartAndStop, amountPerDay, record, barColor);
+			
 			String[] bar = new String [] { psBar.getName(), Double.toString(psBar.lengthInDays()), Double.toString(psBar.amountPerDay()), Double.toString(psBar.getArea())};
 			csvWriter.writeNext(bar);
 
@@ -219,13 +272,13 @@ public abstract class AbstractVizArea {
 	 * This will return "header" definitions that represent all the definitions needed by a visualization area 
 	 * @return
 	 */
-	public abstract String getPostScriptVisualizationDefinitions();
+	public abstract String renderDefinitionsPostscript();
 
-	public List<String> getPostScriptPages() {
-		return getPages();
-	}
+	public abstract String renderVisualizationPostscript(int visualizationNumber);
+	
+	public abstract int numberOfVisualizations();
+	
 
-	public abstract List<String> getPages();
 
 
 }
