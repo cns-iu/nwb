@@ -69,7 +69,8 @@ public class Record {
 			DateTimeFormat.forPattern("dd/MMM/yyyy").getParser(),
 			DateTimeFormat.forPattern("yyyy").getParser(), };
 
-	private static final DateTimeParser[] US_FORMATS = { DateTimeFormat.fullDate().getParser(),
+	private static final DateTimeParser[] US_FORMATS = {
+			DateTimeFormat.fullDate().getParser(),
 			DateTimeFormat.fullDate().getParser(),
 			DateTimeFormat.longDate().getParser(),
 			DateTimeFormat.mediumDate().getParser(),
@@ -107,28 +108,15 @@ public class Record {
 		this.category = category;
 	}
 
-	public Record(Tuple tableRow, String labelKey, String startDateKey,
-			String endDateKey, String sizeByKey, String startDateFormat,
-			String endDateFormat, String categoryKey)
+	private static DateTime getDateTimeFromObject(Object date, String dateFormat)
 			throws InvalidRecordException {
-
-		this.label = PostScriptFormationUtilities
-				.matchParentheses((String) tableRow.get(labelKey));
-
-		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
-				.equals(categoryKey)) {
-			this.category = PostScriptFormationUtilities
-					.matchParentheses(Category.DEFAULT.toString());
-		} else {
-			this.category = PostScriptFormationUtilities
-					.matchParentheses((String) tableRow.get(categoryKey));
-		}
-
-		try {
-			System.out.println("'" + (String) tableRow.get(startDateKey) + "'");
+		if (date == null) {
+			throw new IllegalArgumentException("The value for the row was null");
+		} else if (Date.class == date.getClass()) {
+			return new DateTime(date);
+		} else if (String.class == date.getClass()) {
 			DateTimeFormatter formatter;
-			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT
-					.equals(startDateFormat)) {
+			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT.equals(dateFormat)) {
 				formatter = new DateTimeFormatterBuilder().append(null,
 						EUROPEAN_FORMATS).toFormatter();
 			} else {
@@ -136,9 +124,39 @@ public class Record {
 						US_FORMATS).toFormatter();
 			}
 
-			this.startDate = formatter.parseDateTime((String) tableRow
-					.get(startDateKey));
+			// HACK The nsf data in the sample data all has an extra space
+			// in
+			// the dates other than the start date.
+			return formatter.parseDateTime(date.toString()
+					.replaceAll("  ", " "));
 
+		} else {
+			throw new InvalidRecordException(
+					"Only date objects or string representations of the date are supported.");
+		}
+
+	}
+
+	public Record(Tuple tableRow, String labelKey, String startDateKey,
+			String endDateKey, String sizeByKey, String startDateFormat,
+			String endDateFormat, String categoryKey)
+			throws InvalidRecordException {
+
+		this.label = PostScriptFormationUtilities.matchParentheses(tableRow
+				.get(labelKey).toString());
+
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
+				.equals(categoryKey)) {
+			this.category = PostScriptFormationUtilities
+					.matchParentheses(Category.DEFAULT.toString());
+		} else {
+			this.category = PostScriptFormationUtilities
+					.matchParentheses(tableRow.get(categoryKey).toString());
+		}
+
+		try {
+			Object date = tableRow.get(startDateKey);
+			this.startDate = getDateTimeFromObject(date, startDateFormat);
 		} catch (IllegalArgumentException exception) {
 			String exceptionMessage = "The record labeled \'" + this.label
 					+ "\' contains an invalid start date.  It will be ignored.";
@@ -147,18 +165,8 @@ public class Record {
 		}
 
 		try {
-			DateTimeFormatter formatter;
-			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT.equals(endDateFormat)) {
-				formatter = new DateTimeFormatterBuilder().append(null,
-						EUROPEAN_FORMATS).toFormatter();
-			} else {
-				formatter = new DateTimeFormatterBuilder().append(null,
-						US_FORMATS).toFormatter();
-			}
-			// HACK The nsf data in the sample data all has an extra space in
-			// the dates other than the start date.
-			this.endDate = formatter.parseDateTime(((String) tableRow
-					.get(endDateKey)).replaceAll("  ", " "));
+			Object date = tableRow.get(endDateKey);
+			this.endDate = getDateTimeFromObject(date, endDateFormat);
 
 		} catch (IllegalArgumentException exception) {
 			String exceptionMessage = "The record labeled \'" + this.label
