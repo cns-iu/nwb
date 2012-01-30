@@ -25,7 +25,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.google.common.io.Files;
 
 public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
-	// TODO import external settings if possible
+	// SOMEDAY import external settings if possible
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String EPS_FILE_SUFFIX = ".eps";

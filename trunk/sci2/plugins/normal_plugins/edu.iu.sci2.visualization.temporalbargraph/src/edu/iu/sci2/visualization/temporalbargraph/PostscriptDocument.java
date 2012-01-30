@@ -27,10 +27,11 @@ public class PostscriptDocument
 			ColorRegistry<String> colorRegistry, String query,
 			DoubleDimension pageSize) throws PostScriptCreationException {
 
-		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth() * POINTS_PER_INCH,
-				pageSize.getHeight() * POINTS_PER_INCH);
-		this.temporalBarGraphPages = new TemporalBarGraphPages(csvWriter, records, scaleToOnePage,
-				colorRegistry, postscriptPageSize, legendText, query);
+		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth()
+				* POINTS_PER_INCH, pageSize.getHeight() * POINTS_PER_INCH);
+		this.temporalBarGraphPages = new TemporalBarGraphPages(csvWriter,
+				records, scaleToOnePage, colorRegistry, postscriptPageSize,
+				legendText, query);
 	}
 
 	@Override

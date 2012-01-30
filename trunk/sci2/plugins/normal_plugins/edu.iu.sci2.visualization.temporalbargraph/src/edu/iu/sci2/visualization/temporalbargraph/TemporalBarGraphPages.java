@@ -56,7 +56,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 
 	private Map<Integer, List<PageElement>> getPageElementsForSomePages() {
 		Map<Integer, List<PageElement>> pageElementsSomePages = new TreeMap<Integer, List<PageElement>>();
-		
+
 		String visualizationDefinitions = visualizations
 				.renderDefinitionsPostscript();
 
@@ -64,10 +64,10 @@ public class TemporalBarGraphPages extends AbstractPages {
 			String visualization = visualizations
 					.renderVisualizationPostscript(ii);
 			PageElement visualizationElement = new PageElement("visualization",
-					size.getWidth() * 0.10, size.getHeight() * 0.25, visualization, visualizationDefinitions);
-			
-			List<PageElement> pageElements = pageElementsSomePages
-					.get(ii);
+					size.getWidth() * 0.10, size.getHeight() * 0.25,
+					visualization, visualizationDefinitions);
+
+			List<PageElement> pageElements = pageElementsSomePages.get(ii);
 
 			if (!pageElementsSomePages.containsKey(ii)) {
 				pageElements = new ArrayList<PageElement>();
@@ -119,8 +119,8 @@ public class TemporalBarGraphPages extends AbstractPages {
 				.getInstanceOf("footerDefinitions");
 		footerDefinitionsTemplate.setAttribute("pageWidth", size.getWidth());
 
-		return new PageElement("footer", 0, 0,
-				footerTemplate, footerDefinitionsTemplate);
+		return new PageElement("footer", 0, 0, footerTemplate,
+				footerDefinitionsTemplate);
 	}
 
 	private PageElement getTitlePageElement() {
@@ -163,8 +163,8 @@ public class TemporalBarGraphPages extends AbstractPages {
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 8);
 
 		return new PageElement("howto", (size.getWidth() / 2)
-				- (0.10 * POINTS_PER_INCH), size.getHeight() * 0.10, howtoTemplate,
-				howtoDefinitionsTemplate);
+				- (0.10 * POINTS_PER_INCH), size.getHeight() * 0.10,
+				howtoTemplate, howtoDefinitionsTemplate);
 	}
 
 }
