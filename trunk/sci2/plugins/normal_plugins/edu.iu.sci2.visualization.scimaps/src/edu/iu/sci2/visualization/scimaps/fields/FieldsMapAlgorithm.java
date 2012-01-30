@@ -32,7 +32,6 @@ import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm;
 import edu.iu.sci2.visualization.scimaps.rendering.print2008.MapOfScienceDocumentRenderer;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
-import edu.iu.sci2.visualization.scimaps.testing.LogOnlyCIShellContext;
 
 public class FieldsMapAlgorithm implements Algorithm {
 	public static final String OUT_FIELD_COLUMN_NAME = "Field";
@@ -140,51 +139,4 @@ public class FieldsMapAlgorithm implements Algorithm {
 		return visualization;
 	}
 
-	public static void main(String[] args) {
-		try {
-			// File inFile = new
-			// File("C:\\Documents and Settings\\jrbibers\\Desktop\\nih demo\\scienceMap\\USDA-mapping-fake-values.csv");
-			File inFile = new File(
-					"C:\\Documents and Settings\\jrbibers\\Desktop\\nih demo\\scienceMap\\organism_UCSDcodes.csv");
-			Data data = new BasicData(inFile, CSV_MIME_TYPE);
-
-			PrefuseCsvReader prefuseCSVReader = new PrefuseCsvReader(
-					new Data[] { data });
-			Data[] convertedData = prefuseCSVReader.execute();
-
-			Dictionary<String, Object> parameters = new Hashtable<String, Object>();
-			// parameters.put(FieldsMapAlgorithmFactory.NODE_ID_COLUMN_NAME_ID,
-			// "UCSD Map Field Name");
-			// parameters.put(FieldsMapAlgorithmFactory.NODE_LABEL_COLUMN_NAME_ID,
-			// "Knowledge Areas");
-			// parameters.put(FieldsMapAlgorithmFactory.NODE_VALUE_COLUMN_NAME_ID,
-			// "Value");
-			// parameters.put(FieldsMapAlgorithmFactory.SCALING_FACTOR_ID,
-			// 1.0f);
-			// parameters.put(FieldsMapAlgorithmFactory.DATA_DISPLAY_NAME_ID,
-			// "Knowledge Areas");
-
-			parameters.put(FieldsMapAlgorithmFactory.NODE_ID_COLUMN_NAME_ID,
-					"UCSD Map Field #");
-			parameters.put(FieldsMapAlgorithmFactory.NODE_LABEL_COLUMN_NAME_ID,
-					"UCSD Name");
-			parameters.put(FieldsMapAlgorithmFactory.NODE_VALUE_COLUMN_NAME_ID,
-					FieldsMapAlgorithmFactory.NO_VALUE_COLUMN_TOKEN);
-			parameters.put(FieldsMapAlgorithmFactory.SCALING_FACTOR_ID, 1.0f);
-			parameters.put(FieldsMapAlgorithmFactory.DATA_DISPLAY_NAME_ID,
-					"organism");
-
-			AlgorithmFactory algorithmFactory = new FieldsMapAlgorithmFactory();
-			CIShellContext ciContext = new LogOnlyCIShellContext();
-			Algorithm algorithm = algorithmFactory.createAlgorithm(
-					convertedData, parameters, ciContext);
-
-			System.out.println("Executing.. ");
-			algorithm.execute();
-			System.out.println(".. Done.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
 }

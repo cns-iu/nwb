@@ -3,11 +3,8 @@ package edu.iu.sci2.visualization.scimaps.journals;
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -15,10 +12,8 @@ import java.util.Set;
 import oim.vivo.scimapcore.journal.Category;
 import oim.vivo.scimapcore.journal.Journal;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -28,12 +23,10 @@ import prefuse.data.Tuple;
 
 import com.google.common.collect.ImmutableSet;
 
-import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
-import edu.iu.sci2.visualization.scimaps.testing.LogOnlyCIShellContext;
 
 public class JournalsMapAlgorithm implements Algorithm {
 	public static final String OUT_FREQUENCY_COLUMN_NAME = "Frequency";
