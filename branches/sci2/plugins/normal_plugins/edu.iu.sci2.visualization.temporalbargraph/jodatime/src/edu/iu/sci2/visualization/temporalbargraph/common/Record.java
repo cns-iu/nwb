@@ -112,9 +112,9 @@ public class Record {
 			throws InvalidRecordException {
 		if (date == null) {
 			throw new IllegalArgumentException("The value for the row was null");
-		} else if (Date.class == date.getClass()) {
+		} else if (date instanceof Date) {
 			return new DateTime(date);
-		} else if (String.class == date.getClass()) {
+		} else if (date instanceof String) {
 			DateTimeFormatter formatter;
 			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT.equals(dateFormat)) {
 				formatter = new DateTimeFormatterBuilder().append(null,
@@ -127,7 +127,7 @@ public class Record {
 			// HACK The nsf data in the sample data all has an extra space
 			// in
 			// the dates other than the start date.
-			return formatter.parseDateTime(date.toString()
+			return formatter.parseDateTime(((String) date)
 					.replaceAll("  ", " "));
 
 		} else {

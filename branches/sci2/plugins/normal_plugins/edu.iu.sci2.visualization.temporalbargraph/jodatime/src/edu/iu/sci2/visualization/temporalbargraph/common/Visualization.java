@@ -9,10 +9,12 @@ import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.color.ColorRegistry;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import org.joda.time.Days;
+
+import com.google.common.base.Preconditions;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -45,9 +47,14 @@ public class Visualization extends AbstractVisualization{
 		this.size = size;
 		
 		Collections.sort(records, Record.START_DATE_ORDERING);
-		List<PostScriptBar> bars = createBars(records, csvWriter, vizAreaStartDate, colorRegistry);		
+		List<PostScriptBar> bars = createBars(records, csvWriter, vizAreaStartDate, colorRegistry);
 		
-		vizAreaTotalDays = getTotalDays(vizAreaStartDate, vizAreaEndDate);
+		int totalDays = Days.daysBetween(vizAreaStartDate, vizAreaEndDate).getDays();
+		if (totalDays == 0){
+			throw new PostScriptCreationException("You must have atleast 1 day between start and end dates to visualize.");
+		}		
+		
+		vizAreaTotalDays = totalDays;
 
 
 		
@@ -123,6 +130,7 @@ public class Visualization extends AbstractVisualization{
 		return barsArea.toString();
 	}
 		
+	@SuppressWarnings("unchecked") // Raw types from DateTimeComparator#getInstance()
 	protected String getDateLinesArea(){
 		StringBuilder datelineArea = new StringBuilder();
 		List<String> dateLines = new LinkedList<String>();
@@ -130,7 +138,7 @@ public class Visualization extends AbstractVisualization{
 		List<DateTime> newYearsDates = getNewYearsDates(vizAreaStartDate, vizAreaEndDate);
 		
 		if(newYearsDates.size() > MAX_LINEDATES){
-			newYearsDates = reduceDates(newYearsDates, MAX_LINEDATES);
+			newYearsDates = decimate(newYearsDates, DateTimeComparator.getInstance(), MAX_LINEDATES);
 			
 		}
 		

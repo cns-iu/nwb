@@ -3,30 +3,25 @@ package edu.iu.sci2.visualization.temporalbargraph.common;
 import java.awt.Color;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.color.ColorRegistry;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
-import org.joda.time.Hours;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Minutes;
-import org.joda.time.Months;
 import org.joda.time.Period;
-import org.joda.time.ReadableDateTime;
-import org.joda.time.Seconds;
 import org.joda.time.Years;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -82,37 +77,43 @@ public abstract class AbstractVisualization {
 	}
 
 	/**
-	 * This will return a new list of dates that is smaller or equal to the maxDates
-	 * @param dates The dates you wish to prune.
-	 * @param maxDates The maximum number of dates to allow.
-	 * @return
+	 * Retain {@code maxNumberToRetain} (mostly) equally spaced elements from
+	 * {@code collection} after sorting using {@code comparator}.
+	 * @param maxNumberToRetain Must be >= 2 since we always retain the first and last elements from {@code collection}.
 	 */
-	protected static List<DateTime> reduceDates(List<DateTime> dates, int maxDates){
-		//The DateTimeComparator works on objects so this can't be checked.
-		Collections.sort(dates);
+	public static <E> List<E> decimate(
+			Collection<? extends E> collection,
+			Comparator<? super E> comparator,
+			int maxNumberToRetain){
+		Preconditions.checkArgument(maxNumberToRetain >= 2, "maxNumberToRetain must be >= 2, it was %d", maxNumberToRetain);
+		Preconditions.checkArgument(collection.size() >= maxNumberToRetain, "collection must be >= maxNumberToRetain.  collection.size() was %d and maxNumberToRetain was %d", collection.size(), maxNumberToRetain);
+
+		List<? extends E> sortedList = Ordering.from(comparator).sortedCopy(collection);		
 		
-		assert(maxDates >= 2);  // you need more than 2 per page
-		List<DateTime> reducedDates = new ArrayList<DateTime>(maxDates);
-		
-		// Keep the first and last dates always
-		reducedDates.add(dates.get(0));
-		reducedDates.add(dates.get(dates.size() - 1));
-		
-		// How many datelines are left
-		int yearsLeft = dates.size() - 2;
-		int datelinesNeeded = maxDates - 2;
-		
-		// Make sure to round so the graph is nicely spaced, but never exceeds maxDates.
-		int yearsBetweenTicks = (int) Math.ceil((double) yearsLeft / (double) datelinesNeeded);
-		
-		for(int ii = yearsBetweenTicks; ii < dates.size(); ii += yearsBetweenTicks){
-			reducedDates.add(dates.get(ii));
+		/* Always keep the two extreme elements from the original collection. */
+		PriorityQueue<E> decimated = new PriorityQueue<E>(maxNumberToRetain, comparator);		
+		decimated.add(sortedList.get(0));
+		decimated.add(sortedList.get(sortedList.size() - 1));
+
+		if (maxNumberToRetain == 2) {
+			return Lists.newArrayList(decimated);
 		}
 		
-		//The DateTimeComparator works on objects so this can't be checked.
-		Collections.sort(reducedDates);
+		/* How many of the interior elements do we have,
+		 * and how many do we want to retain?
+		 * Then figure the corresponding step size for the original collection. */
+		int numberOfInteriorElements = sortedList.size() - 2;
+		int numberOfPreservedInteriorElements = maxNumberToRetain - 2;
+		// Make sure to round the distance between retained interior elements, but never exceeds maxNumberToPreserve.
+		int stepSize = (int) Math.ceil((double) numberOfInteriorElements / (double) numberOfPreservedInteriorElements);
 		
-		return reducedDates;
+		assert(stepSize > 0);
+		
+		for (int ii = stepSize; ii < sortedList.size(); ii += stepSize) {
+			decimated.add(sortedList.get(ii));
+		}
+		
+		return Lists.newArrayList(decimated);
 	}
 	
 	/**
@@ -185,16 +186,6 @@ public abstract class AbstractVisualization {
 		return totalAmountPerDay;
 	}
 
-	protected static int getTotalDays(DateTime startDate, DateTime endDate) throws PostScriptCreationException {
-
-		int totalDays = Days.daysBetween(startDate, endDate).getDays();
-		if (totalDays == 0){
-			throw new PostScriptCreationException("The start and end dates are the same.");
-		}
-
-		return totalDays;
-	}
-
 	/**
 	 * Given a list of records, this will create postscriptbars
 	 * @param records The records to be made into postscriptbars
@@ -241,7 +232,7 @@ public abstract class AbstractVisualization {
 		return sum(greatestDeltaYs);
 	}
 
-	public static double sum(Iterable<? extends Double> doubles) {
+	private static double sum(Iterable<? extends Double> doubles) {
 		double total = 0.0;
 
 		for (double d : doubles) {
