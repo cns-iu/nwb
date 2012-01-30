@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.temporalbargraph;
 
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
 public class TemporalBarGraphPages extends AbstractPages {
+	public static DecimalFormat formatter = new DecimalFormat("###,###");
 	private Visualization visualizations;
 	private DoubleDimension size;
 	private String legendText;
@@ -97,8 +99,8 @@ public class TemporalBarGraphPages extends AbstractPages {
 		legendTemplate.setAttribute("title", this.legendText);
 		legendTemplate.setAttribute("startYearLabel", "Start Year");
 		legendTemplate.setAttribute("endYearLabel", "End Year");
-		legendTemplate.setAttribute("min", this.visualizations.minRecordValue());
-		legendTemplate.setAttribute("max", this.visualizations.minRecordValue());
+		legendTemplate.setAttribute("min", formatter.format(this.visualizations.minRecordValue()));
+		legendTemplate.setAttribute("max",  formatter.format(this.visualizations.maxRecordValue()));
 
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");

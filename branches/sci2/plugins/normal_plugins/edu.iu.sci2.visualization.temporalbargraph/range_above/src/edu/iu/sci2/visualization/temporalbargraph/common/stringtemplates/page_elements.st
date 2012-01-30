@@ -192,7 +192,7 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 
 legendTitleTop(title, startYearLabel, endYearLabel, min, max) ::= <<
 
-<min> <max> (<title>) (<startYearLabel>) (<endYearLabel>) legendTitleTop
+(<min>) (<max>) (<title>) (<startYearLabel>) (<endYearLabel>) legendTitleTop
 
 >>
 
