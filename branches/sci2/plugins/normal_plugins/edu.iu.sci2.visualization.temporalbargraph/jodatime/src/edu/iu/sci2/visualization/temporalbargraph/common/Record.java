@@ -70,6 +70,7 @@ public class Record {
 			DateTimeFormat.forPattern("yyyy").getParser(), };
 
 	private static final DateTimeParser[] US_FORMATS = { DateTimeFormat.fullDate().getParser(),
+			DateTimeFormat.fullDate().getParser(),
 			DateTimeFormat.longDate().getParser(),
 			DateTimeFormat.mediumDate().getParser(),
 			DateTimeFormat.shortDate().getParser(),
