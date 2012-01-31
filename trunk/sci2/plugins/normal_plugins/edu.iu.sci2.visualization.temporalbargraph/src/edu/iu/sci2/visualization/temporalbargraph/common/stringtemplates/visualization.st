@@ -41,8 +41,11 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /labelbarSpacing { visualizationLabelBarFontSize } def
 /labelbarLabel { % (label) [x] [y] => -
 	gsave
+	exch  % [y] [x]
+	dup  % [y] [x] [x]
+	3 -1 roll % [x] [x] [y]
 	moveto
-	leftVizMargin labelbarSpacing sub exch righttrim
+	leftVizMargin labelbarSpacing sub add exch righttrim
 	dup stringwidth pop neg labelbarSpacing sub % (label) x
 	exch dup textheight 2 div neg % x (label) y
 	3 -1 roll exch % (label) x y
