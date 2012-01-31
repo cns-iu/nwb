@@ -105,9 +105,9 @@ public class TemporalBarGraphPages extends AbstractPages {
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
 		legendDefinitionsTemplate.setAttribute("legendWidth",
-				size.getWidth() * 0.20);
+				size.getWidth() * 0.30);
 
-		return new PageElement("legendTitleTop", size.getWidth() * 0.15,
+		return new PageElement("legendTitleTop", size.getWidth() * 0.10,
 				size.getHeight() * 0.10, legendTemplate,
 				legendDefinitionsTemplate);
 	}
@@ -163,11 +163,11 @@ public class TemporalBarGraphPages extends AbstractPages {
 
 		StringTemplate howtoDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("howtoDefinitions");
-		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 10);
-		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 8);
+		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 14);
+		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
 		return new PageElement("howto", (size.getWidth() / 2)
-				- (0.10 * POINTS_PER_INCH), size.getHeight() * 0.10,
+				+ (0.10 * POINTS_PER_INCH), size.getHeight() * 0.10,
 				howtoTemplate, howtoDefinitionsTemplate);
 	}
 
