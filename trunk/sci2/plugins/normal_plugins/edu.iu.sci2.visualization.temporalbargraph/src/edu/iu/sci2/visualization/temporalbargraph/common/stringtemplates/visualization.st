@@ -9,11 +9,23 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /leftVizMargin { visualizationLeft } def
 
 /bar { % x1 y1 deltaX deltaY => -
+	dup 0.0 eq 
+	{
+	pop % x1 y1 deltaX
+	3 1 roll % deltaX x1 y1
+	moveto % deltaX
+	[2] 0 setdash
+	0 setlinewidth
+	0 rlineto
+	stroke
+	}	
+	{
 	newpath
 	4 2 roll moveto
 	exch dup 0 rlineto 0 3 -1 roll
 	rlineto neg 0 rlineto
 	fill
+	} ifelse
 } def
 /labelbar { % (label) x1 y1 deltaX deltaY color => -
 	gsave
