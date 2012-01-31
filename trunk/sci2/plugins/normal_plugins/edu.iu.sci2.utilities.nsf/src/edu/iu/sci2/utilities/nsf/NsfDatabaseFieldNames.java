@@ -1,6 +1,6 @@
 package edu.iu.sci2.utilities.nsf;
 
-public class NSF_Database_FieldNames {
+public class NsfDatabaseFieldNames {
 	
 	public static final String NSF_DATABASE_MIME_TYPE = "db:nsf";
 	

@@ -3,7 +3,7 @@ package edu.iu.sci2.utilities.nsf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NSF_CSV_FieldNames {
+public class NsfCsvFieldNames {
 	
 	@SuppressWarnings("serial")
 	public static class CSV {
