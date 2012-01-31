@@ -115,19 +115,20 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 /legendTitleTopTitleFontSize { 10.0 } def
 /legendTitleTopThickness { 10.0 } def
 
-/legendTitleTop { % [min] [max] (title) (start year) (end year) => -
+/legendTitleTop { % (title) [min] [max] (start year) (end year) => -
 	gsave
 	0 0 0 setrgbcolor
 	legendTitleTopLeft legendTitleTopBottom translate
 	0 0 moveto
 	legendTitleTopYearLabels
 	legendTitleTopBar
-	legendTitleTopTitle
 	legendTitleTopRange
+	legendTitleTopTitle
 	grestore
 } def
 
 /legendTitleTopYearLabels {
+	gsave
 	/ArialMT legendTitleTopYearFontSize selectfont
 	exch dup
 	stringwidth pop 2 div 2 -1 roll show % [x1] (end) (title)
@@ -135,7 +136,8 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 	stringwidth pop dup 2 div exch % [dx2] [dx2]/2 (end) [x1] (title)
 	legendTitleTopRightPosition exch sub dup 3 -1 roll exch sub exch 0 moveto  % => RM [dx2] [dx2]/2 (end) [x1] (title) => RM-[dx2] [dx2]/2 (end) [x1] (title) => RM-[dx2] RM-[dx2] [dx2]/2 (end) [x1] (title) => [dx2]/2 RM-[dx2] RM-[dx2] (end) [x1] (title) => ... => [x2] (end) [x1] (title)
 	2 -1 roll show % [x2] [x1] (title)
-	exch dup 
+	exch dup
+	grestore 
 	0 legendTitleTopYearFontSize translate % [x1] [x2] (title)
 	0 0 moveto
 } def
@@ -156,9 +158,9 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 } def
 
 /legendTitleTopTitle {
+	gsave
 	/ArialMT legendTitleTopTitleFontSize selectfont
 	legendTitleTopRightPosition 2 div % (title) [center x]
-	gsave
 	0  % => (title) [x] [y]
 	center
 	show
@@ -167,23 +169,19 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 	0 0 moveto
 } def 
 
-/legendTitleTopRange { % [min] [max]
+/legendTitleTopRange { % [max] [min]
 	gsave
-	/rangeTitleFontSize { 10 } def
 	/rangeBodyFontSize { 8 } def
 	/ArialMT rangeBodyFontSize selectfont
-	(Maximum = ) show
-	20 string cvs show
-	0 rangeBodyFontSize translate
-	0 0 moveto
 	(Minimum = ) show
 	20 string cvs show
-	0 rangeBodyFontSize translate
 	0 0 moveto
-	/ArialMT rangeTitleFontSize selectfont
-	(Range) show
+	20 string cvs % [max] => (max)
+	(Maximum = ) exch concatstrings
+	dup stringwidth pop legendTitleTopRightPosition exch sub 0 moveto
+	show
 	grestore
-	0 rangeBodyFontSize 2 mul rangeTitleFontSize add translate
+	0 rangeBodyFontSize translate
 	0 0 moveto
 } def
 
@@ -192,7 +190,7 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 
 legendTitleTop(title, startYearLabel, endYearLabel, min, max) ::= <<
 
-(<min>) (<max>) (<title>) (<startYearLabel>) (<endYearLabel>) legendTitleTop
+(<title>) (<max>) (<min>) (<startYearLabel>) (<endYearLabel>) legendTitleTop
 
 >>
 
