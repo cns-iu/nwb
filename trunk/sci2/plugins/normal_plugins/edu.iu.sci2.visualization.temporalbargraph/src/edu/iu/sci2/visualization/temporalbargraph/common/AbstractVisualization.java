@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,7 +92,7 @@ public abstract class AbstractVisualization {
 		List<? extends E> sortedList = Ordering.from(comparator).sortedCopy(collection);		
 		
 		/* Always keep the two extreme elements from the original collection. */
-		PriorityQueue<E> decimated = new PriorityQueue<E>(maxNumberToRetain, comparator);		
+		List<E> decimated = new ArrayList<E>(maxNumberToRetain);		
 		decimated.add(sortedList.get(0));
 		decimated.add(sortedList.get(sortedList.size() - 1));
 
@@ -109,11 +110,12 @@ public abstract class AbstractVisualization {
 		
 		assert(stepSize > 0);
 		
-		for (int ii = stepSize; ii < sortedList.size(); ii += stepSize) {
+		for (int ii = stepSize; ii < sortedList.size() - 1; ii += stepSize) {
 			decimated.add(sortedList.get(ii));
 		}
 		
-		return Lists.newArrayList(decimated);
+		Collections.sort(decimated, comparator);
+		return decimated;
 	}
 	
 	/**
