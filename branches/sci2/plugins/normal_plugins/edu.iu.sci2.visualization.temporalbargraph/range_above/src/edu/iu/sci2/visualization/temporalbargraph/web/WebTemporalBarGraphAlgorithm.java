@@ -38,7 +38,7 @@ public class WebTemporalBarGraphAlgorithm extends
 		this.inputData = inputData;
 
 		/*
-		 * FIXME I don't want to pass the column label down all the way, but I
+		 * SOMEDAY I don't want to pass the column label down all the way, but I
 		 * really shouldn't care what the legend text is at this point.  If you 
 		 * find a good solution, please apply it to the colorRegistry too.
 		 */

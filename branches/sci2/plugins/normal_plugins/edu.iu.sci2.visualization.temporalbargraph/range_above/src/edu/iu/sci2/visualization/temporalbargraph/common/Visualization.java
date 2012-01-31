@@ -4,14 +4,15 @@ import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFor
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.color.ColorRegistry;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.Days;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -23,8 +24,8 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class Visualization extends AbstractVisualization {
 
-	private Date vizAreaStartDate;
-	private Date vizAreaEndDate;
+	private DateTime vizAreaStartDate;
+	private DateTime vizAreaEndDate;
 
 	private DoubleDimension size;
 
@@ -49,10 +50,14 @@ public class Visualization extends AbstractVisualization {
 		this.size = size;
 
 		Collections.sort(records, Record.START_DATE_ORDERING);
-		List<PostScriptBar> bars = createBars(records, csvWriter,
-				vizAreaStartDate, colorRegistry);
-
-		vizAreaTotalDays = getTotalDays(vizAreaStartDate, vizAreaEndDate);
+		List<PostScriptBar> bars = createBars(records, csvWriter, vizAreaStartDate, colorRegistry);
+		
+		int totalDays = Days.daysBetween(vizAreaStartDate, vizAreaEndDate).getDays();
+		if (totalDays == 0){
+			throw new PostScriptCreationException("You must have atleast 1 day between start and end dates to visualize.");
+		}		
+		
+		vizAreaTotalDays = totalDays;
 
 		if (scaleToOnePage) {
 			visualizations = new ArrayList<String>();
@@ -140,31 +145,29 @@ public class Visualization extends AbstractVisualization {
 
 		return barsArea.toString();
 	}
-
-	protected String getDateLinesArea() {
+		
+	@SuppressWarnings("unchecked") // Raw types from DateTimeComparator#getInstance()
+	protected String getDateLinesArea(){
 		StringBuilder datelineArea = new StringBuilder();
 		List<String> dateLines = new LinkedList<String>();
-
-		List<Date> newYearsDates = getNewYearsDates(vizAreaStartDate,
-				vizAreaEndDate);
-
-		if (newYearsDates.size() > MAX_LINEDATES) {
-			newYearsDates = reduceDates(newYearsDates, MAX_LINEDATES);
-
+		List<DateTime> newYearsDates = getNewYearsDates(vizAreaStartDate, vizAreaEndDate);
+		
+		if(newYearsDates.size() > MAX_LINEDATES){
+			newYearsDates = decimate(newYearsDates, DateTimeComparator.getInstance(), MAX_LINEDATES);
+			
 		}
 
-		for (Date newYear : newYearsDates) {
+		for (DateTime newYear : newYearsDates) {
 
 			double usableXPoints = size.getWidth();
 
 			double pointsPerDay = usableXPoints / vizAreaTotalDays;
 
-			String label = Integer.toString(newYear.getYear());
-			double x = Math.abs(DateUtilities.calculateDaysBetween(
-					vizAreaStartDate, newYear)) * pointsPerDay;
-
-			StringTemplate datelineTemplate = group
-					.getInstanceOf("visualizationDateLine");
+			String label = Integer.toString(newYear.toLocalDate().getYear());
+			double x = Days.daysBetween(vizAreaStartDate, newYear).getDays() * pointsPerDay;
+			
+			StringTemplate datelineTemplate =
+					group.getInstanceOf("visualizationDateLine");
 			datelineTemplate.setAttribute("label", label);
 			datelineTemplate.setAttribute("x1", x);
 

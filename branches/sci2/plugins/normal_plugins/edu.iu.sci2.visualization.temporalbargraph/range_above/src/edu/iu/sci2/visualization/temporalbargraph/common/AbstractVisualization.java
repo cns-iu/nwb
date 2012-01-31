@@ -3,21 +3,26 @@ package edu.iu.sci2.visualization.temporalbargraph.common;
 import java.awt.Color;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.color.ColorRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.Years;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -57,58 +62,61 @@ public abstract class AbstractVisualization {
 	 * @param endDate The ending date.
 	 * @return A list of Date objects representing all the new years between the dates.
 	 */
-	protected static List<Date> getNewYearsDates(Date startDate, Date endDate) {
-		// FIXME Switch to joda-time
-		List<Date> newYearsDates = new LinkedList<Date>();
-		int startYear = startDate.getYear();
-		int endYear = endDate.getYear();
+	protected static List<DateTime> getNewYearsDates(DateTime startDate, DateTime endDate) {
+		List<DateTime> newYearsDates = new LinkedList<DateTime>();
+		int startYear = startDate.toLocalDate().getYear();
+		int endYear = endDate.toLocalDate().getYear();
 
 		if (endYear - startYear < 1){
-			int year = startYear;
-			int month = 0; //Jan
-			int day = 1; //1st
-			newYearsDates.add(new Date(year, month, day));
+			newYearsDates.add(new LocalDate(startYear, DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay());
 		}else{
 			for(int i = startYear; i <= endYear; i++){
-				int year = i;
-				int month = 0;  //jan
-				int day = 1; //1st
-				newYearsDates.add(new Date(year, month, day));
+				newYearsDates.add(new LocalDate(i, DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay());
 			}
 		}
+		
 		return newYearsDates;
 	}
 
 	/**
-	 * This will return a new list of dates that is smaller or equal to the maxDates
-	 * @param dates The dates you wish to prune.
-	 * @param maxDates The maximum number of dates to allow.
-	 * @return
+	 * Retain {@code maxNumberToRetain} (mostly) equally spaced elements from
+	 * {@code collection} after sorting using {@code comparator}.
+	 * @param maxNumberToRetain Must be >= 2 since we always retain the first and last elements from {@code collection}.
 	 */
-	protected static List<Date> reduceDates(List<Date> dates, int maxDates){
-		Collections.sort(dates);
+	public static <E> List<E> decimate(
+			Collection<? extends E> collection,
+			Comparator<? super E> comparator,
+			int maxNumberToRetain){
+		Preconditions.checkArgument(maxNumberToRetain >= 2, "maxNumberToRetain must be >= 2, it was %d", maxNumberToRetain);
+		Preconditions.checkArgument(collection.size() >= maxNumberToRetain, "collection must be >= maxNumberToRetain.  collection.size() was %d and maxNumberToRetain was %d", collection.size(), maxNumberToRetain);
+
+		List<? extends E> sortedList = Ordering.from(comparator).sortedCopy(collection);		
 		
-		assert(maxDates >= 2);  // you need more than 2 per page
-		List<Date> reducedDates = new ArrayList<Date>(maxDates);
-		
-		// Keep the first and last dates always
-		reducedDates.add(dates.get(0));
-		reducedDates.add(dates.get(dates.size() - 1));
-		
-		// How many datelines are left
-		int yearsLeft = dates.size() - 2;
-		int datelinesNeeded = maxDates - 2;
-		
-		// Make sure to round so the graph is nicely spaced, but never exceeds maxDates.
-		int yearsBetweenTicks = (int) Math.ceil((double) yearsLeft / (double) datelinesNeeded);
-		
-		for(int ii = yearsBetweenTicks; ii < dates.size(); ii += yearsBetweenTicks){
-			reducedDates.add(dates.get(ii));
+		/* Always keep the two extreme elements from the original collection. */
+		List<E> decimated = new ArrayList<E>(maxNumberToRetain);		
+		decimated.add(sortedList.get(0));
+		decimated.add(sortedList.get(sortedList.size() - 1));
+
+		if (maxNumberToRetain == 2) {
+			return Lists.newArrayList(decimated);
 		}
 		
-		Collections.sort(reducedDates);
+		/* How many of the interior elements do we have,
+		 * and how many do we want to retain?
+		 * Then figure the corresponding step size for the original collection. */
+		int numberOfInteriorElements = sortedList.size() - 2;
+		int numberOfPreservedInteriorElements = maxNumberToRetain - 2;
+		// Make sure to round the distance between retained interior elements, but never exceeds maxNumberToPreserve.
+		int stepSize = (int) Math.ceil((double) numberOfInteriorElements / (double) numberOfPreservedInteriorElements);
 		
-		return reducedDates;
+		assert(stepSize > 0);
+		
+		for (int ii = stepSize; ii < sortedList.size() - 1; ii += stepSize) {
+			decimated.add(sortedList.get(ii));
+		}
+		
+		Collections.sort(decimated, comparator);
+		return decimated;
 	}
 	
 	/**
@@ -117,7 +125,7 @@ public abstract class AbstractVisualization {
 	 * @return A date object that represents Jan 1st of the year after the last year.
 	 * @throws PostScriptCreationException
 	 */
-	protected static Date getFirstNewYearAfterLastEndDate(List<Record> records)
+	protected static DateTime getFirstNewYearAfterLastEndDate(List<Record> records)
 			throws PostScriptCreationException {
 		if (records.size() <= 0) {
 			throw new PostScriptCreationException(
@@ -125,13 +133,9 @@ public abstract class AbstractVisualization {
 		}
 
 
-		Date endDate = Record.END_DATE_ORDERING.max(records).getEndDate();
+		DateTime endDate = Record.END_DATE_ORDERING.max(records).getEndDate();
 
-		// FIXME Switch to joda-time
-		int year = endDate.getYear() + 1;
-		int month = 0; // Jan
-		int day = 1; // 1st
-		Date lastYear = new Date(year, month, day);
+		DateTime lastYear = new LocalDate(endDate.toLocalDate().getYear() + 1, DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay();
 		return lastYear;
 	}
 
@@ -141,20 +145,16 @@ public abstract class AbstractVisualization {
 	 * @return A Date object that represents jan 1 the earliest year.
 	 * @throws PostScriptCreationException
 	 */
-	protected static Date getFirstNewYearBeforeStartDate(List<Record> records)
+	protected static DateTime getFirstNewYearBeforeStartDate(List<Record> records)
 			throws PostScriptCreationException {
 		if (records.size() <= 0) {
 			throw new PostScriptCreationException(
 					"You must provide some records for the PostScriptRecordManager to work");
 		}
 
-		Date startDate = Record.START_DATE_ORDERING.min(records).getStartDate();
+		DateTime startDate = Record.START_DATE_ORDERING.min(records).getStartDate();
 
-		// FIXME Switch to joda-time
-		int year = startDate.getYear();
-		int month = 0; //Jan
-		int day = 1; // 1st
-		Date firstYear = new Date(year, month, day);
+		DateTime firstYear = new LocalDate(startDate.toLocalDate().getYear(), DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay();
 		return firstYear;
 	}
 
@@ -189,16 +189,6 @@ public abstract class AbstractVisualization {
 		return totalAmountPerDay;
 	}
 
-	protected static double getTotalDays(Date startDate, Date endDate) throws PostScriptCreationException {
-
-		double totalDays = DateUtilities.calculateDaysBetween(startDate, endDate); 
-		if (totalDays == 0){
-			throw new PostScriptCreationException("The start and end dates are the same.");
-		}
-
-		return totalDays;
-	}
-
 	/**
 	 * Given a list of records, this will create postscriptbars
 	 * @param records The records to be made into postscriptbars
@@ -206,28 +196,14 @@ public abstract class AbstractVisualization {
 	 * @param startDate The starting date of the graph
 	 * @return A list of all the postscriptbars
 	 */
-	protected static List<PostScriptBar> createBars(List<Record> records, CSVWriter csvWriter, Date startDate, ColorRegistry<String> colorRegistry) {
+	protected static List<PostScriptBar> createBars(List<Record> records, CSVWriter csvWriter, DateTime startDate, ColorRegistry<String> colorRegistry) {
 		List<PostScriptBar> bars = new ArrayList<PostScriptBar>(records.size());
 		
 		for(Record record : records){
-			int daysBetweenStartAndStop = Math.abs(DateUtilities.calculateDaysBetween(record.getStartDate(), record.getEndDate()));
-			
+			int daysBetweenStartAndStop = Days.daysBetween(record.getStartDate(), record.getEndDate()).getDays();
+				
 			if (daysBetweenStartAndStop == 0){
-				
-				// Assume that the user would want one year length if the start and stop days are the same.
-				int year = record.getStartDate().getYear();
-				int monthOfYear = DateTimeConstants.JANUARY;
-				int dayOfMonth = 1;
-				int hourOfDay = 12;
-				int minuteOfHour = 0;
-				int secondOfMinute = 0;
-				int millisOfSecond = 000;
-				
-				DateTime recordYear = new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
-				
-				DateTime yearAfterRecordYear = new DateTime(year + 1, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
-				
-				daysBetweenStartAndStop = Days.daysBetween(recordYear, yearAfterRecordYear).getDays();
+				daysBetweenStartAndStop = new Period(Years.ONE).getDays();
 			}
 
 			double area = record.getAmount();
@@ -241,7 +217,8 @@ public abstract class AbstractVisualization {
 				barColor = colorRegistry.getColorOf(record.getCategory());
 			}
 			 
-			double daysSinceEarliest = Math.abs(DateUtilities.calculateDaysBetween(startDate, record.getStartDate()));
+			double daysSinceEarliest = Days.daysBetween(startDate, record.getStartDate()).getDays();
+			
 			PostScriptBar psBar = new PostScriptBar(daysSinceEarliest, daysBetweenStartAndStop, amountPerDay, record, barColor);
 			
 			String[] bar = new String [] { psBar.getName(), Double.toString(psBar.lengthInDays()), Double.toString(psBar.amountPerDay()), Double.toString(psBar.getArea())};
@@ -253,13 +230,12 @@ public abstract class AbstractVisualization {
 	}
 
 	protected static double getTopNDeltaYSum(List<PostScriptBar> bars, int barsPerPage) {
-		// TODO Use a heap instead?
 		List<Double> deltaYs = ImmutableList.copyOf(Collections2.transform(bars, AMOUNT_PER_DAY_GETTER));		
 		List<Double> greatestDeltaYs = Ordering.natural().greatestOf(deltaYs, barsPerPage);
 		return sum(greatestDeltaYs);
 	}
 
-	public static double sum(Iterable<? extends Double> doubles) {
+	private static double sum(Iterable<? extends Double> doubles) {
 		double total = 0.0;
 
 		for (double d : doubles) {
