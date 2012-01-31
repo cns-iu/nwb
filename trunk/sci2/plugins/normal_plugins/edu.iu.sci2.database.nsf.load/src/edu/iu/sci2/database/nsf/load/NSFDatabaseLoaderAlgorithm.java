@@ -28,7 +28,7 @@ import edu.iu.sci2.database.nsf.load.exception.NSFReadingException;
 import edu.iu.sci2.database.nsf.load.utilities.CSVReaderUtilities;
 import edu.iu.sci2.database.nsf.load.utilities.NSFMetadata;
 import edu.iu.sci2.database.nsf.load.utilities.NSFTableModelParser;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 /**
  * @author cdtank
@@ -103,7 +103,7 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     }
 
 	private Data[] annotateOutputData(Database database, Data parentData) {
-		Data output = new BasicData(database, NSF_Database_FieldNames.NSF_DATABASE_MIME_TYPE);
+		Data output = new BasicData(database, NsfDatabaseFieldNames.NSF_DATABASE_MIME_TYPE);
 		Dictionary<String, Object> metadata = output.getMetadata();
 		metadata.put(
 			DataProperty.LABEL,

@@ -12,25 +12,25 @@ import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class Award extends Entity<Award> {
 	public static final Schema<Award> SCHEMA = new Schema<Award>(
 			true,
-			NSF_Database_FieldNames.AWARD_NUMBER, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.TITLE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.START_DATE, DerbyFieldType.DATE,
-			NSF_Database_FieldNames.RAW_START_DATE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.EXPIRATION_DATE, DerbyFieldType.DATE,
-			NSF_Database_FieldNames.RAW_EXPIRATION_DATE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.LAST_AMENDMENT_DATE, DerbyFieldType.DATE,
-			NSF_Database_FieldNames.RAW_LAST_AMENDMENT_DATE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, DerbyFieldType.DOUBLE,
-			NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.AWARD_INSTRUMENT, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.NSF_DIRECTORATE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.NSF_ORGANIZATION, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.ABSTRACT_TEXT, DerbyFieldType.TEXT
+			NsfDatabaseFieldNames.AWARD_NUMBER, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.TITLE, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.START_DATE, DerbyFieldType.DATE,
+			NsfDatabaseFieldNames.RAW_START_DATE, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.EXPIRATION_DATE, DerbyFieldType.DATE,
+			NsfDatabaseFieldNames.RAW_EXPIRATION_DATE, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.LAST_AMENDMENT_DATE, DerbyFieldType.DATE,
+			NsfDatabaseFieldNames.RAW_LAST_AMENDMENT_DATE, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.AWARDED_AMOUNT_TO_DATE, DerbyFieldType.DOUBLE,
+			NsfDatabaseFieldNames.RAW_AWARDED_AMOUNT_TO_DATE, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.AWARD_INSTRUMENT, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.NSF_DIRECTORATE, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.NSF_ORGANIZATION, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.ABSTRACT_TEXT, DerbyFieldType.TEXT
 			);
 	
 	private String awardNumber;
@@ -226,32 +226,32 @@ public class Award extends Entity<Award> {
 			String nSFOrganization,
 			String abstractText) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.TITLE, title);
-		attributes.put(NSF_Database_FieldNames.AWARD_NUMBER, awardNumber);
+		attributes.put(NsfDatabaseFieldNames.TITLE, title);
+		attributes.put(NsfDatabaseFieldNames.AWARD_NUMBER, awardNumber);
 		
 		if (startDate != null) {
-			attributes.put(NSF_Database_FieldNames.START_DATE, startDate);
+			attributes.put(NsfDatabaseFieldNames.START_DATE, startDate);
 		}
 		
-		attributes.put(NSF_Database_FieldNames.RAW_START_DATE, rawStartDate);
+		attributes.put(NsfDatabaseFieldNames.RAW_START_DATE, rawStartDate);
 		
 		if (expirationDate != null) {
-			attributes.put(NSF_Database_FieldNames.EXPIRATION_DATE, expirationDate);
+			attributes.put(NsfDatabaseFieldNames.EXPIRATION_DATE, expirationDate);
 		}
 		
-		attributes.put(NSF_Database_FieldNames.RAW_EXPIRATION_DATE, rawExpirationDate);
+		attributes.put(NsfDatabaseFieldNames.RAW_EXPIRATION_DATE, rawExpirationDate);
 
 		if (lastAmendmentDate != null) {
-			attributes.put(NSF_Database_FieldNames.LAST_AMENDMENT_DATE, lastAmendmentDate);
+			attributes.put(NsfDatabaseFieldNames.LAST_AMENDMENT_DATE, lastAmendmentDate);
 		}
 		
-		attributes.put(NSF_Database_FieldNames.RAW_LAST_AMENDMENT_DATE, rawLastAmendmentDate);
-		attributes.put(NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
-		attributes.put(NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, rawAwardedAmountToDate);
-		attributes.put(NSF_Database_FieldNames.AWARD_INSTRUMENT, awardInstrument);
-		attributes.put(NSF_Database_FieldNames.NSF_DIRECTORATE, nSFDirectorate);
-		attributes.put(NSF_Database_FieldNames.NSF_ORGANIZATION, nSFOrganization);
-		attributes.put(NSF_Database_FieldNames.ABSTRACT_TEXT, abstractText);
+		attributes.put(NsfDatabaseFieldNames.RAW_LAST_AMENDMENT_DATE, rawLastAmendmentDate);
+		attributes.put(NsfDatabaseFieldNames.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
+		attributes.put(NsfDatabaseFieldNames.RAW_AWARDED_AMOUNT_TO_DATE, rawAwardedAmountToDate);
+		attributes.put(NsfDatabaseFieldNames.AWARD_INSTRUMENT, awardInstrument);
+		attributes.put(NsfDatabaseFieldNames.NSF_DIRECTORATE, nSFDirectorate);
+		attributes.put(NsfDatabaseFieldNames.NSF_ORGANIZATION, nSFOrganization);
+		attributes.put(NsfDatabaseFieldNames.ABSTRACT_TEXT, abstractText);
 		
 		return attributes;
 	}

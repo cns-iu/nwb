@@ -8,20 +8,20 @@ import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.sci2.database.nsf.load.model.entity.Award;
 import edu.iu.sci2.database.nsf.load.model.entity.NSFFile;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class AwardOccurence extends RowItem<AwardOccurence> {
 	public static final Schema<AwardOccurence> SCHEMA = new Schema<AwardOccurence>(
 			false,
-			NSF_Database_FieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY,
+			NsfDatabaseFieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY,
 				DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY,
+			NsfDatabaseFieldNames.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY,
 				DerbyFieldType.FOREIGN_KEY).
 			FOREIGN_KEYS(
-				NSF_Database_FieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY,
-					NSF_Database_FieldNames.AWARD_TABLE_NAME,
-				NSF_Database_FieldNames.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY,
-					NSF_Database_FieldNames.NSF_FILE_TABLE_NAME
+				NsfDatabaseFieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY,
+					NsfDatabaseFieldNames.AWARD_TABLE_NAME,
+				NsfDatabaseFieldNames.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY,
+					NsfDatabaseFieldNames.NSF_FILE_TABLE_NAME
 			);
 	
 	private Award award;
@@ -57,9 +57,9 @@ public class AwardOccurence extends RowItem<AwardOccurence> {
 	private static Dictionary<String, Object> createAttributes(Award award, NSFFile nsfFile) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(
-			NSF_Database_FieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY, award.getPrimaryKey());
+			NsfDatabaseFieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY, award.getPrimaryKey());
 		attributes.put(
-			NSF_Database_FieldNames.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY,
+			NsfDatabaseFieldNames.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY,
 			nsfFile.getPrimaryKey());
 
 		return attributes;

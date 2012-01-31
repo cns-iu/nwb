@@ -7,22 +7,22 @@ import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.sci2.database.nsf.load.model.entity.Organization;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class InvestigatorOrganization extends RowItem<InvestigatorOrganization> {
 	
 	public static final Schema<InvestigatorOrganization> SCHEMA = new Schema<InvestigatorOrganization>(
 			false,
-			NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY,
+			NsfDatabaseFieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY,
 				DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY,
+			NsfDatabaseFieldNames.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY,
 				DerbyFieldType.FOREIGN_KEY
 			).
 			FOREIGN_KEYS(
-				NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY,
-					NSF_Database_FieldNames.INVESTIGATOR_TABLE_NAME,
-				NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY,
-					NSF_Database_FieldNames.ORGANIZATION_TABLE_NAME
+				NsfDatabaseFieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY,
+					NsfDatabaseFieldNames.INVESTIGATOR_TABLE_NAME,
+				NsfDatabaseFieldNames.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY,
+					NsfDatabaseFieldNames.ORGANIZATION_TABLE_NAME
 			);
 	
 	private Investigator investigator;
@@ -59,10 +59,10 @@ public class InvestigatorOrganization extends RowItem<InvestigatorOrganization> 
 			Investigator investigator, Organization organization) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(
-			NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY,
+			NsfDatabaseFieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY,
 			investigator.getPrimaryKey());
 		attributes.put(
-			NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY,
+			NsfDatabaseFieldNames.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY,
 			organization.getPrimaryKey());
 
 		return attributes;

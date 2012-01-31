@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.sci2.utilities.nsf.NSF_CSV_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfCsvFieldNames;
 
 public class NSFMetadata {
 	private String fileName;
@@ -104,7 +104,7 @@ public class NSFMetadata {
 	private static Map<String, Integer> mapUnknowmColumnNameToColumnIndex(
 			Map<String, Integer> nsfFieldsColumnNameToColumnIndex) {
 		Map<String, Integer> unknownColumnNameToColumnIndex = new HashMap<String, Integer>();
-		List<String> nsfCSVFields = NSF_CSV_FieldNames.CSV.getNsfCsvFields();
+		List<String> nsfCSVFields = NsfCsvFieldNames.CSV.getNsfCsvFields();
 
 		for (Entry<String, Integer> columnEntry : nsfFieldsColumnNameToColumnIndex.entrySet()) {
 			

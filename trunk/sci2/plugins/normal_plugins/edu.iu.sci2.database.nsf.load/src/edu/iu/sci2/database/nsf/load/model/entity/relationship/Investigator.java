@@ -11,23 +11,23 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.sci2.database.nsf.load.model.entity.Award;
 import edu.iu.sci2.database.nsf.load.model.entity.Person;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class Investigator extends Entity<Investigator> {
 	
 	public static final Schema<Investigator> SCHEMA = new Schema<Investigator>(
 			true,
-			NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.IS_MAIN_PI, DerbyFieldType.BOOLEAN,
-			NSF_Database_FieldNames.EMAIL_ADDRESS, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.STATE, DerbyFieldType.TEXT
+			NsfDatabaseFieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+			NsfDatabaseFieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+			NsfDatabaseFieldNames.IS_MAIN_PI, DerbyFieldType.BOOLEAN,
+			NsfDatabaseFieldNames.EMAIL_ADDRESS, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.STATE, DerbyFieldType.TEXT
 			).
 			FOREIGN_KEYS(
-				NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY,
-					NSF_Database_FieldNames.AWARD_TABLE_NAME,
-				NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY,
-					NSF_Database_FieldNames.PERSON_TABLE_NAME
+				NsfDatabaseFieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY,
+					NsfDatabaseFieldNames.AWARD_TABLE_NAME,
+				NsfDatabaseFieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY,
+					NsfDatabaseFieldNames.PERSON_TABLE_NAME
 			);
 	
 	private boolean isMainPI;
@@ -101,15 +101,15 @@ public class Investigator extends Entity<Investigator> {
 			String state) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(
-			NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, award.getPrimaryKey());
+			NsfDatabaseFieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, award.getPrimaryKey());
 		attributes.put(
-			NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, person.getPrimaryKey());
+			NsfDatabaseFieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, person.getPrimaryKey());
 		attributes.put(
-			NSF_Database_FieldNames.EMAIL_ADDRESS, emailAddress);
+			NsfDatabaseFieldNames.EMAIL_ADDRESS, emailAddress);
 		attributes.put(
-			NSF_Database_FieldNames.STATE, state);
+			NsfDatabaseFieldNames.STATE, state);
 		attributes.put(
-			NSF_Database_FieldNames.IS_MAIN_PI, isMainPI);
+			NsfDatabaseFieldNames.IS_MAIN_PI, isMainPI);
 
 		return attributes;
 	}

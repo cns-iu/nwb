@@ -11,14 +11,14 @@ import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class Program extends Entity<Program> {
 
 	public static final Schema<Program> SCHEMA = new Schema<Program>(
 			true,
-			NSF_Database_FieldNames.PROGRAM_NAME, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.FUNDING_CODE, DerbyFieldType.TEXT
+			NsfDatabaseFieldNames.PROGRAM_NAME, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.FUNDING_CODE, DerbyFieldType.TEXT
 			);
 	
 	private String name;
@@ -83,8 +83,8 @@ public class Program extends Entity<Program> {
 
 	private static Dictionary<String, Object> createAttributes(String name,  String fundingCode) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME, name);
-		attributes.put(NSF_Database_FieldNames.FUNDING_CODE, fundingCode);
+		attributes.put(NsfDatabaseFieldNames.PROGRAM_NAME, name);
+		attributes.put(NsfDatabaseFieldNames.FUNDING_CODE, fundingCode);
 
 		return attributes;
 	}

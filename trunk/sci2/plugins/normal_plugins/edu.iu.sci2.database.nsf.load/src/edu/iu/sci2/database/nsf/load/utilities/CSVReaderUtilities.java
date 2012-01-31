@@ -9,7 +9,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.UnicodeReader;
 
-import edu.iu.sci2.utilities.nsf.NSF_CSV_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfCsvFieldNames;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -92,7 +92,7 @@ public class CSVReaderUtilities {
 		 * TODO: If this approach seems inefficient refactor to use better approach or library
 		 * since the current library is not flexible enough. 
 		 * */
-		if (nsfCsvReader.readNext().length < NSF_CSV_FieldNames.CSV.DEFAULT_TOTAL_NSF_FIELDS) {
+		if (nsfCsvReader.readNext().length < NsfCsvFieldNames.CSV.DEFAULT_TOTAL_NSF_FIELDS) {
 			return true;
 		} else {
 			return false;
