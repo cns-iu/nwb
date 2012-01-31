@@ -171,7 +171,7 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 
 /legendTitleTopRange { % [max] [min]
 	gsave
-	/rangeBodyFontSize { 8 } def
+	/rangeBodyFontSize { 10 } def
 	/ArialMT rangeBodyFontSize selectfont
 	(Minimum = ) show
 	20 string cvs show
