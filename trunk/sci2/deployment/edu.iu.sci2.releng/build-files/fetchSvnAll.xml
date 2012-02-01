@@ -19,7 +19,15 @@
 			</fileset>
 	    </copy>
   	-->
-
+		<!-- CNS plugins -->
+		
+		<antcall target="svn.co">
+			<param name="target" value="plugins"/>
+			<param name="element.id" value="edu.iu.cns.r"/>
+			<param name="project.name" value="edu.iu.cns.r"/>
+			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/cns/"/>
+		</antcall>
+		
 		<!-- Sci2 plugins -->
 
 		<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
@@ -1671,7 +1679,6 @@
 			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/plugins"/>
 		</antcall>
 		<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.visualization.gnuplot"/>
-		<!--  Feb. 1, 2012 Trying to solve why the build is broken.
 		<antcall target="svn.co">
 			<param name="target" value="nonpde_plugins"/>
 			<param name="element.id" value="edu.iu.nwb.visualization.guess"/>
@@ -1679,7 +1686,7 @@
 			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/plugins"/>
 		</antcall>
 		<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.visualization.guess"/>
-		-->
+
 		<!--
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
