@@ -19,15 +19,6 @@
 			</fileset>
 	    </copy>
   	-->
-		<!-- CNS plugins -->
-		
-		<antcall target="svn.co">
-			<param name="target" value="plugins"/>
-			<param name="element.id" value="edu.iu.cns.r"/>
-			<param name="project.name" value="edu.iu.cns.r"/>
-			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/cns/"/>
-		</antcall>
-		
 		<!-- Sci2 plugins -->
 
 		<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
@@ -50,6 +41,12 @@
 			<param name="target" value="plugins"/>
 			<param name="element.id" value="edu.iu.cns.converter.nwb_graphstream"/>
 			<param name="project.name" value="edu.iu.cns.converter.nwb_graphstream"/>
+			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/cns"/>
+		</antcall>
+		<antcall target="svn.co">
+			<param name="target" value="plugins"/>
+			<param name="element.id" value="edu.iu.cns.r"/>
+			<param name="project.name" value="edu.iu.cns.r"/>
 			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/cns"/>
 		</antcall>
 		<antcall target="svn.co">
@@ -428,15 +425,6 @@
 			<param name="project.name" value="edu.iu.sci2.visualization.temporalbargraph"/>
 			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/normal_plugins"/>
 		</antcall>
-
-		<!--
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.sci2.visualization.horizontalbargraph"/>
-  	  	      <param name="project.name" value="edu.iu.sci2.visualization.horizontalbargraph"/>
-  	  	      <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/normal_plugins"/>
-  	  	 </antcall>
-	-->
 
 		<antcall target="svn.co">
 			<param name="target" value="plugins"/>
