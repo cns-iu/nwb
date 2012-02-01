@@ -140,7 +140,7 @@ public class GeometryProjector {
 		
 		return projectedGeometry;
 	}	
-	private static Geometry cropGeometry(Geometry originalGeometry,
+	private Geometry cropGeometry(Geometry originalGeometry,
 			Set<Geometry> cropGeometries) {
 		Geometry croppedGeometry = originalGeometry;
 
@@ -204,7 +204,7 @@ public class GeometryProjector {
 		}
 	}
 	
-	private static double findCentralMeridian(ProjectedCRS projectedCRS)
+	private double findCentralMeridian(ProjectedCRS projectedCRS)
 			throws AlgorithmExecutionException {
 		Projection projection = projectedCRS.getConversionFromBase();
 		ParameterValueGroup parameterValues = projection.getParameterValues();

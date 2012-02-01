@@ -19,7 +19,7 @@ public class RelativeDifferenceLimit extends BinaryCondition<Double> {
 	 * for floating-point numbers.
 	 * Conventionally zero when x1 = x2 = 0.
 	 */
-	private static double relativeDifference(double x1, double x2) {
+	private double relativeDifference(double x1, double x2) {
 		if (x1 == x2) {
 			/* In particular this catches the case x1 == x2 == 0.0,
 			 * where the maxOfAbsolutes would be zero and would yield an

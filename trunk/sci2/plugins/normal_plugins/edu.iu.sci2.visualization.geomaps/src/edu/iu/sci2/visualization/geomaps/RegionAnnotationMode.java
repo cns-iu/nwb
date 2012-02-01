@@ -157,7 +157,7 @@ public class RegionAnnotationMode extends AnnotationMode {
 		shapefileToPostScript.setFeatureColorAnnotations(SUBTITLE, featureColors, legend);
 	}
 	
-	private static LegendComponent createLegend(
+	private LegendComponent createLegend(
 			String attribute,
 			String scaling,
 			Scaler scaler,

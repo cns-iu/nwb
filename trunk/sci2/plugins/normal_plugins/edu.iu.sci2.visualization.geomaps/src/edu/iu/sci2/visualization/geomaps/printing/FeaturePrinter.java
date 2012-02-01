@@ -237,7 +237,7 @@ public class FeaturePrinter {
 		}		
 	}
 
-	private static boolean isAProbableInterruptionGlitch(Coordinate coordinate,
+	private boolean isAProbableInterruptionGlitch(Coordinate coordinate,
 			Coordinate previousCoordinate) {
 		return (distance(coordinate, previousCoordinate) > INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD);
 	}
@@ -268,7 +268,7 @@ public class FeaturePrinter {
 		out.write("stroke" + "\n");
 	}
 	
-	private static double distance(Coordinate coordinate1, Coordinate coordinate2) {
+	private double distance(Coordinate coordinate1, Coordinate coordinate2) {
 		double deltaX = (coordinate1.x - coordinate2.x);
 		double deltaY = (coordinate1.y - coordinate2.y);
 		

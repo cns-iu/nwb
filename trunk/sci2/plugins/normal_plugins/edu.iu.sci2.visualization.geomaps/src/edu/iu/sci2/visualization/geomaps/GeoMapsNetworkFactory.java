@@ -35,14 +35,12 @@ public class GeoMapsNetworkFactory implements AlgorithmFactory, ParameterMutator
 		}
 	}
 	
-	@Override
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciShellContext) {
 		return new GeoMapsNetwork(data, parameters, ciShellContext);
 	}
 
-	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition parameters) {
 		try {

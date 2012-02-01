@@ -178,7 +178,7 @@ public class ShapefileToPostScriptWriter {
 	    return sdf.format(cal.getTime());
 	}
 
-	private static String createPostScriptUtilityDefinitions() {
+	private String createPostScriptUtilityDefinitions() {
 		StringTemplate definitionsTemplate =
 			GeoMapsAlgorithm.group.getInstanceOf("utilityDefinitions");
 		

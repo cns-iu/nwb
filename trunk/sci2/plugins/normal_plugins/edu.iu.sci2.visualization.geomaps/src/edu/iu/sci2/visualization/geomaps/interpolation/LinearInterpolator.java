@@ -19,7 +19,6 @@ public class LinearInterpolator implements Interpolator<Double> {
 		this.outRange = outRange;
 	}
 	
-	@Override
 	public List<Double> interpolate(List<Double> values) {
 		List<Double> interpolatedValues = new ArrayList<Double>();
 		
@@ -31,7 +30,6 @@ public class LinearInterpolator implements Interpolator<Double> {
 		return interpolatedValues;
 	}
 	
-	@Override
 	public Double interpolate(double value) {
 		return interpolate(value, inRange, outRange);
 	}
@@ -58,7 +56,6 @@ public class LinearInterpolator implements Interpolator<Double> {
 		return (outMin + (in - inMin) * (outMax - outMin) / (inMax - inMin));
 	}
 
-	@Override
 	public double invert(Double value) {
 		Interpolator<Double> inverseInterpolator = createInverse(this);
 		

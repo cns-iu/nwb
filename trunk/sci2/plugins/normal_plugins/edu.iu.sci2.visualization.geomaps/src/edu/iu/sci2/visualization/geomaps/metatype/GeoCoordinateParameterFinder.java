@@ -24,12 +24,11 @@ public class GeoCoordinateParameterFinder {
 	protected static class Latitudishness extends Ordering<String> implements Serializable {
 		private static final long serialVersionUID = -7532091564878950295L;
 
-		@Override
 		public int compare(String left, String right) {
 			return score(left).compareTo(score(right));
 		}
 
-		private static Integer score(String s) {
+		private Integer score(String s) {
 			String normal = s.toLowerCase();
 
 			if (normal.contains("latitude")) {
@@ -47,12 +46,11 @@ public class GeoCoordinateParameterFinder {
 	protected static class Longitudishness extends Ordering<String> implements Serializable {
 		private static final long serialVersionUID = -2121660356652701588L;
 
-		@Override
 		public int compare(String left, String right) {
 			return score(left).compareTo(score(right));
 		}
 
-		private static Integer score(String s) {
+		private Integer score(String s) {
 			String normal = s.toLowerCase();
 
 			if (normal.contains("longitude")) {

@@ -59,15 +59,14 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		return mutator.mutate(oldParameters);
 	}
 
-	private static void addInnerColorParameters(
-			DropdownMutator mutator, List<String> numericColumnNames) {
-		List<String> options = Lists.newArrayList(numericColumnNames);
+	private void addInnerColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
 
-		options.add(
+		numericColumnNames.add(
 			CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);	
 		
 		mutator.add(CircleAnnotationMode.INNER_COLOR_QUANTITY_ID,
-				options,
+				numericColumnNames,
 				CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);
 		mutator.add(CircleAnnotationMode.INNER_COLOR_SCALING_ID,
 				new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
@@ -75,15 +74,14 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 	}
 
-	private static void addOuterColorParameters(
-			DropdownMutator mutator, List<String> numericColumnNames) {
-		List<String> options = Lists.newArrayList(numericColumnNames);
+	private void addOuterColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
 		
-		options.add(
+		numericColumnNames.add(
 				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);		
 		
 		mutator.add(CircleAnnotationMode.OUTER_COLOR_QUANTITY_ID,
-				options,
+				numericColumnNames,
 				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);
 		mutator.add(CircleAnnotationMode.OUTER_COLOR_SCALING_ID,
 				new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
@@ -91,11 +89,10 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 	}
 
-	private static void addAreaParameters(
-			DropdownMutator mutator, List<String> numericColumnNames) {
-		List<String> options = Lists.newArrayList(numericColumnNames);
+	private void addAreaParameters(DropdownMutator mutator, List<String> numericColumnNames) {
+		numericColumnNames = Lists.newArrayList(numericColumnNames);
 		
-		mutator.add(CircleAnnotationMode.AREA_ID, options);
+		mutator.add(CircleAnnotationMode.AREA_ID, numericColumnNames);
 		mutator.add(CircleAnnotationMode.AREA_SCALING_ID,
 					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
 	}

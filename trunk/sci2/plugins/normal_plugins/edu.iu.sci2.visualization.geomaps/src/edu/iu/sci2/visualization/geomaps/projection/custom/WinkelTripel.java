@@ -49,7 +49,7 @@ public class WinkelTripel extends MapProjection {
 			super(PARAMETERS);
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" }) // Raw Class
+		@SuppressWarnings("unchecked") // Raw Class
 		@Override
 		public Class getOperationType() {
 			// Not actually cylindrical

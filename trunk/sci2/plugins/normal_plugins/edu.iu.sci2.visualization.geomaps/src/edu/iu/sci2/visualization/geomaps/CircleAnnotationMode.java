@@ -303,7 +303,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 				outerColorLegend);
 	}
 
-	private static LegendComponent createAreaLegend(
+	private LegendComponent createAreaLegend(
 			String attribute,
 			String scaling,
 			Scaler scaler,
@@ -352,7 +352,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 		return areaLegend;
 	}
 
-	private static LegendComponent createInnerColorLegend(
+	private LegendComponent createInnerColorLegend(
 			boolean isUsingInnerColor,
 			String attribute,
 			String scaling,
@@ -408,7 +408,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 		return innerColorLegend;
 	}
 
-	private static LegendComponent createOuterColorLegend(
+	private LegendComponent createOuterColorLegend(
 			boolean isUsingOuterColor,
 			String attribute,
 			String scaling,

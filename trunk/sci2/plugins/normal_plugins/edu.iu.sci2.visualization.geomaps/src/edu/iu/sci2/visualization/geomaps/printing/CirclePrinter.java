@@ -64,7 +64,6 @@ public class CirclePrinter {
 			circles,
 			Collections.reverseOrder(
 				new Comparator<Circle>() {
-					@Override
 					public int compare(Circle circle1, Circle circle2) {
 						return Double.compare(circle1.getArea(),
 											  circle2.getArea());

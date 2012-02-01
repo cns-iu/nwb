@@ -49,7 +49,6 @@ public class ColorInterpolator implements Interpolator<Color> {
 							(double) maximumColorComponents[BLUE]));
 	}
 	
-	@Override
 	public List<Color> interpolate(List<Double> values) {
 		List<Color> interpolatedValues = new ArrayList<Color>();
 		
@@ -61,7 +60,6 @@ public class ColorInterpolator implements Interpolator<Color> {
 		return interpolatedValues;
 	}
 
-	@Override
 	public Color interpolate(double colorQuantity) {
 		float red = redInterpolator.interpolate(colorQuantity).floatValue();
 		float green =  greenInterpolator.interpolate(colorQuantity).floatValue();
@@ -69,7 +67,6 @@ public class ColorInterpolator implements Interpolator<Color> {
 		return new Color(red, green, blue);
 	}
 	
-	@Override
 	public double invert(Color color) throws InterpolatorInversionException {
 		List<Double> inversionSamples = calculateColorInversionSamples(color);
 		

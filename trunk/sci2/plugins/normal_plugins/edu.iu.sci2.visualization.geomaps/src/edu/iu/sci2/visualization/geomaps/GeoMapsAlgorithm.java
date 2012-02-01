@@ -63,7 +63,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 	}
 
 	
-	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
 			Data inDatum = this.data[0];
@@ -177,6 +176,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 	}
 
 
+	@SuppressWarnings("unused")
 	private static AlgorithmFactory prepareFactoryForRegionsTest(
 			Dictionary<String, Object> parameters) {
 		parameters.put("featureName", "Country");
