@@ -4,10 +4,12 @@ Bundle-Name: R
 Bundle-SymbolicName: edu.iu.cns.r
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .,
- bsh-core-2.0b4.jar
+ lib/bsh-core-2.0b4.jar
 Import-Package: com.google.common.annotations,
  com.google.common.base,
  com.google.common.collect,
+ com.google.common.io;version="8.0.0",
+ org.apache.commons.io,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

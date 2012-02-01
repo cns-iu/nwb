@@ -57,9 +57,11 @@ public class CreateRAlgorithmFactory implements AlgorithmFactory, ParameterMutat
 			ObjectClassDefinition oldParameters,
 			BasicObjectClassDefinition newParameters,
 			int attributeDefinitionType,
-			String rHomeFromPath) {
-		if (rHomeFromPath != null) {
-			rHomeFromPath = "directory:" + rHomeFromPath;
+			String rHomeFromPathUnchecked) {
+		String rHomeFromPath;
+		
+		if (rHomeFromPathUnchecked != null) {
+			rHomeFromPath = "directory:" + rHomeFromPathUnchecked;
 		} else {
 			rHomeFromPath = "directory:";
 		}
@@ -70,7 +72,7 @@ public class CreateRAlgorithmFactory implements AlgorithmFactory, ParameterMutat
 
 			if (R_HOME_DIRECTORY_ID.equals(oldAttributeDefinition.getID())) {
 				/* Commented out until we figure out how to handle if the user has multiple
-				 * R in stallations.
+				 * R installations.
 				 */
 //				if (rHomeFromPath != null) {
 //					continue;

@@ -14,9 +14,9 @@ public class RProperties {
 
 	public static final String BASE_CLASS_PATH = "/edu/iu/cns/r/";
 	public static final String MAKE_JAVA_FILE_NAME = "makejava";
-	public static final String MAKE_JAVA_FILE_NAME_EXTENSION = "r";
+	public static final String MAKE_JAVA_FILE_NAME_EXTENSION = ".r";
 	public static final String MAKE_JAVA_PATH =
-		BASE_CLASS_PATH + MAKE_JAVA_FILE_NAME + "." + MAKE_JAVA_FILE_NAME_EXTENSION;
+		BASE_CLASS_PATH + MAKE_JAVA_FILE_NAME + MAKE_JAVA_FILE_NAME_EXTENSION;
 
 	public static final String R_OBJECTS_COMMAND = "objects()";
 }

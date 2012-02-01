@@ -16,6 +16,7 @@ public class RunRAlgorithm implements Algorithm {
 
 	public RunRAlgorithm(RInstance rInstance, LogService logger) {
 		this.rInstance = rInstance;
+		this.logger = logger;
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
