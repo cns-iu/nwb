@@ -477,11 +477,11 @@
 			<param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/libs"/>
 		</antcall>
 		<antcall target="svn.co">
-					<param name="target" value="plugins" />
-					<param name="element.id" value="opencsv" />
-					<param name="project.name" value="/libs/opencsv" />
-					<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk" />
-				</antcall>
+			<param name="target" value="plugins" />
+			<param name="element.id" value="opencsv" />
+			<param name="project.name" value="/libs/opencsv" />
+			<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk" />
+		</antcall>
 
 		<antcall target="svn.co">
 			<param name="target" value="plugins"/>
@@ -546,6 +546,12 @@
 			<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
 		</antcall>
 
+		<antcall target="svn.co">
+			<param name="target" value="plugins" />
+			<param name="element.id" value="org.apache.commons.io" />
+			<param name="project.name" value="libs/org.apache.commons.io" />
+			<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk" />
+		</antcall>
 
 		<antcall target="svn.co">
 			<param name="target" value="plugins"/>
