@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.print;
 
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
 
@@ -29,6 +29,7 @@ public class PostscriptDocument
 
 		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth()
 				* POINTS_PER_INCH, pageSize.getHeight() * POINTS_PER_INCH);
+		
 		this.temporalBarGraphPages = new TemporalBarGraphPages(csvWriter,
 				records, scaleToOnePage, colorRegistry, postscriptPageSize,
 				legendText, query);

@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.print;
 import java.awt.Color;
 import java.util.List;
 

@@ -6,7 +6,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 % Viz Area 
 %%%%%%%%%%%
 /topVizPosition { <topVizPosition> } def
-/leftVizMargin { visualizationLeft } def
+/leftTextMargin { visualizationLeft } def
 
 /bar { % x1 y1 deltaX deltaY => -
 	dup 0.0 eq 
@@ -30,6 +30,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /labelbar { % (label) x1 y1 deltaX deltaY color => -
 	gsave
 	visualizationLeft visualizationBottom translate
+	leftTextMargin 0 translate
 	0 0 moveto
 	setrgbcolor
 	5 -1 roll % stack: x1 y1 deltaX deltaY label
@@ -45,7 +46,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 	dup  % [y] [x] [x]
 	3 -1 roll % [x] [x] [y]
 	moveto
-	leftVizMargin labelbarSpacing sub add exch righttrim
+	leftTextMargin labelbarSpacing sub add exch righttrim
 	dup stringwidth pop neg labelbarSpacing sub % (label) x
 	exch dup textheight 2 div neg % x (label) y
 	3 -1 roll exch % (label) x y
@@ -59,6 +60,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /dateline { % (label) x => -
 	gsave
 	visualizationLeft visualizationBottom translate
+	leftTextMargin 0 translate
 	dup
 	0 moveto
 	0.75 0.75 0.75 setrgbcolor

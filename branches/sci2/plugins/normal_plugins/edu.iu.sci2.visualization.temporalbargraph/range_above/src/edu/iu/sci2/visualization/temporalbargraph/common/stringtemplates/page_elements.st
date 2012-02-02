@@ -13,11 +13,11 @@ footerDefinitions(pageWidth) ::= <<
 % Footer Area
 %%%%%%%%%%%%%
 
-/footerFontSize { 12.0 } def
+/footerFontSize { 10.0 } def
 
 /footer { % (footer)
 	gsave
-	0.75 0.75 0.75 setrgbcolor
+	0.6 0.6 0.6 setrgbcolor % #999999
 	/ArialMT footerFontSize selectfont
 	<pageWidth> 2 div footerFontSize footerBottom add center
 	show
@@ -46,7 +46,7 @@ legendDefinitions(legendWidth) ::= <<
 %%%%%%%%%%%%%%%
 % Legend Area
 %%%%%%%%%%%%%%%
-
+/lineSpacing { 3.0 } def
 /legendWidth { <legendWidth> } def
 
 /legendRightPosition { legendWidth } def
@@ -97,7 +97,9 @@ legend(title, startYearLabel, endYearLabel) ::= <<
 /**
 
 LegendTitleTop - this is a legend element with the title above the bar.  
-It shows a bar with a setable title, start label, and end label.
+It shows a bar with a set-able title, start label, and end label.  It also
+includes the range.  You can see there is an option to center the title called
+'centerTitle' that is not used.
 
 */
 
@@ -107,7 +109,7 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 %%%%%%%%%%%%%%%
 % Legend Area
 %%%%%%%%%%%%%%%
-
+/lineSpacing { 3.0 } def
 /legendTitleTopWidth { <legendWidth> } def
 
 /legendTitleTopRightPosition { legendTitleTopWidth } def
@@ -153,35 +155,50 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 	fill
 	stroke
 	grestore
-	0 legendTitleTopThickness 5 add translate
+	0 legendTitleTopThickness translate
 	0 0 moveto
 } def
 
-/legendTitleTopTitle {
+/legendTitleTopCenterTitle {
 	gsave
-	/ArialMT legendTitleTopTitleFontSize selectfont
+	/Arial-BoldMT legendTitleTopTitleFontSize selectfont
 	legendTitleTopRightPosition 2 div % (title) [center x]
 	0  % => (title) [x] [y]
 	center
 	show
 	grestore
-	0 legendTitleTopTitleFontSize translate
+	0 legendTitleTopTitleFontSize lineSpacing add translate
 	0 0 moveto
 } def 
 
-/legendTitleTopRange { % [max] [min]
+/legendTitleTopTitle {
 	gsave
-	/rangeBodyFontSize { 10 } def
-	/ArialMT rangeBodyFontSize selectfont
-	(Minimum = ) show
-	20 string cvs show
+	/Arial-BoldMT legendTitleTopTitleFontSize selectfont
 	0 0 moveto
-	20 string cvs % [max] => (max)
-	(Maximum = ) exch concatstrings
-	dup stringwidth pop legendTitleTopRightPosition exch sub 0 moveto
 	show
 	grestore
-	0 rangeBodyFontSize translate
+	0 legendTitleTopTitleFontSize lineSpacing add translate
+	0 0 moveto
+} def 
+
+/legendTitleTopRange { % [max] [min] => translation to top of text + spacing
+	exch % [max] [min]
+	/rangeBodyFontSize { 10 } def
+	/ArialMT rangeBodyFontSize selectfont
+	
+	0 rangeBodyFontSize lineSpacing add translate
+	0 0 moveto
+	20 string cvs % [max] => (max)
+	(Maximum = ) exch concatstrings	
+	show
+	
+	0 rangeBodyFontSize lineSpacing add translate
+	0 0 moveto
+	20 string cvs
+	(Minimum = ) exch concatstrings
+	show
+	
+	0 rangeBodyFontSize lineSpacing add translate
 	0 0 moveto
 } def
 
@@ -191,6 +208,77 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 legendTitleTop(title, startYearLabel, endYearLabel, min, max) ::= <<
 
 (<title>) (<max>) (<min>) (<startYearLabel>) (<endYearLabel>) legendTitleTop
+
+>>
+
+/**
+	
+	Title - puts a page title with a query string, info about the generation,
+	and a date left aligned at the top.
+	
+*/
+
+leftAlignedTitleWithQueryAndInfoDefinitions(titleFontType, titleFontSize, titleFontColor, otherFontType, otherFontSize, otherFontColor) ::= <<
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title - leftAlignedTitleWithQueryAndInfo
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/leftAlignedTitleWithQueryAndInfo { % title query date
+/lineSpacing { 3.0 } def
+/titleFontSize { <titleFontSize> } def
+/titleFontType { /<titleFontType> } def
+/titleFontColor { <titleFontColor> } def
+/titleFont { 
+	titleFontType titleFontSize selectfont 
+	titleFontColor setrgbcolor
+} def
+/otherFontSize { <otherFontSize> } def
+/otherFontType { /<otherFontType> } def
+/otherFontColor { <otherFontColor> } def
+/otherFont {
+	otherFontType otherFontSize selectfont 
+	otherFontColor setrgbcolor
+} def
+
+gsave
+leftAlignedTitleWithQueryAndInfoLeft leftAlignedTitleWithQueryAndInfoBottom translate
+
+0 0 moveto
+otherFont
+show
+0 otherFontSize lineSpacing add translate
+
+0 0 moveto 
+otherFont
+(NIH funding data rendered using 'Temporal Bar Graph') show
+0 otherFontSize lineSpacing add translate
+
+dup % (query) (query)
+length 0 gt % query exists or doesn't
+{ 
+	0 0 moveto
+	otherFont
+	show
+	0 otherFontSize lineSpacing add translate
+} 
+{ pop } 
+ifelse
+
+0 0 moveto
+titleFont
+show
+0 titleFontSize lineSpacing add translate
+
+grestore
+
+} def
+
+>>
+
+leftAlignedTitleWithQueryAndInfo(title, query, date) ::= <<
+
+(<title>) (<query>) (<date>) leftAlignedTitleWithQueryAndInfo
 
 >>
 
@@ -273,7 +361,8 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 	/howtoTitleFontSize { <howtoTitleFontSize> } def
 	/howtoTextFontSize { <howtoTextFontSize> } def
 	gsave
-	0.75 0.75 0.75 setrgbcolor
+	/howtoLineSpacing { 1.0 } def
+	0.6 0.6 0.6 setrgbcolor % #999999
 	/ArialMT howtoTextFontSize selectfont
 	howtoLeft howtoBottom translate
 	0 0 moveto
@@ -282,41 +371,41 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 	(dolorum fuga. Et harum quidem rerum facilis est et)
 	show
 	grestore
-	0 howtoTextFontSize rmoveto
+	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
 	(culpa qui officia deserunt mollitia animi, id est laborum et)
 	show
 	grestore
-	0 howtoTextFontSize rmoveto
+	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
 	(sint occaecati cupiditate non provident, similique sunt in)
 	show
 	grestore
-	0 howtoTextFontSize rmoveto
+	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
 	(atque corrupti quos dolores et quas molestias excepturi)
 	show
 	grestore
-	0 howtoTextFontSize rmoveto
+	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
 	(ducimus qui blanditiis praesentium voluptatum deleniti)
 	show
 	grestore
-	0 howtoTextFontSize rmoveto
+	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
 	(At vero eos et accusamus et iusto odio dignissimos)
 	show
 	grestore
-	0 howtoTextFontSize rmoveto
+	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	
 	0.0 0.0 0.0 setrgbcolor
-	/UniverseExtended howtoTitleFontSize selectfont
+	/Arial-BoldMT howtoTitleFontSize selectfont
 	(How To Read This Map)
 	show
 	grestore

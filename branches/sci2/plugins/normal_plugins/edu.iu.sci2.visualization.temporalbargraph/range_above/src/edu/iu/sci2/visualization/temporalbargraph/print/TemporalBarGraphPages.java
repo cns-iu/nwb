@@ -1,9 +1,11 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.print;
 
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,9 +67,11 @@ public class TemporalBarGraphPages extends AbstractPages {
 		for (int ii = 0; ii < numberOfPages(); ii++) {
 			String visualization = visualizations
 					.renderVisualizationPostscript(ii);
+			double visualizationLeft = 1.0 * POINTS_PER_INCH;
+			double visualizationBottom = 1.75 * POINTS_PER_INCH;
 			PageElement visualizationElement = new PageElement("visualization",
-					size.getWidth() * 0.10, size.getHeight() * 0.25,
-					visualization, visualizationDefinitions);
+					visualizationLeft, visualizationBottom, visualization,
+					visualizationDefinitions);
 
 			List<PageElement> pageElements = pageElementsSomePages.get(ii);
 
@@ -88,7 +92,6 @@ public class TemporalBarGraphPages extends AbstractPages {
 		pageElements.add(getLegendPageElement());
 		pageElements.add(getFooterPageElement());
 		pageElements.add(getTitlePageElement());
-		pageElements.add(getQueryInfoPageElement());
 		pageElements.add(getHowtoPageElement());
 		return pageElements;
 	}
@@ -99,17 +102,20 @@ public class TemporalBarGraphPages extends AbstractPages {
 		legendTemplate.setAttribute("title", this.legendText);
 		legendTemplate.setAttribute("startYearLabel", "Start Year");
 		legendTemplate.setAttribute("endYearLabel", "End Year");
-		legendTemplate.setAttribute("min", formatter.format(this.visualizations.minRecordValue()));
-		legendTemplate.setAttribute("max",  formatter.format(this.visualizations.maxRecordValue()));
+		legendTemplate.setAttribute("min",
+				formatter.format(this.visualizations.minRecordValue()));
+		legendTemplate.setAttribute("max",
+				formatter.format(this.visualizations.maxRecordValue()));
 
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
 		legendDefinitionsTemplate.setAttribute("legendWidth",
 				size.getWidth() * 0.30);
 
-		return new PageElement("legendTitleTop", size.getWidth() * 0.10,
-				size.getHeight() * 0.10, legendTemplate,
-				legendDefinitionsTemplate);
+		double leftBound = 1.0 * POINTS_PER_INCH;
+		double bottomBound = 0.5 * POINTS_PER_INCH;
+		return new PageElement("legendTitleTop", leftBound, bottomBound,
+				legendTemplate, legendDefinitionsTemplate);
 	}
 
 	private PageElement getFooterPageElement() {
@@ -123,39 +129,46 @@ public class TemporalBarGraphPages extends AbstractPages {
 				.getInstanceOf("footerDefinitions");
 		footerDefinitionsTemplate.setAttribute("pageWidth", size.getWidth());
 
-		return new PageElement("footer", 0, 0, footerTemplate,
-				footerDefinitionsTemplate);
+		double leftBound = this.size.getWidth() / 2;
+		double bottomBound = 0;
+		return new PageElement("footer", leftBound, bottomBound,
+				footerTemplate, footerDefinitionsTemplate);
 	}
 
 	private PageElement getTitlePageElement() {
 		StringTemplate titleTemplate = pageElementsGroup
-				.getInstanceOf("pageTitle");
+				.getInstanceOf("leftAlignedTitleWithQueryAndInfo");
 		titleTemplate.setAttribute("title", "Horizontal Bar Graph");
+		titleTemplate.setAttribute("query", this.query);
+		titleTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:m:s a zzz"));
 
+		Map<String, String> attributes = new HashMap<String, String>();
+		
 		double titleFontSize = 14;
-		StringTemplate titleDefinitionsTemplate = pageElementsGroup
-				.getInstanceOf("pageTitleDefinitions");
-		titleDefinitionsTemplate.setAttribute("titleFontSize", titleFontSize);
+		String titleFontType = "Arial-BoldMT";
+		Color titleFontColor = new Color(0x000000);
+		attributes.put("titleFontSize", Double.toString(titleFontSize));
+		attributes.put("titleFontType", titleFontType);
+		float[] titleFontRGB = titleFontColor.getRGBColorComponents(null);
+		assert(titleFontRGB.length == 3);
+		attributes.put("titleFontColor", String.format("%f %f %f", titleFontRGB[0], titleFontRGB[1], titleFontRGB[2]));
+		
+		double otherFontSize = 10;
+		String otherFontType = "ArialMT";
+		Color otherFontColor = new Color(0x999999);
+		attributes.put("otherFontSize", Double.toString(otherFontSize));
+		attributes.put("otherFontType", otherFontType);
+		float[] otherFontRGB = otherFontColor.getRGBColorComponents(null);
+		assert(otherFontRGB.length == 3);
+		attributes.put("otherFontColor", String.format("%f %f %f", otherFontRGB[0], otherFontRGB[1], otherFontRGB[2]));
+		
+		
+		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("leftAlignedTitleWithQueryAndInfoDefinitions", attributes);
 
-		return new PageElement("title", this.size.getWidth() / 2,
-				this.size.getHeight() - (this.size.getHeight() * 0.05),
-				titleTemplate, titleDefinitionsTemplate);
-	}
-
-	private PageElement getQueryInfoPageElement() {
-		StringTemplate pageInfoTemplate = pageElementsGroup
-				.getInstanceOf("queryinfo");
-		pageInfoTemplate.setAttribute("query", this.query);
-		pageInfoTemplate.setAttribute("date", new DateTime().toLocalDate()
-				.toString("yyyy.MM.dd"));
-
-		StringTemplate pageInfoDefintionsTemplate = pageElementsGroup
-				.getInstanceOf("queryinfoDefinitions");
-		pageInfoDefintionsTemplate.setAttribute("queryInfoFontSize", 10);
-
-		return new PageElement("queryinfo", this.size.getWidth() / 2,
-				this.size.getHeight() - (this.size.getHeight() * 0.08),
-				pageInfoTemplate, pageInfoDefintionsTemplate);
+		double leftBound = 1.0 * POINTS_PER_INCH;
+		double bottomBound = this.size.getHeight() - 1.0 * POINTS_PER_INCH;
+		return new PageElement("leftAlignedTitleWithQueryAndInfo", leftBound, bottomBound, titleTemplate,
+				titleDefinitionsTemplate);
 	}
 
 	private PageElement getHowtoPageElement() {
@@ -163,12 +176,13 @@ public class TemporalBarGraphPages extends AbstractPages {
 
 		StringTemplate howtoDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("howtoDefinitions");
-		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 14);
+		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 10);
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
-		return new PageElement("howto", (size.getWidth() / 2)
-				+ (0.10 * POINTS_PER_INCH), size.getHeight() * 0.10,
-				howtoTemplate, howtoDefinitionsTemplate);
+		double leftBound = 6.75 * POINTS_PER_INCH;
+		double bottomBound = 0.4 * POINTS_PER_INCH;
+		return new PageElement("howto", leftBound, bottomBound, howtoTemplate,
+				howtoDefinitionsTemplate);
 	}
 
 }
