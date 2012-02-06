@@ -138,7 +138,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 	private PageElement getTitlePageElement() {
 		StringTemplate titleTemplate = pageElementsGroup
 				.getInstanceOf("leftAlignedTitleWithQueryAndInfo");
-		titleTemplate.setAttribute("title", "Horizontal Bar Graph");
+		titleTemplate.setAttribute("title", "Temporal Bar Graph");
 		titleTemplate.setAttribute("query", this.query);
 		titleTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:m:s a zzz"));
 

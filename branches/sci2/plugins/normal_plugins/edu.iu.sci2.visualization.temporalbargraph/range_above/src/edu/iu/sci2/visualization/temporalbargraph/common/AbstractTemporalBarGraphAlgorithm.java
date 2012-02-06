@@ -102,7 +102,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 		Dictionary<String, Object> postScriptMetaData = postScriptData
 				.getMetadata();
 		postScriptMetaData.put(DataProperty.LABEL,
-				"visualized with Horizontal Line Graph");
+				"visualized with Temporal Bar Graph");
 		postScriptMetaData.put(DataProperty.PARENT, inputData);
 		postScriptMetaData.put(DataProperty.TYPE,
 				DataProperty.VECTOR_IMAGE_TYPE);
