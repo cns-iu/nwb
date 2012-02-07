@@ -76,22 +76,20 @@ public class MergeGroup {
 	 */
 	public static void checkForAuthorDuplication(Collection<MergeGroup> mergeGroups)
 			throws AlgorithmExecutionException, SQLException, DuplicateAuthorException {
-		// TODO Do or delete
-//		Collection<MergeGroup> badMergeGroups = Collections2.filter(mergeGroups, new Predicate<MergeGroup>() {
-//			public boolean apply(MergeGroup mergeGroup) {
-//				return doesMergeGroupHaveRedundantAuthorships(mergeGroup);
-//			}			
-//		});
-		/*
-		 * 1. Is any group problematic?
-		 * 		a. If so, make a conflict message and throw it in a subclass of Exception.
-		 * 		b. If not, return true.
-		 */
+
+		boolean hasAuthorDuplication = false;
+		StringBuilder errorMessages = new StringBuilder();
 		
-		String errorMessages = createConflictMessages(mergeGroups);
-		
+		for (MergeGroup mergeGroup : mergeGroups) {
+			try {
+				mergeGroup.checkForAuthorDuplication();
+			} catch (DuplicateAuthorException e) {
+				hasAuthorDuplication = true;
+				errorMessages.append(e.getMessage());
+			}
+		}	
 			
-		if (errorMessages.isEmpty()) {
+		if (!hasAuthorDuplication) {
 			return;
 		} else {
 			// SOMEDAY output a table with this info.
@@ -105,7 +103,7 @@ public class MergeGroup {
 		}
 
 	}
-	
+
 	private static Multimap<Integer, Integer> mapDuplicatePersonPKToDocumentPK(
 			Collection<Integer> peoplePKs, Database database,
 			final MergeGroupSettings mergeGroupSettings)
@@ -187,20 +185,23 @@ public class MergeGroup {
 
 	}
 	
-	private String createConflictMessage() throws AlgorithmExecutionException,
-			SQLException {
+	private void checkForAuthorDuplication() throws AlgorithmExecutionException,
+			SQLException, DuplicateAuthorException {
 
 		if (this.peoplePKs.size() <= 1) {
-			return "";
+			return;
 		}
 
 		Multimap<Integer, Integer> personPKToDuplicateDocumentPK = mapDuplicatePersonPKToDocumentPK(
 				this.peoplePKs, this.database, this.mergeGroupSettings);
 
 		if (personPKToDuplicateDocumentPK.isEmpty()) {
-			return "";
+			return;
 		}
 		
+		/*
+		 * There is author duplication.
+		 */
 		
 		StringBuilder conflictMessage = new StringBuilder();
 		
@@ -271,19 +272,7 @@ public class MergeGroup {
 			connection.close();
 		}
 
-		return conflictMessage.toString();
-	}
-
-	private static String createConflictMessages(
-			Collection<MergeGroup> mergeGroups)
-			throws AlgorithmExecutionException, SQLException {
-		StringBuilder conflictMessage = new StringBuilder();
-
-		for (MergeGroup mergeGroup : mergeGroups) {
-			conflictMessage.append(mergeGroup.createConflictMessage());
-		}
-
-		return conflictMessage.toString();
+		throw new DuplicateAuthorException(conflictMessage.toString());
 	}
 	
 
