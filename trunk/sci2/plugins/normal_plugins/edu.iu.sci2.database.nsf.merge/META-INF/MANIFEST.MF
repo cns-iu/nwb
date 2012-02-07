@@ -5,6 +5,8 @@ Bundle-SymbolicName: edu.iu.sci2.database.nsf.merge
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: com.google.common.base;version="8.0.0",
+ com.google.common.collect,
+ edu.iu.cns.database.merge.generic.detect.redundant_author,
  edu.iu.cns.database.merge.generic.prepare.marked,
  edu.iu.cns.database.merge.generic.prepare.marked.grouping,
  edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased,
@@ -14,6 +16,7 @@ Import-Package: com.google.common.base;version="8.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.service.database,
  org.cishell.utilities,
+ org.osgi.service.log;version="1.3.0",
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
