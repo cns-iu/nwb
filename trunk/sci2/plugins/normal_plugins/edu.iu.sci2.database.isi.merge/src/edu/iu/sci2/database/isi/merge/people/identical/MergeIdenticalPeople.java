@@ -9,6 +9,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DataFactory;
 import org.osgi.service.log.LogService;
@@ -87,8 +88,14 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 		
 		Database merged = MergeMarker.executeMerge(mergeTable, database, context, monitor);
 		
-		return new Data[] { DataFactory.likeParent(merged, data[0],
-				"with identical people merged") };
+		Data mergedData = DataFactory.likeParent(merged, data[0],
+				"with identical people merged");
+		
+		Data mergedTable = DataFactory.withClassNameAsFormat(mergeTable,
+				DataProperty.TABLE_TYPE, data[0], "Merge Table: based on "
+						+ MERGE_GROUP_SETTINGS.PERSON_TABLE);
+		
+		return new Data[] { mergedData, mergedTable };
 	}
 
 
