@@ -16,10 +16,12 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DataFactory;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Table;
 import edu.iu.cns.database.merge.generic.prepare.marked.MergeMarker;
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.KeyBasedGroupingStrategy;
 import edu.iu.nwb.shared.isiutil.database.ISI;
@@ -74,12 +76,20 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 				new DocumentSourceComparator());
 		
 		Database originalDatabase = (Database) originalDatabaseData.getData();
-		Database merged =
-				mergeMarker.performMergesOn(
-						SOURCE_TABLE_ID, originalDatabase, null, ciShellContext);
-    	
-		return new Data[]{ DataFactory.likeParent(
-				merged, originalDatabaseData, "with document sources merged") };
+		
+		Table mergeTable = mergeMarker.createMarkedMergingTable(
+				SOURCE_TABLE_ID, originalDatabase, ciShellContext);    	
+		Database merged = MergeMarker.executeMerge(mergeTable, originalDatabase, 
+				ciShellContext, null);
+		
+		Data mergedDatabaseData = DataFactory.likeParent(
+				merged, originalDatabaseData, "with document sources merged");
+		
+		Data mergeTableData = DataFactory.withClassNameAsFormat(mergeTable,
+				DataProperty.TABLE_TYPE, originalDatabaseData, "Merge Table: based on "
+						+ SOURCE_TABLE_ID);
+				
+		return new Data[]{ mergedDatabaseData, mergeTableData };
     }
 
     private void logLookupStatistics() {
