@@ -1,9 +1,9 @@
 package edu.iu.sci2.database.isi.merge.document_source;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -22,7 +22,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DataFactory;
-import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -99,15 +98,15 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 		returnData.add(mergeTableData);
 		
 		try {
-			ColumnProjection primaryKeyColumns = new NamedColumnProjection(
+			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
+			ColumnProjection columnFilter = new NamedColumnProjection(
 					new String[] {
 							"TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION",
 							"FULL_TITLE" }, true);
-			String mergeReport = new MergeTableAnalyzer(mergeTable,
-					primaryKeyColumns).analyze();
-			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
-			FileUtilities.writeStreamToFile(new ByteArrayInputStream(
-					mergeReport.getBytes()), mergeReportFile);
+
+			MergeTableAnalyzer.writeAnalysis(new FileOutputStream(mergeReportFile), mergeTable,
+					columnFilter);
+			
 			Data mergeReportData = DataFactory.withClassNameAsFormat(
 					mergeReportFile, DataProperty.TEXT_TYPE, this.originalDatabaseData,
 					"Text Log: A Merge Report for the mergeTable.");

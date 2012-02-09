@@ -2,6 +2,7 @@ package edu.iu.sci2.database.isi.merge.people.identical;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -109,11 +110,10 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 		
 		
 		try {
-			String mergeReport = new MergeTableAnalyzer(mergeTable,
-					"UNSPLIT_NAME").analyze();
 			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
-			FileUtilities.writeStreamToFile(new ByteArrayInputStream(
-					mergeReport.getBytes()), mergeReportFile);
+			MergeTableAnalyzer.writeAnalysis(new FileOutputStream(mergeReportFile), mergeTable,
+					"UNSPLIT_NAME");
+
 			Data mergeReportData = DataFactory.withClassNameAsFormat(
 					mergeReportFile, DataProperty.TEXT_TYPE, this.data[0],
 					"Text Log: A Merge Report for the mergeTable.");

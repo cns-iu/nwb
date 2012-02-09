@@ -2,6 +2,8 @@ package edu.iu.cns.database.merge.generic.analyze.mergetable;
 
 import static edu.iu.cns.database.merge.generic.prepare.plain.CreateMergingTable.MERGE_GROUP_IDENTIFIER_COLUMN;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,44 +22,58 @@ import com.google.common.base.Joiner.MapJoiner;
 
 import edu.iu.cns.database.merge.generic.perform.EntityGroup;
 import edu.iu.cns.database.merge.generic.perform.EntityGroup.MergingErrorException;
-public class MergeTableAnalyzer {
+public final class MergeTableAnalyzer {
 	
-	private Table mergeTable;
-	private ColumnProjection primaryKeyColumnFilter;
-
-	public MergeTableAnalyzer(Table mergeTable, String reportColumn) {
-		this(mergeTable, new NamedColumnProjection(reportColumn, true));
+	private MergeTableAnalyzer() {
+		assert false;
 	}
-
-	public MergeTableAnalyzer(Table mergeTable,
-			ColumnProjection primaryKeyColumnFilter) {
-		this.mergeTable = mergeTable;
-		this.primaryKeyColumnFilter = primaryKeyColumnFilter;
+	
+	/**
+	 * This will write the analysis for the merge table to the output stream
+	 * specified. Only the column name given will be used in the report. It will
+	 * thrown an AnalysisException if there was a problem analyzing the table.
+	 */
+	public static void writeAnalysis(OutputStream outputStream,
+			Table mergeTable, String columnName) throws AnalysisException {
+		writeAnalysis(outputStream, mergeTable, new NamedColumnProjection(columnName,
+				true));
 	}
+	
+	/**
+	 * This will write the analysis for the merge table to the output stream
+	 * specified. Only the column projection given will be used in the report.
+	 * It will thrown an AnalysisException if there was a problem analyzing the
+	 * table.
+	 */
+	public static void writeAnalysis(OutputStream outputStream, Table mergeTable,
+			ColumnProjection columnFilter) throws AnalysisException {
 
-	public String analyze() throws AnalysisException {
-		StringBuilder analysis = new StringBuilder();
+		PrintWriter printWriter = new PrintWriter(outputStream);
 
-		Map<String, EntityGroup> entityGroups = getEntityGroups();
-		
+		Map<String, EntityGroup> entityGroups = getEntityGroups(mergeTable,
+				columnFilter);
+
 		/*
-		 * SOMEDAY The sorting here does not work well if the strings being sorted
-		 *   are really numbers or have numbers in them.  If this becomes a big deal
-		 *   There is a solution here: http://www.davekoelle.com/alphanum.html
-		 *  More discussion here:
-		 *   http://stackoverflow.com/questions/104599/sort-on-a-string-that-may-contain-a-number
+		 * SOMEDAY The sorting here does not work well if the strings being
+		 * sorted are really numbers or have numbers in them. If this becomes a
+		 * big deal There is a solution here:
+		 * http://www.davekoelle.com/alphanum.html More discussion here:
+		 * http://stackoverflow
+		 * .com/questions/104599/sort-on-a-string-that-may-contain-a-number
 		 */
-		
-		List<String> groupIdentifiers = new ArrayList<String>(entityGroups.keySet());
+
+		List<String> groupIdentifiers = new ArrayList<String>(
+				entityGroups.keySet());
 		final Collator collator = Collator.getInstance();
 		collator.setStrength(Collator.TERTIARY);
-		
+
 		Collections.sort(groupIdentifiers, collator);
 		for (String groupIdentifier : groupIdentifiers) {
-			analysis.append(analyzeEntityGroup(entityGroups.get(groupIdentifier)));
+			analyzeEntityGroup(entityGroups.get(groupIdentifier), printWriter);
 		}
 
-		return analysis.toString();
+		printWriter.flush();
+		printWriter.close();
 	}
 
 	/*
@@ -68,26 +84,28 @@ public class MergeTableAnalyzer {
 	 * | Use 'FULL_TITLE->EUROPEAN PHYSICAL JOURNAL B,TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION->EUR PHYS J B' to represent this merged group.
 	 * ===== End Group 1011 =====
 	 */
-	public static String analyzeEntityGroup(EntityGroup entityGroup)
-			throws AnalysisException {
+	private static void analyzeEntityGroup(EntityGroup entityGroup,
+			PrintWriter printWriter) throws AnalysisException {
 
-		StringBuilder analysis = new StringBuilder();
-		analysis.append("===== Begin Group ")
-				.append(entityGroup.getGroupIdentifier()).append(" =====")
-				.append(System.lineSeparator());
-		analysis.append("| Merge: ");
-		MapJoiner entityJoiner = Joiner.on(",").withKeyValueSeparator("->").useForNull("(empty)");
+		printWriter.write("===== Begin Group ");
+		printWriter.write(entityGroup.getGroupIdentifier());
+		printWriter.write(" =====");
+		printWriter.write(System.lineSeparator());
+		printWriter.write("| Merge: ");
+
+		MapJoiner entityJoiner = Joiner.on(",").withKeyValueSeparator("->")
+				.useForNull("(empty)");
 
 		try {
 			List<Map<String, Object>> entities = entityGroup.getAllEntities();
 			List<String> entityStrings = new ArrayList<String>();
-			
+
 			for (Map<String, Object> entity : entities) {
 				StringBuilder entityString = new StringBuilder();
 				entityString.append("'");
 
 				assert entity.keySet().size() != 0;
-				
+
 				if (entity.keySet().size() == 1) {
 					for (Object value : entity.values()) {
 						entityString.append(value);
@@ -99,41 +117,44 @@ public class MergeTableAnalyzer {
 				entityString.append("'");
 				entityStrings.add(entityString.toString());
 			}
-			analysis.append(Joiner.on(", ").join(entityStrings));
+			printWriter.write(Joiner.on(", ").join(entityStrings));
 		} catch (MergingErrorException e) {
 			throw new AnalysisException(
 					"The merge table given to be analyzed was malformed."
 							+ e.getMessage());
 		}
-		analysis.append(System.lineSeparator());
-		analysis.append("| Use '");
+		printWriter.write(System.lineSeparator());
+		printWriter.write("| Use '");
 		Map<String, Object> primaryEntity = entityGroup.getPrimaryEntity();
 		if (primaryEntity.keySet().size() == 1) {
 			for (Object value : primaryEntity.values()) {
-				analysis.append(value);
+				printWriter.write(value.toString());
 			}
 		} else {
-			analysis.append(entityJoiner.join(primaryEntity));
+			printWriter.write(entityJoiner.join(primaryEntity));
 		}
 
-		analysis.append("' to represent this merged group.")
-				.append(System.lineSeparator()).append("===== End Group ")
-				.append(entityGroup.getGroupIdentifier()).append(" =====")
-				.append(System.lineSeparator()).append(System.lineSeparator());
+		printWriter.write("' to represent this merged group.");
+		printWriter.write(System.lineSeparator());
+		printWriter.write("===== End Group ");
+		printWriter.write(entityGroup.getGroupIdentifier());
+		printWriter.write(" =====");
+		printWriter.write(System.lineSeparator());
+		printWriter.write(System.lineSeparator());
 
-		return analysis.toString();
+		printWriter.flush();
 	}
 
-	private Map<String, EntityGroup> getEntityGroups()
-			throws AnalysisException {
+	private static Map<String, EntityGroup> getEntityGroups(Table mergeTable,
+			ColumnProjection columnFilter) throws AnalysisException {
 		Map<String, EntityGroup> mergeGroupIDToEntityGroup = new HashMap<String, EntityGroup>();
 
-		for (Iterator<?> rows = this.mergeTable.tuples(); rows.hasNext();) {
+		for (Iterator<?> rows = mergeTable.tuples(); rows.hasNext();) {
 			Tuple row = (Tuple) rows.next();
 			String groupID = row.getString(MERGE_GROUP_IDENTIFIER_COLUMN);
 			if (!mergeGroupIDToEntityGroup.containsKey(groupID)) {
 				mergeGroupIDToEntityGroup.put(groupID, new EntityGroup(groupID,
-						this.primaryKeyColumnFilter));
+						columnFilter));
 			}
 			EntityGroup entityGroup = mergeGroupIDToEntityGroup.get(groupID);
 			try {
@@ -144,7 +165,7 @@ public class MergeTableAnalyzer {
 						+ System.lineSeparator() + e.getMessage());
 			}
 		}
-		
+
 		return mergeGroupIDToEntityGroup;
 	}
 
