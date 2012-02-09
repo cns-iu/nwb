@@ -1,7 +1,12 @@
 package edu.iu.sci2.database.isi.merge.people.identical;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -12,9 +17,12 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DataFactory;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.database.merge.generic.analyze.mergetable.MergeTableAnalyzer;
+import edu.iu.cns.database.merge.generic.analyze.mergetable.MergeTableAnalyzer.AnalysisException;
 import edu.iu.cns.database.merge.generic.detect.redundant_author.MergeGroup;
 import edu.iu.cns.database.merge.generic.detect.redundant_author.MergeGroup.DuplicateAuthorException;
 import edu.iu.cns.database.merge.generic.detect.redundant_author.MergeGroupSettings;
@@ -67,10 +75,10 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 						new IsiSimpleNameNormalized()),
 				new IsiPersonPriorities());
 
-		Database database = (Database) data[0].getData();
+		Database database = (Database) this.data[0].getData();
 
 		Table mergeTable = mergeMarker.createMarkedMergingTable(MERGE_GROUP_SETTINGS.PERSON_TABLE,
-				database, context);
+				database, this.context);
 
 		try {
 			Collection<MergeGroup> mergeGroups = MergeGroup.createMergeGroups(
@@ -78,7 +86,7 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 
 			MergeGroup.checkForAuthorDuplication(mergeGroups);
 		} catch (DuplicateAuthorException e) {
-			logger.log(LogService.LOG_WARNING, e.getMessage());
+			this.logger.log(LogService.LOG_WARNING, e.getMessage());
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException(
 					"A SQL Exception occured when trying to check ISI "
@@ -86,21 +94,46 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 							+ e.getMessage());
 		}
 		
-		Database merged = MergeMarker.executeMerge(mergeTable, database, context, monitor);
+		Database merged = MergeMarker.executeMerge(mergeTable, database, this.context, this.monitor);
 		
-		Data mergedData = DataFactory.likeParent(merged, data[0],
+		Data mergedData = DataFactory.likeParent(merged, this.data[0],
 				"with identical people merged");
 		
 		Data mergedTable = DataFactory.withClassNameAsFormat(mergeTable,
-				DataProperty.TABLE_TYPE, data[0], "Merge Table: based on "
+				DataProperty.TABLE_TYPE, this.data[0], "Merge Table: based on "
 						+ MERGE_GROUP_SETTINGS.PERSON_TABLE);
+	
+		List<Data> returnData = new ArrayList<Data>();
+		returnData.add(mergedData);
+		returnData.add(mergedTable);
 		
-		return new Data[] { mergedData, mergedTable };
+		
+		try {
+			String mergeReport = new MergeTableAnalyzer(mergeTable,
+					"UNSPLIT_NAME").analyze();
+			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
+			FileUtilities.writeStreamToFile(new ByteArrayInputStream(
+					mergeReport.getBytes()), mergeReportFile);
+			Data mergeReportData = DataFactory.withClassNameAsFormat(
+					mergeReportFile, DataProperty.TEXT_TYPE, this.data[0],
+					"Text Log: A Merge Report for the mergeTable.");
+			returnData.add(mergeReportData);
+			
+		} catch (AnalysisException e) {
+			this.logger.log(LogService.LOG_ERROR,
+					"Could not analyze the mergeTable:\n\t" + e.getMessage());
+		} catch (IOException e) {
+			this.logger.log(LogService.LOG_ERROR,
+					"Could not create the merge report file for the mergeTable:\n\t"
+							+ e.getMessage());
+		}
+
+		return returnData.toArray(new Data[0]);
 	}
 
 
 	public ProgressMonitor getProgressMonitor() {
-		return monitor;
+		return this.monitor;
 	}
 
 	public void setProgressMonitor(ProgressMonitor monitor) {
