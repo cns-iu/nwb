@@ -21,6 +21,7 @@ import prefuse.data.io.sql.DatabaseDataSource;
 import prefuse.data.util.TableIterator;
 
 public class CreateMergingTable implements Algorithm {
+	public static final String PRIMARY_ENTITY_TRUE_VALUE = "*";
 	public static final String PRIMARY_ENTITY_COLUMN = "Primary Entity";
 	public static final String MERGE_GROUP_IDENTIFIER_COLUMN = "Merge Group Identifier";
 	public static final String FROM_TABLE = "From table: ";
@@ -94,7 +95,7 @@ public class CreateMergingTable implements Algorithm {
 		while(rows.hasNext()) {
 			int row = rows.nextInt();
 			rows.setString(MERGE_GROUP_IDENTIFIER_COLUMN, "" + row);
-			rows.setString(PRIMARY_ENTITY_COLUMN, "*");
+			rows.setString(PRIMARY_ENTITY_COLUMN, PRIMARY_ENTITY_TRUE_VALUE);
 		}
 		extractedTable.addColumn(FROM_TABLE + table, String.class);
 		return extractedTable;

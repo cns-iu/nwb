@@ -152,7 +152,7 @@ public class MergeMarker {
 
 
  	private static void markPrimary(Tuple tuple) {
- 		tuple.setString(CreateMergingTable.PRIMARY_ENTITY_COLUMN, "*");
+ 		tuple.setString(CreateMergingTable.PRIMARY_ENTITY_COLUMN, CreateMergingTable.PRIMARY_ENTITY_TRUE_VALUE);
  	}
 
  	private static void assignIdentifier(Tuple tuple, Object selectedIdentifier) {
