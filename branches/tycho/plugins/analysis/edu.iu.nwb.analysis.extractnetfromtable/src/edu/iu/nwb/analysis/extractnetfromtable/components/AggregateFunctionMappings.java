@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
+import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunction;
 import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunctionNames;
 import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFunctions;
 
@@ -99,12 +101,18 @@ public class AggregateFunctionMappings {
 				if (functionNames.contains(function) && columnNames.contains(sourceColumnName)
 						&& !columnNames.contains(newColumnName)) {
 					if (key.startsWith("edge.")) {
-						createColumn(newColumnName, function, columnType, edges);
+						if (!createColumn(newColumnName, function, columnType, edges)) {
+							throw new IllegalArgumentException(String.format("Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
+									newColumnName, function, columnType.getName()));
+						}
 						edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName,
 								function);
 					}
 					if (key.startsWith("node.")) {
-						createColumn(newColumnName, function, columnType, nodes);
+						if (!createColumn(newColumnName, function, columnType, nodes)) {
+							throw new IllegalArgumentException(String.format("Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
+									newColumnName, function, columnType.getName()));
+						}
 						nodeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName,
 								function, nodeType);
 					}
@@ -149,10 +157,25 @@ public class AggregateFunctionMappings {
 		edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
 	}
 
-	private static void createColumn(String newColumnName, String function, Class columnType,
+	/**
+	 * Returns true if the column could be created; false if it was not able to find
+	 * an appropriate aggregation function (e.g. if you try to sum a string column).
+	 * @param newColumnName
+	 * @param function
+	 * @param columnType
+	 * @param newSchema
+	 * @return
+	 * @throws AlgorithmExecutionException
+	 */
+	private static boolean createColumn(String newColumnName, String function, Class columnType,
 			Schema newSchema) {
-		Class finalType = AssembleAggregateFunctions.defaultAssembly().getAggregateFunction(
-				function, columnType).getType();
+		AggregateFunction aggFunc = AssembleAggregateFunctions.defaultAssembly().getAggregateFunction(
+				function, columnType);
+		if (aggFunc == null) {
+			return false;
+		}
+		Class finalType = aggFunc.getType();
 		newSchema.addColumn(newColumnName, finalType);
+		return true;
 	}
 }

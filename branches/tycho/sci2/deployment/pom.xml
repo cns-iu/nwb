@@ -14,16 +14,6 @@
     <module>edu.iu.sci2.javaalgorithms.feature</module>
     <module>edu.iu.sci2.releng</module>
   </modules>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>0.13.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
   <parent>
   	<groupId>edu.iu.sci2</groupId>
   	<artifactId>parent</artifactId>

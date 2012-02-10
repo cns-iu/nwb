@@ -9,16 +9,6 @@
   <modules>
     <module>edu.iu.nwb.database.connect</module>
   </modules>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>0.13.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
   <parent>
   	<groupId>edu.iu.nwb</groupId>
   	<artifactId>plugins</artifactId>

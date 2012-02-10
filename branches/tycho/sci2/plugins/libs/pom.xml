@@ -19,14 +19,4 @@
 		<module>org.apache.commons.lang</module>
 		<module>pdfbox_fontbox</module>
 	</modules>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>0.13.0</version>
-				<extensions>true</extensions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

@@ -19,14 +19,4 @@
 		<module>edu.iu.nwb.gui.brand.welcometext</module>
 		<module>edu.iu.nwb.javaalgorithm.feature</module>
 	</modules>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>0.13.0</version>
-				<extensions>true</extensions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

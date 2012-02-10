@@ -17,14 +17,4 @@
 		<module>edu.iu.cns.database.merge.generic.tests</module>
 		<module>edu.iu.sci2.visualization.geomaps.tests</module>
 	</modules>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>0.13.0</version>
-				<extensions>true</extensions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

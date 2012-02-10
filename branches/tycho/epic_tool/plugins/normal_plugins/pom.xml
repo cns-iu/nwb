@@ -13,16 +13,6 @@
     <module>edu.iu.epic.simulator.runner</module>
     <module>edu.iu.epic.visualization.linegraph</module>
   </modules>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>0.13.0</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
   <parent>
   	<groupId>edu.iu.epic.plugins</groupId>
   	<artifactId>epic_plugins</artifactId>
