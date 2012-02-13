@@ -102,6 +102,75 @@ public class RecordTests extends TestCase {
 	}
 
 	@Test
+	public void testIntegerTable() {
+		table = new Table();
+
+		table.addColumn(labelKey, String.class);
+		table.addColumn(startDateKey, Integer.class);
+		table.addColumn(endDateKey, Integer.class);
+		table.addColumn(startDateFormat, String.class);
+		table.addColumn(endDateFormat, String.class);
+		table.addColumn(sizeByKey, String.class);
+		table.addColumn(categoryKey, String.class);
+		table.addRows(2);
+
+		String row1Label = "Data 1";
+		Integer row1StartDateKey = Integer.parseInt("2012");
+		String row1StartDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
+		Integer row1EndDateKey =  Integer.parseInt("2013");
+		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
+		String row1SizeByKey = "300";
+		String row1CategoryKey = "Category1";
+		table.set(0, labelKey, row1Label);
+		table.set(0, startDateKey, row1StartDateKey);
+		table.set(0, endDateKey, row1EndDateKey);
+		table.set(0, startDateFormat, row1StartDateFormat);
+		table.set(0, endDateFormat, row1EndDateFormat);
+		table.set(0, sizeByKey, row1SizeByKey);
+		table.set(0, categoryKey, row1CategoryKey);
+
+		String row2Label = "Data 2";
+		Integer row2StartDateKey = Integer.parseInt("2013");
+		String row2StartDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
+		Integer row2EndDateKey = Integer.parseInt("2014");
+		String row2EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
+		String row2SizeByKey = "3000";
+		String row2CategoryKey = "Category2";
+
+		table.set(1, labelKey, row2Label);
+		table.set(1, startDateKey, row2StartDateKey);
+		table.set(1, endDateKey, row2EndDateKey);
+		table.set(1, startDateFormat, row2StartDateFormat);
+		table.set(1, endDateFormat, row2EndDateFormat);
+		table.set(1, sizeByKey, row2SizeByKey);
+		table.set(1, categoryKey, row2CategoryKey);
+
+		Record r1;
+		Record r2;
+
+		try {
+			r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+					endDateKey, sizeByKey, startDateFormat, endDateFormat,
+					categoryKey);
+			r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+					endDateKey, sizeByKey, startDateFormat, endDateFormat,
+					categoryKey);
+			assertEquals(row1Label, r1.getLabel());
+			assertEquals(2012, r1.getStartDate().toLocalDate().getYear());
+			assertEquals(2013, r2.getStartDate().toLocalDate().getYear());
+
+			assertEquals(row1CategoryKey, r1.getCategory());
+			assertEquals(row2CategoryKey, r2.getCategory());
+			assertNotSame(r1.getCategory(), r2.getCategory());
+		} catch (InvalidRecordException e) {
+			fail("An exception was thrown when creating the records that should not have been: "
+					+ e.getMessage());
+		}
+
+	}
+
+	
+	@Test
 	public void testDateTable() {
 		assertEquals(2082 - 1900, new Date(2082 - 1900, 1, 1).getYear());
 		assertEquals(2083, new LocalDate(new Date(2083 - 1900, 1, 1)).getYear());
