@@ -27,7 +27,7 @@ import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationU
 public class Record {
 	public static enum Category {
 		DEFAULT
-	};
+	}
 
 	public static final Ordering<Record> START_DATE_ORDERING = Ordering
 			.from(new Comparator<Record>() {
@@ -121,7 +121,7 @@ public class Record {
 			throw new IllegalArgumentException("The value for the row was null");
 		} else if (date instanceof Date) {
 			return new DateTime(date);
-		} else if (date instanceof String) {
+		} else {
 			DateTimeFormatter formatter;
 			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT.equals(dateFormat)) {
 				formatter = new DateTimeFormatterBuilder().append(null,
@@ -130,16 +130,21 @@ public class Record {
 				formatter = new DateTimeFormatterBuilder().append(null,
 						US_FORMATS).toFormatter();
 			}
-
-			// HACK The nsf data in the sample data all has an extra space
-			// in
-			// the dates other than the start date.
-			return formatter.parseDateTime(((String) date)
-					.replaceAll("  ", " "));
-
-		} else {
-			throw new InvalidRecordException(
-					"Only date objects or string representations of the date are supported.");
+			try {
+				/*
+				 * HACK The nsf data in the sample data all has an extra space
+				 * in the dates other than the start date.
+				 */
+				return formatter.parseDateTime(String.valueOf(date).replaceAll("  ",
+						" "));
+			} catch (IllegalArgumentException e) {
+				throw new InvalidRecordException(
+						"Only date objects or representations of the date that can "
+								+ "be converted to strings are supported.  You provided an Object of '"
+								+ date.getClass().getName() + "' type."
+								+ System.getProperty("line.separator")
+								+ e.getMessage());
+			}
 		}
 
 	}
@@ -230,7 +235,7 @@ public class Record {
 	 * @return the category
 	 */
 	public String getCategory() {
-		return category;
+		return this.category;
 	}
 
 }
