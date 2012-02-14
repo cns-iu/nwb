@@ -203,7 +203,8 @@ public abstract class AbstractVisualization {
 			int daysBetweenStartAndStop = Days.daysBetween(record.getStartDate(), record.getEndDate()).getDays();
 			
 			if (daysBetweenStartAndStop == 0){
-				daysBetweenStartAndStop = 365;
+				daysBetweenStartAndStop = Days.daysBetween(record.getStartDate(), record.getStartDate().plusYears(1)).getDays();
+				assert daysBetweenStartAndStop > 0;
 			}
 			
 			double area = record.getAmount();
