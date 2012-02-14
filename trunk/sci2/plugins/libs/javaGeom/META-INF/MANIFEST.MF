@@ -27,3 +27,7 @@ Export-Package: com.seisw.util.geom,
  math.utils
 Bundle-ClassPath: javaGeom-0.10.0.jar,
  .
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: javageom.AcknowledgementPrinter
+Import-Package: org.osgi.framework,
+ org.osgi.service.log
