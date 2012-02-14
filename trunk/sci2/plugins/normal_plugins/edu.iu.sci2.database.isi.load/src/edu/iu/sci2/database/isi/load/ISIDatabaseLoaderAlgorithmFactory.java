@@ -6,10 +6,26 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.AlgorithmUtilities;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 
 public class ISIDatabaseLoaderAlgorithmFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(
-    		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
-        return new ISIDatabaseLoaderAlgorithm(data, parameters, ciShellContext);
+    private BundleContext bundleContext;
+
+	public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+		
+		AlgorithmFactory mergeIdentical = getMergeIdentical(this.bundleContext);
+        return new ISIDatabaseLoaderAlgorithm(data, ciShellContext, mergeIdentical);
+    }
+    
+    protected void activate(ComponentContext componentContext) {
+    	this.bundleContext = componentContext.getBundleContext();
+    }
+    
+    private static AlgorithmFactory getMergeIdentical(BundleContext bundleContext) {
+    	return AlgorithmUtilities.getAlgorithmFactoryByPID(
+        		"edu.iu.sci2.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm", bundleContext);
     }
 }

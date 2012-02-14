@@ -56,7 +56,7 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 	private Data originalDatabaseData;
     private CIShellContext ciShellContext;
 	private LogService logger;
-	private ProgressMonitor monitor;	
+	private ProgressMonitor monitor; // TODO Actually use this..	
         
     public MergeDocumentSourcesAlgorithm(Data[] data, CIShellContext ciShellContext) {
     	this.originalDatabaseData = data[0];
