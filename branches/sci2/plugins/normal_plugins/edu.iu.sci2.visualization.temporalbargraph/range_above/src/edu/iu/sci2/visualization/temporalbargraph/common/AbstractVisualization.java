@@ -201,11 +201,11 @@ public abstract class AbstractVisualization {
 		
 		for(Record record : records){
 			int daysBetweenStartAndStop = Days.daysBetween(record.getStartDate(), record.getEndDate()).getDays();
-				
+			
 			if (daysBetweenStartAndStop == 0){
-				daysBetweenStartAndStop = new Period(Years.ONE).getDays();
+				daysBetweenStartAndStop = 365;
 			}
-
+			
 			double area = record.getAmount();
 
 			double amountPerDay = area / daysBetweenStartAndStop;

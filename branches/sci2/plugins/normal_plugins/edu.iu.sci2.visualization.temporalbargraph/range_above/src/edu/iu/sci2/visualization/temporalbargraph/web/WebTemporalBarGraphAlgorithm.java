@@ -47,8 +47,8 @@ public class WebTemporalBarGraphAlgorithm extends
 		this.shouldScaleOutput = shouldScaleOutput;
 		this.categoryColumn = categoryColumn;
 
-		if (this.categoryColumn
-				.equals(AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE)) {
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
+				.equals(this.categoryColumn)) {
 			colorRegistry = new ColorRegistry<String>(
 					new TemporalBarGraphColorSchema(
 							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
