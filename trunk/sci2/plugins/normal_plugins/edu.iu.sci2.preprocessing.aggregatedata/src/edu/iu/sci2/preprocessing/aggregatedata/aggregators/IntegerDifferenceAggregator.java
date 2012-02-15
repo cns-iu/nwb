@@ -9,8 +9,6 @@ public class IntegerDifferenceAggregator implements SingleFunctionAggregator<Int
 		int difference = 0;
 
 		for (int currentValue : objectsToAggregate) {
-			IntegerAggregatorHelper.checkAdditionForOverOrUnderFlow(-difference,
-					currentValue);
 			difference = currentValue - difference;
 		}
 

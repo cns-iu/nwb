@@ -10,8 +10,6 @@ public class LongSumAggregator implements SingleFunctionAggregator<Long> {
 		long total = 0L;
 
 		for (Long currentValue : objectsToAggregate) {
-			LongAggregatorHelper.checkAdditionForOverOrUnderFlow(total,
-					currentValue);
 			total += currentValue;
 		}
 		return total;
