@@ -7,14 +7,14 @@ import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 public class DoubleSumAggregator implements SingleFunctionAggregator<Double> {
 
 	public Double aggregateValue(List<Double> objectsToAggregate) {
-		Double currentSummmationValue = new Double(0);
+		double total = 0D;
 		
-		for (Double currentValue : objectsToAggregate) {
-			currentSummmationValue = currentSummmationValue.doubleValue() 
-										+ currentValue.doubleValue();
+		for (double currentValue : objectsToAggregate) {
+			DoubleAggregatorHelper.checkAdditionForOverOrUnderFlow(total, currentValue);
+			total += currentValue;
 		}
 		
-		return currentSummmationValue.doubleValue();
+		return total;
 	}
 
 }

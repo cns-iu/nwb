@@ -4,17 +4,18 @@ import java.util.List;
 
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
-public class DoubleDifferenceAggregator implements SingleFunctionAggregator<Double> {
+public class DoubleDifferenceAggregator implements
+		SingleFunctionAggregator<Double> {
 
 	public Double aggregateValue(List<Double> objectsToAggregate) {
-		Double currentDifferenceValue = new Double(0);
+		double difference = 0D;
 		
-		for (Double currentValue : objectsToAggregate) {
-			currentDifferenceValue = currentValue.doubleValue()
-											- currentDifferenceValue.doubleValue();
+		for (double currentValue : objectsToAggregate) {
+			DoubleAggregatorHelper.checkAdditionForOverOrUnderFlow(-difference, currentValue);
+			difference = currentValue - difference;
 		}
-		
-		return currentDifferenceValue.doubleValue();
+
+		return difference;
 	}
 
 }
