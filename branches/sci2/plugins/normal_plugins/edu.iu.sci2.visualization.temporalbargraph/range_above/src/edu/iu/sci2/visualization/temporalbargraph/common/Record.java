@@ -154,6 +154,17 @@ public class Record {
 			String endDateFormat, String categoryKey)
 			throws InvalidRecordException {
 
+		if (tableRow.canGetString(labelKey)) {
+			this.label = tableRow.getString(labelKey);
+		} else {
+			this.label = String.valueOf(tableRow.get(labelKey));
+		}
+		
+		System.out.println("Getting label...");
+		System.out.println("Label: " + tableRow
+				.getString(labelKey));
+		System.out.println("Got the label.");
+
 		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
 				.equals(categoryKey)) {
 			this.category = PostScriptFormationUtilities
