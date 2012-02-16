@@ -292,6 +292,12 @@
   	  	  <param name="project.name" value="edu.iu.sci2.database.nsf.extract.table.core_entities"/>
   	  	  <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/normal_plugins"/>
   	</antcall>
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.sci2.database.isi.extract.network.weighted_document_document_network"/>
+  	  	  <param name="project.name" value="edu.iu.sci2.database.isi.extract.network.weighted_document_document_network"/>
+  	  	  <param name="url" value="http://nwb.cns.iu.edu/svn/nwb/trunk/sci2/plugins/normal_plugins"/>
+  	</antcall>
   	-->
 		<!-- END (REMOVED) DATABASE FUNCTIONALITY -->
 
