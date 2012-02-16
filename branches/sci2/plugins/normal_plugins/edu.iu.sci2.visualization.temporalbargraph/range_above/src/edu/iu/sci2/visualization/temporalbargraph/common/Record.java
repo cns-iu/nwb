@@ -1,7 +1,12 @@
 package edu.iu.sci2.visualization.temporalbargraph.common;
 
+import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
@@ -12,9 +17,17 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 
+import prefuse.data.Schema;
+import prefuse.data.Table;
 import prefuse.data.Tuple;
+//FIXME remove from here and manifest
+import prefuse.data.tuple.TableTuple;
+import prefuse.data.tuple.TupleManager;
+//FIXME remove from here and manifest
+import prefuse.util.collections.IntIterator;
 
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
 
@@ -250,4 +263,61 @@ public class Record {
 		return this.category;
 	}
 
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Record [label=").append(this.label).append(", startDate=")
+				.append(this.startDate).append(", endDate=").append(this.endDate)
+				.append(", amount=").append(this.amount).append(", category=")
+				.append(this.category).append("]");
+		return builder.toString();
+	}
+
+	// FIXME  I should go into a testing plugin!
+	public static void main(String[] args) {
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, String.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, Double.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+		
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]), columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null, TableTuple.class);
+		Random rand = new Random();
+		for (int ii = 0; ii < 5; ii++) {
+			int rowId = table.addRow();
+			Tuple row = tupleManager.getTuple(rowId);
+			table.addTuple(row);
+			row.set(labelKey, "Label" + ii);
+			row.set(sizeByKey, rand.nextDouble());
+			row.set(startDateKey, new DateTime().toDate());
+			row.set(endDateKey, new DateTime().toDate());
+			row.set(categoryKey, "Category" + ii);
+		}
+		IntIterator rows = table.rows();
+		while (rows.hasNext()) {
+
+			try {
+				System.out.println(new Record(table.getTuple(rows.nextInt()),
+						labelKey, startDateKey, endDateKey, sizeByKey,
+						DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
+						DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT, categoryKey));
+			} catch (InvalidRecordException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
 }
