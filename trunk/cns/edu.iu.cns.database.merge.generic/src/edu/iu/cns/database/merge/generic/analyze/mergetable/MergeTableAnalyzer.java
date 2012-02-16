@@ -86,11 +86,11 @@ public final class MergeTableAnalyzer {
 	 */
 	private static void analyzeEntityGroup(EntityGroup entityGroup,
 			PrintWriter printWriter) throws AnalysisException {
-
+		String newline = System.getProperty("line.separator");
 		printWriter.write("===== Begin Group ");
 		printWriter.write(entityGroup.getGroupIdentifier());
 		printWriter.write(" =====");
-		printWriter.write(System.lineSeparator());
+		printWriter.write(newline);
 		printWriter.write("| Merge: ");
 
 		MapJoiner entityJoiner = Joiner.on(",").withKeyValueSeparator("->")
@@ -123,7 +123,7 @@ public final class MergeTableAnalyzer {
 					"The merge table given to be analyzed was malformed."
 							+ e.getMessage());
 		}
-		printWriter.write(System.lineSeparator());
+		printWriter.write(newline);
 		printWriter.write("| Use '");
 		Map<String, Object> primaryEntity = entityGroup.getPrimaryEntity();
 		if (primaryEntity.keySet().size() == 1) {
@@ -135,12 +135,12 @@ public final class MergeTableAnalyzer {
 		}
 
 		printWriter.write("' to represent this merged group.");
-		printWriter.write(System.lineSeparator());
+		printWriter.write(newline);
 		printWriter.write("===== End Group ");
 		printWriter.write(entityGroup.getGroupIdentifier());
 		printWriter.write(" =====");
-		printWriter.write(System.lineSeparator());
-		printWriter.write(System.lineSeparator());
+		printWriter.write(newline);
+		printWriter.write(newline);
 
 		printWriter.flush();
 	}
@@ -162,8 +162,9 @@ public final class MergeTableAnalyzer {
 			} catch (MergingErrorException e) {
 				throw new AnalysisException("Row " + row.getRow()
 						+ " in the merge table was invalid:"
-						+ System.lineSeparator() + e.getMessage());
+						+ System.getProperty("line.separator") + e.getMessage());
 			}
+			
 		}
 
 		return mergeGroupIDToEntityGroup;
