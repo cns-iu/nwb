@@ -159,11 +159,6 @@ public class Record {
 		} else {
 			this.label = String.valueOf(tableRow.get(labelKey));
 		}
-		
-		System.out.println("Getting label...");
-		System.out.println("Label: " + tableRow
-				.getString(labelKey));
-		System.out.println("Got the label.");
 
 		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
 				.equals(categoryKey)) {
