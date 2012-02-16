@@ -115,7 +115,7 @@ public class MergeMarker {
 	
  	
  	
- 	private static Database executeMerge(
+	public static Database executeMerge(
  			Table markedMergingTable,
  			Database database,
  			CIShellContext context,

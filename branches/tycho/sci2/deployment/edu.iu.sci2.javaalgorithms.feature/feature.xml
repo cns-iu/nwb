@@ -52,7 +52,7 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="edu.iu.cns.converter.nwb_graphstream"
          download-size="0"
@@ -164,7 +164,7 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="edu.iu.nwb.converter.text"
          download-size="0"
@@ -606,13 +606,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"
          unpack="false"/>
 
-   <!-- <plugin
-         id="edu.iu.sci2.visualization.imageviewer"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/> -->
-
    <plugin
          id="edu.iu.nwb.analysis.hits"
          download-size="0"
@@ -796,5 +789,18 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="edu.iu.cns.r"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.io"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

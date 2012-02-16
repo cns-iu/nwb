@@ -1,165 +1,105 @@
 package edu.iu.sci2.visualization.temporalbargraph;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Dictionary;
+import java.awt.Color;
+import java.util.List;
 
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
-import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.color.ColorRegistry;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import au.com.bytecode.opencsv.CSVWriter;
+import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
+import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
+import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
+import edu.iu.sci2.visualization.temporalbargraph.common.Record;
+import edu.iu.sci2.visualization.temporalbargraph.common.TemporalBarGraphColorSchema;
 
-import com.google.common.io.Files;
+public class TemporalBarGraphAlgorithm extends
+		AbstractTemporalBarGraphAlgorithm implements Algorithm {
 
-public class TemporalBarGraphAlgorithm implements Algorithm {
-	 // TODO import external settings if possible
-	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
-	public static final String CSV_MIME_TYPE = "file:text/csv";
-	public static final String EPS_FILE_EXTENSION = "eps";
-	public static final String CSV_FILE_EXTENSION = "csv";
-	
-    private Data inputData;
-    private Table inputTable;
-    private LogService logger;
-    private String labelColumn;
-    private String startDateColumn;
-    private String endDateColumn;
-    private String sizeByColumn;
-    private String startDateFormat;
-    private String endDateFormat;
-    private double pageWidth;
-    private double pageHeight;
-    private boolean shouldScaleOutput;
+	private Data inputData;
+	private LogService logger;
+
+	private String labelColumn;
+	private String startDateColumn;
+	private String endDateColumn;
+	private String sizeByColumn;
+	private String startDateFormat;
+	private String endDateFormat;
+	private double pageWidth;
+	private double pageHeight;
+	private boolean shouldScaleOutput;
+	private String categoryColumn;
+	private ColorRegistry<String> colorRegistry;
+	private List<Record> records;
 	private String query;
-    
-    public TemporalBarGraphAlgorithm(
-    		Data inputData,
-    		Table inputTable,
-    		LogService logger,
-    		String labelColumn,
-    		String startDateColumn,
-    		String endDateColumn,
-    		String sizeByColumn,
-    		String startDateFormat,
-    		String endDateFormat,
-    		String query,
-    		double pageWidth,
-    		double pageHeight,
-    		boolean shouldScaleOutput) {
-        this.inputData = inputData;
-        this.inputTable = inputTable;
-        this.logger = logger;
-        this.labelColumn = labelColumn;
-        this.startDateColumn = startDateColumn;
-        this.endDateColumn = endDateColumn;
-        this.sizeByColumn = sizeByColumn;
-        this.startDateFormat = startDateFormat;
-        this.endDateFormat = endDateFormat;
-        this.query = query;
-        this.pageWidth = pageWidth;
-        this.pageHeight = pageHeight;
-        this.shouldScaleOutput = shouldScaleOutput;
-    }
 
-    public Data[] execute() throws AlgorithmExecutionException {
-    	logger.log(LogService.LOG_INFO, "Creating PostScript. May take a few moments...");
-    	CSVWriter csvWriter = null;
+	public TemporalBarGraphAlgorithm(Data inputData, Table inputTable,
+			LogService logger, String labelColumn, String startDateColumn,
+			String endDateColumn, String sizeByColumn, String startDateFormat,
+			String endDateFormat, String query, double pageWidth,
+			double pageHeight, boolean shouldScaleOutput, String categoryColumn) {
+		this.inputData = inputData;
+		this.logger = logger;
 
-    	try {
-    		File barSizesFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-    			"barSizes", CSV_FILE_EXTENSION);
-    		csvWriter = new CSVWriter(new FileWriter(barSizesFile));
-    		String[] header = new String[] {
-    			"Record Name", "Width", "Height", "Area (Width x Height)"
-    		};
-    		csvWriter.writeNext(header);
-    		String postScriptCode = createPostScriptCode(csvWriter);
-    		csvWriter.close();
+		this.labelColumn = labelColumn;
+		this.startDateColumn = startDateColumn;
+		this.endDateColumn = endDateColumn;
+		this.sizeByColumn = sizeByColumn;
+		this.startDateFormat = startDateFormat;
+		this.endDateFormat = endDateFormat;
+		this.query = query;
+		this.pageWidth = pageWidth;
+		this.pageHeight = pageHeight;
+		this.shouldScaleOutput = shouldScaleOutput;
+		this.categoryColumn = categoryColumn;
 
-    		File temporaryPostScriptFile =
-    			writePostScriptCodeToTemporaryFile(postScriptCode, "horizontal-line-graph");
+		if (this.categoryColumn
+				.equals(AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE)) {
+			colorRegistry = new ColorRegistry<String>(
+					new TemporalBarGraphColorSchema(
+							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
+							TemporalBarGraphColorSchema.DEFAULT_COLOR));
+		} else {
+			colorRegistry = new ColorRegistry<String>(
+					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
 
-			return formOutData(temporaryPostScriptFile, barSizesFile, inputData);
-    	} catch (IOException e) {
-    		String message = String.format(
-    			"An error occurred when creating %s.",
-    			getLabel(this.inputData.getMetadata()));
-    		message += e.getMessage();
-    		throw new AlgorithmExecutionException(message, e);
-    	} catch (PostScriptCreationException e) {
-    		String exceptionMessage = String.format(
-    			"An error occurred when creating the PostScript for the %s.",
-    			getLabel(this.inputData.getMetadata()) + e.getMessage());
-    		throw new AlgorithmExecutionException(exceptionMessage, e);
-    	} finally {
-    		if (csvWriter != null) {
-    			try {
-    				csvWriter.close();
-    			} catch (IOException e) {
-    				throw new AlgorithmExecutionException(e.getMessage(), e);
-    			}
-    		}
-    	}
-    }
+		}
 
-	private String createPostScriptCode(CSVWriter csvWriter)
-			throws PostScriptCreationException {
-		DocumentPostScriptCreator postScriptCreator = new DocumentPostScriptCreator(
-				labelColumn, startDateColumn, endDateColumn, sizeByColumn,
-				startDateFormat, endDateFormat, query, pageWidth, pageHeight,
-				shouldScaleOutput);
-
-		String postScriptCode = postScriptCreator.createPostScript(this.inputTable, this.logger, csvWriter);
-
-		return postScriptCode;
+		this.records = readRecordsFromTable(inputTable, logger,
+				this.labelColumn, this.startDateColumn, this.endDateColumn,
+				this.sizeByColumn, this.startDateFormat, this.endDateFormat,
+				this.categoryColumn);
+		for (Record record : records) {
+			colorRegistry.getColorOf(record.getCategory());
+		}
 	}
 
-    private static File writePostScriptCodeToTemporaryFile(
-    		String postScriptCode, String temporaryFileName) throws IOException {
-    	File psFile = File.createTempFile(temporaryFileName, EPS_FILE_EXTENSION);
-    	psFile.deleteOnExit();
-    	
-    	Files.write(postScriptCode, psFile, Charset.defaultCharset());
-    	
-    	return psFile;
-    }
+	protected String createPostScriptCode(CSVWriter csvWriter)
+			throws PostScriptCreationException {
 
-    private static Data[] formOutData(File postScriptFile, File barSizesFile, Data inputData) {
-		Data postScriptData = new BasicData(postScriptFile, POSTSCRIPT_MIME_TYPE);
-		
-		Dictionary<String, Object> postScriptMetaData = postScriptData.getMetadata();
-		postScriptMetaData.put(
-			DataProperty.LABEL, "visualized with Horizontal Line Graph");
-		postScriptMetaData.put(DataProperty.PARENT, inputData);
-		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
+		String legendText = "Area size equals \"" + this.sizeByColumn + "\"";
 
-		
-		Data barSizesData = new BasicData(barSizesFile, CSV_MIME_TYPE);
-		
-		Dictionary<String, Object> barSizesMetadata = barSizesData.getMetadata();
-		barSizesMetadata.put(DataProperty.LABEL, "bar sizes");
-		barSizesMetadata.put(DataProperty.PARENT, inputData);
-		barSizesMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		PostscriptDocument postscriptDocument = new PostscriptDocument(
+				csvWriter, this.records, shouldScaleOutput, legendText,
+				colorRegistry, query,
+				new DoubleDimension(pageWidth, pageHeight));
 
-		
-        return new Data[] { postScriptData, barSizesData };
-    }
+		String documentPostScript = postscriptDocument.renderPostscript();
 
-    private static String getLabel(Dictionary<String, Object> metadata) {
-    	Object label = metadata.get(DataProperty.LABEL);
+		return documentPostScript;
 
-    	if (label != null) {
-    		return String.format("data \"%s\"", label.toString());
-    	} else {
-    		return "input data";
-    	}
-    }
+	}
+
+	@Override
+	protected LogService getLogger() {
+		return this.logger;
+	}
+
+	@Override
+	protected Data getInputData() {
+		return this.inputData;
+	}
 }

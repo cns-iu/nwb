@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: edu.iu.sci2.visualization.scimaps.tests
+Bundle-SymbolicName: edu.iu.sci2.visualization.scimaps.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: edu.iu.sci2.visualization.scimaps;bundle-version="0.0.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit;bundle-version="4.8.2"

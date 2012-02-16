@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.cishell.utilities.FileCopyingException;
 import org.cishell.utilities.FileUtilities;
@@ -19,19 +18,16 @@ import com.google.common.collect.Sets;
 import edu.iu.cns.r.exportdata.RFileExportLog;
 
 public class RInstance {
-	public static final String CSV_FILE_EXTENSION = "csv";
+	public static final String CSV_FILE_EXTENSION = ".csv";
 
-	public static final String TEMPORARY_WORKING_DIRECTORY_BASE_NAME = "r_instance_";
-	public static final String TEMPORARY_IMPORT_TABLE_BASE_NAME = "_import_";
-	public static final String TEMPORARY_EXPORT_TABLE_BASE_NAME = "_export_";
+	public static final String TEMPORARY_WORKING_DIRECTORY_PREFIX = "r_instance";
+	public static final String TEMPORARY_IMPORT_TABLE_PREFIX = "_import_";
+	public static final String TEMPORARY_EXPORT_TABLE_PREFIX = "_export_";
 
 	private String rHome;
 	private bsh.Interpreter javaInterpreter = new bsh.Interpreter();
-	private String randomPartForTemporaryWorkingDirectory = UUID.randomUUID().toString();
-	private String temporaryWorkingDirectoryPath =
-		TEMPORARY_WORKING_DIRECTORY_BASE_NAME + this.randomPartForTemporaryWorkingDirectory;
 	private File temporaryWorkingDirectory =
-		FileUtilities.createTemporaryDirectory(this.temporaryWorkingDirectoryPath);
+		FileUtilities.createTempDirectory(TEMPORARY_WORKING_DIRECTORY_PREFIX);
 
 	public RInstance(String rHome, LogService logger) {
 		this.rHome = rHome;
@@ -56,11 +52,9 @@ public class RInstance {
 			throws IOException {
 		String rPath = String.format(
 			"%s%s%s", this.rHome, File.separator, RProperties.R_EXECUTABLE_BASE_NAME);
-		File temporaryMakeJava_RFile = FileUtilities.writeEntireStreamToTemporaryFileInDirectory(
-			RInstance.class.getResourceAsStream(RProperties.MAKE_JAVA_PATH),
-			this.temporaryWorkingDirectory,
-			RProperties.MAKE_JAVA_FILE_NAME,
-			RProperties.MAKE_JAVA_FILE_NAME_EXTENSION);
+		File temporaryMakeJava_RFile = File.createTempFile(RProperties.MAKE_JAVA_FILE_NAME, RProperties.MAKE_JAVA_FILE_NAME_EXTENSION, temporaryWorkingDirectory);
+
+		FileUtilities.writeStreamToFile(RInstance.class.getResourceAsStream(RProperties.MAKE_JAVA_PATH), temporaryMakeJava_RFile);
 		List<String> command = Arrays.asList(
 			rPath,
 			RProperties.R_SAVE_ENVIRONMENT_COMMAND_LINE_SWITCH,
@@ -76,11 +70,13 @@ public class RInstance {
 	public RStreamLog runRGUI() throws IOException {
 		String rGUIPath = String.format(
 			"%s%s%s", this.rHome, File.separator, RProperties.R_GUI_EXECUTABLE_BASE_NAME);
+		
 		String rDataPath = String.format(
 			"%s%s%s",
 			this.temporaryWorkingDirectory.getAbsolutePath(),
 			File.separator,
 			RProperties.R_DATA_FILE_NAME);
+		
 		List<String> command =
 			Arrays.asList(rGUIPath, rDataPath, RProperties.R_SAVE_ENVIRONMENT_COMMAND_LINE_SWITCH);
 
@@ -157,13 +153,7 @@ public class RInstance {
 
 	public RStreamLog importTable(File tableFile, boolean hasHeader, String rVariableName)
 			throws FileCopyingException, IOException {
-		String temporaryTableFileName =
-			tableFile.getName() + TEMPORARY_IMPORT_TABLE_BASE_NAME + UUID.randomUUID().toString();
-		File localTableFile = FileUtilities.createTemporaryFile(
-			this.temporaryWorkingDirectory,
-			this.temporaryWorkingDirectoryPath,
-			temporaryTableFileName,
-			CSV_FILE_EXTENSION);
+		File localTableFile = File.createTempFile(tableFile.getName() + TEMPORARY_IMPORT_TABLE_PREFIX, CSV_FILE_EXTENSION, this.temporaryWorkingDirectory) ;
 		FileUtilities.copyFile(tableFile, localTableFile);
 
 		String hasHeaderString = new Boolean(hasHeader).toString().toUpperCase();
@@ -181,29 +171,19 @@ public class RInstance {
 
 	// Get Stuff out of R.
 
-	public RFileExportLog exportTable(String rVariableName) throws IOException {
-		String baseTemporaryTableFileName = String.format(
-			"%s%s%s",
-			rVariableName,
-			TEMPORARY_EXPORT_TABLE_BASE_NAME,
-			UUID.randomUUID().toString());
-		String temporaryTableFileName =
-			String.format("%s.%s", baseTemporaryTableFileName, CSV_FILE_EXTENSION);
+	public RFileExportLog exportTable(String rVariableName) throws IOException {		
+		File tempFile = File.createTempFile(rVariableName + TEMPORARY_EXPORT_TABLE_PREFIX, CSV_FILE_EXTENSION, this.temporaryWorkingDirectory);
+		String temporaryTableFileName = tempFile.getName();
+		
 		String rCode = String.format(
 			"write.csv(%s, file='%s', sep=',', quote=TRUE, row.names=FALSE)",
 			rVariableName,
 			temporaryTableFileName);
+		
 		RStreamLog output = executeArbitaryRCode(rCode);
-
-		String fullWrittenFilePath = String.format(
-			"%s%s%s",
-			this.temporaryWorkingDirectory.getAbsolutePath(),
-			File.separator,
-			temporaryTableFileName);
-		/* TODO Check a file exists at fullWrittenFilePath and if not, tell the user nicely that R messed up */
-		File writtenFile = new File(fullWrittenFilePath);
-
-		return new RFileExportLog(output, writtenFile);
+		
+		/* TODO Check a file exists at fullWrittenFilePath (tempFile) and if not, tell the user nicely that R messed up */
+		return new RFileExportLog(output, tempFile);
 	}
 
 	// Miscellaneous/Utilities.

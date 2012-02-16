@@ -8,20 +8,20 @@ import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.sci2.database.nsf.load.model.entity.Award;
 import edu.iu.sci2.database.nsf.load.model.entity.Person;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class ProgramManager extends RowItem<ProgramManager> {
 
 	public static final Schema<ProgramManager> SCHEMA = new Schema<ProgramManager>(
 			false,
-			NSF_Database_FieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.PROGRAM_MANAGER_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY
+			NsfDatabaseFieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+			NsfDatabaseFieldNames.PROGRAM_MANAGER_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY
 			).
 			FOREIGN_KEYS(
-				NSF_Database_FieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY,
-					NSF_Database_FieldNames.AWARD_TABLE_NAME,
-				NSF_Database_FieldNames.PROGRAM_MANAGER_PERSON_FOREIGN_KEY,
-					NSF_Database_FieldNames.PERSON_TABLE_NAME
+				NsfDatabaseFieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY,
+					NsfDatabaseFieldNames.AWARD_TABLE_NAME,
+				NsfDatabaseFieldNames.PROGRAM_MANAGER_PERSON_FOREIGN_KEY,
+					NsfDatabaseFieldNames.PERSON_TABLE_NAME
 			);
 	
 	private Person person;
@@ -57,9 +57,9 @@ public class ProgramManager extends RowItem<ProgramManager> {
 	private static Dictionary<String, Object> createAttributes(Person person, Award award) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(
-			NSF_Database_FieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY, award.getPrimaryKey());
+			NsfDatabaseFieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY, award.getPrimaryKey());
 		attributes.put(
-			NSF_Database_FieldNames.PROGRAM_MANAGER_PERSON_FOREIGN_KEY, person.getPrimaryKey());
+			NsfDatabaseFieldNames.PROGRAM_MANAGER_PERSON_FOREIGN_KEY, person.getPrimaryKey());
 
 		return attributes;
 	}

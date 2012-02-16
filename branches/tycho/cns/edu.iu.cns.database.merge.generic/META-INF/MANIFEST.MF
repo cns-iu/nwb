@@ -57,7 +57,8 @@ Import-Package: org.cishell.framework;version="1.0.0",
 X-AutoStart: true
 Service-Component: OSGI-INF/create.xml, OSGI-INF/merge.xml
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: edu.iu.cns.database.merge.generic.perform,
+Export-Package: edu.iu.cns.database.merge.generic.detect.redundant_author,
+ edu.iu.cns.database.merge.generic.perform,
  edu.iu.cns.database.merge.generic.prepare.marked,
  edu.iu.cns.database.merge.generic.prepare.marked.grouping,
  edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased,

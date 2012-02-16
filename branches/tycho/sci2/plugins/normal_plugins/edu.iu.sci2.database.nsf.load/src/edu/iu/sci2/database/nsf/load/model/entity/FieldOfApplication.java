@@ -11,15 +11,15 @@ import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 
 public class FieldOfApplication extends Entity<FieldOfApplication> {
 
 	public static final Schema<FieldOfApplication> SCHEMA = new Schema<FieldOfApplication>(
 			true,
-			NSF_Database_FieldNames.ORIGINAL_INPUT_FIELD, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.EXTRACTED_NUMERIC_FIELD, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.EXTRACTED_TEXT_FIELD, DerbyFieldType.TEXT
+			NsfDatabaseFieldNames.ORIGINAL_INPUT_FIELD, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.EXTRACTED_NUMERIC_FIELD, DerbyFieldType.TEXT,
+			NsfDatabaseFieldNames.EXTRACTED_TEXT_FIELD, DerbyFieldType.TEXT
 			);
 	
 	private String originalInputField;
@@ -106,9 +106,9 @@ public class FieldOfApplication extends Entity<FieldOfApplication> {
 	private static Dictionary<String, Object> createAttributes(
 			String originalInputField, String extractedNumericField, String extractedTextField) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.ORIGINAL_INPUT_FIELD, originalInputField);
-		attributes.put(NSF_Database_FieldNames.EXTRACTED_NUMERIC_FIELD, extractedNumericField);
-		attributes.put(NSF_Database_FieldNames.EXTRACTED_TEXT_FIELD, extractedTextField);
+		attributes.put(NsfDatabaseFieldNames.ORIGINAL_INPUT_FIELD, originalInputField);
+		attributes.put(NsfDatabaseFieldNames.EXTRACTED_NUMERIC_FIELD, extractedNumericField);
+		attributes.put(NsfDatabaseFieldNames.EXTRACTED_TEXT_FIELD, extractedTextField);
 
 		return attributes;
 	}

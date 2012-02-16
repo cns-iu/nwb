@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.FileUtilities;
+import org.apache.commons.io.FilenameUtils;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.ToCaseFunction;
 
@@ -63,8 +63,7 @@ public class RHomeFinder {
 				continue;
 			}
 
-			/* TODO can we use some other utility? if not, that'll do. */
-			String rBaseFileName = FileUtilities.extractFileName(rDirectoryFile.getName());
+			String rBaseFileName = FilenameUtils.getBaseName(rDirectoryFile.getName());
 
 			if (RProperties.R_EXECUTABLE_BASE_NAME.equalsIgnoreCase(rBaseFileName)) {
 				return true;

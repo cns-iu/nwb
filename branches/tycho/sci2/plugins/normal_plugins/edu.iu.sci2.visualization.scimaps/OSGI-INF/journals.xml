@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithmFactory"/>
+	<properties entry="OSGI-INF/journals.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
