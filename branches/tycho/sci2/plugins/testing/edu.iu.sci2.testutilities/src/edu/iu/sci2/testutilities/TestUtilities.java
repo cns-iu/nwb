@@ -42,14 +42,14 @@ public class TestUtilities {
 	}
 	
 	// This is abstracted in case we ever decide to use a full-blown mock library.
-	public static TestContext createFakeCIShellContext() throws Exception {
-		try {
-			return new TestContext();
-		}
-		catch (Exception e) {
-			throw e;
-		}
-	}
+//	public static TestContext createFakeCIShellContext() throws Exception {
+//		try {
+//			return new TestContext();
+//		}
+//		catch (Exception e) {
+//			throw e;
+//		}
+//	}
 	
 	/**
 	 * Create a database and fill it with the provided parameters, and wrap and
