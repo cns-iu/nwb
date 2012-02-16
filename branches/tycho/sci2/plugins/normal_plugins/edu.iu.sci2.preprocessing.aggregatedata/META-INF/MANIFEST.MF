@@ -4,7 +4,6 @@ Bundle-Name: Aggregate Data
 Bundle-SymbolicName: edu.iu.sci2.preprocessing.aggregatedata
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Bundle-Localization: plugin
 Import-Package: com.google.common.collect,
  edu.iu.nwb.converter.nwb.common,
  org.cishell.framework,
@@ -20,3 +19,4 @@ Import-Package: com.google.common.collect,
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

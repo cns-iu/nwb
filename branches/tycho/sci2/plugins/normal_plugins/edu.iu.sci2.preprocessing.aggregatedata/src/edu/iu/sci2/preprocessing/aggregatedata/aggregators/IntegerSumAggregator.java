@@ -5,7 +5,6 @@ import java.util.List;
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
 public class IntegerSumAggregator implements SingleFunctionAggregator<Integer> {
-
 	public Integer aggregateValue(List<Integer> objectsToAggregate) {
 		int total = 0;
 
@@ -17,5 +16,4 @@ public class IntegerSumAggregator implements SingleFunctionAggregator<Integer> {
 
 		return total;
 	}
-
 }

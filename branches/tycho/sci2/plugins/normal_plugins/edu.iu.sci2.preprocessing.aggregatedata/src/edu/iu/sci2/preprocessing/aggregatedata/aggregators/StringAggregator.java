@@ -23,5 +23,4 @@ public class StringAggregator implements SingleFunctionAggregator<String> {
 		
 		return currentAggregatedText.toString();
 	}
-
 }

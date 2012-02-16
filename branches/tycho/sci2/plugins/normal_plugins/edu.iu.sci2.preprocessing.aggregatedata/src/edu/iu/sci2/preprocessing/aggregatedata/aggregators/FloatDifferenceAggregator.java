@@ -5,7 +5,6 @@ import java.util.List;
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
 public class FloatDifferenceAggregator implements SingleFunctionAggregator<Float> {
-
 	public Float aggregateValue(List<Float> objectsToAggregate) {
 		float difference = 0F;
 
@@ -17,5 +16,4 @@ public class FloatDifferenceAggregator implements SingleFunctionAggregator<Float
 
 		return difference;
 	}
-
 }

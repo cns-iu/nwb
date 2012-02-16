@@ -5,10 +5,8 @@ import java.util.List;
 
 import edu.iu.sci2.preprocessing.aggregatedata.SingleFunctionAggregator;
 
-public class MaxAggregator implements SingleFunctionAggregator {
-
-	public Object aggregateValue(List objectsToAggregate) {
-		return (Number) Collections.max(objectsToAggregate);
+public class MaxAggregator<T extends Comparable<T>> implements SingleFunctionAggregator<T> {
+	public T aggregateValue(List<T> objectsToAggregate) {
+		return Collections.max(objectsToAggregate);
 	}
-
 }

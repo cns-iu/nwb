@@ -42,9 +42,8 @@ public class AggregateDataAlgorithmFactory implements AlgorithmFactory, Paramete
 	};
 	
 	
-	@SuppressWarnings("unchecked")
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		return new AggregateDataAlgorithm(data, 
 										  parameters, 
 										  context, 
@@ -52,8 +51,8 @@ public class AggregateDataAlgorithmFactory implements AlgorithmFactory, Paramete
 										  inputStringParameterIDs);
 	}
 
-	public ObjectClassDefinition mutateParameters(Data[] data, 
-												  ObjectClassDefinition oldParameters) {
+	public ObjectClassDefinition mutateParameters(
+			Data[] data, ObjectClassDefinition oldParameters) {
 		/*
 		 * 
 		 * 	Fill the 'Aggregated On' parameter drop-down box with column names 
