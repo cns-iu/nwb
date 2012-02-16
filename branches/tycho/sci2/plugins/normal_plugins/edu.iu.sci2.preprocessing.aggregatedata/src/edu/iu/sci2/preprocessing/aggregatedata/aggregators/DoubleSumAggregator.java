@@ -9,7 +9,6 @@ public class DoubleSumAggregator implements SingleFunctionAggregator<Double> {
 		double total = 0D;
 		
 		for (double currentValue : objectsToAggregate) {
-			DoubleAggregatorHelper.checkAdditionForOverOrUnderFlow(total, currentValue);
 			total += currentValue;
 		}
 		

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Weighted Document Document Network" id="edu.iu.sci2.database.isi.extract.network.weighted_document_document_network.OCD"
+		 description="Extract the weighted document-document network for this ISI database.">
+		 <AD name="Threshold" id="threshold" type="float" description="Documents whose absolute similarity value is below this threshold will not be give edges." default="0.4f" />
+		 <AD name="Comparison Algorithm" id="comparison_algorithm" type="String" description="The algorithm to be used to compare the similarity between documents." default="MUTATED_BY_FACTORY" />
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.isi.extract.network.weighted_document_document_network">
+		<Object ocdref="edu.iu.sci2.database.isi.extract.network.weighted_document_document_network.OCD" />
+	</Designate>
+</metatype:MetaData>

@@ -10,11 +10,6 @@ public class LongDifferenceAggregator implements SingleFunctionAggregator<Long> 
 		long difference = 0L;
 
 		for (Long currentValue : objectsToAggregate) {
-			// checkAdditionForOverOrUnderflow only works with addition so
-			// update the values accordingly.
-			LongAggregatorHelper.checkAdditionForOverOrUnderFlow(-difference,
-					currentValue);
-
 			difference = currentValue - difference;
 		}
 

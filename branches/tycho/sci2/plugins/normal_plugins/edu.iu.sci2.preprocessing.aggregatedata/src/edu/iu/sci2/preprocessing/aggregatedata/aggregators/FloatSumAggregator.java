@@ -9,8 +9,6 @@ public class FloatSumAggregator implements SingleFunctionAggregator<Float> {
 		float total = 0F;
 
 		for (float currentValue : objectsToAggregate) {
-			FloatAggregatorHelper.checkAdditionForOverOrUnderFlow(total,
-					currentValue);
 			total += currentValue;
 		}
 

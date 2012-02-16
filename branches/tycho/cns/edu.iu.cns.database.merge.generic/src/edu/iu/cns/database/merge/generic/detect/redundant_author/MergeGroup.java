@@ -17,9 +17,7 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 
 /**
@@ -33,11 +31,10 @@ public class MergeGroup {
 	private final int groupID;
 	private final Collection<Integer> peoplePKs;
 	private final Database database;	
-	public final MergeGroupSettings mergeGroupSettings;
+	private final MergeGroupSettings mergeGroupSettings;
 	
 	public MergeGroup(int groupID, Collection<Integer> peoplePKs,
-			Database database, final MergeGroupSettings mergeGroupSettings)
-			throws AlgorithmExecutionException, SQLException {
+			Database database, final MergeGroupSettings mergeGroupSettings) {
 		this.groupID = groupID;
 		this.peoplePKs = peoplePKs;
 		this.database = database;
@@ -49,8 +46,7 @@ public class MergeGroup {
 	 * <code>MergeGroup</code>s.
 	 */
 	public static List<MergeGroup> createMergeGroups(Table mergeTable,
-			Database database, final MergeGroupSettings mergeGroupSettings)
-			throws AlgorithmExecutionException, SQLException {
+			Database database, final MergeGroupSettings mergeGroupSettings) {
 		Multimap<Integer, Integer> mergeGroupToPersonPK = mapGroupToPeople(
 				mergeTable,
 				mergeGroupSettings);
@@ -58,9 +54,10 @@ public class MergeGroup {
 		List<MergeGroup> mergeGroups = new ArrayList<MergeGroup>(
 				mergeGroupToPersonPK.size());
 
-		for (int groupID : mergeGroupToPersonPK.keySet()) {
+		for (Integer groupID : mergeGroupToPersonPK.keySet()) {
 			Collection<Integer> personPKs = mergeGroupToPersonPK.get(groupID);
-			mergeGroups.add(new MergeGroup(groupID, personPKs, database, mergeGroupSettings));
+			mergeGroups.add(new MergeGroup(groupID.intValue(), personPKs,
+					database, mergeGroupSettings));
 		}
 
 		return mergeGroups;
@@ -91,16 +88,15 @@ public class MergeGroup {
 			
 		if (!hasAuthorDuplication) {
 			return;
-		} else {
-			// SOMEDAY output a table with this info.
-			String conflictMessage = "Merge Identical People is likely not suitable"
-					+ " for the dataset.\n"
-					+ "The following merge groups had authors that were"
-					+ " deemed to be identical, but they occured on the same document.\n"
-					+ "\tMergeGroup\tAuthor\tPK\tDocument\tPK\n"
-					+ errorMessages; 
-			throw new DuplicateAuthorException(conflictMessage);
 		}
+		// SOMEDAY output a table with this info.
+		String conflictMessage = "Merge Identical People is likely not suitable"
+				+ " for the dataset.\n"
+				+ "The following merge groups had authors that were"
+				+ " deemed to be identical, but they occured on the same document.\n"
+				+ "\tMergeGroup\tAuthor\tPK\tDocument\tPK\n"
+				+ errorMessages; 
+		throw new DuplicateAuthorException(conflictMessage);
 
 	}
 
@@ -170,8 +166,11 @@ public class MergeGroup {
 					.create();
 			
 			while (resultSet.next()) {
-				int documentPK = resultSet.getInt(1);
-				int personPK = resultSet.getInt(2);
+				// Indices from the query.
+				int documentPKIndex = 1;
+				int personPKIndex = 2;
+				Integer documentPK = Integer.valueOf(resultSet.getInt(documentPKIndex));
+				Integer personPK = Integer.valueOf(resultSet.getInt(personPKIndex));
 				authorDocumentPKs.put(personPK, documentPK);
 			}
 			
@@ -216,8 +215,6 @@ public class MergeGroup {
 		try {
 			Statement statement = DatabaseUtilities.createStatement(
 					connection, "Creating a statement failed.\n");
-			final MergeGroupSettings mergeGroupSettings = this.mergeGroupSettings;
-
 			
 //			String query = String.format(
 //					"SELECT APP.PERSON.UNSPLIT_NAME, APP.DOCUMENT.ISI_UNIQUE_ARTICLE_IDENTIFIER, APP.PERSON.PK, APP.DOCUMENT.PK " + "\n" +
@@ -237,20 +234,20 @@ public class MergeGroup {
 					+ "INNER JOIN %s ON %s=%s  " + "\n"
 					+ "WHERE %s IN %s " + "\n"
 					+ "AND %s IN %s",
-					mergeGroupSettings.PERSON_ID,
-					mergeGroupSettings.DOCUMENT_ID,
-					mergeGroupSettings.PERSON_PK,
-					mergeGroupSettings.DOCUMENT_PK,
-					mergeGroupSettings.PERSON_TABLE,
-					mergeGroupSettings.AUTHORS_TABLE,
-					mergeGroupSettings.AUTHORS_PERSON_FK,
-					mergeGroupSettings.PERSON_PK,
-					mergeGroupSettings.DOCUMENT_TABLE,
-					mergeGroupSettings.DOCUMENT_PK,
-					mergeGroupSettings.AUTHORS_DOCUMENT_FK,
-					mergeGroupSettings.PERSON_PK,
+					this.mergeGroupSettings.PERSON_ID,
+					this.mergeGroupSettings.DOCUMENT_ID,
+					this.mergeGroupSettings.PERSON_PK,
+					this.mergeGroupSettings.DOCUMENT_PK,
+					this.mergeGroupSettings.PERSON_TABLE,
+					this.mergeGroupSettings.AUTHORS_TABLE,
+					this.mergeGroupSettings.AUTHORS_PERSON_FK,
+					this.mergeGroupSettings.PERSON_PK,
+					this.mergeGroupSettings.DOCUMENT_TABLE,
+					this.mergeGroupSettings.DOCUMENT_PK,
+					this.mergeGroupSettings.AUTHORS_DOCUMENT_FK,
+					this.mergeGroupSettings.PERSON_PK,
 					formatCollectionAsSqlList(authorPKs),
-					mergeGroupSettings.DOCUMENT_PK,
+					this.mergeGroupSettings.DOCUMENT_PK,
 					formatCollectionAsSqlList(documentPKs));
 
 			statement.execute(query);
@@ -258,10 +255,16 @@ public class MergeGroup {
 			ResultSet resultSet = statement.getResultSet();
 
 			while (resultSet.next()) {
-				String authorID = resultSet.getString(1);
-				String documentID = resultSet.getString(2);
-				int authorPK = resultSet.getInt(3);
-				int documentPK = resultSet.getInt(4);
+				// These are the indexs as they appear in the results from the query.
+				final int authorIDIndex = 1;
+				final int documentIDIndex = 2;
+				final int authorPKIndex = 3;
+				final int documentPKIndex = 4;
+				
+				String authorID = resultSet.getString(authorIDIndex);
+				String documentID = resultSet.getString(documentIDIndex);
+				int authorPK = resultSet.getInt(authorPKIndex);
+				int documentPK = resultSet.getInt(documentPKIndex);
 				conflictMessage.append("\t" + this.getGroupID() + "\t"
 						+ authorID + "\t" + authorPK + "\t" + documentID
 						+ "\t" + documentPK + "\n");
@@ -277,32 +280,23 @@ public class MergeGroup {
 	
 
 	private static Multimap<Integer, Integer> mapGroupToPeople(
-			Table mergeTable, final MergeGroupSettings mergeGroupSettings)
-			throws AlgorithmExecutionException {
+			Table mergeTable, final MergeGroupSettings mergeGroupSettings) {
 		Multimap<Integer, Integer> groupToAuthorPK = ArrayListMultimap.create();
+
 		for (@SuppressWarnings("unchecked")
-				Iterator<Tuple> rows = mergeTable.tuples(); rows.hasNext();) {
+		Iterator<Tuple> rows = mergeTable.tuples(); rows.hasNext();) {
 			Tuple row = rows.next();
 
-			String rowGroup = getStringFromRow(row, mergeGroupSettings.MERGE_TABLE_GROUP_COLUMN);
-			String rowPK = getStringFromRow(row, mergeGroupSettings.MERGE_TABLE_PERSON_PK_COLUMN);
-			int group = Integer.parseInt(rowGroup);
-			int authorPK = Integer.parseInt(rowPK);
+			String rowGroup = row
+					.getString(mergeGroupSettings.MERGE_TABLE_GROUP_COLUMN);
+			String rowPK = row
+					.getString(mergeGroupSettings.MERGE_TABLE_PERSON_PK_COLUMN);
+			Integer group = Integer.valueOf(Integer.parseInt(rowGroup));
+			Integer authorPK = Integer.valueOf(Integer.parseInt(rowPK));
 			groupToAuthorPK.put(group, authorPK);
 		}
-		
+
 		return groupToAuthorPK;
-	}
-	
-	private static String getStringFromRow(Tuple row, final String identifier)
-			throws AlgorithmExecutionException {
-		if (row.canGetString(identifier)) {
-			return row.getString(identifier);
-		} else {
-			String message = "Error reading table: Could not read value in column "
-					+ identifier + " for row number" + row.getRow() + ".";
-			throw new AlgorithmExecutionException(message); // TODO Use a domain-specific exception, create one if necessary.
-		}
 	}
 	
 	private static String formatCollectionAsSqlList(Collection<?> collection) {
@@ -320,14 +314,14 @@ public class MergeGroup {
 	}
 	
 	public int getGroupID() {
-		return groupID;
+		return this.groupID;
 	}
 
 	public Collection<Integer> getPeoplePKs() {
-		return peoplePKs;
+		return this.peoplePKs;
 	}
 
 	public Database getDatabase() {
-		return database;
+		return this.database;
 	}
 }

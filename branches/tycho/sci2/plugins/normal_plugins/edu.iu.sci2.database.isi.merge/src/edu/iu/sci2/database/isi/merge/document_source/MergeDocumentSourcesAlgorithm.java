@@ -3,11 +3,14 @@ package edu.iu.sci2.database.isi.merge.document_source;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
@@ -16,10 +19,16 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DataFactory;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Table;
+import prefuse.data.util.ColumnProjection;
+import prefuse.data.util.NamedColumnProjection;
+import edu.iu.cns.database.merge.generic.analyze.mergetable.MergeTableAnalyzer;
+import edu.iu.cns.database.merge.generic.analyze.mergetable.MergeTableAnalyzer.AnalysisException;
 import edu.iu.cns.database.merge.generic.prepare.marked.MergeMarker;
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.KeyBasedGroupingStrategy;
 import edu.iu.nwb.shared.isiutil.database.ISI;
@@ -47,7 +56,7 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 	private Data originalDatabaseData;
     private CIShellContext ciShellContext;
 	private LogService logger;
-	private ProgressMonitor monitor;	
+	private ProgressMonitor monitor; // TODO Actually use this..	
         
     public MergeDocumentSourcesAlgorithm(Data[] data, CIShellContext ciShellContext) {
     	this.originalDatabaseData = data[0];
@@ -59,45 +68,77 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
     
     public Data[] execute() throws AlgorithmExecutionException {
 		if (NAME_FORM_LOOKUP.isEmpty()) {
-			String message =
-				"Failed to load document source merging data.  " +
-				"If this problem persists after restarting the tool, " +
-				"please contact the NWB development team at nwb-helpdesk@googlegroups.com";
+			String message = "Failed to load document source merging data.  "
+					+ "If this problem persists after restarting the tool, "
+					+ "please contact the NWB development team at nwb-helpdesk@googlegroups.com";
 			throw new AlgorithmExecutionException(message);
-		} else {
-			logLookupStatistics();
 		}
+		logLookupStatistics();
 
 		MergeMarker mergeMarker = new MergeMarker(
 				new KeyBasedGroupingStrategy<String>(
 						new DocumentSourceKeyFunction(NAME_FORM_LOOKUP)),
 				new DocumentSourceComparator());
 		
-		Database originalDatabase = (Database) originalDatabaseData.getData();
-		Database merged =
-				mergeMarker.performMergesOn(
-						SOURCE_TABLE_ID, originalDatabase, null, ciShellContext);
-    	
-		return new Data[]{ DataFactory.likeParent(
-				merged, originalDatabaseData, "with document sources merged") };
+		Database originalDatabase = (Database) this.originalDatabaseData.getData();
+		
+		Table mergeTable = mergeMarker.createMarkedMergingTable(
+				SOURCE_TABLE_ID, originalDatabase, this.ciShellContext);    	
+		Database merged = MergeMarker.executeMerge(mergeTable, originalDatabase, 
+				this.ciShellContext, null);
+		
+		Data mergedDatabaseData = DataFactory.likeParent(
+				merged, this.originalDatabaseData, "with document sources merged");
+		
+		Data mergeTableData = DataFactory.withClassNameAsFormat(mergeTable,
+				DataProperty.TABLE_TYPE, this.originalDatabaseData, "Merge Table: based on "
+						+ SOURCE_TABLE_ID);
+		List<Data> returnData = new ArrayList<Data>();
+		returnData.add(mergedDatabaseData);
+		returnData.add(mergeTableData);
+		
+		try {
+			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
+			ColumnProjection columnFilter = new NamedColumnProjection(
+					new String[] {
+							"TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION",
+							"FULL_TITLE" }, true);
+
+			MergeTableAnalyzer.writeAnalysis(new FileOutputStream(mergeReportFile), mergeTable,
+					columnFilter);
+			
+			Data mergeReportData = DataFactory.withClassNameAsFormat(
+					mergeReportFile, DataProperty.TEXT_TYPE, this.originalDatabaseData,
+					"Text Log: A Merge Report for the mergeTable.");
+			returnData.add(mergeReportData);
+			
+		} catch (AnalysisException e) {
+			this.logger.log(LogService.LOG_ERROR,
+					"Could not analyze the mergeTable:\n\t" + e.getMessage());
+		} catch (IOException e) {
+			this.logger.log(LogService.LOG_ERROR,
+					"Could not create the merge report file for the mergeTable:\n\t"
+							+ e.getMessage());
+		}
+		
+		return returnData.toArray(new Data[0]);
     }
 
     private void logLookupStatistics() {
     	int numberOfCanonicalForms = new HashSet<String>(NAME_FORM_LOOKUP.values()).size();	
     	int numberOfKnownVariants = NAME_FORM_LOOKUP.size();			
 		
-		logger.log(
-			LogService.LOG_INFO,
-			"This algorithm can merge " + numberOfKnownVariants +
-				" document source name variants into " + numberOfCanonicalForms +
-				" canonical forms.");
-		logger.log(
-			LogService.LOG_WARNING,
-			"Warning: while we use Web of Science's official list of " +
-				"Journal Title Abbreviations, that list does not cover all spellings of " +
-				"cited sources. Additionally, in some cited references it is not possible to " +
-				"disambiguate between members of a book or conference series and a " +
-				"journal with the same name.");
+		this.logger.log(LogService.LOG_INFO, "This algorithm can merge "
+				+ numberOfKnownVariants
+				+ " document source name variants into "
+				+ numberOfCanonicalForms + " canonical forms.");
+		this.logger
+				.log(LogService.LOG_WARNING,
+						"Warning: while we use Web of Science's official list of "
+								+ "Journal Title Abbreviations, that list does not cover all spellings of "
+								+ "cited sources. Additionally, in some cited references it is not possible to "
+								+ "disambiguate between members of a book or conference series and a "
+								+ "journal with the same name.");
 	}
 
 
@@ -157,7 +198,7 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 	}
 	
 	public ProgressMonitor getProgressMonitor() {
-		return monitor;
+		return this.monitor;
 	}
 
 	public void setProgressMonitor(ProgressMonitor monitor) {

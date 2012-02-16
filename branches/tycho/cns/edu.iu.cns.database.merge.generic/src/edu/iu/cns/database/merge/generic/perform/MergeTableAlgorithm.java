@@ -34,10 +34,9 @@ import edu.iu.cns.database.merge.generic.perform.EntityGroup.MergingErrorExcepti
 import edu.iu.cns.database.merge.generic.prepare.plain.CreateMergingTable;
 
 public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
-	private static final String INVALID_TABLE_NAME_HEADER_MESSAGE =
-			"Unable to infer table to be merged. " +
-			"The last column header of the spreadsheet should be of the form '"
-					+ CreateMergingTable.FROM_TABLE + " table.name'.";
+	private static final String INVALID_TABLE_NAME_HEADER_MESSAGE = "Unable to infer table to be merged. "
+			+ "The last column header of the spreadsheet should be of the form '"
+			+ CreateMergingTable.FROM_TABLE + " table.name'.";
 	private Data[] data;
 	private DatabaseService databaseService;
 	private LogService logger;
@@ -53,7 +52,8 @@ public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
     public MergeTableAlgorithm(Data[] data, CIShellContext context) {
         this.data = data;
         
-        this.databaseService = (DatabaseService) context.getService(DatabaseService.class.getName());
+		this.databaseService = (DatabaseService) context
+				.getService(DatabaseService.class.getName());
         this.logger = (LogService) context.getService(LogService.class.getName());
     }
 
