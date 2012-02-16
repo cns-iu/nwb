@@ -13,6 +13,6 @@
 		<version>1.0.0</version>
 	</parent>
 	<modules>
-		<!-- <module>edu.iu.sci2.testutilities</module> -->
+		<module>edu.iu.sci2.testutilities</module>
 	</modules>
 </project>
