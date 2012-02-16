@@ -43,7 +43,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		for(int ii = 0; ii < numberOfPages(); ii++){
 			String visualization = visualizations.renderVisualizationPostscript(ii);
-			PageElement visualizationElement = new PageElement("visualization", 320.0, 300.0, visualization, visualizationDefinitions);
+			PageElement visualizationElement = new PageElement("visualization", 100.0, 300.0, visualization, visualizationDefinitions);
 			
 			List<PageElement> pageElements = pageElementsSomePages.get(ii);			
 			if (!pageElementsSomePages.containsKey(ii)){

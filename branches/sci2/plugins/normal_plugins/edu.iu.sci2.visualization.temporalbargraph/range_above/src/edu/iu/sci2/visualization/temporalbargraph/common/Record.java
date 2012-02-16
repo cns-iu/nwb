@@ -154,16 +154,18 @@ public class Record {
 			String endDateFormat, String categoryKey)
 			throws InvalidRecordException {
 
-		this.label = PostScriptFormationUtilities.matchParentheses(tableRow
-				.get(labelKey).toString());
-
 		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
 				.equals(categoryKey)) {
 			this.category = PostScriptFormationUtilities
 					.matchParentheses(Category.DEFAULT.toString());
 		} else {
-			this.category = PostScriptFormationUtilities
-					.matchParentheses(tableRow.get(categoryKey).toString());
+			if(tableRow.canGetString(categoryKey)){
+				this.category = PostScriptFormationUtilities
+						.matchParentheses(tableRow.getString(categoryKey));
+			} else {
+				this.category = PostScriptFormationUtilities
+						.matchParentheses(String.valueOf(tableRow.get(categoryKey)));
+			}	
 		}
 
 		try {
@@ -188,8 +190,12 @@ public class Record {
 		}
 
 		try {
-			this.amount = NumberUtilities.interpretObjectAsDouble(
-					tableRow.get(sizeByKey)).doubleValue();
+			if (tableRow.canGetDouble(sizeByKey)) {
+				this.amount = tableRow.getDouble(sizeByKey);
+			} else {
+				this.amount = NumberUtilities.interpretObjectAsDouble(
+						tableRow.get(sizeByKey)).doubleValue();
+			}
 		} catch (NumberFormatException invalidNumberFormatException) {
 			String exceptionMessage = "The record labeled \'"
 					+ this.label
