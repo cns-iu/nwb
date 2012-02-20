@@ -179,7 +179,7 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 10);
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
-		double leftBound = 4.5 * POINTS_PER_INCH;
+		double leftBound = 4.3 * POINTS_PER_INCH;
 		double bottomBound = 0.4 * POINTS_PER_INCH;
 		return new PageElement("howto", leftBound, bottomBound, howtoTemplate,
 				howtoDefinitionsTemplate);

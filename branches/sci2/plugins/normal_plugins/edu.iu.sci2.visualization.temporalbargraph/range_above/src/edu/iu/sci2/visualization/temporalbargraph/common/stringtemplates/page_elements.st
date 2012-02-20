@@ -368,37 +368,37 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 	0 0 moveto
 		
 	gsave
-	(dolorum fuga. Et harum quidem rerum facilis est et)
+	(colored according to category (if one exists).)
 	show
 	grestore
 	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
-	(culpa qui officia deserunt mollitia animi, id est laborum et)
+	(area based on the relative weight within the dataset, and is)
 	show
 	grestore
 	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
-	(sint occaecati cupiditate non provident, similique sunt in)
+	(timeline, which spans the total time of the dataset, is given an)
 	show
 	grestore
 	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
-	(atque corrupti quos dolores et quas molestias excepturi)
+	(belong to a distinct category.  Each of the records is shown on the)
 	show
 	grestore
 	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
-	(ducimus qui blanditiis praesentium voluptatum deleniti)
+	(have specific beginnings and endings, are weighted, and may)
 	show
 	grestore
 	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
 	gsave
-	(At vero eos et accusamus et iusto odio dignissimos)
+	(Temporal Bar Graph is a visualization of a dataset whose records)
 	show
 	grestore
 	0 howtoTextFontSize howtoLineSpacing add rmoveto
