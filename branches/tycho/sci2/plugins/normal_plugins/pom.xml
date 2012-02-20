@@ -13,6 +13,7 @@
 		<version>1.0.0</version>
 	</parent>
 	<modules>
+		<module>edu.iu.sci2.database.isi.extract.network.weighted_document_document_network</module>
 		<module>edu.iu.sci2.database.isi.extract.network.bibcoupling.author</module>
 		<module>edu.iu.sci2.database.isi.extract.network.bibcoupling.document</module>
 		<module>edu.iu.sci2.database.isi.extract.network.bibcoupling.document_source</module>
@@ -52,10 +53,12 @@
 		<module>edu.iu.sci2.tool.db_to_prefuse</module>
 		<module>edu.iu.sci2.utilities</module>
 		<module>edu.iu.sci2.utilities.nsf</module>
+		<module>edu.iu.sci2.visualization.bipartitenet</module>
 		<module>edu.iu.sci2.visualization.geomaps</module>
 		<module>edu.iu.sci2.visualization.horizontalbargraph</module>
-		<module>edu.iu.sci2.visualization.horizontallinegraph</module>
 		<module>edu.iu.sci2.visualization.imageviewer</module>
+		<module>edu.iu.sci2.visualization.scimaps</module>
 		<module>edu.iu.sci2.visualization.scimap.references</module>
+		<module>edu.iu.sci2.visualization.temporalbargraph</module>
 	</modules>
 </project>

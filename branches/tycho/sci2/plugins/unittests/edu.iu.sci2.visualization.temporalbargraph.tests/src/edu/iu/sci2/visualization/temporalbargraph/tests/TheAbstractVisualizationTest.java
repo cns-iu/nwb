@@ -1,11 +1,12 @@
 package edu.iu.sci2.visualization.temporalbargraph.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.junit.Test;
 
@@ -13,10 +14,12 @@ import com.google.common.collect.Ordering;
 
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractVisualization;
 
-public class AbstractVisualizationTests extends TestCase {
-
+public class TheAbstractVisualizationTest {
+	private int wtf;
+	
 	@Test
-	public static void testDecimateMaxNumberGreaterThanCollectionLength() {
+	public void testDecimateMaxNumberGreaterThanCollectionLength() {
+		wtf = 0;
 		Collection<Integer> collection = new ArrayList<Integer>();
 		collection.add(1);
 		collection.add(2);
@@ -38,7 +41,7 @@ public class AbstractVisualizationTests extends TestCase {
 	}
 
 	@Test
-	public static void testDecimateMaxNumberGreater2() {
+	public void testDecimateMaxNumberGreater2() {
 		Collection<Integer> collection = new ArrayList<Integer>();
 		collection.add(0);
 		collection.add(1);
@@ -63,7 +66,7 @@ public class AbstractVisualizationTests extends TestCase {
 	}
 
 	@Test
-	public static void testDecimateNone() {
+	public void testDecimateNone() {
 		Collection<Integer> collection = new ArrayList<Integer>();
 		collection.add(0);
 		collection.add(1);
@@ -79,7 +82,7 @@ public class AbstractVisualizationTests extends TestCase {
 	}
 	
 	@Test
-	public static void testDecimateMax() {
+	public void testDecimateMax() {
 		Collection<Integer> collection = new ArrayList<Integer>();
 		collection.add(1);
 		collection.add(3);
@@ -103,7 +106,7 @@ public class AbstractVisualizationTests extends TestCase {
 	}
 	
 	@Test
-	public static void testDecimateLessThanMax() {
+	public void testDecimateLessThanMax() {
 		Collection<Integer> collection = new ArrayList<Integer>();
 		collection.add(1);
 		collection.add(3);

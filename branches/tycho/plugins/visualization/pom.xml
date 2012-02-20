@@ -19,6 +19,7 @@
     <module>edu.iu.nwb.visualization.radialgraph</module>
     <module>edu.iu.nwb.visualization.roundrussell</module>
     <module>org.mediavirus.parvis</module>
+    <module>gephi</module>
   </modules>
   <parent>
   	<groupId>edu.iu.nwb</groupId>

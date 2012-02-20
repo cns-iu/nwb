@@ -23,7 +23,7 @@ import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm;
 import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithmFactory;
 import edu.iu.sci2.visualization.scimaps.testing.LogOnlyCIShellContext;
 
-public class MapOfScienceTests {
+public class MapOfScienceTest {
 	Map<String, Integer> realJournals = new HashMap<String, Integer>();
 	Map<String, Integer> fakeJournals = new HashMap<String, Integer>();
 	Map<String, Integer> allJournals = new HashMap<String, Integer>();

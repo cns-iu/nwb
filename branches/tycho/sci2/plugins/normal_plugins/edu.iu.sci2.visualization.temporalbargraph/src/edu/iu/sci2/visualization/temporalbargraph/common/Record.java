@@ -132,7 +132,8 @@ public class Record {
 
 		} else {
 			throw new InvalidRecordException(
-					"Only date objects or string representations of the date are supported.");
+					"Only date objects or string representations of the date are supported.  Got " 
+							+ date.getClass().toString());
 		}
 
 	}

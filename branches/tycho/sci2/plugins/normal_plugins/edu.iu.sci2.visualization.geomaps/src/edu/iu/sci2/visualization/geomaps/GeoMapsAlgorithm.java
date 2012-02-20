@@ -21,9 +21,9 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
+import edu.iu.sci2.testutilities.StdErrLogService;
 import edu.iu.sci2.visualization.geomaps.metatype.Shapefiles;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
-import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
 
 public class GeoMapsAlgorithm implements Algorithm {
 	public static final String CSV_MIME_TYPE = "file:text/csv";

@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.testing;
+package edu.iu.sci2.testutilities;
 
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;

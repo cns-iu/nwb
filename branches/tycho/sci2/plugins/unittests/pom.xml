@@ -16,6 +16,11 @@
 	<modules>
 		<module>edu.iu.cns.database.merge.generic.tests</module>
 		<module>edu.iu.sci2.visualization.geomaps.tests</module>
+		<module>edu.iu.sci2.visualization.bipartitenet.tests</module>
+		<module>edu.iu.sci2.visualization.scimaps.tests</module>
+		<module>edu.iu.sci2.database.isi.load.tests</module>
+		<module>edu.iu.sci2.database.isi.load.integration.tests</module>
+		<module>edu.iu.sci2.visualization.temporalbargraph.tests</module>
 	</modules>
 
 	<build>

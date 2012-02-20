@@ -20,6 +20,7 @@
     <module>edu.iu.nwb.converter.pajekmat</module>
     <module>edu.iu.nwb.converter.pajekmatpajeknet</module>
     <module>edu.iu.nwb.converter.pajeknet</module>
+    <module>edu.iu.nwb.converter.postscript.gs</module>
     <module>edu.iu.nwb.converter.prefuseTreeBetaAlpha</module>
     <module>edu.iu.nwb.converter.prefusebibtex</module>
     <module>edu.iu.nwb.converter.prefusecsv</module>
