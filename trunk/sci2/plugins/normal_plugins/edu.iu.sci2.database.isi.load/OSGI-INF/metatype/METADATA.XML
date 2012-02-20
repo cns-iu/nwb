@@ -6,6 +6,12 @@
 	<Designate pid="edu.iu.sci2.database.isi.load.ISIDatabaseLoaderAlgorithm">
 		<Object ocdref="edu.iu.sci2.database.isi.load.ISIDatabaseLoaderAlgorithm.OCD" />
 	</Designate>
+	<OCD name="ISI Database Loader" id="edu.iu.sci2.database.isi.load.CSVDatabaseLoaderAlgorithm.OCD"
+		 description="This algorithm loads a CSV file into a database. ">
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.isi.load.CSVDatabaseLoaderAlgorithm">
+		<Object ocdref="edu.iu.sci2.database.isi.load.CSVDatabaseLoaderAlgorithm.OCD" />
+	</Designate>
 	<OCD name="Scopus Database Loader" id="edu.iu.sci2.database.scopus.load.ScopusDatabaseLoaderAlgorithm.OCD"
 		 description="Loads a Scopus file into a database">
 	</OCD>
