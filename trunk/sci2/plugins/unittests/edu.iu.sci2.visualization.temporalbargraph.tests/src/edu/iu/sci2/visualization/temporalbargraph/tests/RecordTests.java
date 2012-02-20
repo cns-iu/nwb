@@ -38,23 +38,24 @@ public class RecordTests extends TestCase {
 	public static final String sizeByKey = "size_by";
 	public static final String categoryKey = "category";
 
+	@Override
 	@Before
 	public void setUp() {
-		table = new Table();
+		this.table = new Table();
 
-		table.addColumn(labelKey, String.class);
-		table.addColumn(startDateKey, String.class);
-		table.addColumn(endDateKey, String.class);
-		table.addColumn(startDateFormat, String.class);
-		table.addColumn(endDateFormat, String.class);
-		table.addColumn(sizeByKey, String.class);
-		table.addColumn(categoryKey, String.class);
+		this.table.addColumn(labelKey, String.class);
+		this.table.addColumn(startDateKey, String.class);
+		this.table.addColumn(endDateKey, String.class);
+		this.table.addColumn(startDateFormat, String.class);
+		this.table.addColumn(endDateFormat, String.class);
+		this.table.addColumn(sizeByKey, String.class);
+		this.table.addColumn(categoryKey, String.class);
 	}
 
 	@Test
 	public void testStringTable() {
 
-		table.addRows(2);
+		this.table.addRows(2);
 
 		String row1Label = "Data 1";
 		String row1StartDateKey = "10/22/2012";
@@ -63,13 +64,13 @@ public class RecordTests extends TestCase {
 		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
 		String row1SizeByKey = "300";
 		String row1CategoryKey = "Category1";
-		table.set(0, labelKey, row1Label);
-		table.set(0, startDateKey, row1StartDateKey);
-		table.set(0, endDateKey, row1EndDateKey);
-		table.set(0, startDateFormat, row1StartDateFormat);
-		table.set(0, endDateFormat, row1EndDateFormat);
-		table.set(0, sizeByKey, row1SizeByKey);
-		table.set(0, categoryKey, row1CategoryKey);
+		this.table.set(0, labelKey, row1Label);
+		this.table.set(0, startDateKey, row1StartDateKey);
+		this.table.set(0, endDateKey, row1EndDateKey);
+		this.table.set(0, startDateFormat, row1StartDateFormat);
+		this.table.set(0, endDateFormat, row1EndDateFormat);
+		this.table.set(0, sizeByKey, row1SizeByKey);
+		this.table.set(0, categoryKey, row1CategoryKey);
 
 		String row2Label = "Data 2";
 		String row2StartDateKey = "1/22/2013";
@@ -79,22 +80,22 @@ public class RecordTests extends TestCase {
 		String row2SizeByKey = "3000";
 		String row2CategoryKey = "Category2";
 
-		table.set(1, labelKey, row2Label);
-		table.set(1, startDateKey, row2StartDateKey);
-		table.set(1, endDateKey, row2EndDateKey);
-		table.set(1, startDateFormat, row2StartDateFormat);
-		table.set(1, endDateFormat, row2EndDateFormat);
-		table.set(1, sizeByKey, row2SizeByKey);
-		table.set(1, categoryKey, row2CategoryKey);
+		this.table.set(1, labelKey, row2Label);
+		this.table.set(1, startDateKey, row2StartDateKey);
+		this.table.set(1, endDateKey, row2EndDateKey);
+		this.table.set(1, startDateFormat, row2StartDateFormat);
+		this.table.set(1, endDateFormat, row2EndDateFormat);
+		this.table.set(1, sizeByKey, row2SizeByKey);
+		this.table.set(1, categoryKey, row2CategoryKey);
 
 		Record r1;
 		Record r2;
 
 		try {
-			r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+			r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
-			r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+			r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 			assertEquals(row1Label, r1.getLabel());
@@ -113,16 +114,16 @@ public class RecordTests extends TestCase {
 
 	@Test
 	public void testIntegerTable() {
-		table = new Table();
+		this.table = new Table();
 
-		table.addColumn(labelKey, String.class);
-		table.addColumn(startDateKey, Integer.class);
-		table.addColumn(endDateKey, Integer.class);
-		table.addColumn(startDateFormat, String.class);
-		table.addColumn(endDateFormat, String.class);
-		table.addColumn(sizeByKey, String.class);
-		table.addColumn(categoryKey, String.class);
-		table.addRows(2);
+		this.table.addColumn(labelKey, String.class);
+		this.table.addColumn(startDateKey, Integer.class);
+		this.table.addColumn(endDateKey, Integer.class);
+		this.table.addColumn(startDateFormat, String.class);
+		this.table.addColumn(endDateFormat, String.class);
+		this.table.addColumn(sizeByKey, String.class);
+		this.table.addColumn(categoryKey, String.class);
+		this.table.addRows(2);
 
 		String row1Label = "Data 1";
 		Integer row1StartDateKey = Integer.parseInt("2012");
@@ -131,13 +132,13 @@ public class RecordTests extends TestCase {
 		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
 		String row1SizeByKey = "300";
 		String row1CategoryKey = "Category1";
-		table.set(0, labelKey, row1Label);
-		table.set(0, startDateKey, row1StartDateKey);
-		table.set(0, endDateKey, row1EndDateKey);
-		table.set(0, startDateFormat, row1StartDateFormat);
-		table.set(0, endDateFormat, row1EndDateFormat);
-		table.set(0, sizeByKey, row1SizeByKey);
-		table.set(0, categoryKey, row1CategoryKey);
+		this.table.set(0, labelKey, row1Label);
+		this.table.set(0, startDateKey, row1StartDateKey);
+		this.table.set(0, endDateKey, row1EndDateKey);
+		this.table.set(0, startDateFormat, row1StartDateFormat);
+		this.table.set(0, endDateFormat, row1EndDateFormat);
+		this.table.set(0, sizeByKey, row1SizeByKey);
+		this.table.set(0, categoryKey, row1CategoryKey);
 
 		String row2Label = "Data 2";
 		Integer row2StartDateKey = Integer.parseInt("2013");
@@ -147,22 +148,22 @@ public class RecordTests extends TestCase {
 		String row2SizeByKey = "3000";
 		String row2CategoryKey = "Category2";
 
-		table.set(1, labelKey, row2Label);
-		table.set(1, startDateKey, row2StartDateKey);
-		table.set(1, endDateKey, row2EndDateKey);
-		table.set(1, startDateFormat, row2StartDateFormat);
-		table.set(1, endDateFormat, row2EndDateFormat);
-		table.set(1, sizeByKey, row2SizeByKey);
-		table.set(1, categoryKey, row2CategoryKey);
+		this.table.set(1, labelKey, row2Label);
+		this.table.set(1, startDateKey, row2StartDateKey);
+		this.table.set(1, endDateKey, row2EndDateKey);
+		this.table.set(1, startDateFormat, row2StartDateFormat);
+		this.table.set(1, endDateFormat, row2EndDateFormat);
+		this.table.set(1, sizeByKey, row2SizeByKey);
+		this.table.set(1, categoryKey, row2CategoryKey);
 
 		Record r1;
 		Record r2;
 
 		try {
-			r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+			r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
-			r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+			r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 			assertEquals(row1Label, r1.getLabel());
@@ -186,17 +187,17 @@ public class RecordTests extends TestCase {
 		assertEquals(2083, new LocalDate(new Date(2083 - 1900, 1, 1)).getYear());
 		assertEquals(2084, new DateTime(new Date(2084 - 1900, 1, 1))
 				.toLocalDateTime().getYear());
-		table = new Table();
+		this.table = new Table();
 
-		table.addColumn(labelKey, String.class);
-		table.addColumn(startDateKey, Date.class);
-		table.addColumn(endDateKey, Date.class);
-		table.addColumn(startDateFormat, String.class);
-		table.addColumn(endDateFormat, String.class);
-		table.addColumn(sizeByKey, String.class);
-		table.addColumn(categoryKey, String.class);
+		this.table.addColumn(labelKey, String.class);
+		this.table.addColumn(startDateKey, Date.class);
+		this.table.addColumn(endDateKey, Date.class);
+		this.table.addColumn(startDateFormat, String.class);
+		this.table.addColumn(endDateFormat, String.class);
+		this.table.addColumn(sizeByKey, String.class);
+		this.table.addColumn(categoryKey, String.class);
 
-		table.addRows(2);
+		this.table.addRows(2);
 
 		String row1Label = "Data 1";
 		Date row1StartDateKey = new Date(2012 - 1900, 10, 22);
@@ -205,13 +206,13 @@ public class RecordTests extends TestCase {
 		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
 		String row1SizeByKey = "300";
 		String row1CategoryKey = "Category1";
-		table.set(0, labelKey, row1Label);
-		table.set(0, startDateKey, row1StartDateKey);
-		table.set(0, endDateKey, row1EndDateKey);
-		table.set(0, startDateFormat, row1StartDateFormat);
-		table.set(0, endDateFormat, row1EndDateFormat);
-		table.set(0, sizeByKey, row1SizeByKey);
-		table.set(0, categoryKey, row1CategoryKey);
+		this.table.set(0, labelKey, row1Label);
+		this.table.set(0, startDateKey, row1StartDateKey);
+		this.table.set(0, endDateKey, row1EndDateKey);
+		this.table.set(0, startDateFormat, row1StartDateFormat);
+		this.table.set(0, endDateFormat, row1EndDateFormat);
+		this.table.set(0, sizeByKey, row1SizeByKey);
+		this.table.set(0, categoryKey, row1CategoryKey);
 
 		String row2Label = "Data 2";
 		Date row2StartDateKey = new Date(2013 - 1900, 1, 22);
@@ -221,22 +222,22 @@ public class RecordTests extends TestCase {
 		String row2SizeByKey = "3000";
 		String row2CategoryKey = "Category2";
 
-		table.set(1, labelKey, row2Label);
-		table.set(1, startDateKey, row2StartDateKey);
-		table.set(1, endDateKey, row2EndDateKey);
-		table.set(1, startDateFormat, row2StartDateFormat);
-		table.set(1, endDateFormat, row2EndDateFormat);
-		table.set(1, sizeByKey, row2SizeByKey);
-		table.set(1, categoryKey, row2CategoryKey);
+		this.table.set(1, labelKey, row2Label);
+		this.table.set(1, startDateKey, row2StartDateKey);
+		this.table.set(1, endDateKey, row2EndDateKey);
+		this.table.set(1, startDateFormat, row2StartDateFormat);
+		this.table.set(1, endDateFormat, row2EndDateFormat);
+		this.table.set(1, sizeByKey, row2SizeByKey);
+		this.table.set(1, categoryKey, row2CategoryKey);
 
 		Record r1;
 		Record r2;
 
 		try {
-			r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+			r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
-			r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+			r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 			assertEquals(row1Label, r1.getLabel());
@@ -253,10 +254,11 @@ public class RecordTests extends TestCase {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void testInvalidRecord() throws InvalidRecordException {
 
-		table.addRows(2);
+		this.table.addRows(2);
 
 		String row1Label = "Data 1";
 		String row1StartDateKey = "10/22/2012";
@@ -265,13 +267,13 @@ public class RecordTests extends TestCase {
 		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
 		String row1SizeByKey = "300";
 		String row1CategoryKey = "Category1";
-		table.set(0, labelKey, row1Label);
-		table.set(0, startDateKey, row1StartDateKey);
-		table.set(0, endDateKey, row1EndDateKey);
-		table.set(0, startDateFormat, row1StartDateFormat);
-		table.set(0, endDateFormat, row1EndDateFormat);
-		table.set(0, sizeByKey, row1SizeByKey);
-		table.set(0, categoryKey, row1CategoryKey);
+		this.table.set(0, labelKey, row1Label);
+		this.table.set(0, startDateKey, row1StartDateKey);
+		this.table.set(0, endDateKey, row1EndDateKey);
+		this.table.set(0, startDateFormat, row1StartDateFormat);
+		this.table.set(0, endDateFormat, row1EndDateFormat);
+		this.table.set(0, sizeByKey, row1SizeByKey);
+		this.table.set(0, categoryKey, row1CategoryKey);
 
 		String row2Label = "Data 2";
 		String row2StartDateKey = "1/22/2013";
@@ -281,20 +283,20 @@ public class RecordTests extends TestCase {
 		String row2SizeByKey = "3000";
 		String row2CategoryKey = "Category2";
 
-		table.set(1, labelKey, row2Label);
-		table.set(1, startDateKey, row2StartDateKey);
-		table.set(1, endDateKey, row2EndDateKey);
-		table.set(1, startDateFormat, row2StartDateFormat);
-		table.set(1, endDateFormat, row2EndDateFormat);
-		table.set(1, sizeByKey, row2SizeByKey);
-		table.set(1, categoryKey, row2CategoryKey);
+		this.table.set(1, labelKey, row2Label);
+		this.table.set(1, startDateKey, row2StartDateKey);
+		this.table.set(1, endDateKey, row2EndDateKey);
+		this.table.set(1, startDateFormat, row2StartDateFormat);
+		this.table.set(1, endDateFormat, row2EndDateFormat);
+		this.table.set(1, sizeByKey, row2SizeByKey);
+		this.table.set(1, categoryKey, row2CategoryKey);
 
-		Record r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+		Record r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 				endDateKey, sizeByKey, startDateFormat, endDateFormat,
 				categoryKey);
 		boolean thrown = false;
 		try {
-			Record r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+			new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 		} catch (InvalidRecordException e) {
@@ -313,7 +315,7 @@ public class RecordTests extends TestCase {
 	@Test
 	public void testNullRecord() {
 
-		table.addRows(2);
+		this.table.addRows(2);
 
 		String row1Label = "Data 1";
 		String row1StartDateKey = null;
@@ -322,13 +324,13 @@ public class RecordTests extends TestCase {
 		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
 		String row1SizeByKey = "300";
 		String row1CategoryKey = "Category1";
-		table.set(0, labelKey, row1Label);
-		table.set(0, startDateKey, row1StartDateKey);
-		table.set(0, endDateKey, row1EndDateKey);
-		table.set(0, startDateFormat, row1StartDateFormat);
-		table.set(0, endDateFormat, row1EndDateFormat);
-		table.set(0, sizeByKey, row1SizeByKey);
-		table.set(0, categoryKey, row1CategoryKey);
+		this.table.set(0, labelKey, row1Label);
+		this.table.set(0, startDateKey, row1StartDateKey);
+		this.table.set(0, endDateKey, row1EndDateKey);
+		this.table.set(0, startDateFormat, row1StartDateFormat);
+		this.table.set(0, endDateFormat, row1EndDateFormat);
+		this.table.set(0, sizeByKey, row1SizeByKey);
+		this.table.set(0, categoryKey, row1CategoryKey);
 
 		String row2Label = "Data 2";
 		String row2StartDateKey = "1/22/2013";
@@ -338,17 +340,17 @@ public class RecordTests extends TestCase {
 		String row2SizeByKey = "3000";
 		String row2CategoryKey = "Category2";
 
-		table.set(1, labelKey, row2Label);
-		table.set(1, startDateKey, row2StartDateKey);
-		table.set(1, endDateKey, row2EndDateKey);
-		table.set(1, startDateFormat, row2StartDateFormat);
-		table.set(1, endDateFormat, row2EndDateFormat);
-		table.set(1, sizeByKey, row2SizeByKey);
-		table.set(1, categoryKey, row2CategoryKey);
+		this.table.set(1, labelKey, row2Label);
+		this.table.set(1, startDateKey, row2StartDateKey);
+		this.table.set(1, endDateKey, row2EndDateKey);
+		this.table.set(1, startDateFormat, row2StartDateFormat);
+		this.table.set(1, endDateFormat, row2EndDateFormat);
+		this.table.set(1, sizeByKey, row2SizeByKey);
+		this.table.set(1, categoryKey, row2CategoryKey);
 
 		boolean thrown1 = false;
 		try {
-			Record r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+			Record r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 		} catch (InvalidRecordException e) {
@@ -359,7 +361,7 @@ public class RecordTests extends TestCase {
 
 		boolean thrown2 = false;
 		try {
-			Record r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+			Record r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 		} catch (InvalidRecordException e) {
@@ -372,7 +374,7 @@ public class RecordTests extends TestCase {
 	@Test
 	public void testOrderingTable() {
 
-		table.addRows(3);
+		this.table.addRows(3);
 
 		String row1Label = "Data 1";
 		String row1StartDateKey = "2/22/2012";
@@ -381,13 +383,13 @@ public class RecordTests extends TestCase {
 		String row1EndDateFormat = DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT;
 		String row1SizeByKey = "300";
 		String row1CategoryKey = "Category1";
-		table.set(0, labelKey, row1Label);
-		table.set(0, startDateKey, row1StartDateKey);
-		table.set(0, endDateKey, row1EndDateKey);
-		table.set(0, startDateFormat, row1StartDateFormat);
-		table.set(0, endDateFormat, row1EndDateFormat);
-		table.set(0, sizeByKey, row1SizeByKey);
-		table.set(0, categoryKey, row1CategoryKey);
+		this.table.set(0, labelKey, row1Label);
+		this.table.set(0, startDateKey, row1StartDateKey);
+		this.table.set(0, endDateKey, row1EndDateKey);
+		this.table.set(0, startDateFormat, row1StartDateFormat);
+		this.table.set(0, endDateFormat, row1EndDateFormat);
+		this.table.set(0, sizeByKey, row1SizeByKey);
+		this.table.set(0, categoryKey, row1CategoryKey);
 
 		String row2Label = "Data 2";
 		String row2StartDateKey = "1/22/2013";
@@ -397,13 +399,13 @@ public class RecordTests extends TestCase {
 		String row2SizeByKey = "3000";
 		String row2CategoryKey = "Category2";
 
-		table.set(1, labelKey, row2Label);
-		table.set(1, startDateKey, row2StartDateKey);
-		table.set(1, endDateKey, row2EndDateKey);
-		table.set(1, startDateFormat, row2StartDateFormat);
-		table.set(1, endDateFormat, row2EndDateFormat);
-		table.set(1, sizeByKey, row2SizeByKey);
-		table.set(1, categoryKey, row2CategoryKey);
+		this.table.set(1, labelKey, row2Label);
+		this.table.set(1, startDateKey, row2StartDateKey);
+		this.table.set(1, endDateKey, row2EndDateKey);
+		this.table.set(1, startDateFormat, row2StartDateFormat);
+		this.table.set(1, endDateFormat, row2EndDateFormat);
+		this.table.set(1, sizeByKey, row2SizeByKey);
+		this.table.set(1, categoryKey, row2CategoryKey);
 		
 		String row3Label = "Data 3";
 		String row3StartDateKey = "3/3/2012";
@@ -413,26 +415,26 @@ public class RecordTests extends TestCase {
 		String row3SizeByKey = "2831";
 		String row3CategoryKey = "Category3";
 
-		table.set(2, labelKey, row3Label);
-		table.set(2, startDateKey, row3StartDateKey);
-		table.set(2, endDateKey, row3EndDateKey);
-		table.set(2, startDateFormat, row3StartDateFormat);
-		table.set(2, endDateFormat, row3EndDateFormat);
-		table.set(2, sizeByKey, row3SizeByKey);
-		table.set(2, categoryKey, row3CategoryKey);
+		this.table.set(2, labelKey, row3Label);
+		this.table.set(2, startDateKey, row3StartDateKey);
+		this.table.set(2, endDateKey, row3EndDateKey);
+		this.table.set(2, startDateFormat, row3StartDateFormat);
+		this.table.set(2, endDateFormat, row3EndDateFormat);
+		this.table.set(2, sizeByKey, row3SizeByKey);
+		this.table.set(2, categoryKey, row3CategoryKey);
 
 		Record r1;
 		Record r2;
 		Record r3;
 
 		try {
-			r1 = new Record(table.getTuple(0), labelKey, startDateKey,
+			r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
-			r2 = new Record(table.getTuple(1), labelKey, startDateKey,
+			r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
-			r3 = new Record(table.getTuple(2), labelKey, startDateKey,
+			r3 = new Record(this.table.getTuple(2), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
 			
@@ -458,19 +460,15 @@ public class RecordTests extends TestCase {
 
 	}
 	
+	@SuppressWarnings({ "unused"})
 	@Test
-	public void testNullLabel(){
+	public static void testNullLabel(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		String labelKey = "label";
 		columns.put(labelKey, String.class);
-		String sizeByKey = "size_by";
 		columns.put(sizeByKey, Double.class);
-		String startDateKey = "start";
 		columns.put(startDateKey, Timestamp.class);
-		String endDateKey = "end";
 		columns.put(endDateKey, Timestamp.class);
-		String categoryKey = "category";
 		columns.put(categoryKey, String.class);
 
 		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
@@ -483,7 +481,7 @@ public class RecordTests extends TestCase {
 		int rowId = table.addRow();
 		Tuple row = tupleManager.getTuple(rowId);
 		row.set(labelKey, null);
-		row.set(sizeByKey, 188273.0);
+		row.set(sizeByKey, Double.valueOf(188273.0));
 		row.set(startDateKey, new DateTime().toDate());
 		row.set(endDateKey, new DateTime().toDate());
 		row.set(categoryKey, "Category for null check");
@@ -503,19 +501,15 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 	
+	@SuppressWarnings({ "unused" })
 	@Test
-	public void testNullStartDate(){
+	public static void testNullStartDate(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		String labelKey = "label";
 		columns.put(labelKey, String.class);
-		String sizeByKey = "size_by";
 		columns.put(sizeByKey, Double.class);
-		String startDateKey = "start";
 		columns.put(startDateKey, Timestamp.class);
-		String endDateKey = "end";
 		columns.put(endDateKey, Timestamp.class);
-		String categoryKey = "category";
 		columns.put(categoryKey, String.class);
 
 		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
@@ -536,19 +530,15 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 	
+	@SuppressWarnings({ "unused" })
 	@Test
-	public void testNullEndDate(){
+	public static void testNullEndDate(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		String labelKey = "label";
 		columns.put(labelKey, String.class);
-		String sizeByKey = "size_by";
 		columns.put(sizeByKey, Double.class);
-		String startDateKey = "start";
 		columns.put(startDateKey, Timestamp.class);
-		String endDateKey = "end";
 		columns.put(endDateKey, Timestamp.class);
-		String categoryKey = "category";
 		columns.put(categoryKey, String.class);
 
 		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
@@ -570,19 +560,15 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 	
+	@SuppressWarnings({ "unused" })
 	@Test
-	public void testNullSizeBy(){
+	public static void testNullSizeBy(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		String labelKey = "label";
 		columns.put(labelKey, String.class);
-		String sizeByKey = "size_by";
 		columns.put(sizeByKey, Double.class);
-		String startDateKey = "start";
 		columns.put(startDateKey, Timestamp.class);
-		String endDateKey = "end";
 		columns.put(endDateKey, Timestamp.class);
-		String categoryKey = "category";
 		columns.put(categoryKey, String.class);
 
 		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
@@ -615,19 +601,15 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 
+	@SuppressWarnings({ "unused"})
 	@Test
-	public void testNullCategory(){
+	public static void testNullCategory(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		String labelKey = "label";
 		columns.put(labelKey, String.class);
-		String sizeByKey = "size_by";
 		columns.put(sizeByKey, Double.class);
-		String startDateKey = "start";
 		columns.put(startDateKey, Timestamp.class);
-		String endDateKey = "end";
 		columns.put(endDateKey, Timestamp.class);
-		String categoryKey = "category";
 		columns.put(categoryKey, String.class);
 
 		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
@@ -640,7 +622,7 @@ public class RecordTests extends TestCase {
 		int rowId = table.addRow();
 		Tuple row = tupleManager.getTuple(rowId);
 		row.set(labelKey, "nuller");
-		row.set(sizeByKey, 188273.0);
+		row.set(sizeByKey, Double.valueOf(188273.0));
 		row.set(startDateKey, new DateTime().toDate());
 		row.set(endDateKey, new DateTime().toDate());
 		row.set(categoryKey, null);
@@ -660,19 +642,15 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 	
+	@SuppressWarnings({ "unused" })
 	@Test
-	public void testBadTable() throws InvalidRecordException{
+	public static void testBadTable() throws InvalidRecordException{
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		String labelKey = "label";
-		columns.put(labelKey, Integer.class);
-		String sizeByKey = "size_by";
-		columns.put(sizeByKey, String.class);
-		String startDateKey = "start";
+		columns.put(labelKey, String.class);
+		columns.put(sizeByKey, Double.class);
 		columns.put(startDateKey, Timestamp.class);
-		String endDateKey = "end";
 		columns.put(endDateKey, Timestamp.class);
-		String categoryKey = "category";
 		columns.put(categoryKey, String.class);
 
 		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
@@ -684,7 +662,7 @@ public class RecordTests extends TestCase {
 
 		int rowId = table.addRow();
 		Tuple row = tupleManager.getTuple(rowId);
-		row.set(labelKey, 1);
+		row.set(labelKey, Integer.valueOf(1));
 		row.set(sizeByKey, "188273.0");
 		row.set(startDateKey, new DateTime().toDate());
 		row.set(endDateKey, new DateTime().toDate());
