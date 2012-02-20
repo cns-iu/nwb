@@ -33,27 +33,17 @@ public class DataInterpreterTest {
 		return this.getClass().getResourceAsStream("test-network.nwb");
 	}
 	
-	// TODO Need to figure out how to enable assertions in running tests...
-	@Ignore
 	@Test
 	public void testBadTypeColumn() throws IOException, ParsingException {
 		NWBDataImporter importer = new NWBDataImporter("wrongname", "Who", "Desirability", null);
-		exception.expect(ParsingException.class);
-		exception.expectMessage("schema");
-		exception.expectMessage("wrongname"); // message should mention the column it's looking for
-		exception.expectMessage("type");
+		exception.expect(AssertionError.class);
 		importer.constructModelFromFile(getTestNetwork());
 	}
 	
-	// TODO Need to figure out how to enable assertions in running tests...
-	@Ignore
 	@Test
 	public void testBadSizeColumn() throws IOException, ParsingException {
 		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "wrongname", null);
-		exception.expect(ParsingException.class);
-		exception.expectMessage("schema");
-		exception.expectMessage("wrongname");
-		exception.expectMessage("size");
+		exception.expect(AssertionError.class);
 		importer.constructModelFromFile(getTestNetwork());
 	}
 }
