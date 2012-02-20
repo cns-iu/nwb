@@ -123,9 +123,9 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 
 		if (label != null) {
 			return String.format("data \"%s\"", label.toString());
-		} else {
-			return "input data";
 		}
+		
+		return "input data";
 	}
 
 	protected static List<Record> readRecordsFromTable(Table table,
@@ -146,7 +146,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 				workingRecordSet.add(newRecord);
 
 			} catch (InvalidRecordException e) {
-				logger.log(LogService.LOG_WARNING, e.getMessage(), e);
+				logger.log(LogService.LOG_WARNING, "An invalid record will be ignored." + System.getProperty("line.separator") + e.getMessage(), e);
 			}
 		}
 
