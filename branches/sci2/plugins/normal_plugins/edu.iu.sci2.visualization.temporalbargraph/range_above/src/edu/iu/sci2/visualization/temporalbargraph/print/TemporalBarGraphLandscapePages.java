@@ -22,14 +22,14 @@ import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationExcep
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
-public class TemporalBarGraphPages extends AbstractPages {
+public class TemporalBarGraphLandscapePages extends AbstractPages {
 	public static DecimalFormat formatter = new DecimalFormat("###,###");
 	private Visualization visualizations;
 	private DoubleDimension size;
 	private String legendText;
 	private String query;
 
-	public TemporalBarGraphPages(CSVWriter csvWriter, List<Record> records,
+	public TemporalBarGraphLandscapePages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
 			DoubleDimension size, String legendText, String query)
 			throws PostScriptCreationException {
@@ -39,7 +39,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 				- (size.getWidth() * .25),
 				(size.getHeight() - (size.getHeight() * .35)));
 
-		visualizations = new Visualization(csvWriter, records,
+		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
 
 		this.legendText = legendText;
@@ -49,7 +49,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 
 	@Override
 	public int numberOfPages() {
-		return visualizations.numberOfVisualizations();
+		return this.visualizations.numberOfVisualizations();
 	}
 
 	@Override
@@ -61,11 +61,11 @@ public class TemporalBarGraphPages extends AbstractPages {
 	private Map<Integer, List<PageElement>> getPageElementsForSomePages() {
 		Map<Integer, List<PageElement>> pageElementsSomePages = new TreeMap<Integer, List<PageElement>>();
 
-		String visualizationDefinitions = visualizations
+		String visualizationDefinitions = this.visualizations
 				.renderDefinitionsPostscript();
 
 		for (int ii = 0; ii < numberOfPages(); ii++) {
-			String visualization = visualizations
+			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
 			double visualizationLeft = 1.0 * POINTS_PER_INCH;
 			double visualizationBottom = 1.75 * POINTS_PER_INCH;
@@ -110,7 +110,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
 		legendDefinitionsTemplate.setAttribute("legendWidth",
-				size.getWidth() * 0.30);
+				this.size.getWidth() * 0.30);
 
 		double leftBound = 1.0 * POINTS_PER_INCH;
 		double bottomBound = 0.5 * POINTS_PER_INCH;
@@ -127,7 +127,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 
 		StringTemplate footerDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("footerDefinitions");
-		footerDefinitionsTemplate.setAttribute("pageWidth", size.getWidth());
+		footerDefinitionsTemplate.setAttribute("pageWidth", this.size.getWidth());
 
 		double leftBound = this.size.getWidth() / 2;
 		double bottomBound = 0;
@@ -140,7 +140,7 @@ public class TemporalBarGraphPages extends AbstractPages {
 				.getInstanceOf("leftAlignedTitleWithQueryAndInfo");
 		titleTemplate.setAttribute("title", "Temporal Bar Graph");
 		titleTemplate.setAttribute("query", this.query);
-		titleTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:m:s a zzz"));
+		titleTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
 
 		Map<String, String> attributes = new HashMap<String, String>();
 		

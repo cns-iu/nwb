@@ -178,13 +178,23 @@ public class Record {
 			this.category = PostScriptFormationUtilities
 					.matchParentheses(Category.DEFAULT.toString());
 		} else {
-			if(tableRow.canGetString(categoryKey)){
-				this.category = PostScriptFormationUtilities
-						.matchParentheses(tableRow.getString(categoryKey));
+			String categoryValue;
+			if (tableRow.canGetString(categoryKey)) {
+				categoryValue = tableRow.getString(categoryKey);
+
 			} else {
-				this.category = PostScriptFormationUtilities
-						.matchParentheses(String.valueOf(tableRow.get(categoryKey)));
-			}	
+				// TODO catch null values
+				categoryValue = String.valueOf(tableRow.get(categoryKey));
+			}
+			if (categoryValue.isEmpty()){
+				String exceptionMessage = "The record labeled \'" + this.label
+						+ "\' contains an null field.  It will be ignored.";
+
+				throw new InvalidRecordException(exceptionMessage);
+			}
+			this.category = PostScriptFormationUtilities
+					.matchParentheses(categoryValue);
+
 		}
 
 		try {
@@ -305,6 +315,10 @@ public class Record {
 			row.set(endDateKey, new DateTime().toDate());
 			row.set(categoryKey, "Category" + ii);
 		}
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		//Null check
+		table.addTuple(row);
 		IntIterator rows = table.rows();
 		while (rows.hasNext()) {
 
@@ -318,6 +332,5 @@ public class Record {
 				e.printStackTrace();
 			}
 		}
-
 	}
 }

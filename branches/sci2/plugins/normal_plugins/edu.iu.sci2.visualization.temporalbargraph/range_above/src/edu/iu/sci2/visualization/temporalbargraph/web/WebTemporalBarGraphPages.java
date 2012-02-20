@@ -1,5 +1,8 @@
 package edu.iu.sci2.visualization.temporalbargraph.web;
 
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +20,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
 public class WebTemporalBarGraphPages extends AbstractPages{
-	
-	
+	public static DecimalFormat formatter = new DecimalFormat("###,###");	
 	private Visualization visualizations;
 	private DoubleDimension size;
 	private String legendText;
@@ -31,19 +33,19 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		this.size = size;
 		this.legendText = legendText;
 		
-		DoubleDimension visualizationSize = new DoubleDimension(900.0, 600.0);
+		DoubleDimension visualizationSize = new DoubleDimension(1000.0, 775.0);
 		
-		visualizations = new Visualization(csvWriter, records,
+		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
 	}
 
 	private Map<Integer, List<PageElement>> getPageElementsForSomePages() {
 		Map<Integer, List<PageElement>> pageElementsSomePages = new TreeMap<Integer, List<PageElement>>();
-		String visualizationDefinitions = visualizations.renderDefinitionsPostscript();
+		String visualizationDefinitions = this.visualizations.renderDefinitionsPostscript();
 		
 		for(int ii = 0; ii < numberOfPages(); ii++){
-			String visualization = visualizations.renderVisualizationPostscript(ii);
-			PageElement visualizationElement = new PageElement("visualization", 100.0, 300.0, visualization, visualizationDefinitions);
+			String visualization = this.visualizations.renderVisualizationPostscript(ii);
+			PageElement visualizationElement = new PageElement("visualization", 100.0, 150.0, visualization, visualizationDefinitions);
 			
 			List<PageElement> pageElements = pageElementsSomePages.get(ii);			
 			if (!pageElementsSomePages.containsKey(ii)){
@@ -66,21 +68,25 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	}
 	
 	private PageElement getLegendPageElement(){
-		StringTemplate legendTemplate = pageElementsGroup
-				.getInstanceOf("legend");
-		legendTemplate.setAttribute("title", this.legendText);
-		legendTemplate.setAttribute("startYearLabel", "Start Year");
-		legendTemplate.setAttribute("endYearLabel", "End Year");
-		
-		
-		
-		StringTemplate legendDefinitionsTemplate = pageElementsGroup
-				.getInstanceOf("legendDefinitions");
+			StringTemplate legendTemplate = pageElementsGroup
+					.getInstanceOf("legendTitleTop");
+			legendTemplate.setAttribute("title", this.legendText);
+			legendTemplate.setAttribute("startYearLabel", "Start Year");
+			legendTemplate.setAttribute("endYearLabel", "End Year");
+			legendTemplate.setAttribute("min",
+					formatter.format(this.visualizations.minRecordValue()));
+			legendTemplate.setAttribute("max",
+					formatter.format(this.visualizations.maxRecordValue()));
 
-		legendDefinitionsTemplate.setAttribute("legendWidth",
-				size.getWidth() * 0.20);
-		
-		return new PageElement("legend", size.getWidth() * 0.25, size.getHeight() * 0.25, legendTemplate, legendDefinitionsTemplate);
+			StringTemplate legendDefinitionsTemplate = pageElementsGroup
+					.getInstanceOf("legendTitleTopDefinitions");
+			legendDefinitionsTemplate.setAttribute("legendWidth",
+					this.size.getWidth() * 0.30);
+
+			double leftBound = 1.0 * POINTS_PER_INCH;
+			double bottomBound = 50.0;
+			return new PageElement("legendTitleTop", leftBound, bottomBound,
+					legendTemplate, legendDefinitionsTemplate);
 	}
 	
 	private PageElement getFooterPageElement(){
@@ -89,14 +95,14 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		StringTemplate footerDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("footerDefinitions");
-		footerDefinitionsTemplate.setAttribute("pageWidth", size.getWidth());
+		footerDefinitionsTemplate.setAttribute("pageWidth", this.size.getWidth());
 		
-		return new PageElement("footer", 0, size.getHeight() * 0.05, footerTemplate, footerDefinitionsTemplate);
+		return new PageElement("footer", 0, 25.0, footerTemplate, footerDefinitionsTemplate);
 	}
 
 	@Override
 	public int numberOfPages() {
-		return visualizations.numberOfVisualizations();
+		return this.visualizations.numberOfVisualizations();
 	}
 
 	@Override
