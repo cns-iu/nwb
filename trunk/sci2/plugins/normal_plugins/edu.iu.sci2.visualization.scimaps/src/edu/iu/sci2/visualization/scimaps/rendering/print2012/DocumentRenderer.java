@@ -60,7 +60,7 @@ public class DocumentRenderer implements RenderableVisualization {
 		header.render(state, inch(0.5f), inch(0.5f));
 		
 		HowToArea howto = new HowToArea();
-		howto.render(state, inch(6.5f), inch(6.5f));
+		howto.render(state, inch(4.5f), inch(6.5f));
 		
 		Footer footer = new Footer((float) size.getWidth(), inch(8.0f));
 		footer.render(state);
