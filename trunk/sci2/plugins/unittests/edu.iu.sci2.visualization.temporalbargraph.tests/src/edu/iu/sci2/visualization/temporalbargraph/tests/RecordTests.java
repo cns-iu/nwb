@@ -1,8 +1,12 @@
 package edu.iu.sci2.visualization.temporalbargraph.tests;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -12,7 +16,13 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
+import prefuse.data.DataTypeException;
+import prefuse.data.Schema;
 import prefuse.data.Table;
+import prefuse.data.Tuple;
+import prefuse.data.tuple.TableTuple;
+import prefuse.data.tuple.TupleManager;
+import prefuse.util.collections.IntIterator;
 import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 
@@ -445,6 +455,244 @@ public class RecordTests extends TestCase {
 			fail("An exception was thrown when creating the records that should not have been: "
 					+ e.getMessage());
 		}
+
+	}
+	
+	@Test
+	public void testNullLabel(){
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, String.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, Double.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
+				columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null,
+				TableTuple.class);
+
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		row.set(labelKey, null);
+		row.set(sizeByKey, 188273.0);
+		row.set(startDateKey, new DateTime().toDate());
+		row.set(endDateKey, new DateTime().toDate());
+		row.set(categoryKey, "Category for null check");
+		
+		boolean exceptionCaught = false;
+		
+		try {
+			new Record(row,
+					labelKey, startDateKey, endDateKey, sizeByKey,
+					DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
+					DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT, categoryKey);
+		} catch (InvalidRecordException e) {
+			exceptionCaught = true;
+			assertTrue("The message is not specific enough", e.getMessage().contains("label"));
+		}
+		
+		assertTrue(exceptionCaught);
+	}
+	
+	@Test
+	public void testNullStartDate(){
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, String.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, Double.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
+				columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null,
+				TableTuple.class);
+
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		boolean exceptionCaught = false;
+		try {
+			row.set(startDateKey, null);
+		} catch (DataTypeException e) {
+			exceptionCaught = true;
+		}
+		assertTrue(exceptionCaught);
+	}
+	
+	@Test
+	public void testNullEndDate(){
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, String.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, Double.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
+				columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null,
+				TableTuple.class);
+
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		boolean exceptionCaught = false;
+		try {
+			row.set(endDateKey, null);
+		} catch (DataTypeException e) {
+			exceptionCaught = true;
+		}
+
+		assertTrue(exceptionCaught);
+	}
+	
+	@Test
+	public void testNullSizeBy(){
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, String.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, Double.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
+				columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null,
+				TableTuple.class);
+
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		row.set(labelKey, "nuller");
+		row.set(sizeByKey, null);
+		row.set(startDateKey, new DateTime().toDate());
+		row.set(endDateKey, new DateTime().toDate());
+		row.set(categoryKey, "Category for null check");
+		
+		boolean exceptionCaught = false;
+		
+		try {
+			new Record(row,
+					labelKey, startDateKey, endDateKey, sizeByKey,
+					DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
+					DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT, categoryKey);
+		} catch (InvalidRecordException e) {
+			exceptionCaught = true;
+			assertTrue("The message is not specific enough", e.getMessage().contains("size"));
+		}
+		
+		assertTrue(exceptionCaught);
+	}
+
+	@Test
+	public void testNullCategory(){
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, String.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, Double.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
+				columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null,
+				TableTuple.class);
+
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		row.set(labelKey, "nuller");
+		row.set(sizeByKey, 188273.0);
+		row.set(startDateKey, new DateTime().toDate());
+		row.set(endDateKey, new DateTime().toDate());
+		row.set(categoryKey, null);
+		
+		boolean exceptionCaught = false;
+		
+		try {
+			new Record(row,
+					labelKey, startDateKey, endDateKey, sizeByKey,
+					DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
+					DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT, categoryKey);
+		} catch (InvalidRecordException e) {
+			exceptionCaught = true;
+			assertTrue("The message is not specific enough", e.getMessage().contains("category"));
+		}
+		
+		assertTrue(exceptionCaught);
+	}
+	
+	@Test
+	public void testBadTable() throws InvalidRecordException{
+		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
+
+		String labelKey = "label";
+		columns.put(labelKey, Integer.class);
+		String sizeByKey = "size_by";
+		columns.put(sizeByKey, String.class);
+		String startDateKey = "start";
+		columns.put(startDateKey, Timestamp.class);
+		String endDateKey = "end";
+		columns.put(endDateKey, Timestamp.class);
+		String categoryKey = "category";
+		columns.put(categoryKey, String.class);
+
+		Schema schema = new Schema(columns.keySet().toArray(new String[0]),
+				columns.values().toArray(new Class<?>[0]));
+
+		Table table = schema.instantiate();
+		TupleManager tupleManager = new TupleManager(table, null,
+				TableTuple.class);
+
+		int rowId = table.addRow();
+		Tuple row = tupleManager.getTuple(rowId);
+		row.set(labelKey, 1);
+		row.set(sizeByKey, "188273.0");
+		row.set(startDateKey, new DateTime().toDate());
+		row.set(endDateKey, new DateTime().toDate());
+		row.set(categoryKey, "dog");
+
+		new Record(row, labelKey, startDateKey, endDateKey, sizeByKey,
+				DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
+				DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT, categoryKey);
 
 	}
 }
