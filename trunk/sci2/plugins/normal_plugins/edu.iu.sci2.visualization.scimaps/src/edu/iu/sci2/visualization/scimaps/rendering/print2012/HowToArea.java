@@ -11,17 +11,19 @@ public class HowToArea {
 
 	public HowToArea() {
 		this.title = "How To Read This Map";
-		this.body = "The Map of Science is a visual representation of 554 sub-disciplines within 13 disciplines"
+		this.body = "The Map of Science is a visual representation of 554 sub-disciplines within 13 disciplines of science"
 				+ newline
-				+ "of science and their relationships to one another, shown as points and lines connecting"
+				+ "and their relationships to one another, shown as points and lines connecting those points respectively."
 				+ newline
-				+ "those points respectively.  Over top this visualization is drawn the result of matching a"
+				+ "Over top this visualization is drawn the result of mapping a dataset's journals to the underlying"
 				+ newline
-				+ "dataset to the underlying sub-disciplines it contains. Each matching sub-discipline is"
+				+ "sub-disciplines those journals contain (NB Each journal can map to more than one sub-dicipline). Each"
 				+ newline
-				+ "shown as a circle whose color corresponds to the superior discipline and whose relative"
+				+ "matching sub-discipline is shown as a circle whose color corresponds to the superior discipline and"
 				+ newline
-				+ "size is derived from the overall representation of this sub-discipline within the dataset.";
+				+ "whose relative size is derived from the overall representation of this sub-discipline within the dataset."
+				+ newline
+				+ "For more information on maps of science, see http://mapofscience.com";
 	}
 
 	public void render(GraphicsState state, float leftBoundary,

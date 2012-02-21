@@ -48,8 +48,9 @@ public class DocumentRenderer implements RenderableVisualization {
 	public void render(GraphicsState state, Dimension size) {
 		state.save();
 		double mapOfScienceBottom = inch(5.0f);
-		double mapOfScienceLeft = inch(1.0f);
+		double mapOfScienceLeft = inch(0.0f);
 		state.current.translate(mapOfScienceLeft, mapOfScienceBottom);
+		state.current.scale(1.3, 1.3);
 		MapOfScienceRenderer.render(state, mapOfScience, scalingFactor);
 		state.restore();
 		
@@ -60,7 +61,7 @@ public class DocumentRenderer implements RenderableVisualization {
 		header.render(state, inch(0.5f), inch(0.5f));
 		
 		HowToArea howto = new HowToArea();
-		howto.render(state, inch(4.5f), inch(6.5f));
+		howto.render(state, inch(4.0f), inch(6.5f));
 		
 		Footer footer = new Footer((float) size.getWidth(), inch(8.0f));
 		footer.render(state);
