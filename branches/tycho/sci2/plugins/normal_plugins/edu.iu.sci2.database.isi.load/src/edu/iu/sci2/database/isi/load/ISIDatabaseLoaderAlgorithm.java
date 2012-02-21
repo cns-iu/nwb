@@ -1,7 +1,6 @@
 package edu.iu.sci2.database.isi.load;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,24 +19,17 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
-import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-
-import com.google.common.collect.ImmutableMap;
-
-import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
-import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.sci2.database.isi.load.utilities.ISITablePreprocessor;
-import edu.iu.sci2.database.isi.load.utilities.parser.ISITableModelParser;
 
 public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable {
 	public static final boolean SHOULD_NORMALIZE_AUTHOR_NAMES = true;
@@ -84,7 +76,9 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 
 			// Convert the ISI table to an ISI database.
 
-			Database database = convertTableToDatabase(isiTable, rows);
+			Database database = ISITableDatabaseLoader
+					.createISIDatabase(isiTable, rows, this.progressMonitor,
+							this.databaseProvider);
 
 			// Annotate ISI database as output data with metadata and return it.
 			Data[] annotatedOutputData = annotateOutputData(database,
@@ -163,52 +157,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		}
 	}
 
-	private Database convertTableToDatabase(Table table,
-			Collection<Integer> rows) throws AlgorithmCanceledException,
-			ISILoadingException {
-		try {
-			double totalWork = calculateTotalWork(rows);
-			startProgressMonitor(totalWork);
-
-			// Create an in-memory ISI model based off of the table.
-
-			DatabaseModel model = new ISITableModelParser(this.progressMonitor)
-					.parseModel(table, rows);
-
-			// Use the ISI model to create an ISI database.
-
-			Database database = DerbyDatabaseCreator.createFromModel(
-					this.databaseProvider, model, "ISI", this.progressMonitor,
-					totalWork);
-
-			stopProgressMonitor();
-
-			return database;
-		} catch (DatabaseCreationException e) {
-			throw new ISILoadingException(e.getMessage(), e);
-		} catch (SQLException e) {
-			throw new ISILoadingException(e.getMessage(), e);
-		}
-	}
-
-	private static double calculateTotalWork(Collection<Integer> rows) {
-		double totalWork = rows.size()
-				/ DerbyDatabaseCreator.PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION;
-
-		return totalWork;
-	}
-
-	private void startProgressMonitor(double totalWork) {
-		this.progressMonitor.start((ProgressMonitor.WORK_TRACKABLE
-				| ProgressMonitor.CANCELLABLE | ProgressMonitor.PAUSEABLE),
-				totalWork);
-		this.progressMonitor.describeWork("Loading ISI data into a database.");
-	}
-
-	private void stopProgressMonitor() {
-		this.progressMonitor.done();
-	}
-
 	private static Data[] annotateOutputData(Database isiDatabase, Data parentData) {
 		Data data = new BasicData(isiDatabase, ISI.ISI_DATABASE_MIME_TYPE);
 		Dictionary<String, Object> metadata = data.getMetadata();
@@ -226,7 +174,7 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	
 	/*
 	 *  SOMEDAY if you find use for this, put it in a utility.  For now there is
-	 *  no good place.
+	 *  no good place.  It is also used in {@link CSVDatabaseLoader}.
 	 */
 	
 	/**
