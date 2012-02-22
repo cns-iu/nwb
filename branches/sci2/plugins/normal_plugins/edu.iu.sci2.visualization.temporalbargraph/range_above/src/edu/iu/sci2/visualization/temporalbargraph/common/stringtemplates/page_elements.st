@@ -35,67 +35,6 @@ footer(footer) ::= <<
 
 /**
 
-Legend - this is a legend element.  
-It shows a bar with a setable title, start label, and end label.
-
-*/
-
-
-legendDefinitions(legendWidth) ::= <<
-
-%%%%%%%%%%%%%%%
-% Legend Area
-%%%%%%%%%%%%%%%
-/lineSpacing { 3.0 } def
-/legendWidth { <legendWidth> } def
-
-/legendRightPosition { legendWidth } def
-/legendYearFontSize { 10.0 } def
-/legendTitleFontSize { 10.0 } def
-/legendThickness { 10.0 } def
-
-/legend { % (title) (start year) (end year) => -
-	gsave
-	0 0 0 setrgbcolor
-	legendLeft legendBottom translate
-	0 0 moveto
-	/ArialMT legendTitleFontSize selectfont
-	3 -1 roll % (start year) (end year) (title)
-	legendRightPosition 2 div % (start year) (end year) (title) [x]
-	0  % => (title) [x] [y]
-	center
-	show
-	0 legendTitleFontSize 2 mul translate
-	0 0 moveto
-	/ArialMT legendYearFontSize selectfont
-	exch dup
-	stringwidth pop 2 div 2 -1 roll show % [x1] (end) (title)
-	exch dup
-	stringwidth pop dup 2 div exch % [dx2] [dx2]/2 (end) [x1] (title)
-	legendRightPosition exch sub dup 3 -1 roll exch sub exch 0 moveto  % => RM [dx2] [dx2]/2 (end) [x1] (title) => RM-[dx2] [dx2]/2 (end) [x1] (title) => RM-[dx2] RM-[dx2] [dx2]/2 (end) [x1] (title) => [dx2]/2 RM-[dx2] RM-[dx2] (end) [x1] (title) => ... => [x2] (end) [x1] (title)
-	2 -1 roll show % [x2] [x1] (title)
-	exch dup legendYearFontSize moveto % [x1] [x2] (title)
-	gsave
-	0 0 0 setrgbcolor
-	0 legendThickness rlineto
-	exch sub 0 rlineto
-	0 legendThickness neg rlineto
-	fill
-	stroke
-	grestore
-	grestore
-} def
-
->>
-
-legend(title, startYearLabel, endYearLabel) ::= <<
-
-(<title>) (<startYearLabel>) (<endYearLabel>) legend
-
->>
-
-/**
-
 LegendTitleTop - this is a legend element with the title above the bar.  
 It shows a bar with a set-able title, start label, and end label.  It also
 includes the range.  You can see there is an option to center the title called
@@ -104,72 +43,36 @@ includes the range.  You can see there is an option to center the title called
 */
 
 
-legendTitleTopDefinitions(legendWidth) ::= <<
+legendTitleTopDefinitions() ::= <<
 
 %%%%%%%%%%%%%%%
 % Legend Area
 %%%%%%%%%%%%%%%
 /lineSpacing { 3.0 } def
-/legendTitleTopWidth { <legendWidth> } def
 
-/legendTitleTopRightPosition { legendTitleTopWidth } def
-/legendTitleTopYearFontSize { 10.0 } def
 /legendTitleTopTitleFontSize { 10.0 } def
-/legendTitleTopThickness { 10.0 } def
 
-/legendTitleTop { % (title) [min] [max] (start year) (end year) => -
+
+/legendTitleTop { % (title) [min] [max] (category) => -
 	gsave
 	0 0 0 setrgbcolor
 	legendTitleTopLeft legendTitleTopBottom translate
 	0 0 moveto
-	legendTitleTopYearLabels
-	legendTitleTopBar
+	legendTitleTopCategory
 	legendTitleTopRange
 	legendTitleTopTitle
 	grestore
 } def
 
-/legendTitleTopYearLabels {
-	gsave
-	/ArialMT legendTitleTopYearFontSize selectfont
-	exch dup
-	stringwidth pop 2 div 2 -1 roll show % [x1] (end) (title)
-	exch dup
-	stringwidth pop dup 2 div exch % [dx2] [dx2]/2 (end) [x1] (title)
-	legendTitleTopRightPosition exch sub dup 3 -1 roll exch sub exch 0 moveto  % => RM [dx2] [dx2]/2 (end) [x1] (title) => RM-[dx2] [dx2]/2 (end) [x1] (title) => RM-[dx2] RM-[dx2] [dx2]/2 (end) [x1] (title) => [dx2]/2 RM-[dx2] RM-[dx2] (end) [x1] (title) => ... => [x2] (end) [x1] (title)
-	2 -1 roll show % [x2] [x1] (title)
-	exch dup
-	grestore 
-	0 legendTitleTopYearFontSize translate % [x1] [x2] (title)
-	0 0 moveto
-} def
-
-/legendTitleTopBar {
-	gsave
-	0 translate
-	0 0 moveto
-	0 0 0 setrgbcolor
-	0 legendTitleTopThickness rlineto
-	exch sub 0 rlineto
-	0 legendTitleTopThickness neg rlineto
-	fill
-	stroke
-	grestore
-	0 legendTitleTopThickness translate
-	0 0 moveto
-} def
-
-/legendTitleTopCenterTitle {
+/legendTitleTopCategory {
 	gsave
 	/Arial-BoldMT legendTitleTopTitleFontSize selectfont
-	legendTitleTopRightPosition 2 div % (title) [center x]
-	0  % => (title) [x] [y]
-	center
+	0 0 moveto
 	show
 	grestore
 	0 legendTitleTopTitleFontSize lineSpacing add translate
 	0 0 moveto
-} def 
+} def
 
 /legendTitleTopTitle {
 	gsave
@@ -205,9 +108,9 @@ legendTitleTopDefinitions(legendWidth) ::= <<
 	
 >>
 
-legendTitleTop(title, startYearLabel, endYearLabel, min, max) ::= <<
+legendTitleTop(title, min, max, category) ::= <<
 
-(<title>) (<max>) (<min>) (<startYearLabel>) (<endYearLabel>) legendTitleTop
+(<title>) (<max>) (<min>) (<category>) legendTitleTop
 
 >>
 

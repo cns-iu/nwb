@@ -28,10 +28,11 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	private DoubleDimension size;
 	private String legendText;
 	private String query;
+	private String categoryText;
 
 	public TemporalBarGraphLandscapePages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String legendText, String query)
+			DoubleDimension size, String legendText, String categoryText, String query)
 			throws PostScriptCreationException {
 
 		this.size = size;
@@ -43,6 +44,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 				visualizationSize, scaleToOnePage, colorRegistry);
 
 		this.legendText = legendText;
+		this.categoryText = categoryText;
 		this.query = query;
 
 	}
@@ -100,8 +102,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		StringTemplate legendTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTop");
 		legendTemplate.setAttribute("title", this.legendText);
-		legendTemplate.setAttribute("startYearLabel", "Start Year");
-		legendTemplate.setAttribute("endYearLabel", "End Year");
+		legendTemplate.setAttribute("category", this.categoryText);
 		legendTemplate.setAttribute("min",
 				formatter.format(this.visualizations.minRecordValue()));
 		legendTemplate.setAttribute("max",
@@ -109,8 +110,6 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
-		legendDefinitionsTemplate.setAttribute("legendWidth",
-				this.size.getWidth() * 0.30);
 
 		double leftBound = 1.0 * POINTS_PER_INCH;
 		double bottomBound = 0.5 * POINTS_PER_INCH;

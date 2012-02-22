@@ -58,12 +58,12 @@ public class TemporalBarGraphAlgorithm extends
 
 		if (this.categoryColumn
 				.equals(AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE)) {
-			colorRegistry = new ColorRegistry<String>(
+			this.colorRegistry = new ColorRegistry<String>(
 					new TemporalBarGraphColorSchema(
 							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
 							TemporalBarGraphColorSchema.DEFAULT_COLOR));
 		} else {
-			colorRegistry = new ColorRegistry<String>(
+			this.colorRegistry = new ColorRegistry<String>(
 					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
 
 		}
@@ -72,8 +72,8 @@ public class TemporalBarGraphAlgorithm extends
 				this.labelColumn, this.startDateColumn, this.endDateColumn,
 				this.sizeByColumn, this.startDateFormat, this.endDateFormat,
 				this.categoryColumn);
-		for (Record record : records) {
-			colorRegistry.getColorOf(record.getCategory());
+		for (Record record : this.records) {
+			this.colorRegistry.getColorOf(record.getCategory());
 		}
 	}
 
@@ -81,11 +81,19 @@ public class TemporalBarGraphAlgorithm extends
 			throws PostScriptCreationException {
 
 		String legendText = "Area size equals \"" + this.sizeByColumn + "\"";
-
+		String categoryText;
+		
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE.equals(this.categoryColumn)) {
+			categoryText = "";
+		} else {
+			categoryText = "Coloring based on \"" + this.categoryColumn + "\"";
+			
+		}
+		
 		PostscriptDocument postscriptDocument = new PostscriptDocument(
-				csvWriter, this.records, shouldScaleOutput, legendText,
-				colorRegistry, query,
-				new DoubleDimension(pageWidth, pageHeight));
+				csvWriter, this.records, this.shouldScaleOutput, legendText, categoryText,
+				this.colorRegistry, this.query,
+				new DoubleDimension(this.pageWidth, this.pageHeight));
 
 		String documentPostScript = postscriptDocument.renderPostscript();
 

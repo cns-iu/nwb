@@ -21,7 +21,7 @@ public class PostscriptDocument
 
 	public PostscriptDocument(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, String legendText,
-			ColorRegistry<String> colorRegistry, String query,
+			String categoryText, ColorRegistry<String> colorRegistry, String query,
 			DoubleDimension pageSize) throws PostScriptCreationException {
 
 		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth()
@@ -30,11 +30,11 @@ public class PostscriptDocument
 		if (this.postscriptPageSize.getWidth() > this.postscriptPageSize.getHeight()){
 		this.temporalBarGraphPages = new TemporalBarGraphLandscapePages(csvWriter,
 				records, scaleToOnePage, colorRegistry, this.postscriptPageSize,
-				legendText, query);
+				legendText, categoryText, query);
 		} else {
 			this.temporalBarGraphPages = new TemporalBarGraphPortraitPages(csvWriter,
 					records, scaleToOnePage, colorRegistry, this.postscriptPageSize,
-					legendText, query);
+					legendText, categoryText, query);
 		}
 	}
 

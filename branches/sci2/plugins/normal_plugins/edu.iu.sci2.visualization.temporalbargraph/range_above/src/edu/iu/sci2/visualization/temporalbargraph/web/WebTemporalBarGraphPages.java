@@ -24,14 +24,16 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	private Visualization visualizations;
 	private DoubleDimension size;
 	private String legendText;
+	private String categoryText;
 	
 	
 	public WebTemporalBarGraphPages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String legendText)
+			DoubleDimension size, String legendText, String categoryText)
 			throws PostScriptCreationException {
 		this.size = size;
 		this.legendText = legendText;
+		this.categoryText = categoryText;
 		
 		DoubleDimension visualizationSize = new DoubleDimension(1000.0, 775.0);
 		
@@ -71,8 +73,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 			StringTemplate legendTemplate = pageElementsGroup
 					.getInstanceOf("legendTitleTop");
 			legendTemplate.setAttribute("title", this.legendText);
-			legendTemplate.setAttribute("startYearLabel", "Start Year");
-			legendTemplate.setAttribute("endYearLabel", "End Year");
+			legendTemplate.setAttribute("category", this.categoryText);
 			legendTemplate.setAttribute("min",
 					formatter.format(this.visualizations.minRecordValue()));
 			legendTemplate.setAttribute("max",
@@ -80,8 +81,6 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 
 			StringTemplate legendDefinitionsTemplate = pageElementsGroup
 					.getInstanceOf("legendTitleTopDefinitions");
-			legendDefinitionsTemplate.setAttribute("legendWidth",
-					this.size.getWidth() * 0.30);
 
 			double leftBound = 1.0 * POINTS_PER_INCH;
 			double bottomBound = 50.0;
