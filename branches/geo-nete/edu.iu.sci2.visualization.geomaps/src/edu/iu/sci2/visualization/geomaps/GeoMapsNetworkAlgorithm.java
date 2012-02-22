@@ -16,6 +16,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.FileUtilities;
+import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
@@ -38,9 +39,11 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.AnchorPoint;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMap;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -60,7 +63,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	private static final String IS_ANCHOR_FIELD = "isAnchor";
 	private static final String X_POS_FIELD = "x";
 	private static final String Y_POS_FIELD = "y";
-	private PSWriter postScriptWriter;
+	private GeoMapViewPS postScriptWriter;
 	private final Shapefile shapefile;
 
 	public GeoMapsNetworkAlgorithm(Data[] data, Dictionary<String, Object> parameters,
@@ -93,19 +96,21 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.anchorPoints();
 			List<Circle> anchorPointsAsCircles = drawAnchorPoints(anchorPoints);
 
-			postScriptWriter = new PSWriter(
+			GeoMap geoMap = new GeoMap(
+					"Networks",
 					shapefile,
 					knownProjectedCRSDescriptor,
-					"Networks",
-					anchorPointsAsCircles,
 					ImmutableSet.<FeatureView>of(),
+					anchorPointsAsCircles,
 					ImmutableSet.<PostScriptable>of());
 			
-			File geoMap = postScriptWriter.writePostScriptToFile("", "");
+			postScriptWriter = new GeoMapViewPS(geoMap);
+			
+			File geoMapFile = postScriptWriter.writePostScriptToFile("", "");
 
 			File outNetwork = processNetwork(anchorPoints, inFile);
 
-			Data[] outData = formOutData(geoMap, outNetwork, inDatum);
+			Data[] outData = formOutData(geoMapFile, outNetwork, inDatum);
 
 			return outData;
 		} catch (TransformException e) {
@@ -116,6 +121,10 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					"Error creating PostScript file: " + e.getMessage(), e);
 		} catch (ShapefilePostScriptWriterException e) {
 			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+		} catch (FactoryRegistryException e) {
+			throw new AlgorithmExecutionException("TODO", e);
+		} catch (GeoMapException e) {
+			throw new AlgorithmExecutionException("TODO", e);
 		}
 	}
 

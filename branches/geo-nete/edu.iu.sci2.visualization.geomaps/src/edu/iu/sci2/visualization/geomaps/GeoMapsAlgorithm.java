@@ -16,6 +16,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DataFactory;
+import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
@@ -29,8 +30,9 @@ import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter.ShapefilePostScriptWriterException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 
 /*
  * TODO:
@@ -96,7 +98,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
-			PSWriter postScriptWriter =
+			GeoMapViewPS postScriptWriter =
 					annotationMode.createPSWriter(inTable, parameters);
 			File geoMap = postScriptWriter.writePostScriptToFile(authorName, dataLabel);
 
@@ -121,6 +123,10 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		} catch (LegendCreationException e) {
 			throw new AlgorithmExecutionException("Error creating legend: " + e.getMessage(), e);
 		} catch (ShapefilePostScriptWriterException e) {
+			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+		} catch (FactoryRegistryException e) {
+			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+		} catch (GeoMapException e) {
 			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
 		}
 	}

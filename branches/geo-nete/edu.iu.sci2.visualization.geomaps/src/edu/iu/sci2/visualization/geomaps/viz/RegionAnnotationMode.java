@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 import org.cishell.utilities.StringUtilities;
+import org.geotools.factory.FactoryRegistryException;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
@@ -23,9 +24,11 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMap;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
@@ -70,20 +73,22 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 	}
 	
 	@Override
-	protected PSWriter createPSWriter(Shapefile shapefile,
+	protected GeoMapViewPS createPSWriter(Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
-			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException {
+			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(), codings);
 		
-		return new PSWriter(
+		GeoMap geoMap = new GeoMap(
+				GeoMapsRegionsFactory.SUBTITLE,
 				shapefile,
 				projectedCrs,
-				GeoMapsRegionsFactory.SUBTITLE,
-				ImmutableSet.<Circle>of(),
 				featureViews,
-				ImmutableSet.<PostScriptable>of());
+				ImmutableSet.<Circle>of(),
+				legends);
+		
+		return new GeoMapViewPS(geoMap);
 	}
 	
 	public static Collection<FeatureView> asFeatureViews(Collection<? extends GeoDatum<String, FeatureDimension>> valuedFeatures, final Collection<? extends Coding<FeatureDimension>> codings) {

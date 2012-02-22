@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 import org.cishell.utilities.NumberUtilities;
+import org.geotools.factory.FactoryRegistryException;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
@@ -23,8 +24,10 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescrip
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter.ShapefilePostScriptWriterException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMap;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
@@ -48,20 +51,22 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 	}
 	
 	@Override
-	protected PSWriter createPSWriter(Shapefile shapefile,
+	protected GeoMapViewPS createPSWriter(Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<Coordinate, CircleDimension> scaledData,
 			Collection<? extends Coding<CircleDimension>> codings,
-			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException {
+			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(), codings);
 		
-		return new PSWriter(
+		GeoMap geoMap = new GeoMap(
+				GeoMapsCirclesFactory.SUBTITLE,
 				shapefile,
 				projectedCrs,
-				GeoMapsCirclesFactory.SUBTITLE,
-				circles,
 				ImmutableSet.<FeatureView>of(),
+				circles,
 				legends);
+		
+		return new GeoMapViewPS(geoMap);
 	}
 
 	private final String longitudeColumnName;

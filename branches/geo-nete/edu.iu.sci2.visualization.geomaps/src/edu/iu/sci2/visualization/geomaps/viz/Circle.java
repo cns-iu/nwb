@@ -12,7 +12,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
-import edu.iu.sci2.visualization.geomaps.viz.ps.MapDisplayer;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPageArea;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -37,7 +37,7 @@ public class Circle {
 	}
 	
 	
-	public String toPostScript(GeometryProjector geometryProjector, MapDisplayer mapDisplayer) throws TransformException {
+	public String toPostScript(GeometryProjector geometryProjector, GeoMapViewPageArea geoMapViewPageArea) throws TransformException {
 		// TODO ugly cast
 		double radius = calculateRadiusFromArea(((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).area());
 		Strategy innerColorStrategy = strategyFor(CircleDimension.INNER_COLOR);
@@ -50,7 +50,7 @@ public class Circle {
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
-		Coordinate displayCoordinate = mapDisplayer.getDisplayCoordinate(point.getCoordinate());
+		Coordinate displayCoordinate = geoMapViewPageArea.getDisplayCoordinate(point.getCoordinate());
 
 		StringBuilder builder = new StringBuilder();
 		

@@ -45,7 +45,7 @@ public class FeaturePrinter {
 	
 	private final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private final GeometryProjector geometryProjector;
-	private final MapDisplayer mapDisplayer;
+	private final GeoMapViewPageArea geoMapViewPageArea;
 	private final String shapefileFeatureNameKey;
 	
 	private Map<String, Boolean> featureWasColoredMap;
@@ -53,11 +53,11 @@ public class FeaturePrinter {
 	public FeaturePrinter(
 			FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection,
 			GeometryProjector geometryProjector,
-			MapDisplayer mapDisplayer,
+			GeoMapViewPageArea geoMapViewPageArea,
 			String shapefileFeatureNameKey) {
 		this.featureCollection = featureCollection;
 		this.geometryProjector = geometryProjector;
-		this.mapDisplayer = mapDisplayer;
+		this.geoMapViewPageArea = geoMapViewPageArea;
 		this.shapefileFeatureNameKey = shapefileFeatureNameKey;
 	}
 	
@@ -194,7 +194,7 @@ public class FeaturePrinter {
 		Coordinate[] coordinates = subgeometry.getCoordinates();
 		if (coordinates.length > 0) {
 			Coordinate firstCoordinate =
-				mapDisplayer.getDisplayCoordinate(coordinates[0]);
+				geoMapViewPageArea.getDisplayCoordinate(coordinates[0]);
 
 			out.write(INDENT + "newpath" + "\n");
 			out.write(INDENT + INDENT + (firstCoordinate.x) + " " + (firstCoordinate.y) + " moveto\n");
@@ -216,9 +216,9 @@ public class FeaturePrinter {
 			 */
 			for (int cc = 1; cc < coordinates.length; cc++) {
 				Coordinate coordinate =
-					mapDisplayer.getDisplayCoordinate(coordinates[cc]);
+					geoMapViewPageArea.getDisplayCoordinate(coordinates[cc]);
 				Coordinate previousCoordinate =
-					mapDisplayer.getDisplayCoordinate(coordinates[cc - 1]);
+					geoMapViewPageArea.getDisplayCoordinate(coordinates[cc - 1]);
 				
 				/* A closed path consisting of two or more points at the same location is a
 				 * degenerate path. A degenerate path will be drawn only if you have set the line

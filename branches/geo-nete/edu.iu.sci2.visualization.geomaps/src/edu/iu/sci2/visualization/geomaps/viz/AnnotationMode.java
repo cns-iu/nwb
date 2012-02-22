@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.EnumSet;
 
+import org.geotools.factory.FactoryRegistryException;
+
 import prefuse.data.Table;
 
 import com.google.common.base.Function;
@@ -21,29 +23,31 @@ import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter.ShapefilePostScriptWriterException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	protected abstract EnumSet<D> dimensions();
 	protected abstract GeoDataset<G, D> readTable(Table table, Collection<Binding<D>> bindings);
-	protected abstract PSWriter createPSWriter(
+	protected abstract GeoMapViewPS createPSWriter(
 			Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<G, D> scaledData,
 			Collection<? extends Coding<D>> codings,
-			Collection<PostScriptable> legends)	throws ShapefilePostScriptWriterException;
+			Collection<PostScriptable> legends)	throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
 
-	public PSWriter createPSWriter(
+	public GeoMapViewPS createPSWriter(
 			Table table,
 			final Dictionary<String, Object> parameters)
-				throws ScalingException, LegendCreationException, ShapefilePostScriptWriterException {
+				throws ScalingException, LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Shapefile shapefile = Shapefile.PRETTY_NAME_TO_SHAPEFILE.get(parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.defaultProjectedCrs();
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-			knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forName((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
+			knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forName(
+					(String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 		}
 		
 		Collection<Binding<D>> enabledBindings = bindTo(parameters);

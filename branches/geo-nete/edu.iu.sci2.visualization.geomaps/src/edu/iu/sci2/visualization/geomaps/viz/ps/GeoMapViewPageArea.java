@@ -7,7 +7,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 
-public class MapDisplayer {
+public class GeoMapViewPageArea {
 	public static final boolean CLIP_TO_BOUNDING_BOX = true;
 	public static final boolean BACKGROUND_TRANSPARENT = true;
 	public static final Color BACKGROUND_COLOR = Color.CYAN;
@@ -23,7 +23,7 @@ public class MapDisplayer {
 	private final double scale;
 	private final double displayHeightInPoints;
 
-	public MapDisplayer(double dataMinX, double dataMinY, double dataMaxX,
+	public GeoMapViewPageArea(double dataMinX, double dataMinY, double dataMaxX,
 			double dataMaxY) {
 		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;
 

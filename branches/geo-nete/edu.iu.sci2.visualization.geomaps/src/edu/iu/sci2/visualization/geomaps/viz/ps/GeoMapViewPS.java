@@ -5,36 +5,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.utilities.FileUtilities;
-import org.geotools.factory.Hints;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
-import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
-import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector.GeometryProjectorException;
-import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
-import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
-import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
 
-public class PSWriter {
+public class GeoMapViewPS {
 	/* Percentage of the data range to add to each side of the map as a buffer.
 	 * Between 0 and 1.
 	 */
@@ -46,48 +33,22 @@ public class PSWriter {
 	public static final String INDENT = "  ";
 	
 	
-	private final GeometryProjector geometryProjector;
-	private final MapDisplayer mapDisplayer;
+	private final GeoMapViewPageArea geoMapViewPageArea;
 	private final double pageHeightInPoints;
-	private final LegendComposite legendComposite = new LegendComposite();
-	private Shapefile shapefile;
-	private KnownProjectedCRSDescriptor knownProjectedCRSDescriptor;
-	private final GeometryFactory defaultGeometryFactory = JTSFactoryFinder.getGeometryFactory(
-			new Hints(Hints.CRS, DefaultGeographicCRS.WGS84));
-	
-	private Collection<FeatureView> featureViews = ImmutableSet.of(); // TODO try to generalize to "hooks", and hook into a feature-drawn event
-	private Collection<Circle> circles = new ArrayList<Circle>(); // TODO try to generalize to "overlays"
-	private String subtitle = "";
+	private final GeoMap geoMap;
 
 
 
-	public PSWriter(
-			Shapefile shapefile,
-			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor,
-			String subtitle,
-			Collection<Circle> circles,
-			Collection<FeatureView> featureViews,
-			Collection<PostScriptable> legends)
-				throws ShapefilePostScriptWriterException {
-		try {			
-			this.shapefile = shapefile;
-			this.knownProjectedCRSDescriptor = knownProjectedCRSDescriptor;
-			this.subtitle = subtitle;
-			this.featureViews = featureViews;
-			this.circles = circles;
-			
-			legendComposite.addAll(legends);
-			
-			this.geometryProjector = new GeometryProjector(shapefile.detectCRS(), knownProjectedCRSDescriptor);
-			this.mapDisplayer = calculateMapBoundingBox();
+	public GeoMapViewPS(GeoMap geoMap) throws ShapefilePostScriptWriterException {
+		try {
+			this.geoMap = geoMap;
+			this.geoMapViewPageArea = calculateMapBoundingBox();
 			
 			this.pageHeightInPoints =
-				Constants.calculatePageHeightInPoints(mapDisplayer.getMapHeightInPoints());
+				Constants.calculatePageHeightInPoints(geoMapViewPageArea.getMapHeightInPoints());
 			
 			
 		} catch (TransformException e) {
-			throw new ShapefilePostScriptWriterException(e);
-		} catch (GeometryProjectorException e) {
 			throw new ShapefilePostScriptWriterException(e);
 		}
 	}
@@ -111,16 +72,16 @@ public class PSWriter {
 		out.write("gsave" + "\n");
 		out.write("\n");
 
-		out.write(mapDisplayer.toPostScript());
+		out.write(geoMapViewPageArea.toPostScript());
 		out.write("\n");
 		
 		FeaturePrinter featurePrinter =
 			new FeaturePrinter(
-					shapefile.viewOfFeatureCollection(),
-					geometryProjector,
-					mapDisplayer,
-					shapefile.featureAttributeName());
-		featurePrinter.printFeatures(out, featureViews);
+					geoMap.getShapefile().viewOfFeatureCollection(),
+					geoMap.getGeometryProjector(),
+					geoMapViewPageArea,
+					geoMap.getShapefile().featureAttributeName());
+		featurePrinter.printFeatures(out, geoMap.getFeatureViews());
 
 		out.write(GeoMapsAlgorithm.group.getInstanceOf("circlePrinterDefinitions").toString());
 		
@@ -133,8 +94,8 @@ public class PSWriter {
 		out.write(INDENT + circleLineWidth + " setlinewidth" + "\n");
 		out.write("\n");
 
-		for (Circle circle : circles) {
-			out.write(circle.toPostScript(geometryProjector, mapDisplayer));
+		for (Circle circle : geoMap.getCircles()) {
+			out.write(circle.toPostScript(geoMap.getGeometryProjector(), geoMapViewPageArea));
 		}
 
 		out.write("grestore" + "\n");
@@ -146,14 +107,14 @@ public class PSWriter {
 		out.write("\n");
 		
 		
-		PageMetadata pageMetadata = new PageMetadata(TITLE, subtitle);
-		pageMetadata.add(knownProjectedCRSDescriptor.displayName() + " Projection");
+		PageMetadata pageMetadata = new PageMetadata(TITLE, geoMap.getSubtitle());
+		pageMetadata.add(geoMap.getKnownProjectedCRSDescriptor().displayName() + " Projection");
 		pageMetadata.add(timestamp());
 		pageMetadata.add(authorName);
 		out.write(pageMetadata.toPostScript());
 		out.write("\n");
 		
-		out.write(legendComposite.toPostScript());
+		out.write(geoMap.getLegendComposite().toPostScript());
 		out.write("\n");
 		
 		out.write("showpage" + "\n");
@@ -176,27 +137,17 @@ public class PSWriter {
 	 * current map as well as possible.
 	 */
 	public Coordinate coordinateToPagePosition(Coordinate coordinate) { // TODO what the hell is up with the exception handling here
-		Geometry coordinatePointGeometry = defaultGeometryFactory.createPoint(coordinate);
-		
-		Coordinate intermediateCoord;
-		try {
-			intermediateCoord = geometryProjector.projectGeometry(coordinatePointGeometry).getCoordinate();
-		} catch (TransformException e) {
-			// I think this should only happen for particularly weird input coordinates
-			// http://docs.geotools.org/latest/javadocs/org/opengis/referencing/operation/TransformException.html
-			return null;
-		}
+		Coordinate intermediateCoord = geoMap.project(coordinate);
 		
 		if (intermediateCoord != null) {
-			return mapDisplayer.getDisplayCoordinate(intermediateCoord);
+			return geoMapViewPageArea.getDisplayCoordinate(intermediateCoord);
 		} else {
 			// can happen if the point would not be displayed (so the Geometry becomes empty)
 			return null;
 		}
 	}
 	
-
-	private MapDisplayer calculateMapBoundingBox() throws TransformException {
+	private GeoMapViewPageArea calculateMapBoundingBox() throws TransformException {
 		/* Identify extreme values for the X and Y dimensions
 		 * among the Geometries in our featureCollection.
 		 * Note that this is *after* Geometry preparation (cropping and projecting).
@@ -206,13 +157,12 @@ public class PSWriter {
 		double dataMaxX = Double.NEGATIVE_INFINITY;
 		double dataMaxY = Double.NEGATIVE_INFINITY;
 
-		FeatureIterator<SimpleFeature> it = shapefile.viewOfFeatureCollection().features();
+		FeatureIterator<SimpleFeature> it = geoMap.getShapefile().viewOfFeatureCollection().features();
 		while (it.hasNext()) {
 			SimpleFeature feature = it.next();
-			Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
-			Geometry geometry = rawGeometry;
-			try {
-				geometry = geometryProjector.projectGeometry(rawGeometry);
+			Geometry geometry;
+			try {				
+				geometry = geoMap.project((Geometry) feature.getDefaultGeometry());
 			} catch (IllegalArgumentException e) {
 				// TODO !
 				System.out.println("iae for feature " + feature.getAttribute("NAME"));
@@ -246,7 +196,7 @@ public class PSWriter {
 		double bufferedDataMinY = dataMinY - yBufferSize;
 		double bufferedDataMaxY = dataMaxY + yBufferSize;
 
-		return new MapDisplayer(
+		return new GeoMapViewPageArea(
 				bufferedDataMinX,
 				bufferedDataMinY,
 				bufferedDataMaxX,
