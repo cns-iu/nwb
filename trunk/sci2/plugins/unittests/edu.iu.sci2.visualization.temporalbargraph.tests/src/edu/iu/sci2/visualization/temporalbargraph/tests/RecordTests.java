@@ -647,8 +647,8 @@ public class RecordTests extends TestCase {
 	public static void testBadTable() throws InvalidRecordException{
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
-		columns.put(labelKey, String.class);
-		columns.put(sizeByKey, Double.class);
+		columns.put(labelKey, Integer.class);
+		columns.put(sizeByKey, String.class);
 		columns.put(startDateKey, Timestamp.class);
 		columns.put(endDateKey, Timestamp.class);
 		columns.put(categoryKey, String.class);
