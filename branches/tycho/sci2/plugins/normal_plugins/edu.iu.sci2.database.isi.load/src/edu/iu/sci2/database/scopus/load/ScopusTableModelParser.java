@@ -24,6 +24,7 @@ import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
 import edu.iu.sci2.database.scholarly.model.entity.Person;
 import edu.iu.sci2.database.scholarly.model.entity.ReprintAddress;
+import edu.iu.sci2.database.scholarly.model.entity.Source;
 
 public class ScopusTableModelParser {
 
@@ -38,6 +39,8 @@ public class ScopusTableModelParser {
 				ISI.PERSON_TABLE_NAME, Person.SCHEMA);
 		RowItemContainer<Address> addresses = new EntityContainer<Address>(
 				ISI.ADDRESS_TABLE_NAME, Address.SCHEMA);
+		RowItemContainer<Source> sources = new EntityContainer<Source>(
+				ISI.SOURCE_TABLE_NAME, Source.SCHEMA);
 
 		RowItemContainer<Author> authors = new RelationshipContainer<Author>(
 				ISI.AUTHORS_TABLE_NAME, Author.SCHEMA);
@@ -49,11 +52,17 @@ public class ScopusTableModelParser {
 			int rowNum = rowNumbers.nextInt();
 			FileTuple<ScopusField> row = new FileTuple<ScopusField>(table.getTuple(rowNum));
 
-			Document document = new Document(documents.getKeyGenerator(), 
-					getDocumentAttribs(row));
-			documents.add(document);
+			Source source = getSource(row, sources.getKeyGenerator());
+			sources.add(source);
+			
 			
 			List<Person> authorPeople = getAuthorPeople(row, people.getKeyGenerator());
+			Person firstAuthor = null;
+			if (!authorPeople.isEmpty()) firstAuthor = authorPeople.get(0);
+			
+			Document document = new Document(documents.getKeyGenerator(), 
+					getDocumentAttribs(row, source, firstAuthor));
+			documents.add(document);
 			
 			for (Person p : authorPeople) {
 				people.add(p);
@@ -68,9 +77,31 @@ public class ScopusTableModelParser {
 			ReprintAddress reprintAddr = ReprintAddress.link(document, reprintAddrAddr);
 			reprintAddresses.add(reprintAddr);
 		}
-		return new DatabaseModel(documents, people, authors, addresses, reprintAddresses);
+		return new DatabaseModel(documents, people, authors, addresses, reprintAddresses, sources);
 	}
 	
+	private Source getSource(FileTuple<ScopusField> row,
+			DatabaseTableKeyGenerator keyGenerator) {
+		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
+		
+		putField(attribs, Source.Field.PUBLICATION_TYPE, row, ScopusField.DOCUMENT_TYPE);
+		
+		putField(attribs, Source.Field.ISSN, row, ScopusField.ISSN);
+		
+		putField(attribs, Source.Field.FULL_TITLE, row, ScopusField.SOURCE_TITLE);
+		
+		putField(attribs, Source.Field.CONFERENCE_TITLE, row, ScopusField.CONFERENCE_NAME);
+		putField(attribs, Source.Field.CONFERENCE_LOCATION, row, ScopusField.CONFERENCE_LOCATION);
+		
+		// You might think that ScopusField.ABBREVIATED_SOURCE_TITLE would be shorter than
+		// ScopusField.SOURCE_TITLE, but you'd be wrong.  :-/
+		// (at least in my sample data)
+		
+		// ScopusField.SOURCE is always "Scopus" AFAIK.  Not related to the "source" database table.
+		
+		return new Source(keyGenerator, attribs);
+	}
+
 	public Address getReprintAddrAddr(FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
@@ -103,8 +134,11 @@ public class ScopusTableModelParser {
 		return people;
 	}
 	
-	private Dictionary<String, Object> getDocumentAttribs(FileTuple<ScopusField> row) {
+	private Dictionary<String, Object> getDocumentAttribs(FileTuple<ScopusField> row, Source source, Person firstAuthor) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
+		
+		putPK(attribs, Document.Field.DOCUMENT_SOURCE_FK, source);
+		putPK(attribs, Document.Field.FIRST_AUTHOR_FK, firstAuthor);
 		
 		putField(attribs, Document.Field.ABSTRACT_TEXT, row, ScopusField.ABSTRACT);
 		putField(attribs, Document.Field.ARTICLE_NUMBER, row, ScopusField.ART_NO);

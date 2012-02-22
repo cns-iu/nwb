@@ -21,7 +21,7 @@ public class Author extends RowItem<Author> {
 		EMAIL_ADDRESS(DerbyFieldType.TEXT),
 		ORDER_LISTED(DerbyFieldType.INTEGER);
 
-		private DerbyFieldType type;
+		private final DerbyFieldType type;
 
 		private Field(DerbyFieldType type) {
 			this.type = type;

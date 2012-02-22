@@ -18,7 +18,7 @@ public class Address extends Entity<Address> {
 		STREET_ADDRESS(DerbyFieldType.TEXT);
 		
 
-		private DerbyFieldType fieldType;
+		private final DerbyFieldType fieldType;
 
 		private Field(DerbyFieldType type) {
 			fieldType = type;

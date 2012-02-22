@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
 import edu.iu.nwb.shared.isiutil.database.ISI;
+import edu.iu.sci2.database.scholarly.model.entity.Author;
+import edu.iu.sci2.database.scholarly.model.entity.Document;
 import edu.iu.sci2.database.scholarly.model.entity.Person;
 
 public class TryIntegrationTest {
@@ -52,7 +54,7 @@ public class TryIntegrationTest {
 	
 			Data inFile = new BasicData(file, "file:text/csv");
 			
-			Algorithm algo = factory.createAlgorithm(new Data[] {inFile}, new Hashtable(), ciContext);
+			Algorithm algo = factory.createAlgorithm(new Data[] {inFile}, new Hashtable<String, Object>(), ciContext);
 			Data[] results = algo.execute();
 			Database db = (Database) results[0].getData();
 			connection = db.getConnection();
@@ -79,16 +81,20 @@ public class TryIntegrationTest {
 	public void testFirstPaperAuthors() throws Exception {
 		Statement s = connection.createStatement();
 		
-		s.execute("select pk from document where title like 'Synthesis of carbon%'");
+		s.execute("select pk, first_author_fk from document where title like 'Synthesis of carbon%'");
 		ResultSet rs = s.getResultSet();
 		rs.next();
-		int document_pk = rs.getInt(1);
-		System.out.println("primary key of a document: " + document_pk);
+		int documentPK = rs.getInt("PK");
+		System.out.println("primary key of a document: " + documentPK);
+		int firstAuthorPK = rs.getInt(Document.Field.FIRST_AUTHOR_FK.toString());
+		assertTrue(firstAuthorPK != 0);
 		
-		s.execute("select * from authors join person on (authors.AUTHORS_PERSON_FK = person.PK) WHERE authors.AUTHORS_DOCUMENT_FK = " + document_pk + " order by ORDER_LISTED");
+		s.execute("select * from authors join person on (authors.AUTHORS_PERSON_FK = person.PK) WHERE authors.AUTHORS_DOCUMENT_FK = " + documentPK + " order by ORDER_LISTED");
 		rs = s.getResultSet();
 		rs.next();
 		assertEquals(rs.getString(Person.Field.UNSPLIT_NAME.name()), "Gao M.");
+		assertEquals(firstAuthorPK, rs.getInt(Author.Field.AUTHORS_PERSON_FK.toString()));
+		
 		rs.next();
 		assertEquals(rs.getString(Person.Field.UNSPLIT_NAME.name()), "Wang M.");
 		rs.next();
@@ -132,11 +138,10 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testSourceExists() {
 		try {
-			numRowsInTable(ISI.SOURCE_TABLE_NAME);
+			assertTrue(numRowsInTable(ISI.SOURCE_TABLE_NAME) > 0);
 		} catch (Exception e) {
 			throw new AssertionError("Table " + ISI.SOURCE_TABLE_NAME + " seems not to exist: " + e.getMessage());
 		}

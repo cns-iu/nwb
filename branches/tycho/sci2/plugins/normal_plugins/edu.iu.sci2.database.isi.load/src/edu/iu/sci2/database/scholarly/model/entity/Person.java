@@ -9,7 +9,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class Person extends Entity<Person> {
-	public enum Field implements DBField {
+	public static enum Field implements DBField {
 		ADDITIONAL_NAME,
 		FAMILY_NAME,
 		FIRST_INITIAL,
