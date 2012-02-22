@@ -1,0 +1,105 @@
+package edu.iu.sci2.visualization.geomaps.viz;
+
+import java.awt.Color;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.EnumSet;
+
+import org.cishell.utilities.StringUtilities;
+
+import prefuse.data.Table;
+import prefuse.data.Tuple;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+
+import edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory;
+import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
+import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
+import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
+import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
+import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
+import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter;
+import edu.iu.sci2.visualization.geomaps.viz.ps.PSWriter.ShapefilePostScriptWriterException;
+import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
+
+public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
+	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
+		LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
+		+ (0.5 * LegendComposite.DEFAULT_WIDTH_IN_POINTS);
+	public static final double COLOR_GRADIENT_WIDTH =
+		(Constants.PAGE_MARGIN_SIZE_IN_POINTS
+		+ Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS)
+		- COLOR_GRADIENT_LOWER_LEFT_X;
+	public static final int COLOR_GRADIENT_HEIGHT = 10;
+	public static final String FEATURE_NAME_ID = "featureName";
+	public static final String COLOR_COLUMN_NAME_ID = "featureColorColumnName";
+	public static final String COLOR_SCALING_ID = "featureColorScaling";
+	public static final String COLOR_RANGE_ID = "featureColorRange";
+	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
+	
+	public static final String SUBTITLE = "Regions";
+	public static final Color DEFAULT_FEATURE_COLOR = null;
+	
+	private final String featureNameColumnName;
+
+	public RegionAnnotationMode(String featureNameColumnName) {
+		this.featureNameColumnName = featureNameColumnName;
+	}
+	
+	
+	@Override
+	protected EnumSet<FeatureDimension> dimensions() {
+		return EnumSet.allOf(FeatureDimension.class);
+	}
+	
+	@Override
+	protected GeoDataset<String, FeatureDimension> readTable(Table table,
+			Collection<Binding<FeatureDimension>> bindings) {
+		return GeoDataset.fromTable(table, bindings, FeatureDimension.class,
+				new Function<Tuple, String>() {
+					public String apply(Tuple row) {
+						return StringUtilities.interpretObjectAsString(row.get(featureNameColumnName));
+					}					
+				});
+	}
+	
+	@Override
+	protected PSWriter createPSWriter(Shapefile shapefile,
+			KnownProjectedCRSDescriptor projectedCrs,
+			GeoDataset<String, FeatureDimension> scaledData,
+			Collection<? extends Coding<FeatureDimension>> codings,
+			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException {
+		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(), codings);
+		
+		return new PSWriter(
+				shapefile,
+				projectedCrs,
+				GeoMapsRegionsFactory.SUBTITLE,
+				ImmutableSet.<Circle>of(),
+				featureViews,
+				ImmutableSet.<PostScriptable>of());
+	}
+	
+	public static Collection<FeatureView> asFeatureViews(Collection<? extends GeoDatum<String, FeatureDimension>> valuedFeatures, final Collection<? extends Coding<FeatureDimension>> codings) {
+		return Collections2.transform(
+				valuedFeatures,
+				new Function<GeoDatum<String, FeatureDimension>, FeatureView>() {
+					public FeatureView apply(GeoDatum<String, FeatureDimension> valuedFeature) {
+						String featureName = valuedFeature.getGeo();
+						
+						EnumMap<FeatureDimension, Strategy> strategies = Maps.newEnumMap(FeatureDimension.class);
+						for (Coding<FeatureDimension> coding : codings) {
+							strategies.put(coding.getDimension(), coding.strategyForValue(valuedFeature.valueInDimension(coding.getDimension())));
+						}
+						
+						return new FeatureView(featureName, strategies);
+					}			
+				});
+	}
+}
