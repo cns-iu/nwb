@@ -18,6 +18,7 @@ import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
@@ -28,15 +29,18 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 	public static final String DATA_DISPLAY_NAME_ID = "datasetDisplayName";
 	public static final String SCALING_FACTOR_ID = "scalingFactor";
 	public static final String WEB_VERSION_ID = "webVersion";
+	public static final String SHOW_EXPORT_WINDOW = "showWindow";
 
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext context) {
 		String journalColumnName = (String) parameters.get(JOURNAL_COLUMN_ID);
-		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
+		float scalingFactor = ((Float) parameters.get(SCALING_FACTOR_ID)).floatValue();
 		String dataDisplayName = (String) parameters.get(DATA_DISPLAY_NAME_ID);
-		Boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
+		boolean webVersion = ((Boolean) parameters.get(WEB_VERSION_ID)).booleanValue();
+		boolean showWindow = ((Boolean) parameters.get(SHOW_EXPORT_WINDOW)).booleanValue();
+		LogService logger = (LogService) context.getService(LogService.class.getName());
 		return new JournalsMapAlgorithm(data, journalColumnName, scalingFactor,
-				dataDisplayName, webVersion);
+				dataDisplayName, webVersion, showWindow, logger);
 	}
 
 	/**

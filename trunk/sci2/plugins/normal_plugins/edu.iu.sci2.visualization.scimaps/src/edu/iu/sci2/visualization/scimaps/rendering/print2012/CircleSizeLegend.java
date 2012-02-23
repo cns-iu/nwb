@@ -25,7 +25,7 @@ public class CircleSizeLegend {
 	public static final float EXTREMA_LABEL_BRIGHTNESS = 0.3f;
 	public static final float EXTREMA_LABEL_FONT_SIZE = 12f;
 	public static final float TYPE_LABEL_BRIGHTNESS = 0.0f;
-	public static final float TYPE_LABEL_FONT_SIZE = 10f;
+	public static final float TYPE_LABEL_FONT_SIZE = 12f;
 	public static final float SCALING_LABEL_BRIGHTNESS = 0.25f;
 	public static final float KEY_LABEL_BRIGHTNESS = 0.3f;
 	public static final float KEY_LABEL_FONT_SIZE = 14f;

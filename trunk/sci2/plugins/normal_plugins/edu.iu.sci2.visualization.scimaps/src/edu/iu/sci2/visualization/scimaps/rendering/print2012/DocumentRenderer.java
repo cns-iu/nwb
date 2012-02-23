@@ -40,7 +40,7 @@ public class DocumentRenderer implements RenderableVisualization {
 
 		GraphicsState graphicsState = new GraphicsState(graphics);
 
-		graphicsState.setFont("Garamond", 12);
+		graphicsState.setFont("Arial", 12);
 
 		return graphicsState;
 	}
@@ -61,7 +61,7 @@ public class DocumentRenderer implements RenderableVisualization {
 		header.render(state, inch(0.5f), inch(0.5f));
 		
 		HowToArea howto = new HowToArea();
-		howto.render(state, inch(4.0f), inch(6.5f));
+		howto.render(state, inch(4.5f), inch(6.5f));
 		
 		Footer footer = new Footer((float) size.getWidth(), inch(8.0f));
 		footer.render(state);

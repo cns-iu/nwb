@@ -35,7 +35,7 @@ public class DocumentRenderer implements RenderableVisualization {
 
 		GraphicsState graphicsState = new GraphicsState(graphics);
 
-		graphicsState.setFont("Garamond", 12);
+		graphicsState.setFont("Arial", 12);
 
 		return graphicsState;
 	}
