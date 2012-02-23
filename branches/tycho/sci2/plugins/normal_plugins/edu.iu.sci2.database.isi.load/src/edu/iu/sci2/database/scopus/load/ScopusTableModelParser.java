@@ -22,6 +22,7 @@ import edu.iu.sci2.database.isi.load.utilities.parser.exception.PersonParsingExc
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
+import edu.iu.sci2.database.scholarly.model.entity.Editor;
 import edu.iu.sci2.database.scholarly.model.entity.Person;
 import edu.iu.sci2.database.scholarly.model.entity.ReprintAddress;
 import edu.iu.sci2.database.scholarly.model.entity.Source;
@@ -46,6 +47,8 @@ public class ScopusTableModelParser {
 				ISI.AUTHORS_TABLE_NAME, Author.SCHEMA);
 		RowItemContainer<ReprintAddress> reprintAddresses = new RelationshipContainer<ReprintAddress>(
 				ISI.REPRINT_ADDRESSES_TABLE_NAME, ReprintAddress.SCHEMA);
+		RowItemContainer<Editor> editors = new RelationshipContainer<Editor>(
+				ISI.EDITORS_TABLE_NAME, Editor.SCHEMA);
 
 		TableIterator rowNumbers = table.iterator();
 		while (rowNumbers.hasNext()) {
@@ -56,7 +59,8 @@ public class ScopusTableModelParser {
 			sources.add(source);
 			
 			
-			List<Person> authorPeople = getAuthorPeople(row, people.getKeyGenerator());
+			List<Person> authorPeople = splitAndParsePersonList(row, ScopusField.AUTHORS, 
+					people.getKeyGenerator());
 			Person firstAuthor = null;
 			if (!authorPeople.isEmpty()) firstAuthor = authorPeople.get(0);
 			
@@ -72,12 +76,25 @@ public class ScopusTableModelParser {
 				authors.add(a);
 			}
 			
+			// I have tried, and can't find *any* SCOPUS data with entries in the Editors column.
+			// So this is totally untested on "real" data :-(
+			// -Thomas
+			List<Person> editorPeople = splitAndParsePersonList(row, ScopusField.EDITORS, 
+					people.getKeyGenerator());
+			for (Person p : editorPeople) {
+				people.add(p);
+			}
+			
+			for (Editor e : Editor.makeEditors(document, editorPeople)) {
+				editors.add(e);
+			}
+			
 			Address reprintAddrAddr = getReprintAddrAddr(row, addresses.getKeyGenerator());
 			addresses.add(reprintAddrAddr);
 			ReprintAddress reprintAddr = ReprintAddress.link(document, reprintAddrAddr);
 			reprintAddresses.add(reprintAddr);
 		}
-		return new DatabaseModel(documents, people, authors, addresses, reprintAddresses, sources);
+		return new DatabaseModel(documents, people, authors, addresses, reprintAddresses, sources, editors);
 	}
 	
 	private Source getSource(FileTuple<ScopusField> row,
@@ -109,13 +126,14 @@ public class ScopusTableModelParser {
 		return new Address(keyGenerator, attribs);
 	}
 
-	private List<Person> getAuthorPeople(FileTuple<ScopusField> row,
+	private List<Person> splitAndParsePersonList(FileTuple<ScopusField> row,
+			ScopusField fieldToExtract,
 			DatabaseTableKeyGenerator keyGenerator) {
 		List<Person> people = new ArrayList<Person>();
 		Dictionary<String, Object> attribs;
 		AbbreviatedNameParser nameParser;
 		
-		for (String name : row.getStringField(ScopusField.AUTHORS).split("\\|")) {
+		for (String name : row.getStringField(fieldToExtract).split("\\|")) {
 			attribs = new Hashtable<String, Object>();
 			putValue(attribs, Person.Field.UNSPLIT_NAME, name);
 			
@@ -146,6 +164,14 @@ public class ScopusTableModelParser {
 		putField(attribs, Document.Field.TITLE, row, ScopusField.TITLE);
 		putField(attribs, Document.Field.PUBLICATION_YEAR, row, ScopusField.YEAR);
 		putField(attribs, Document.Field.PUBLICATION_DATE, row, ScopusField.YEAR);
+		putField(attribs, Document.Field.CITED_YEAR, row, ScopusField.YEAR);
+		putField(attribs, Document.Field.CITED_REFERENCE_COUNT, row, ScopusField.CITED_BY);
+		putField(attribs, Document.Field.ISBN, row, ScopusField.ISBN);
+		putField(attribs, Document.Field.ISSUE, row, ScopusField.ISSUE);
+		putField(attribs, Document.Field.LANGUAGE, row, ScopusField.LANGUAGE_OF_ORIGINAL_DOCUMENT);
+		putField(attribs, Document.Field.DOCUMENT_VOLUME, row, ScopusField.VOLUME);
+		
+		
 		
 		// Make our own Page Count, since it's often missing from the file.
 		Integer beginningPage = getNullableInteger(row, ScopusField.PAGE_START),

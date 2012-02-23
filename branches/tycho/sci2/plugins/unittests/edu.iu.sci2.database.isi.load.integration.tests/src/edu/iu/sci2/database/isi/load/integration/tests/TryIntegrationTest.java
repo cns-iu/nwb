@@ -252,7 +252,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testEditorsExists() {
 		try {
