@@ -34,7 +34,7 @@ public class LegendComposite {
 
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.group.getInstanceOf("legendDefinitions");
+				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("legendDefinitions");
 			
 			s += definitionsTemplate.toString();
 			

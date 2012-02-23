@@ -63,7 +63,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.group.getInstanceOf(
+				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf(
 						"circleAreaLegendDefinitions");
 			
 			s += definitionsTemplate.toString();
@@ -72,7 +72,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 		}
 		
 		StringTemplate invocationTemplate =
-			GeoMapsAlgorithm.group.getInstanceOf("circleAreaLegend");
+			GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circleAreaLegend");
 		
 		invocationTemplate.setAttribute("x", lowerLeftX);
 		invocationTemplate.setAttribute("y", lowerLeftY);
@@ -82,7 +82,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointA()));
 		invocationTemplate.setAttribute(
 				"midRadius",
-				Circle.calculateRadiusFromArea(areaLegend.getOutputMidpoint()));
+				Circle.calculateRadiusFromArea(areaLegend.getMidpointArea()));
 		invocationTemplate.setAttribute(
 				"maxRadius",
 				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointB()));

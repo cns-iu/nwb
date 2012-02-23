@@ -29,18 +29,18 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescrip
 
 public enum Shapefile {
 	UNITED_STATES(
+			Resources.getResource(Shapefile.class, "st99_d00.shp"),
 			"United States",
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
-			Resources.getResource(Shapefile.class, "st99_d00.shp"),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALEUTIAN_ISLANDS,
 					AnchorPoint.NEAR_PUERTO_RICO)),
 	WORLD(
+			Resources.getResource(Shapefile.class, "countries.shp"),
 			"World",
 			"NAME",
 			KnownProjectedCRSDescriptor.ECKERT_IV,
-			Resources.getResource(Shapefile.class, "countries.shp"),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALASKA,
 					AnchorPoint.NEAR_ANTARCTICA));
@@ -69,10 +69,10 @@ public enum Shapefile {
 	private final ImmutableCollection<AnchorPoint> anchorPoints;
 
 	private Shapefile(
+			URL url,
 			String niceName,
 			String featureAttributeName,
 			KnownProjectedCRSDescriptor defaultProjectedCrs,
-			URL url,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
 		this.niceName = niceName;
 		this.featureAttributeName = featureAttributeName;
@@ -88,7 +88,7 @@ public enum Shapefile {
 		}
 	}
 	
-	public CoordinateReferenceSystem detectCRS() {
+	public CoordinateReferenceSystem detectNativeCRS() {
 		return Objects.firstNonNull( // TODO ?
 				featureSource.getSchema().getCoordinateReferenceSystem(),
 				DEFAULT_SOURCE_CRS);

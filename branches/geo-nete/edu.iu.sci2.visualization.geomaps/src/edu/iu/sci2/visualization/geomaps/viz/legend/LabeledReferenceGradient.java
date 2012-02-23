@@ -79,7 +79,7 @@ public class LabeledReferenceGradient implements PostScriptable {
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.group.getInstanceOf("colorLegendDefinitions");
+				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("colorLegendDefinitions");
 			
 			s += definitionsTemplate.toString();
 			
@@ -88,7 +88,7 @@ public class LabeledReferenceGradient implements PostScriptable {
 		
 		
 		StringTemplate invocationTemplate =
-			GeoMapsAlgorithm.group.getInstanceOf("colorLegend");
+			GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("colorLegend");
 		
 		invocationTemplate.setAttribute("x", lowerLeftX);
 		invocationTemplate.setAttribute("y", lowerLeftY);

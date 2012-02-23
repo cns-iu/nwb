@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
-import edu.iu.sci2.visualization.geomaps.viz.CircleAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
+import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
 
 public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Circles";

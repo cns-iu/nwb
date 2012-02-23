@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
 	/* Percentage of the data range to add to each side of the map as a buffer.
@@ -32,12 +33,9 @@ public class GeoMapViewPS {
 	public static final String TITLE = "Geo Map";
 	public static final String INDENT = "  ";
 	
-	
+	private final GeoMap geoMap;
 	private final GeoMapViewPageArea geoMapViewPageArea;
 	private final double pageHeightInPoints;
-	private final GeoMap geoMap;
-
-
 
 	public GeoMapViewPS(GeoMap geoMap) throws ShapefilePostScriptWriterException {
 		try {
@@ -53,7 +51,8 @@ public class GeoMapViewPS {
 		}
 	}
 
-	public File writePostScriptToFile(String authorName, String dataLabel)
+	
+	public File writeToPSFile(String authorName, String dataLabel)
 				throws IOException, AlgorithmExecutionException, TransformException {		
 		File psFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", OUTPUT_FILE_EXTENSION);
@@ -62,7 +61,7 @@ public class GeoMapViewPS {
 
 		writeCodeHeader(out, psFile.getName());
 		
-		out.write(GeoMapsAlgorithm.group.getInstanceOf("utilityDefinitions").toString());
+		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 		out.write("\n");
 		
 		out.write((new PageHeader(dataLabel, pageHeightInPoints)).toPostScript() + "\n");
@@ -83,7 +82,7 @@ public class GeoMapViewPS {
 					geoMap.getShapefile().featureAttributeName());
 		featurePrinter.printFeatures(out, geoMap.getFeatureViews());
 
-		out.write(GeoMapsAlgorithm.group.getInstanceOf("circlePrinterDefinitions").toString());
+		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circlePrinterDefinitions").toString());
 		
 		
 		out.write("% Circle annotations" + "\n");		

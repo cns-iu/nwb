@@ -18,6 +18,7 @@ import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
+import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.FillColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 

@@ -27,8 +27,8 @@ import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
-import edu.iu.sci2.visualization.geomaps.viz.RegionAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
+import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Regions";

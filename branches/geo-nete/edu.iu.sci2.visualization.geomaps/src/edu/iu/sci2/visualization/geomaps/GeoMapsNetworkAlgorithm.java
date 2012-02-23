@@ -39,8 +39,8 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.AnchorPoint;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMap;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
@@ -107,7 +107,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			postScriptWriter = new GeoMapViewPS(geoMap);
 			
-			File geoMapFile = postScriptWriter.writePostScriptToFile("", "");
+			File geoMapFile = postScriptWriter.writeToPSFile("", "");
 
 			File outNetwork = processNetwork(anchorPoints, inFile);
 

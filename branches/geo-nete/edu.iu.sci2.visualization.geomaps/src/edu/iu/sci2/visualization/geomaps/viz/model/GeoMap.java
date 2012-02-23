@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.viz.ps;
+package edu.iu.sci2.visualization.geomaps.viz.model;
 
 import java.util.Collection;
 
@@ -18,6 +18,7 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
+import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 public class GeoMap {
 	private static final GeometryFactory DEFAULT_GEOMETRY_FACTORY = JTSFactoryFinder.getGeometryFactory(new Hints(Hints.CRS, DefaultGeographicCRS.WGS84));
@@ -51,7 +52,7 @@ public class GeoMap {
 		this.geometryFactory = DEFAULT_GEOMETRY_FACTORY;
 		
 		try {
-			this.geometryProjector = new GeometryProjector(shapefile.detectCRS(), knownProjectedCRSDescriptor);
+			this.geometryProjector = new GeometryProjector(shapefile.detectNativeCRS(), knownProjectedCRSDescriptor);
 		} catch (GeometryProjectorException e) {
 			throw new GeoMapException("TODO", e);
 		}
@@ -97,7 +98,7 @@ public class GeoMap {
 		}
 	}
 
-	Geometry project(Geometry geometry) throws TransformException {
+	public Geometry project(Geometry geometry) throws TransformException {
 		return getGeometryProjector().projectGeometry(geometry);
 		
 	}

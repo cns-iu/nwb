@@ -31,7 +31,8 @@ import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 
@@ -57,9 +58,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
 
-	public static StringTemplateGroup group = loadTemplates();
+	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplates();
 	public static final String STRING_TEMPLATE_FILE_PATH =
-		"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/group.st";
+		"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/geomap.st";
 	
 	public static final String SHAPEFILE_ID = "shapefile";
 	public static final String PROJECTION_ID = "projection";
@@ -100,13 +101,13 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
-			GeoMapViewPS postScriptWriter =
-					annotationMode.createPSWriter(inTable, parameters);
-			File geoMap = postScriptWriter.writePostScriptToFile(authorName, dataLabel);
+			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters);
+			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap);
+			File geoMapFile = geoMapView.writeToPSFile(authorName, dataLabel);
 
 			Data[] outData = new Data[] {
 					DataFactory.forFile(
-							geoMap,
+							geoMapFile,
 							POSTSCRIPT_MIME_TYPE,
 							DataProperty.VECTOR_IMAGE_TYPE,
 							inDatum,

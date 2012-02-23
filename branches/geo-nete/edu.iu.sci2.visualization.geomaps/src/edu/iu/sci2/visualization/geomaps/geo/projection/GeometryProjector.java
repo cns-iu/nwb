@@ -55,9 +55,8 @@ public class GeometryProjector {
 				throws GeometryProjectorException {
 
 		try {
-			ProjectedCRS targetCrs = knownProjectedCRSDescriptor.asProjectedCRS();
-			
-			coordinateTransformer.setMathTransform(knownProjectedCRSDescriptor.getTransformFrom(sourceCrs));
+			coordinateTransformer.setMathTransform(
+					knownProjectedCRSDescriptor.getTransformFrom(sourceCrs));
 	
 			/* Note that cropping around the opposite meridian is generally
 			 * necessary even when the desired resulting map will have less than
@@ -69,7 +68,10 @@ public class GeometryProjector {
 			 */
 			cropGeometries = Sets.newHashSet();
 			cropGeometries.add(
-					CropGeometryBuilder.createMeridianCropGeometry(getOppositeLongitude(centralMeridianOf(targetCrs)))); // TODO BAD BAD BAD
+					CropGeometryBuilder.createMeridianCropGeometry(
+							getOppositeLongitude(
+									centralMeridianOf(
+											knownProjectedCRSDescriptor.asProjectedCRS()))));
 			cropGeometries.add(
 					CropGeometryBuilder.createNorthPoleGeometry(NORTH_POLE_CROP_HEIGHT_IN_DEGREES));
 			cropGeometries.add(

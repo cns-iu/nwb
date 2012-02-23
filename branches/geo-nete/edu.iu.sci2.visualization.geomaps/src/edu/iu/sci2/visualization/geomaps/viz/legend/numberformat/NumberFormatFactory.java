@@ -41,10 +41,10 @@ public class NumberFormatFactory {
 				   (range.getPointB().doubleValue() < 10000);
 		}
 
-		private static boolean mentionsSomethingLikeYear(final String s) {
+		private static boolean mentionsSomethingLikeYear(final String string) {
 			return Iterables.any(
 					ImmutableSet.of("year", "yr", "date", "time"),
-					StringPredicates.isContainedBy(s, ToCaseFunction.LOWER));
+					StringPredicates.isContainedBy(string, ToCaseFunction.LOWER));
 		}
 	}
 	

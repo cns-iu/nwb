@@ -31,7 +31,7 @@ public class PageFooter {
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.group.getInstanceOf("showToolNameDefinitions");
+				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("showToolNameDefinitions");
 			
 			builder.append(definitionsTemplate.toString());
 			

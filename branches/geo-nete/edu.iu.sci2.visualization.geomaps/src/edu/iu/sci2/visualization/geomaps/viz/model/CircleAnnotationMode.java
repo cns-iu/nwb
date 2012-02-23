@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.viz;
+package edu.iu.sci2.visualization.geomaps.viz.model;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -22,16 +22,36 @@ import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.Circle;
+import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
+import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMap;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimension> {
+	// TODO This doesn't seem like a great way to handle the possible nullity?  Maybe it's good to keep defensively in any case, but this shouldn't be the only solution/band-aid.
+	public static final Ordering<GeoDatum<Coordinate, CircleDimension>> AREA_ORDERING =
+			Ordering.natural().nullsFirst().onResultOf(
+					new Function<GeoDatum<Coordinate, CircleDimension>, Double>() {
+						@Override
+						public Double apply(GeoDatum<Coordinate, CircleDimension> input) {
+							return input.valueInDimension(CircleDimension.AREA);
+						}				
+					});
+	
+	private final String longitudeColumnName;
+	private final String latitudeColumnName;
+	
+	public CircleAnnotationMode(String longitudeColumnName, String latitudeColumnName) {
+		this.longitudeColumnName = longitudeColumnName;
+		this.latitudeColumnName = latitudeColumnName;
+	}
+
+	
 	@Override
 	protected EnumSet<CircleDimension> dimensions() {
 		return EnumSet.allOf(CircleDimension.class);
@@ -52,42 +72,23 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 	}
 	
 	@Override
-	protected GeoMapViewPS createPSWriter(Shapefile shapefile,
+	protected GeoMap createGeoMap(Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<Coordinate, CircleDimension> scaledData,
 			Collection<? extends Coding<CircleDimension>> codings,
 			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(), codings);
 		
-		GeoMap geoMap = new GeoMap(
+		return new GeoMap(
 				GeoMapsCirclesFactory.SUBTITLE,
 				shapefile,
 				projectedCrs,
 				ImmutableSet.<FeatureView>of(),
 				circles,
 				legends);
-		
-		return new GeoMapViewPS(geoMap);
 	}
 
-	private final String longitudeColumnName;
-	private final String latitudeColumnName;
 
-	public CircleAnnotationMode(String longitudeColumnName, String latitudeColumnName) {
-		this.longitudeColumnName = longitudeColumnName;
-		this.latitudeColumnName = latitudeColumnName;
-	}
-	
-	// TODO This doesn't seem like a great way to handle the possible nullity?  Maybe it's good to keep defensively in any case, but this shouldn't be the only solution/band-aid.
-	public static final Ordering<GeoDatum<Coordinate, CircleDimension>> AREA_ORDERING =
-			Ordering.natural().nullsFirst().onResultOf(
-					new Function<GeoDatum<Coordinate, CircleDimension>, Double>() {
-						@Override
-						public Double apply(GeoDatum<Coordinate, CircleDimension> input) {
-							return input.valueInDimension(CircleDimension.AREA);
-						}				
-					});
-	
 	public static Collection<Circle> asCirclesInDrawingOrder(
 			Collection<? extends GeoDatum<Coordinate, CircleDimension>> geoData,
 			final Collection<? extends Coding<CircleDimension>> codings) {
@@ -97,7 +98,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 					@Override
 					public Circle apply(GeoDatum<Coordinate, CircleDimension> geoDatum) {
 						Coordinate coordinate = geoDatum.getGeo();
-
+	
 						EnumMap<CircleDimension, Strategy> strategies =
 								Maps.newEnumMap(CircleDimension.class);
 						for (Coding<CircleDimension> coding : codings) {
@@ -106,7 +107,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 									coding.strategyForValue(
 											geoDatum.valueInDimension(coding.getDimension())));
 						}
-
+	
 						return new Circle(coordinate, strategies);
 					}
 				});

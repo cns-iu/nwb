@@ -45,8 +45,7 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
 				public Coding<CircleDimension> codingForDataRange(final Range<Double> dataRange) {
-					final Range<Double> vizRange =
-							Range.between(0.1, Circle.DEFAULT_CIRCLE_AREA_MAXIMUM); // TODO constants			
+					Range<Double> vizRange = DEFAULT_CIRCLE_AREA_RANGE; // TODO constants			
 					final Interpolator<Double> interpolator = Interpolator1D.between(dataRange, vizRange);
 					
 					return new AbstractCoding<CircleDimension>(this) {
@@ -70,7 +69,10 @@ public enum CircleDimension implements VizDimension {
 											NumericFormatType.guessNumberFormat(getColumnName(), usableRange));	
 							
 							try {
-								double midpointOfScaledData = Averages.meanOfDoubles(interpolator.inRange().getPointA(), interpolator.inRange().getPointB());
+								double midpointOfScaledData =
+										Averages.meanOfDoubles(
+												interpolator.inRange().getPointA(),
+												interpolator.inRange().getPointB());
 								double unscaledValueForMidrangeArea = getScaling().invert(midpointOfScaledData);
 								double midrangeArea = interpolator.apply(midpointOfScaledData);
 								
@@ -192,6 +194,7 @@ public enum CircleDimension implements VizDimension {
 		}
 	};
 	
+	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE = Range.between(0.1, Circle.DEFAULT_CIRCLE_AREA_MAXIMUM);
 	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
 			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
 			+ ((1.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());

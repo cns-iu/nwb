@@ -77,29 +77,26 @@ public class GeoMapViewPageArea {
 		String s = "";
 
 		s += "newpath" + "\n";
-		s += INDENT + displayLowerLeftX + " " + displayLowerLeftY + " moveto"
-				+ "\n";
-		s += INDENT + displayLowerLeftX + " " + displayUpperRightY + " lineto"
-				+ "\n";
-		s += INDENT + displayUpperRightX + " " + displayUpperRightY + " lineto"
-				+ "\n";
-		s += INDENT + displayUpperRightX + " " + displayLowerLeftY + " lineto"
-				+ "\n";
+		s += INDENT + displayLowerLeftX + " " + displayLowerLeftY + " moveto" + "\n";
+		s += INDENT + displayLowerLeftX + " " + displayUpperRightY + " lineto" + "\n";
+		s += INDENT + displayUpperRightX + " " + displayUpperRightY + " lineto"	+ "\n";
+		s += INDENT + displayUpperRightX + " " + displayLowerLeftY + " lineto" + "\n";
 		s += "closepath" + "\n";
+		
 		if (!BACKGROUND_TRANSPARENT) {
 			s += "gsave" + "\n";
-			s += INDENT
-					+ PSUtility
-							.makeSetRGBColorCommand(BACKGROUND_COLOR);
+			s += INDENT	+ PSUtility.makeSetRGBColorCommand(BACKGROUND_COLOR);
 			s += INDENT + "fill" + "\n";
 			s += "grestore" + "\n";
 		}
+		
 		if (DRAW_BOUNDING_BOX) {
 			s += "gsave" + "\n";
 			s += INDENT + BOUNDING_BOX_LINE_WIDTH + " setlinewidth" + "\n";
 			s += INDENT + "stroke" + "\n";
 			s += "grestore" + "\n";
 		}
+		
 		if (CLIP_TO_BOUNDING_BOX) {
 			s += "clip" + "\n";
 		}

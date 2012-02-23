@@ -23,26 +23,27 @@ import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	protected abstract EnumSet<D> dimensions();
 	protected abstract GeoDataset<G, D> readTable(Table table, Collection<Binding<D>> bindings);
-	protected abstract GeoMapViewPS createPSWriter(
+	protected abstract GeoMap createGeoMap(
 			Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<G, D> scaledData,
 			Collection<? extends Coding<D>> codings,
 			Collection<PostScriptable> legends)	throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
 
-	public GeoMapViewPS createPSWriter(
-			Table table,
+	public GeoMap createGeoMap(
+			final Table table,
 			final Dictionary<String, Object> parameters)
 				throws ScalingException, LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
-		Shapefile shapefile = Shapefile.forNiceName((String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
+		Shapefile shapefile = Shapefile.forNiceName(
+				(String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.defaultProjectedCrs();
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
@@ -68,7 +69,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			legends.add(legend);
 		}
 
-		return createPSWriter(shapefile, knownProjectedCRSDescriptor, scaledData, codings, legends);
+		return createGeoMap(
+				shapefile, knownProjectedCRSDescriptor, scaledData, codings, legends);
 	}
 	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {

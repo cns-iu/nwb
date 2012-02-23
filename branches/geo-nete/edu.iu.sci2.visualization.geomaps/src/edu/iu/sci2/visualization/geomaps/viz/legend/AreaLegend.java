@@ -11,20 +11,21 @@ public class AreaLegend implements Legend<Double, Double> {
 	
 	public AreaLegend(
 			VizLegend<Double> generalLegend,
-			double rawMidArea,
-			double areaMidrange) {
+			double dataValueForMidpointArea,
+			double midpointArea) {
 		this.vizLegend = generalLegend;
-		this.dataValueForMidpointArea = rawMidArea;
-		this.midpointArea = areaMidrange;
+		this.dataValueForMidpointArea = dataValueForMidpointArea;
+		this.midpointArea = midpointArea;
 	}
 
 	public double dataValueForOutputMidpoint() {
 		return dataValueForMidpointArea;
 	}
 	
-	public double getOutputMidpoint() {
+	public double getMidpointArea() {
 		return midpointArea;
 	}
+	
 	
 	public String getScalingLabel() {
 		return vizLegend.scalingLabel();

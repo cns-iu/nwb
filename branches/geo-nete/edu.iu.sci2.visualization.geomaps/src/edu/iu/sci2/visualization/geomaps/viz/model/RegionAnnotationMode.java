@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.viz;
+package edu.iu.sci2.visualization.geomaps.viz.model;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -21,12 +21,14 @@ import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.Circle;
+import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
+import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMap;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -74,22 +76,20 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 	}
 	
 	@Override
-	protected GeoMapViewPS createPSWriter(Shapefile shapefile,
+	protected GeoMap createGeoMap(Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
 			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(), codings);
 		
-		GeoMap geoMap = new GeoMap(
+		return new GeoMap(
 				GeoMapsRegionsFactory.SUBTITLE,
 				shapefile,
 				projectedCrs,
 				featureViews,
 				ImmutableSet.<Circle>of(),
 				legends);
-		
-		return new GeoMapViewPS(geoMap);
 	}
 	
 	public static Collection<FeatureView> asFeatureViews(Collection<? extends GeoDatum<String, FeatureDimension>> valuedFeatures, final Collection<? extends Coding<FeatureDimension>> codings) {
