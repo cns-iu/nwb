@@ -38,6 +38,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
 		LogService log = (LogService) ciShellContext.getService(LogService.class.getName());
+		examineInputFile(data);
 		
 		List<String> types = new ArrayList<String>(examiner.getBipartiteTypes());
 		String leftSideType = (String) parameters.get(LEFT_SIDE_TYPE_ID);
@@ -67,16 +68,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
-		examiner = new NWBFileExaminer();
-		File nwbFile = getNWBFile(data);
-
-		try {
-			new NWBFileParser(nwbFile).parse(examiner);
-		} catch (ParsingException e) {
-			throw new AlgorithmCreationFailedException(e);
-		} catch (IOException e) {
-			throw new AlgorithmCreationFailedException(e);
-		}
+		examineInputFile(data);
 
 		LinkedHashMap<String, String> nodeSchema = examiner.getNodeSchema();
 		List<String> nodeNumericColumns = Lists.newArrayList(
@@ -98,6 +90,22 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 		
 
 		return mutator.mutate(oldParameters);
+	}
+
+	private void examineInputFile(Data[] data) {
+		if (examiner != null) {
+			return;
+		}
+		examiner = new NWBFileExaminer();
+		File nwbFile = getNWBFile(data);
+
+		try {
+			new NWBFileParser(nwbFile).parse(examiner);
+		} catch (ParsingException e) {
+			throw new AlgorithmCreationFailedException(e);
+		} catch (IOException e) {
+			throw new AlgorithmCreationFailedException(e);
+		}
 	}
 
 	private File getNWBFile(Data[] data) {
