@@ -66,6 +66,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 			Collection<Binding<FeatureDimension>> bindings) {
 		return GeoDataset.fromTable(table, bindings, FeatureDimension.class,
 				new Function<Tuple, String>() {
+					@Override
 					public String apply(Tuple row) {
 						return StringUtilities.interpretObjectAsString(row.get(featureNameColumnName));
 					}					
@@ -95,6 +96,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 		return Collections2.transform(
 				valuedFeatures,
 				new Function<GeoDatum<String, FeatureDimension>, FeatureView>() {
+					@Override
 					public FeatureView apply(GeoDatum<String, FeatureDimension> valuedFeature) {
 						String featureName = valuedFeature.getGeo();
 						

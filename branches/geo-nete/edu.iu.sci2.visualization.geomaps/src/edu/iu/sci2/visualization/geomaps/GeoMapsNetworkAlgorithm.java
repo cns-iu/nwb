@@ -76,13 +76,14 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 		
 		this.latitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		this.longitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
-		this.shapefile = Shapefile.PRETTY_NAME_TO_SHAPEFILE.get(parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
+		this.shapefile = Shapefile.forNiceName((String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
 		
 		if (latitudeAttrib.equals(longitudeAttrib)) {
 			throw new AlgorithmCreationFailedException("Latitude and longitude attributes must be distinct");
 		}
 	}
 
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
 			Data inDatum = this.data[0];
@@ -90,7 +91,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.defaultProjectedCrs();
 			if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-				knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forName((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
+				knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceName((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 			}
 
 			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.anchorPoints();
@@ -182,8 +183,8 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	}
 
 	private FieldMakerFunction getLongitudeToXComputer() {
-		return new FieldMakerFunction() {
-			
+		return new FieldMakerFunction() {			
+			@Override
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
@@ -204,6 +205,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	private FieldMakerFunction getLatitudeToYComputer() {
 		return new FieldMakerFunction() {
 			
+			@Override
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));

@@ -24,8 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
-import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
-import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.RegionAnnotationMode;
@@ -34,6 +33,7 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Regions";
 	
+	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciShellContext) {
 		String featureNameColumnName = (String) parameters.get(RegionAnnotationMode.FEATURE_NAME_ID);
@@ -46,12 +46,14 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition oldOCD) {
 		Table table = (Table) data[0].getData();
 		
 		List<String> numericColumnNames = ImmutableList.of();
 		try {
-			numericColumnNames = Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
+			numericColumnNames =
+					Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
 			// TODO Actually, now that we can disable region coloring, is this really a fail condition?
 			throw new AlgorithmCreationCanceledException("TODO No numeric columns.", e);
@@ -59,7 +61,8 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 		
 		List<String> stringColumnNames = ImmutableList.of();
 		try {
-			stringColumnNames = Lists.newArrayList(TableUtilities.getValidStringColumnNamesInTable(table));
+			stringColumnNames =
+					Lists.newArrayList(TableUtilities.getValidStringColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
 			throw new AlgorithmCreationCanceledException("TODO No string columns.", e);
 		}
@@ -67,13 +70,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 		
 		DropdownMutator mutator = new DropdownMutator();
 		
-		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.PRETTY_NAME_TO_SHAPEFILE.keySet());
-
-		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-			mutator.add(GeoMapsAlgorithm.PROJECTION_ID,	KnownProjectedCRSDescriptor.FOR_NAME.keySet());
-		} else {
-			mutator.ignore(GeoMapsAlgorithm.PROJECTION_ID);
-		}
+		Parameters.addShapefileAndProjectionParameters(mutator);
 		
 		for (VizDimension dimension : EnumSet.allOf(FeatureDimension.class)) {
 			dimension.addOptionsToAlgorithmParameters(mutator, numericColumnNames);

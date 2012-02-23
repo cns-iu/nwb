@@ -78,6 +78,7 @@ public class FeaturePrinter {
 		ImmutableMap<String, FeatureView> featureColorMap = Maps.uniqueIndex(
 				featureViews,
 				new Function<FeatureView, String>() {
+					@Override
 					public String apply(FeatureView featureView) {
 						return featureView.getFeatureName();
 					}			
@@ -294,6 +295,7 @@ public class FeaturePrinter {
 							Joiner.on(",").join(Lists.transform(
 									featureCollection.getSchema().getAttributeDescriptors(),
 									new Function<AttributeDescriptor, String>() {
+										@Override
 										public String apply(AttributeDescriptor input) {
 											return input.getName().toString();
 										}									

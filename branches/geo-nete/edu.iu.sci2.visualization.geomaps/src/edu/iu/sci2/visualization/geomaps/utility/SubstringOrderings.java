@@ -18,6 +18,7 @@ public class SubstringOrderings {
 			/* The index of the last candidate substring from that really is a substring of
 			 * "string", else -1.
 			 */
+			@Override
 			public Integer apply(final String string) {
 				return Lists2.lastIndexOf(
 						candidateSubstringsInOrder,

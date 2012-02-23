@@ -108,7 +108,7 @@ public class GeoMapViewPS {
 		
 		
 		PageMetadata pageMetadata = new PageMetadata(TITLE, geoMap.getSubtitle());
-		pageMetadata.add(geoMap.getKnownProjectedCRSDescriptor().displayName() + " Projection");
+		pageMetadata.add(geoMap.getKnownProjectedCRSDescriptor().niceName() + " Projection");
 		pageMetadata.add(timestamp());
 		pageMetadata.add(authorName);
 		out.write(pageMetadata.toPostScript());

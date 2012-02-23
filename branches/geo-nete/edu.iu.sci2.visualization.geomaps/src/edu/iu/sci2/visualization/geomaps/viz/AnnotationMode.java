@@ -42,11 +42,11 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			Table table,
 			final Dictionary<String, Object> parameters)
 				throws ScalingException, LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
-		Shapefile shapefile = Shapefile.PRETTY_NAME_TO_SHAPEFILE.get(parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
+		Shapefile shapefile = Shapefile.forNiceName((String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.defaultProjectedCrs();
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-			knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forName(
+			knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceName(
 					(String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 		}
 		
@@ -70,18 +70,20 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 
 		return createPSWriter(shapefile, knownProjectedCRSDescriptor, scaledData, codings, legends);
 	}
-
+	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {
 		return Collections2.filter(
 				Collections2.transform(
 					dimensions(),
 					new Function<D, Binding<D>>() {
+						@Override
 						public Binding<D> apply(D dimension) {
 							// TODO ?
 							return (Binding<D>) dimension.bindingFor(parameters);
 						}
 					}),
 				new Predicate<Binding<D>>() {
+					@Override
 					public boolean apply(Binding<D> binding) {
 						return binding.isEnabled();
 					}

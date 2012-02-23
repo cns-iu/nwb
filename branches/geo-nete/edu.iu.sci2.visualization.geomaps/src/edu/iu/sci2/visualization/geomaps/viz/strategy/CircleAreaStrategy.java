@@ -18,6 +18,7 @@ public class CircleAreaStrategy implements Strategy {
 		return area;
 	}
 
+	@Override
 	public String toPostScript() {
 		return String.valueOf(area); // TODO :\
 	}

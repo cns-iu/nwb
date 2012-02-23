@@ -17,16 +17,17 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.nwb.util.nwbfile.NWBFileUtilities;
 import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
-import edu.iu.sci2.visualization.geomaps.metatype.GeoCoordinateParameterFinder;
-import edu.iu.sci2.visualization.geomaps.metatype.Shapefiles;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 
 public class GeoMapsNetworkFactory implements AlgorithmFactory, ParameterMutator {
+	@Override
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciShellContext) {
 		return new GeoMapsNetworkAlgorithm(data, parameters, ciShellContext);
 	}
 
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition parameters) {
 		try {
@@ -39,9 +40,9 @@ public class GeoMapsNetworkFactory implements AlgorithmFactory, ParameterMutator
 			
 			DropdownMutator mutator = new DropdownMutator();
 			
-			Shapefiles.addShapefileAndProjectionParameters(mutator);
-			GeoCoordinateParameterFinder.addLatitudeParameter(mutator, numericColumnNames, Parameter.LATITUDE.id());
-			GeoCoordinateParameterFinder.addLongitudeParameter(mutator, numericColumnNames, Parameter.LONGITUDE.id());
+			Parameters.addShapefileAndProjectionParameters(mutator);
+			Parameters.addLatitudeParameter(mutator, numericColumnNames, Parameter.LATITUDE.id());
+			Parameters.addLongitudeParameter(mutator, numericColumnNames, Parameter.LONGITUDE.id());
 			
 			return mutator.mutate(parameters);
 		} catch (ColumnNotFoundException e) {

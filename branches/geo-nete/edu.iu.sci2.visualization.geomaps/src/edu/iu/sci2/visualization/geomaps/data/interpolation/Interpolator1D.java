@@ -17,6 +17,7 @@ public class Interpolator1D implements Interpolator<Double> {
 	}
 	
 
+	@Override
 	public Double apply(Double value) {
 		return interpolate(value, inRange, outRange);
 	}
@@ -39,10 +40,12 @@ public class Interpolator1D implements Interpolator<Double> {
 		return (outMin + (((in - inMin) * (outMax - outMin)) / (inMax - inMin)));
 	}
 
+	@Override
 	public Range<Double> inRange() {
 		return inRange;
 	}
 	
+	@Override
 	public Range<Double> outRange() {
 		return outRange;
 	}

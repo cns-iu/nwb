@@ -8,6 +8,7 @@ public class RelativeDifferencePredicate implements BinaryPredicate<Double> {
 	}
 	
 	/** Is the relative difference of x1 and x2 no greater than the tolerance? */
+	@Override
 	public boolean apply(Pair<Double> pair) {
 		return (relativeDifference(pair.getLeft(), pair.getRight()) <= tolerance);
 	}

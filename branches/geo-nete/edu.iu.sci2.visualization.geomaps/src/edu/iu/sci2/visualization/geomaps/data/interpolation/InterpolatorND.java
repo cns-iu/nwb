@@ -29,6 +29,7 @@ public class InterpolatorND implements Interpolator<double[]> {
 	}
 	
 
+	@Override
 	public double[] apply(Double value) {
 		double[] tuple = new double[interpolators.length];
 		
@@ -39,10 +40,12 @@ public class InterpolatorND implements Interpolator<double[]> {
 		return tuple;
 	}
 
+	@Override
 	public Range<Double> inRange() {
 		return inRange;
 	}
 
+	@Override
 	public Range<double[]> outRange() {
 		return outRange;
 	}

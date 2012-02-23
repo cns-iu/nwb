@@ -42,6 +42,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 			Collection<Binding<CircleDimension>> bindings) {
 		return GeoDataset.fromTable(table, bindings, CircleDimension.class,
 				new Function<Tuple, Coordinate>() {
+					@Override
 					public Coordinate apply(Tuple input) {
 						return new Coordinate(
 								NumberUtilities.interpretObjectAsDouble(input.get(longitudeColumnName)),
@@ -81,6 +82,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 	public static final Ordering<GeoDatum<Coordinate, CircleDimension>> AREA_ORDERING =
 			Ordering.natural().nullsFirst().onResultOf(
 					new Function<GeoDatum<Coordinate, CircleDimension>, Double>() {
+						@Override
 						public Double apply(GeoDatum<Coordinate, CircleDimension> input) {
 							return input.valueInDimension(CircleDimension.AREA);
 						}				
@@ -92,6 +94,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 		return Collections2.transform(
 				AREA_ORDERING.reverse().sortedCopy(geoData),
 				new Function<GeoDatum<Coordinate, CircleDimension>, Circle>() {
+					@Override
 					public Circle apply(GeoDatum<Coordinate, CircleDimension> geoDatum) {
 						Coordinate coordinate = geoDatum.getGeo();
 

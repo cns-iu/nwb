@@ -23,6 +23,7 @@ public class ColorLegend implements Legend<Double, Color> {
 	}
 
 	
+	@Override
 	public Range<Double> getDataRange() {
 		return vizLegend.dataRange();
 	}
@@ -31,6 +32,7 @@ public class ColorLegend implements Legend<Double, Color> {
 		return vizLegend.scalingLabel();
 	}
 
+	@Override
 	public Range<Color> getVizRange() {
 		return vizLegend.vizRange();
 	}

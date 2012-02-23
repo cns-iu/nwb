@@ -25,6 +25,7 @@ public class StringPredicates {
 		final String normalizedBaseString = normalizer.apply(string);
 		
 		return new Predicate<String>() {
+			@Override
 			public boolean apply(String candidateSubstring) {
 				return normalizedBaseString.contains(normalizer.apply(candidateSubstring));
 			}				

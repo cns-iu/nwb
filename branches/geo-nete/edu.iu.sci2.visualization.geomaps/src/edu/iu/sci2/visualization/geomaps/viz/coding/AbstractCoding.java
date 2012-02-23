@@ -19,18 +19,23 @@ public abstract class AbstractCoding<D extends VizDimension> implements Coding<D
 		this.binding = binding;
 	}
 
+	@Override
 	public abstract Strategy strategyForValue(double value);
+	@Override
 	public abstract PostScriptable makeLabeledReference(Range<Double> usableRange, Range<Double> scaledRange) throws LegendCreationException;
 
 	
+	@Override
 	public D getDimension() {
 		return binding.getDimension();
 	}
 
+	@Override
 	public String getColumnName() {
 		return binding.getColumnName();
 	}
 
+	@Override
 	public Scaling getScaling() {
 		return binding.getScaling();
 	}

@@ -95,25 +95,32 @@ public enum FeatureDimension implements VizDimension {
 	}
 	
 	
+	@Override
 	public abstract Strategy defaultStrategy();
+	@Override
 	public abstract Binding<FeatureDimension> bindingFor(Dictionary<String, Object> parameters);	
 
+	@Override
 	public String getColumnNameParameterId() {
 		return columnNameParameterId;
 	}
 
+	@Override
 	public String getColumnNameParameterDisablingToken() {
 		return columnNameParameterDisablingToken;
 	}
 
+	@Override
 	public String getScalingParameterId() {
 		return scalingParameterId;
 	}
 
+	@Override
 	public String getRangeParameterId() {
 		return rangeParameterId;
 	}
 
+	@Override
 	public void addOptionsToAlgorithmParameters(DropdownMutator mutator, List<String> numericColumnNames) {
 		List<String> options = Lists.newArrayList(numericColumnNames);
 

@@ -51,6 +51,7 @@ public class Averages {
 
 			means[dd] = meanOfDoubles(Collections2.transform(tuples,
 					new Function<double[], Double>() {
+						@Override
 						public Double apply(double[] tuple) {
 							// The preconditions should guarantee this.
 							assert (0 <= dimension && dimension < tuple.length);

@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.geo.projection;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -39,32 +40,37 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 	 * distort drawing. */
 	public static final boolean REQUEST_LENIENT_TRANSFORM = true;
 	
-	public static final ImmutableBiMap<String, KnownProjectedCRSDescriptor> FOR_NAME =
+	private static final ImmutableBiMap<String, KnownProjectedCRSDescriptor> FOR_NICE_NAME =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(KnownProjectedCRSDescriptor.class),
 						new Function<KnownProjectedCRSDescriptor, String>() {
+							@Override
 							public String apply(KnownProjectedCRSDescriptor shapefile) {
-								return shapefile.displayName();
+								return shapefile.niceName();
 							}
 						}));
-	public static KnownProjectedCRSDescriptor forName(String displayName) {
+	public static Set<String> byNiceNames() {
+		return FOR_NICE_NAME.keySet();
+	}
+	public static KnownProjectedCRSDescriptor forNiceName(String niceName) {
 		// TODO What to do about null?
-		return FOR_NAME.get(displayName);
+		return FOR_NICE_NAME.get(niceName);
 	}
 
-	private final String displayName;
+	private final String niceName;
 	private final ProjectedCRSDescriptor projectedCrsDescriptor;
 	
-	private KnownProjectedCRSDescriptor(String displayName, ProjectedCRSDescriptor crsMaker) {
-		this.displayName = displayName;
+	private KnownProjectedCRSDescriptor(String niceName, ProjectedCRSDescriptor crsMaker) {
+		this.niceName = niceName;
 		this.projectedCrsDescriptor = crsMaker;
 	}
 	
 
-	public String displayName() {
-		return displayName;
+	public String niceName() {
+		return niceName;
 	}
 
+	@Override
 	public ProjectedCRS asProjectedCRS() throws NoSuchAuthorityCodeException, FactoryException {
 		return projectedCrsDescriptor.asProjectedCRS();
 	}
@@ -84,6 +90,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 			this.code = code;
 		}
 		
+		@Override
 		public ProjectedCRS asProjectedCRS() throws NoSuchAuthorityCodeException, FactoryException {
 			return CRS.getProjectedCRS(CRS.decode(code));
 		}
@@ -97,6 +104,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 			this.wkt = wkt;
 		}
 	
+		@Override
 		public ProjectedCRS asProjectedCRS() throws FactoryException {
 			return CRS.getProjectedCRS(CRS.parseWKT(wkt));
 		}		

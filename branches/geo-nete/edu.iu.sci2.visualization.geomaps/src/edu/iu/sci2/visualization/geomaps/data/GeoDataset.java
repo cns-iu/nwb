@@ -45,6 +45,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		ImmutableSet<GeoDatum<G, D>> geoData = ImmutableSet.copyOf(Collections2.transform(
 				tuples,
 				new Function<Tuple, GeoDatum<G, D>>() {
+					@Override
 					public GeoDatum<G, D> apply(final Tuple tuple) {						
 						EnumMap<D, Double> dimensionToValue =
 								readValues(tuple, dimensionClass, dimensionToBinding);
@@ -112,6 +113,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 
 	public Range<Double> calculateRangeOver(final D dimension) {
 		return Range.over(Collections2.transform(geoData, new Function<GeoDatum<G, D>, Double>() {
+			@Override
 			public Double apply(GeoDatum<G, D> geoDatum) {
 				return geoDatum.valueInDimension(dimension);
 			}			
@@ -123,6 +125,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return ImmutableSet.copyOf(Collections2.filter(
 				geoData,
 				new Predicate<GeoDatum<G, D>>() {
+					@Override
 					public boolean apply(GeoDatum<G, D> geoDatum) {
 						return binding.getScaling().isScalable(geoDatum.valueInDimension(binding.getDimension()));
 					}					
@@ -135,6 +138,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return ImmutableSet.copyOf(Collections2.transform(
 				geoData,
 				new Function<GeoDatum<G, D>, GeoDatum<G, D>>() {
+					@Override
 					public GeoDatum<G, D> apply(GeoDatum<G, D> geoDatum) {
 						assert (binding.getScaling().isScalable(geoDatum.valueInDimension(binding.getDimension())));
 						
@@ -152,6 +156,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return Maps.uniqueIndex(
 				bindings,
 				new Function<Binding<D>, D>() {
+					@Override
 					public D apply(Binding<D> binding) {
 						return binding.getDimension();
 					}
@@ -169,6 +174,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return Maps.newEnumMap(Maps.transformValues(
 					dimensionToBinding,
 					new Function<Binding<D>, Double>() {
+						@Override
 						public Double apply(Binding<D> binding) {
 							return binding.readValueFromTuple(tuple);
 						}

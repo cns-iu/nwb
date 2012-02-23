@@ -23,14 +23,17 @@ public class ColorInterpolator implements Interpolator<Color> {
 	}
 
 	
+	@Override
 	public Color apply(Double value) {
 		return ColorTuples.asColor(interpolator3D.apply(value));
 	}
 
+	@Override
 	public Range<Double> inRange() {
 		return interpolator3D.inRange();
 	}
 
+	@Override
 	public Range<Color> outRange() {
 		return Range.between(
 				ColorTuples.asColor(interpolator3D.outRange().getPointA()),

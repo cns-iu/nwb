@@ -22,8 +22,7 @@ import prefuse.data.Table;
 import com.google.common.collect.ImmutableList;
 import com.vividsolutions.jts.geom.Coordinate;
 
-import edu.iu.sci2.visualization.geomaps.metatype.GeoCoordinateParameterFinder;
-import edu.iu.sci2.visualization.geomaps.metatype.Shapefiles;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.CircleAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
@@ -31,6 +30,7 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Circles";
 
+	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciShellContext) {
 		String latitudeColumnName = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
@@ -44,6 +44,7 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition oldParameters) {
 		Table table = (Table) data[0].getData();
 		
@@ -61,10 +62,10 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 		
 		DropdownMutator mutator = new DropdownMutator();
 		
-		Shapefiles.addShapefileAndProjectionParameters(mutator);
+		Parameters.addShapefileAndProjectionParameters(mutator);
 	
-		GeoCoordinateParameterFinder.addLatitudeParameter(mutator, numericColumnNames, GeoMapsNetworkFactory.Parameter.LATITUDE.id());
-		GeoCoordinateParameterFinder.addLongitudeParameter(mutator, numericColumnNames, GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
+		Parameters.addLatitudeParameter(mutator, numericColumnNames, GeoMapsNetworkFactory.Parameter.LATITUDE.id());
+		Parameters.addLongitudeParameter(mutator, numericColumnNames, GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
 		
 		for (VizDimension dimension : EnumSet.allOf(CircleDimension.class)) {
 			dimension.addOptionsToAlgorithmParameters(mutator, numericColumnNames);

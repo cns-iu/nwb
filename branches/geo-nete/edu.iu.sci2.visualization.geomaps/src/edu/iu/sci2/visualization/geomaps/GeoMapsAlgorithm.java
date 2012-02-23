@@ -22,6 +22,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
+import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
@@ -91,6 +92,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	}
 
 	
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
 			Data inDatum = this.data[0];
@@ -179,12 +181,12 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("latitude", "Latitude");
 		parameters.put("longitude", "Longitude");
 		parameters.put("circleAreaColumnName", "Population (thousands)");
-		parameters.put("circleAreaScaling", "Logarithmic");
+		parameters.put("circleAreaScaling", Scaling.Logarithmic.toString());
 		parameters.put("outerColorColumnName", CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
-		parameters.put("outerColorScaling", "Linear");
+		parameters.put("outerColorScaling", Scaling.Linear.toString());
 		parameters.put("outerColorRange", "Yellow to Blue");
 		parameters.put("innerColorColumnName", "Population (thousands)");
-		parameters.put("innerColorScaling", "Linear");
+		parameters.put("innerColorScaling", Scaling.Linear.toString());
 		parameters.put("innerColorRange", "Green to Red");
 		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
 		return algorithmFactory;
@@ -195,7 +197,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters) {
 		parameters.put("featureName", "Country");
 		parameters.put("featureColorColumnName", "Population (thousands)");
-		parameters.put("featureColorScaling", "Logarithmic");
+		parameters.put("featureColorScaling", Scaling.Logarithmic.toString());
 		parameters.put("featureColorRange", "Yellow to Blue");
 		AlgorithmFactory algorithmFactory =	new GeoMapsRegionsFactory();
 		return algorithmFactory;

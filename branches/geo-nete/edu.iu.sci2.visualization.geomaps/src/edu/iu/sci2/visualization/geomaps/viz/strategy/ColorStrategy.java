@@ -13,5 +13,6 @@ public abstract class ColorStrategy implements Strategy {
 		return color;
 	}
 
+	@Override
 	public abstract String toPostScript();
 }

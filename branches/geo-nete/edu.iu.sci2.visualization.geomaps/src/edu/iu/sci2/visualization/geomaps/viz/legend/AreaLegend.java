@@ -42,10 +42,12 @@ public class AreaLegend implements Legend<Double, Double> {
 		return vizLegend.numericFormatType();
 	}
 
+	@Override
 	public Range<Double> getDataRange() {
 		return vizLegend.dataRange();
 	}
 
+	@Override
 	public Range<Double> getVizRange() {
 		return vizLegend.vizRange();
 	}	

@@ -225,25 +225,32 @@ public enum CircleDimension implements VizDimension {
 		this.rangeParameterId = rangeParameterId;
 	}
 	
+	@Override
 	public abstract Binding<CircleDimension> bindingFor(Dictionary<String, Object> parameters);
+	@Override
 	public abstract Strategy defaultStrategy();
 
+	@Override
 	public String getColumnNameParameterId() {
 		return columnNameParameterId;
 	}
 
+	@Override
 	public String getColumnNameParameterDisablingToken() {
 		return columnNameParameterDisablingToken;
 	}
 
+	@Override
 	public String getScalingParameterId() {
 		return scalingParameterId;
 	}
 
+	@Override
 	public String getRangeParameterId() {
 		return rangeParameterId;
 	}
 
+	@Override
 	public void addOptionsToAlgorithmParameters(DropdownMutator mutator, List<String> numericColumnNames) {
 		List<String> options = Lists.newArrayList(numericColumnNames);
 
