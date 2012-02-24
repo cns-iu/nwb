@@ -9,10 +9,14 @@ import java.util.List;
 
 import org.cishell.framework.algorithm.ProgressMonitor;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import prefuse.data.Table;
 import prefuse.data.util.TableIterator;
 import edu.iu.cns.database.load.framework.EntityContainer;
 import edu.iu.cns.database.load.framework.RelationshipContainer;
+import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.RowItemContainer;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
@@ -22,7 +26,9 @@ import edu.iu.sci2.database.isi.load.utilities.parser.exception.PersonParsingExc
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
+import edu.iu.sci2.database.scholarly.model.entity.DocumentKeyword;
 import edu.iu.sci2.database.scholarly.model.entity.Editor;
+import edu.iu.sci2.database.scholarly.model.entity.Keyword;
 import edu.iu.sci2.database.scholarly.model.entity.Person;
 import edu.iu.sci2.database.scholarly.model.entity.ReprintAddress;
 import edu.iu.sci2.database.scholarly.model.entity.Source;
@@ -42,6 +48,8 @@ public class ScopusTableModelParser {
 				ISI.ADDRESS_TABLE_NAME, Address.SCHEMA);
 		RowItemContainer<Source> sources = new EntityContainer<Source>(
 				ISI.SOURCE_TABLE_NAME, Source.SCHEMA);
+		RowItemContainer<Keyword> keywords = new EntityContainer<Keyword>(
+				ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
 
 		RowItemContainer<Author> authors = new RelationshipContainer<Author>(
 				ISI.AUTHORS_TABLE_NAME, Author.SCHEMA);
@@ -49,6 +57,8 @@ public class ScopusTableModelParser {
 				ISI.REPRINT_ADDRESSES_TABLE_NAME, ReprintAddress.SCHEMA);
 		RowItemContainer<Editor> editors = new RelationshipContainer<Editor>(
 				ISI.EDITORS_TABLE_NAME, Editor.SCHEMA);
+		RowItemContainer<DocumentKeyword> documentKeywords = new RelationshipContainer<DocumentKeyword>(
+				ISI.DOCUMENT_KEYWORDS_TABLE_NAME, DocumentKeyword.SCHEMA);
 
 		TableIterator rowNumbers = table.iterator();
 		while (rowNumbers.hasNext()) {
@@ -68,35 +78,60 @@ public class ScopusTableModelParser {
 					getDocumentAttribs(row, source, firstAuthor));
 			documents.add(document);
 			
-			for (Person p : authorPeople) {
-				people.add(p);
-			}
-			
-			for (Author a : Author.makeAuthors(document, authorPeople)) {
-				authors.add(a);
-			}
+			addAll(people, authorPeople);
+			addAll(authors, Author.makeAuthors(document, authorPeople));
 			
 			// I have tried, and can't find *any* SCOPUS data with entries in the Editors column.
 			// So this is totally untested on "real" data :-(
 			// -Thomas
 			List<Person> editorPeople = splitAndParsePersonList(row, ScopusField.EDITORS, 
 					people.getKeyGenerator());
-			for (Person p : editorPeople) {
-				people.add(p);
-			}
+			addAll(people, editorPeople);
+			addAll(editors, Editor.makeEditors(document, editorPeople));
 			
-			for (Editor e : Editor.makeEditors(document, editorPeople)) {
-				editors.add(e);
-			}
+			List<Keyword> authorKeywords = splitKeywords(row, ScopusField.AUTHOR_KEYWORDS, 
+					keywords.getKeyGenerator());
+			addAll(keywords, authorKeywords);
+			addAll(documentKeywords, DocumentKeyword.makeDocumentKeywords(document, authorKeywords));
+			
+			List<Keyword> indexKeywords = splitKeywords(row, ScopusField.INDEX_KEYWORDS,
+					keywords.getKeyGenerator());
+			addAll(keywords,  indexKeywords);
+			addAll(documentKeywords, DocumentKeyword.makeDocumentKeywords(document, indexKeywords));
+			
+			// TODO: make sure nothing depends on the ISI *values* for Keyword.Field.TYPE
+			// ISITag.NEW_KEYWORDS_GIVEN_BY_ISI, ISITag.ORIGINAL_KEYWORDS
+			
 			
 			Address reprintAddrAddr = getReprintAddrAddr(row, addresses.getKeyGenerator());
 			addresses.add(reprintAddrAddr);
 			ReprintAddress reprintAddr = ReprintAddress.link(document, reprintAddrAddr);
 			reprintAddresses.add(reprintAddr);
 		}
-		return new DatabaseModel(documents, people, authors, addresses, reprintAddresses, sources, editors);
+		return new DatabaseModel(documents, people, authors, addresses, 
+				reprintAddresses, sources, editors, keywords, documentKeywords);
 	}
 	
+	private static <T extends RowItem<T>> void addAll(RowItemContainer<T> container, Iterable<T> items) {
+		for (T item : items) {
+			container.add(item);
+		}
+	}
+	
+	private List<Keyword> splitKeywords(FileTuple<ScopusField> row,
+			ScopusField fieldToSplit, DatabaseTableKeyGenerator keyGenerator) {
+		List<Keyword> keywords = Lists.newArrayList();
+		
+		for (String keyword : row.getStringField(fieldToSplit).split(";")) {
+			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
+			putValue(attribs, Keyword.Field.KEYWORD, keyword.trim());
+			putValue(attribs, Keyword.Field.TYPE, fieldToSplit.toString());
+			keywords.add(new Keyword(keyGenerator, attribs));
+		}
+		
+		return keywords;
+	}
+
 	private Source getSource(FileTuple<ScopusField> row,
 			DatabaseTableKeyGenerator keyGenerator) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();

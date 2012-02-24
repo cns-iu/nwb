@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -166,14 +167,29 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testKeywordExists() {
 		try {
-			numRowsInTable(ISI.KEYWORD_TABLE_NAME);
+			assertTrue(numRowsInTable(ISI.KEYWORD_TABLE_NAME) > 10);
 		} catch (Exception e) {
 			throw new AssertionError("Table " + ISI.KEYWORD_TABLE_NAME + " seems not to exist: " + e.getMessage());
 		}
+	}
+	
+	@Test
+	public void testJoinOnKeywords() throws SQLException {
+		Statement s = connection.createStatement();
+		
+		s.execute("select * from keyword join document_keywords on (keyword.PK = document_keywords.document_keywords_keyword_fk) "
+				+ "join document on (document.PK = document_keywords.document_keywords_document_fk) "
+				+ "WHERE keyword.keyword = 'Rib number'");
+		ResultSet rs = s.getResultSet();
+		assertTrue("No results!  Expected something!", rs.next());
+		String documentTitle = rs.getString("title");
+		assertEquals("Abnormal rib number in childhood malignancy: Implications for the scoliosis surgeon".toLowerCase(),
+				documentTitle.toLowerCase());
+		rs.close();
+		s.close();
 	}
 
 	@Test
@@ -233,11 +249,10 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testDocument_keywordsExists() {
 		try {
-			numRowsInTable(ISI.DOCUMENT_KEYWORDS_TABLE_NAME);
+			assertTrue(numRowsInTable(ISI.DOCUMENT_KEYWORDS_TABLE_NAME) > 10);
 		} catch (Exception e) {
 			throw new AssertionError("Table " + ISI.DOCUMENT_KEYWORDS_TABLE_NAME + " seems not to exist: " + e.getMessage());
 		}
