@@ -16,10 +16,9 @@ import com.google.common.collect.Sets;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
-import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
+import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
@@ -42,7 +41,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	public GeoMap createGeoMap(
 			final Table table,
 			final Dictionary<String, Object> parameters)
-				throws ScalingException, LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
+				throws LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Shapefile shapefile = Shapefile.forNiceName(
 				(String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
 		
@@ -54,18 +53,23 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		
 		Collection<Binding<D>> enabledBindings = bindTo(parameters);
 
-		GeoDataset<G, D> usableData = readTable(table, enabledBindings).viewScalableOnly();
-		GeoDataset<G, D> scaledData = usableData.viewScaled();
+		GeoDataset<G, D> usableData = readTable(table, enabledBindings);//.viewScalableOnly();
+//		GeoDataset<G, D> scaledData = usableData.viewScaled();
 		
 		Collection<Coding<D>> codings = Sets.newHashSet();
 		Collection<PostScriptable> legends = Lists.newArrayList();
 		for (Binding<D> binding : enabledBindings) {
-			Range<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
-			Range<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
+//			Range<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
+//			Range<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
 			
-			NumericFormatType numericFormatType = NumericFormatType.guessNumberFormat(binding.columnName(), dataRange);
+			NumericFormatType numericFormatType =
+					NumericFormatType.guessFor(
+							binding.columnName(),
+							usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE));
 			
-			Coding<D> coding = binding.codingForDataRange(dataRange, scaledRange);
+			Coding<D> coding = binding.codingForDataRange(
+					usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE),
+					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED));
 			codings.add(coding);
 			
 			PostScriptable legend = coding.makeLabeledReference(numericFormatType);			
@@ -73,7 +77,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		}
 
 		return createGeoMap(
-				shapefile, knownProjectedCRSDescriptor, scaledData, codings, legends);
+				shapefile, knownProjectedCRSDescriptor, usableData, codings, legends);
 	}
 	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {

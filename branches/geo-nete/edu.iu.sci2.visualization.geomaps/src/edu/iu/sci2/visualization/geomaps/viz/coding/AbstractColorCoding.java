@@ -19,7 +19,7 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
-public abstract class AbstractColorCoding<D extends VizDimension> extends AbstractCoding<D, Color> {
+public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> extends AbstractCoding<D, Color> {
 
 	public AbstractColorCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<Color> interpolator) {
 		super(binding, usableRange, interpolator);

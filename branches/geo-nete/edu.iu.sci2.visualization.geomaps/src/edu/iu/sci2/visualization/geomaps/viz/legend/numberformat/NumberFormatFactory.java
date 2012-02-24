@@ -20,7 +20,7 @@ public class NumberFormatFactory {
 		YEAR,
 		GENERAL;
 
-		public static NumericFormatType guessNumberFormat(
+		public static NumericFormatType guessFor(
 				String columnName, Range<? extends Number> range) {
 			// Default to something reasonable
 			if ((columnName == null) || (range == null)) {

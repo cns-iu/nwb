@@ -11,7 +11,7 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFac
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
-public abstract class AbstractCoding<D extends VizDimension, V> implements Coding<D> {
+public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implements Coding<D> {
 	private final Binding<D> binding;
 	private Range<Double> usableRange;
 	protected final Interpolator<V> interpolator;

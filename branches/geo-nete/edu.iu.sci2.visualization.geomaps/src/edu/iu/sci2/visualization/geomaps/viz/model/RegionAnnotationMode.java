@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
+import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
@@ -81,7 +82,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
 			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
-		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(), codings);
+		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(
 				GeoMapsRegionsFactory.SUBTITLE,

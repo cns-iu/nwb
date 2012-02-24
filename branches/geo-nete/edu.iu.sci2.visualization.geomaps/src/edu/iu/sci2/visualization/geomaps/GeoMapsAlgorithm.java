@@ -23,7 +23,6 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
-import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
@@ -121,8 +120,6 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		} catch (TransformException e) {
 			throw new AlgorithmExecutionException(
 					"Error transforming features: " + e.getMessage(), e);
-		} catch (ScalingException e) {
-			throw new AlgorithmExecutionException("Error scaling data: " + e.getMessage(), e);
 		} catch (LegendCreationException e) {
 			throw new AlgorithmExecutionException("Error creating legend: " + e.getMessage(), e);
 		} catch (ShapefilePostScriptWriterException e) {

@@ -10,7 +10,9 @@ import prefuse.data.Tuple;
 
 import com.google.common.base.Objects;
 
+import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
+import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -27,7 +29,7 @@ public interface VizDimension {
 	void addOptionsToAlgorithmParameters(DropdownMutator mutator, List<String> numericColumnNames);
 	
 	
-	public static abstract class Binding<D extends VizDimension> {		
+	public static abstract class Binding<D extends Enum<D> & VizDimension> {		
 		private final D dimension;
 		private final String columnName;
 		private final Scaling scaling;
@@ -59,6 +61,14 @@ public interface VizDimension {
 		
 		public double readValueFromTuple(Tuple tuple) { // TODO maybe this is a bad fit
 			return NumberUtilities.interpretObjectAsDouble(tuple.get(columnName()));
-		}		
+		}
+		
+		public <G> boolean isScalable(GeoDatum<G, D> geoDatum) {
+			return scaling().isScalable(geoDatum.valueInDimension(dimension()));
+		}
+		
+		public <G> double scale(GeoDatum<G, D> geoDatum) throws ScalingException {
+			return scaling().scale(geoDatum.valueInDimension(dimension()));
+		}
 	}
 }

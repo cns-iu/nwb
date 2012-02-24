@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
+import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
@@ -77,7 +78,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 			GeoDataset<Coordinate, CircleDimension> scaledData,
 			Collection<? extends Coding<CircleDimension>> codings,
 			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
-		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(), codings);
+		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(
 				GeoMapsCirclesFactory.SUBTITLE,
