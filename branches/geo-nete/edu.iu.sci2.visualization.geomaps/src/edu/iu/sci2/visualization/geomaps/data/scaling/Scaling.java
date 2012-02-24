@@ -28,7 +28,7 @@ public enum Scaling {
 	Exponential {
 		@Override
 		public double scaleUnchecked(double value) {
-			return Math.pow(value, 10.0);
+			return Math.pow(10.0, value);
 		}
 
 		@Override

@@ -23,6 +23,7 @@ import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
+import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
@@ -59,13 +60,15 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		Collection<Coding<D>> codings = Sets.newHashSet();
 		Collection<PostScriptable> legends = Lists.newArrayList();
 		for (Binding<D> binding : enabledBindings) {
-			Range<Double> dataRange   = usableData.calculateRangeOver(binding.getDimension());
-			Range<Double> scaledRange = scaledData.calculateRangeOver(binding.getDimension());
+			Range<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
+			Range<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
 			
-			Coding<D> coding = binding.codingForDataRange(scaledRange);
+			NumericFormatType numericFormatType = NumericFormatType.guessNumberFormat(binding.columnName(), dataRange);
+			
+			Coding<D> coding = binding.codingForDataRange(dataRange, scaledRange);
 			codings.add(coding);
 			
-			PostScriptable legend = coding.makeLabeledReference(dataRange, scaledRange);			
+			PostScriptable legend = coding.makeLabeledReference(numericFormatType);			
 			legends.add(legend);
 		}
 

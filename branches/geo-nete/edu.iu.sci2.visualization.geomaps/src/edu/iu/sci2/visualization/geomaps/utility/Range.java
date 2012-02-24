@@ -13,13 +13,15 @@ import com.google.common.collect.Ordering;
  * 				(e.g. Double, Color).
  */
 public class Range<T> {
-	private final Pair<T> pair;
+	private final T pointA;
+	private final T pointB;
 
-	private Range(Pair<T> pair) {
-		this.pair = pair;
+	private Range(T pointA, T pointB) {
+		this.pointA = pointA;
+		this.pointB = pointB;
 	}
 	public static <T> Range<T> between(T pointA, T pointB) {
-		return new Range<T>(Pair.of(pointA, pointB));
+		return new Range<T>(pointA, pointB);
 	}
 	/**
 	 * @return	The min and max of values present in {@code iterable} according to its element
@@ -33,16 +35,17 @@ public class Range<T> {
 		return over(Arrays.asList(ObjectArrays.concat(first, rest)));
 	}
 	
-	public T getPointA() {
-		return pair.getLeft();
+	
+	public T pointA() {
+		return pointA;
 	}
 
-	public T getPointB() {
-		return pair.getRight();
+	public T pointB() {
+		return pointB;
 	}
 
 	public boolean isEmpty() {
-		return pair.arePartsEqual();
+		return Objects.equal(pointA, pointB);
 	}
 
 	@Override
@@ -52,18 +55,20 @@ public class Range<T> {
 		}		
 		Range<?> that = (Range<?>) thatObject;
 		
-		return Objects.equal(this.pair, that.pair);
+		return Objects.equal(this.pointA, that.pointA) &&
+			   Objects.equal(this.pointB, that.pointB);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(pair);
+		return Objects.hashCode(pointA, pointB);
 	}
 
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
-				.add("pair", pair)
+				.add("pointA", pointA)
+				.add("pointB", pointB)
 				.toString();
 	}
 }

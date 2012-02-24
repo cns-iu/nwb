@@ -25,10 +25,10 @@ public class Interpolator1D implements Interpolator<Double> {
 	private static double interpolate(
 			double value, Range<Double> inRange, Range<Double> outRange) {
 		return interpolate(value,
-						   inRange.getPointA().doubleValue(),
-						   inRange.getPointB().doubleValue(),
-						   outRange.getPointA().doubleValue(),
-						   outRange.getPointB().doubleValue());
+						   inRange.pointA().doubleValue(),
+						   inRange.pointB().doubleValue(),
+						   outRange.pointA().doubleValue(),
+						   outRange.pointB().doubleValue());
 	}
 
 	private static double interpolate(

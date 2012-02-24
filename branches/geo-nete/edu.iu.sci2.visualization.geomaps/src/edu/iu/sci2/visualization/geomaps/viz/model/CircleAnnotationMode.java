@@ -103,9 +103,9 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 								Maps.newEnumMap(CircleDimension.class);
 						for (Coding<CircleDimension> coding : codings) {
 							strategies.put(
-									coding.getDimension(),
+									coding.dimension(),
 									coding.strategyForValue(
-											geoDatum.valueInDimension(coding.getDimension())));
+											geoDatum.valueInDimension(coding.dimension())));
 						}
 	
 						return new Circle(coordinate, strategies);

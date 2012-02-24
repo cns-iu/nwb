@@ -39,26 +39,26 @@ public interface VizDimension {
 		}
 		
 		
-		public abstract Coding<D> codingForDataRange(Range<Double> scaledRange);
+		public abstract Coding<D> codingForDataRange(Range<Double> usableRange, Range<Double> scaledRange);
 		
-		public D getDimension() {
+		public D dimension() {
 			return dimension;
 		} 
 		
-		public String getColumnName() {
+		public String columnName() {
 			return columnName;
 		}
 		
-		public double readValueFromTuple(Tuple tuple) {
-			return NumberUtilities.interpretObjectAsDouble(tuple.get(getColumnName()));
-		}
-
-		public Scaling getScaling() {
+		public Scaling scaling() {
 			return scaling;
-		}		
+		}
 		
 		public boolean isEnabled() {
 			return (!Objects.equal(columnName, dimension.getColumnNameParameterDisablingToken()));
 		}
+		
+		public double readValueFromTuple(Tuple tuple) { // TODO maybe this is a bad fit
+			return NumberUtilities.interpretObjectAsDouble(tuple.get(columnName()));
+		}		
 	}
 }

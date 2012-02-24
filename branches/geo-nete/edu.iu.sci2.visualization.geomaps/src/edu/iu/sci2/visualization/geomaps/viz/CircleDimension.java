@@ -44,37 +44,32 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
-				public Coding<CircleDimension> codingForDataRange(final Range<Double> dataRange) {
-					Range<Double> vizRange = DEFAULT_CIRCLE_AREA_RANGE; // TODO constants			
+				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange) {
+					Range<Double> vizRange = DEFAULT_CIRCLE_AREA_RANGE;		
 					final Interpolator<Double> interpolator = Interpolator1D.between(dataRange, vizRange);
 					
-					return new AbstractCoding<CircleDimension>(this) {
+					return new AbstractCoding<CircleDimension, Double>(this, usableRange, interpolator) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return CircleAreaStrategy.forArea(interpolator.apply(value));
 						}
 
 						@Override
-						public PostScriptable makeLabeledReference(
-								Range<Double> usableRange,
-								Range<Double> scaledRange) throws LegendCreationException {
-							// Add circle area legend
-							VizLegend<Double> generalLegend =
-									new VizLegend<Double>(
-											interpolator.inRange(),
-											interpolator.outRange(),
-											getScaling().toString(),
-											"Area",
-											getColumnName(),
-											NumericFormatType.guessNumberFormat(getColumnName(), usableRange));	
+						public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
+							VizLegend<Double> generalLegend = makeVizLegend(numericFormatType);
 							
 							try {
 								double midpointOfScaledData =
 										Averages.meanOfDoubles(
-												interpolator.inRange().getPointA(),
-												interpolator.inRange().getPointB());
-								double unscaledValueForMidrangeArea = getScaling().invert(midpointOfScaledData);
+												interpolator.inRange().pointA(),
+												interpolator.inRange().pointB());
+								double unscaledValueForMidrangeArea = scaling().invert(midpointOfScaledData);
 								double midrangeArea = interpolator.apply(midpointOfScaledData);
+								
+								System.out.println("interpolator.inRange() = " + interpolator.inRange());
+								System.out.println("midpointOfScaledData = " + midpointOfScaledData);
+								System.out.println("unscaledValueForMidrangeArea = " + unscaledValueForMidrangeArea);
+								System.out.println("midrangeArea = " + midrangeArea);
 								
 								AreaLegend areaLegend =
 										new AreaLegend(generalLegend, unscaledValueForMidrangeArea, midrangeArea);
@@ -108,11 +103,11 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
-				public Coding<CircleDimension> codingForDataRange(Range<Double> dataRange) {
+				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
 					Range<Color> outRange = Constants.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
-					return new AbstractColorCoding<CircleDimension>(this, interpolator) {
+					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return StrokeColorStrategy.forColor(interpolator.apply(value));
@@ -159,11 +154,11 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
-				public Coding<CircleDimension> codingForDataRange(Range<Double> dataRange) {
+				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
 					Range<Color> outRange = Constants.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
-					return new AbstractColorCoding<CircleDimension>(this, interpolator) {
+					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return FillColorStrategy.forColor(interpolator.apply(value));

@@ -98,13 +98,13 @@ public class LabeledReferenceGradient implements PostScriptable {
 		
 		invocationTemplate.setAttribute("gradientResolution", GRADIENT_RESOLUTION);
 		
-		Color minColor = legend.getVizRange().getPointA();
+		Color minColor = legend.vizRange().pointA();
 		double[] minColorTuple = ColorTuples.asTuple(minColor);		
 		invocationTemplate.setAttribute("minColorRed", minColorTuple[0]);
 		invocationTemplate.setAttribute("minColorGreen", minColorTuple[1]);
 		invocationTemplate.setAttribute("minColorBlue", minColorTuple[2]);
 		
-		Color maxColor = legend.getVizRange().getPointB();
+		Color maxColor = legend.vizRange().pointB();
 		double[] maxColorTuple = ColorTuples.asTuple(maxColor);	
 		invocationTemplate.setAttribute("maxColorRed", maxColorTuple[0]);
 		invocationTemplate.setAttribute("maxColorGreen", maxColorTuple[1]);
@@ -113,12 +113,12 @@ public class LabeledReferenceGradient implements PostScriptable {
 		UnsignedZeroFormat doubleFormatter =
 			NumberFormatFactory.getNumberFormat(
 					legend.getNumericFormatType(),
-					legend.getDataRange().getPointA(),
+					legend.dataRange().pointA(),
 					legend.getDataValueForOutRangeMidpoint(),
-					legend.getDataRange().getPointB());
-		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(legend.getDataRange().getPointA()));
+					legend.dataRange().pointB());
+		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(legend.dataRange().pointA()));
 		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(legend.getDataValueForOutRangeMidpoint()));
-		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.getDataRange().getPointB()));
+		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.dataRange().pointB()));
 		
 		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);

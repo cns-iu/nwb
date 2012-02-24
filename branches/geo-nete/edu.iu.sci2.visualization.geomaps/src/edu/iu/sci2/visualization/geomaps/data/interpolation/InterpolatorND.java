@@ -11,17 +11,17 @@ public class InterpolatorND implements Interpolator<double[]> {
 		this.inRange = inRange;
 		this.outRange = outRange;
 		
-		assert (outRange.getPointA().length == outRange.getPointB().length); // TODO ?
+		assert (outRange.pointA().length == outRange.pointB().length); // TODO ?
 		
-		int dimensionality = outRange.getPointA().length;
+		int dimensionality = outRange.pointA().length;
 		
 		interpolators = new Interpolator1D[dimensionality];		
 		for (int dd = 0; dd < dimensionality; dd++) {
 			interpolators[dd] = Interpolator1D.between(
 					inRange,
 					Range.between(
-							Double.valueOf(outRange.getPointA()[dd]),
-							Double.valueOf(outRange.getPointB()[dd])));
+							Double.valueOf(outRange.pointA()[dd]),
+							Double.valueOf(outRange.pointB()[dd])));
 		}
 	}
 	public static InterpolatorND between(Range<Double> inRange, Range<double[]> outRange) {

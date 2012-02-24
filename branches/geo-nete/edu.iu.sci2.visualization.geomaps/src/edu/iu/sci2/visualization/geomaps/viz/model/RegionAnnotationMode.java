@@ -102,7 +102,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 						
 						EnumMap<FeatureDimension, Strategy> strategies = Maps.newEnumMap(FeatureDimension.class);
 						for (Coding<FeatureDimension> coding : codings) {
-							strategies.put(coding.getDimension(), coding.strategyForValue(valuedFeature.valueInDimension(coding.getDimension())));
+							strategies.put(coding.dimension(), coding.strategyForValue(valuedFeature.valueInDimension(coding.dimension())));
 						}
 						
 						return new FeatureView(featureName, strategies);

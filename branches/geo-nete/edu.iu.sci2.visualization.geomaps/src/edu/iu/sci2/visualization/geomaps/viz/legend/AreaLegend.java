@@ -22,34 +22,34 @@ public class AreaLegend implements Legend<Double, Double> {
 		return dataValueForMidpointArea;
 	}
 	
-	public double getMidpointArea() {
+	public double midpointArea() {
 		return midpointArea;
 	}
 	
 	
-	public String getScalingLabel() {
+	public String scalingLabel() {
 		return vizLegend.scalingLabel();
 	}
 
-	public String getLegendDescription() {
+	public String legendDescription() {
 		return vizLegend.legendDescription();
 	}
 
-	public String getColumnName() {
+	public String columnName() {
 		return vizLegend.dataColumnName();
 	}
 
-	public NumericFormatType getNumericFormatType() {
+	public NumericFormatType numericFormatType() {
 		return vizLegend.numericFormatType();
 	}
 
 	@Override
-	public Range<Double> getDataRange() {
+	public Range<Double> dataRange() {
 		return vizLegend.dataRange();
 	}
 
 	@Override
-	public Range<Double> getVizRange() {
+	public Range<Double> vizRange() {
 		return vizLegend.vizRange();
 	}	
 }

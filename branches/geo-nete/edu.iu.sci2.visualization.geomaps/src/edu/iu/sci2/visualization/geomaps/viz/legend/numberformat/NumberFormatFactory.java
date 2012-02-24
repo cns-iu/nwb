@@ -11,10 +11,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
 
-import edu.iu.sci2.visualization.geomaps.utility.BinaryPredicate;
-import edu.iu.sci2.visualization.geomaps.utility.BinaryPredicates;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
-import edu.iu.sci2.visualization.geomaps.utility.RelativeDifferencePredicate;
+import edu.iu.sci2.visualization.geomaps.utility.RelativeDifferences;
 import edu.iu.sci2.visualization.geomaps.utility.StringPredicates;
 
 public class NumberFormatFactory {
@@ -37,8 +35,8 @@ public class NumberFormatFactory {
 		}
 
 		private static boolean rangeIsInThousands(Range<? extends Number> range) {
-			return (range.getPointA().doubleValue() >= 1000) &&
-				   (range.getPointB().doubleValue() < 10000);
+			return (range.pointA().doubleValue() >= 1000) &&
+				   (range.pointB().doubleValue() < 10000);
 		}
 
 		private static boolean mentionsSomethingLikeYear(final String string) {
@@ -47,9 +45,7 @@ public class NumberFormatFactory {
 					StringPredicates.isContainedBy(string, ToCaseFunction.LOWER));
 		}
 	}
-	
-	public static final String INTEGER_DIGITS_SEPARATOR = ","; // TODO remove
-	
+		
 	public static final double TOLERANCE = 1.0;
 	public static final int ATTEMPT_LIMIT = 8;
 	
@@ -76,9 +72,6 @@ public class NumberFormatFactory {
 	 * 		and return a DecimalFormat which will produce [0, 0, 1] on those values).
 	 */
 	private static void setFormatPrecision(NumberFormat formatter, double[] values) {
-		BinaryPredicate<Double> relativeDifferenceLimit =
-				new RelativeDifferencePredicate(TOLERANCE);
-		
 		int maximumNumberOfFractionDigits = 0;
 		
 		// Add another fraction digit and re-check the stopping conditions
@@ -103,8 +96,7 @@ public class NumberFormatFactory {
 			 * good and we return it now.
 			 */
 			if (Ordering.natural().isStrictlyOrdered(Doubles.asList(approximateValues))
-					&& BinaryPredicates.isSatisfiedBetween(
-							relativeDifferenceLimit,
+					&& RelativeDifferences.DEFAULT_EQUIVALENCE.pairwise().equivalent(
 							Doubles.asList(values),
 							Doubles.asList(approximateValues))) {
 				break;

@@ -9,6 +9,8 @@ public class StringPredicates {
 
 	/**
 	 * @return	A Predicate for whether {@code string}.contains(a candidate substring).
+	 * @see {@link #isContainedBy(String, Function)}
+	 * @see {@link Functions#identity()}
 	 */
 	public static Predicate<String> isContainedBy(String string) {
 		return isContainedBy(string, Functions.<String>identity());

@@ -79,44 +79,52 @@ public class LabeledReferenceCircles implements PostScriptable {
 		
 		invocationTemplate.setAttribute(
 				"minRadius",
-				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointA()));
+				Circle.calculateRadiusFromArea(areaLegend.vizRange().pointA()));
 		invocationTemplate.setAttribute(
 				"midRadius",
-				Circle.calculateRadiusFromArea(areaLegend.getMidpointArea()));
+				Circle.calculateRadiusFromArea(areaLegend.midpointArea()));
 		invocationTemplate.setAttribute(
 				"maxRadius",
-				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointB()));
+				Circle.calculateRadiusFromArea(areaLegend.vizRange().pointB()));
 		
 		invocationTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
 		
 		UnsignedZeroFormat doubleFormatter =
 			NumberFormatFactory.getNumberFormat(
-					areaLegend.getNumericFormatType(),
-					areaLegend.getDataRange().getPointA(), areaLegend.dataValueForOutputMidpoint(), areaLegend.getDataRange().getPointB());
+					areaLegend.numericFormatType(),
+					areaLegend.dataRange().pointA(), areaLegend.dataValueForOutputMidpoint(), areaLegend.dataRange().pointB());
 		invocationTemplate.setAttribute(
-				"minLabel", doubleFormatter.format(areaLegend.getDataRange().getPointA()));
+				"minLabel", doubleFormatter.format(areaLegend.dataRange().pointA()));
 		invocationTemplate.setAttribute(
 				"midLabel", doubleFormatter.format(areaLegend.dataValueForOutputMidpoint()));
 		invocationTemplate.setAttribute(
-				"maxLabel", doubleFormatter.format(areaLegend.getDataRange().getPointB()));
+				"maxLabel", doubleFormatter.format(areaLegend.dataRange().pointB()));
+		
+		System.out.println("areaLegend.getNumericFormatType() = " + areaLegend.numericFormatType());
+		System.out.println("areaLegend.getDataRange().getPointA() = " + areaLegend.dataRange().pointA());
+		System.out.println("doubleFormatter.format(areaLegend.getDataRange().getPointA()) = " + doubleFormatter.format(areaLegend.dataRange().pointA()));
+		System.out.println("areaLegend.getDataValueForOutRangeMidpoint() = " + areaLegend.dataValueForOutputMidpoint());
+		System.out.println("doubleFormatter.format(areaLegend.getDataValueForOutRangeMidpoint()) = " + doubleFormatter.format(areaLegend.dataValueForOutputMidpoint()));
+		System.out.println("areaLegend.getDataRange().getPointB() = " + areaLegend.dataRange().pointB());
+		System.out.println("doubleFormatter.format(areaLegend.getDataRange().getPointB()) = " + doubleFormatter.format(areaLegend.dataRange().pointB()));
 		
 		invocationTemplate.setAttribute(
 				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(
 				"extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
 		
-		invocationTemplate.setAttribute("typeLabel", areaLegend.getLegendDescription());
+		invocationTemplate.setAttribute("typeLabel", areaLegend.legendDescription());
 		invocationTemplate.setAttribute(
 				"typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(
 				"typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
 		
 		invocationTemplate.setAttribute(
-				"scalingLabel", "(" + areaLegend.getScalingLabel() + ")");
+				"scalingLabel", "(" + areaLegend.scalingLabel() + ")");
 		invocationTemplate.setAttribute(
 				"scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
 		
-		invocationTemplate.setAttribute("keyLabel", areaLegend.getColumnName());
+		invocationTemplate.setAttribute("keyLabel", areaLegend.columnName());
 		invocationTemplate.setAttribute(
 				"keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(

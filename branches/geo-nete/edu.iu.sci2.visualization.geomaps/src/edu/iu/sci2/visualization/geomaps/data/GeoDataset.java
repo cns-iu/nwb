@@ -127,7 +127,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 				new Predicate<GeoDatum<G, D>>() {
 					@Override
 					public boolean apply(GeoDatum<G, D> geoDatum) {
-						return binding.getScaling().isScalable(geoDatum.valueInDimension(binding.getDimension()));
+						return binding.scaling().isScalable(geoDatum.valueInDimension(binding.dimension()));
 					}					
 				}));
 	}
@@ -140,10 +140,10 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 				new Function<GeoDatum<G, D>, GeoDatum<G, D>>() {
 					@Override
 					public GeoDatum<G, D> apply(GeoDatum<G, D> geoDatum) {
-						assert (binding.getScaling().isScalable(geoDatum.valueInDimension(binding.getDimension())));
+						assert (binding.scaling().isScalable(geoDatum.valueInDimension(binding.dimension())));
 						
 						try {
-							return GeoDatum.copyOf(geoDatum, binding.getDimension(), binding.getScaling().scale(geoDatum.valueInDimension(binding.getDimension())));
+							return GeoDatum.copyOf(geoDatum, binding.dimension(), binding.scaling().scale(geoDatum.valueInDimension(binding.dimension())));
 						} catch (ScalingException e) {
 							throw new RuntimeException("TODO", e);
 						}
@@ -158,7 +158,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 				new Function<Binding<D>, D>() {
 					@Override
 					public D apply(Binding<D> binding) {
-						return binding.getDimension();
+						return binding.dimension();
 					}
 				});
 	}

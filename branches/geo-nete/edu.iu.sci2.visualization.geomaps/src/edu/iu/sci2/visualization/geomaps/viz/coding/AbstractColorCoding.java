@@ -14,70 +14,45 @@ import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.ColorLegend;
-import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegend;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceGradient;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
-public abstract class AbstractColorCoding<D extends VizDimension> extends AbstractCoding<D> {
-	private final Interpolator<Color> interpolator;
+public abstract class AbstractColorCoding<D extends VizDimension> extends AbstractCoding<D, Color> {
 
-	public AbstractColorCoding(Binding<D> binding, Interpolator<Color> interpolator) {
-		super(binding);
-		this.interpolator = interpolator;
+	public AbstractColorCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<Color> interpolator) {
+		super(binding, usableRange, interpolator);
 	}
 
-	
 	public abstract double lowerLeftX();
+
 	public abstract double lowerLeftY();
+
 	public abstract String legendDescription();
+
 	public abstract Color defaultColor();
-	
+
 	@Override
-	public PostScriptable makeLabeledReference(Range<Double> usableRange, Range<Double> scaledRange)
-			throws LegendCreationException {
-		ColorLegend colorLegend =
-				createColorLegend(
-						usableRange,
-						interpolator,
-						NumericFormatType.guessNumberFormat(getColumnName(), usableRange),
-						legendDescription());
-		
-		LabeledReferenceGradient labeledReferenceGradient =
-				new LabeledReferenceGradient(
-						colorLegend,
-						lowerLeftX(),
-						lowerLeftY(),
-						CircleDimension.INNER_COLOR_GRADIENT_WIDTH,
-						CircleDimension.INNER_COLOR_GRADIENT_HEIGHT);
-	
+	public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
+		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
+				createColorLegend(numericFormatType), lowerLeftX(), lowerLeftY(),
+				CircleDimension.INNER_COLOR_GRADIENT_WIDTH,
+				CircleDimension.INNER_COLOR_GRADIENT_HEIGHT);
+
 		return labeledReferenceGradient;
 	}
 
-	private ColorLegend createColorLegend(
-			Range<Double> rangeOfValidData,
-			Interpolator<Color> interpolator,
-			NumericFormatType numericFormatType,
-			String legendDescription) throws LegendCreationException {
-		VizLegend<Color> generalLegend =
-				new VizLegend<Color>(
-						rangeOfValidData,
-						interpolator.outRange(),
-						getScaling().toString(),
-						legendDescription,
-						getColumnName(),
-						numericFormatType);
-		
+	private ColorLegend createColorLegend(NumericFormatType numericFormatType) throws LegendCreationException {
 		try {
-			double midpointOfScaledData =
-					Averages.meanOfDoubles(
-							interpolator.inRange().getPointA(),
-							interpolator.inRange().getPointB());
-			double unscaledValueForMidrangeColor = getScaling().invert(midpointOfScaledData);
-			
-			ColorLegend colorLegend = new ColorLegend(generalLegend, unscaledValueForMidrangeColor);
-			
+			double midpointOfScaledData = Averages.meanOfDoubles(
+					interpolator.inRange().pointA(), interpolator.inRange().pointB());
+			double unscaledValueForMidrangeColor = scaling().invert(midpointOfScaledData);
+
+			ColorLegend colorLegend = new ColorLegend(
+					makeVizLegend(numericFormatType),
+					unscaledValueForMidrangeColor);
+
 			return colorLegend;
 		} catch (ScalingException e) {
 			throw new LegendCreationException("TODO Problem formatting numbers for legend.", e);

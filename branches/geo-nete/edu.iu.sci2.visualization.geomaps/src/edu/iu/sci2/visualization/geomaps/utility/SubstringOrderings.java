@@ -15,8 +15,8 @@ public class SubstringOrderings {
 	public static Ordering<String> explicit(
 			final List<? extends String> candidateSubstringsInOrder) {
 		return Ordering.natural().onResultOf(new Function<String, Integer>() {
-			/* The index of the last candidate substring from that really is a substring of
-			 * "string", else -1.
+			/* The index of the last candidate substring that really is a substring of "string",
+			 * else -1.
 			 */
 			@Override
 			public Integer apply(final String string) {
