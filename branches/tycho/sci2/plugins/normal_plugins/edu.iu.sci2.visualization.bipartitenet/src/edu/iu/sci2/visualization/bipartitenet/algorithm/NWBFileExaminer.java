@@ -25,7 +25,7 @@ class NWBFileExaminer extends GetNWBFileMetadata {
 					"More than 2 node types found in supposedly-bipartite graph: "
 							+ bipartiteTypes.toString());
 		}
-		return bipartiteTypes;
+		return Sets.newHashSet(bipartiteTypes);
 	}
 
 	@Override
