@@ -46,7 +46,8 @@ public enum Scaling {
 		
 		if (Double.isInfinite(unchecked) || Double.isNaN(unchecked)) {
 			throw new ScalingException(
-					String.format("Scaling \"%s\" cannot scale the value \"%d\"", this, value));
+					String.format("Scaling \"%s\" cannot scale the value \"%s\".",
+							this, value));
 		}
 		
 		return unchecked;
