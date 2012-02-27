@@ -148,7 +148,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testReferenceExists() {
 		try {
@@ -296,7 +295,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testCited_referencesExists() {
 		try {

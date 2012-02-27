@@ -1,6 +1,9 @@
 package edu.iu.sci2.database.scopus.load;
 
-import static edu.iu.sci2.database.scopus.load.EntityUtils.*;
+import static edu.iu.sci2.database.scopus.load.EntityUtils.getNullableInteger;
+import static edu.iu.sci2.database.scopus.load.EntityUtils.putField;
+import static edu.iu.sci2.database.scopus.load.EntityUtils.putPK;
+import static edu.iu.sci2.database.scopus.load.EntityUtils.putValue;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -9,15 +12,17 @@ import java.util.List;
 
 import org.cishell.framework.algorithm.ProgressMonitor;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 import prefuse.data.Table;
 import prefuse.data.util.TableIterator;
+
+import com.google.common.collect.Lists;
+
+import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.EntityContainer;
 import edu.iu.cns.database.load.framework.RelationshipContainer;
 import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.RowItemContainer;
+import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
@@ -25,11 +30,13 @@ import edu.iu.sci2.database.isi.load.utilities.parser.AbbreviatedNameParser;
 import edu.iu.sci2.database.isi.load.utilities.parser.exception.PersonParsingException;
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
+import edu.iu.sci2.database.scholarly.model.entity.CitedReference;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
 import edu.iu.sci2.database.scholarly.model.entity.DocumentKeyword;
 import edu.iu.sci2.database.scholarly.model.entity.Editor;
 import edu.iu.sci2.database.scholarly.model.entity.Keyword;
 import edu.iu.sci2.database.scholarly.model.entity.Person;
+import edu.iu.sci2.database.scholarly.model.entity.Reference;
 import edu.iu.sci2.database.scholarly.model.entity.ReprintAddress;
 import edu.iu.sci2.database.scholarly.model.entity.Source;
 
@@ -38,28 +45,74 @@ public class ScopusTableModelParser {
 	public ScopusTableModelParser(ProgressMonitor progressMonitor) {
 		// TODO Auto-generated constructor stub
 	}
+	
 
+	
+	// ?
+//	private Map<Class<?>, RowItemContainer<?>> containers = Maps.newHashMap();
+//	private <T extends RowItem<T>> RowItemContainer<T> getContainer(Class<T> clazz) {
+//		return RowItemContainer.class.cast(containers.get(clazz));
+//	}
+//	
+//	private <T extends RowItem<T>> void addToContainer(T item) {
+//		RowItemContainer c = containers.get(item.getClass());
+//	}
+
+	private static <T extends Entity<T>> EntityContainer<T> createEntityContainer(String tableName, Schema<T> schema) {
+		return new EntityContainer<T>(tableName, schema);
+	}
+	private static <T extends RowItem<T>> RowItemContainer<T> createRelationshipContainer(String tableName, Schema<T> schema) {
+		return new RelationshipContainer<T>(tableName, schema);
+	}
+	
 	public DatabaseModel parseModel(Table table) {
-		RowItemContainer<Document> documents = new EntityContainer<Document>(
+		List<RowItemContainer<? extends RowItem<?>>> dbTables = Lists.newArrayList();
+		
+		RowItemContainer<Document> documents = createEntityContainer(
 				ISI.DOCUMENT_TABLE_NAME, Document.SCHEMA);
-		RowItemContainer<Person> people = new EntityContainer<Person>(
+		dbTables.add(documents);
+		
+		RowItemContainer<Person> people = createEntityContainer(
 				ISI.PERSON_TABLE_NAME, Person.SCHEMA);
-		RowItemContainer<Address> addresses = new EntityContainer<Address>(
+		dbTables.add(people);
+		
+		RowItemContainer<Address> addresses = createEntityContainer(
 				ISI.ADDRESS_TABLE_NAME, Address.SCHEMA);
-		RowItemContainer<Source> sources = new EntityContainer<Source>(
+		dbTables.add(addresses);
+		
+		RowItemContainer<Source> sources = createEntityContainer(
 				ISI.SOURCE_TABLE_NAME, Source.SCHEMA);
-		RowItemContainer<Keyword> keywords = new EntityContainer<Keyword>(
+		dbTables.add(sources);
+		
+		RowItemContainer<Keyword> keywords = createEntityContainer(
 				ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
+		dbTables.add(keywords);
+		
+		RowItemContainer<Reference> references = createEntityContainer(
+				ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA);
+		dbTables.add(references);
+		
 
-		RowItemContainer<Author> authors = new RelationshipContainer<Author>(
+		RowItemContainer<Author> authors = createRelationshipContainer(
 				ISI.AUTHORS_TABLE_NAME, Author.SCHEMA);
-		RowItemContainer<ReprintAddress> reprintAddresses = new RelationshipContainer<ReprintAddress>(
+		dbTables.add(authors);
+		
+		RowItemContainer<ReprintAddress> reprintAddresses = createRelationshipContainer(
 				ISI.REPRINT_ADDRESSES_TABLE_NAME, ReprintAddress.SCHEMA);
-		RowItemContainer<Editor> editors = new RelationshipContainer<Editor>(
+		dbTables.add(reprintAddresses);
+		
+		RowItemContainer<Editor> editors = createRelationshipContainer(
 				ISI.EDITORS_TABLE_NAME, Editor.SCHEMA);
-		RowItemContainer<DocumentKeyword> documentKeywords = new RelationshipContainer<DocumentKeyword>(
+		dbTables.add(editors);
+		
+		RowItemContainer<DocumentKeyword> documentKeywords = createRelationshipContainer(
 				ISI.DOCUMENT_KEYWORDS_TABLE_NAME, DocumentKeyword.SCHEMA);
+		dbTables.add(documentKeywords);
 
+		RowItemContainer<CitedReference> citedReferences = createRelationshipContainer(
+				ISI.CITED_REFERENCES_TABLE_NAME, CitedReference.SCHEMA);
+		dbTables.add(citedReferences);
+		
 		TableIterator rowNumbers = table.iterator();
 		while (rowNumbers.hasNext()) {
 			int rowNum = rowNumbers.nextInt();
@@ -108,8 +161,9 @@ public class ScopusTableModelParser {
 			ReprintAddress reprintAddr = ReprintAddress.link(document, reprintAddrAddr);
 			reprintAddresses.add(reprintAddr);
 		}
-		return new DatabaseModel(documents, people, authors, addresses, 
-				reprintAddresses, sources, editors, keywords, documentKeywords);
+		
+		
+		return new DatabaseModel(dbTables);
 	}
 	
 	private static <T extends RowItem<T>> void addAll(RowItemContainer<T> container, Iterable<T> items) {
