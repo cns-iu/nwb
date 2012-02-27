@@ -111,7 +111,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 								GeoDatum<G, D> scaled = geoDatum;
 								for (Binding<D> binding : bindings) {
 									try {
-										scaled = GeoDatum.copyOf(geoDatum, binding.dimension(), binding.scale(geoDatum));
+										scaled = GeoDatum.copyOf(scaled, binding.dimension(), binding.scale(geoDatum));
 									} catch (ScalingException e) {
 										throw new RuntimeException("TODO", e);
 									}
