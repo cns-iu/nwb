@@ -37,3 +37,4 @@ Export-Package: org.apache.xmlgraphics.fonts,
  org.apache.xmlgraphics.xmp.schemas,
  org.apache.xmlgraphics.xmp.schemas.pdf
 Bundle-ClassPath: xmlgraphics-commons-1.4.jar
+Import-Package: javax.xml.transform
