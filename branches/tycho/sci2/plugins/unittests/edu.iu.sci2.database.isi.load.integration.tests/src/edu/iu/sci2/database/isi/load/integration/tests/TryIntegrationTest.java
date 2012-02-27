@@ -119,7 +119,6 @@ public class TryIntegrationTest {
 	
 	// TODO: test whether the page count matches end - start?
 
-	@Ignore
 	@Test 
 	public void testIsi_fileExists() {
 		try {
@@ -129,7 +128,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testPublisherExists() {
 		try {
@@ -200,7 +198,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testPatentExists() {
 		try {
@@ -219,7 +216,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testPublisher_addressesExists() {
 		try {
@@ -238,7 +234,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testResearch_addressesExists() {
 		try {
@@ -275,7 +270,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testCited_patentsExists() {
 		try {
@@ -285,7 +279,6 @@ public class TryIntegrationTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void testDocument_occurrencesExists() {
 		try {

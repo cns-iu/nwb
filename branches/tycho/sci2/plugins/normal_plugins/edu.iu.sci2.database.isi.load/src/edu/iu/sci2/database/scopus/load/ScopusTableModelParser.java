@@ -30,14 +30,21 @@ import edu.iu.sci2.database.isi.load.utilities.parser.AbbreviatedNameParser;
 import edu.iu.sci2.database.isi.load.utilities.parser.exception.PersonParsingException;
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
+import edu.iu.sci2.database.scholarly.model.entity.CitedPatent;
 import edu.iu.sci2.database.scholarly.model.entity.CitedReference;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
 import edu.iu.sci2.database.scholarly.model.entity.DocumentKeyword;
+import edu.iu.sci2.database.scholarly.model.entity.DocumentOccurrence;
 import edu.iu.sci2.database.scholarly.model.entity.Editor;
+import edu.iu.sci2.database.scholarly.model.entity.ISIFile;
 import edu.iu.sci2.database.scholarly.model.entity.Keyword;
+import edu.iu.sci2.database.scholarly.model.entity.Patent;
 import edu.iu.sci2.database.scholarly.model.entity.Person;
+import edu.iu.sci2.database.scholarly.model.entity.Publisher;
+import edu.iu.sci2.database.scholarly.model.entity.PublisherAddress;
 import edu.iu.sci2.database.scholarly.model.entity.Reference;
 import edu.iu.sci2.database.scholarly.model.entity.ReprintAddress;
+import edu.iu.sci2.database.scholarly.model.entity.ResearchAddress;
 import edu.iu.sci2.database.scholarly.model.entity.Source;
 
 public class ScopusTableModelParser {
@@ -68,6 +75,7 @@ public class ScopusTableModelParser {
 	public DatabaseModel parseModel(Table table) {
 		List<RowItemContainer<? extends RowItem<?>>> dbTables = Lists.newArrayList();
 		
+		// Entities (things that mostly hold data themselves)
 		RowItemContainer<Document> documents = createEntityContainer(
 				ISI.DOCUMENT_TABLE_NAME, Document.SCHEMA);
 		dbTables.add(documents);
@@ -88,11 +96,15 @@ public class ScopusTableModelParser {
 				ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
 		dbTables.add(keywords);
 		
-		RowItemContainer<Reference> references = createEntityContainer(
-				ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA);
-		dbTables.add(references);
+		// Not filled with data, but here to complete the table model
+		dbTables.add(createEntityContainer(ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA));
+		dbTables.add(createEntityContainer(ISI.PATENT_TABLE_NAME, Patent.SCHEMA));
+		dbTables.add(createEntityContainer(
+				ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA));
+		dbTables.add(createEntityContainer(ISI.PUBLISHER_TABLE_NAME, Publisher.SCHEMA));
 		
-
+		
+		// Relationships (things that are mostly links between other things)
 		RowItemContainer<Author> authors = createRelationshipContainer(
 				ISI.AUTHORS_TABLE_NAME, Author.SCHEMA);
 		dbTables.add(authors);
@@ -109,9 +121,12 @@ public class ScopusTableModelParser {
 				ISI.DOCUMENT_KEYWORDS_TABLE_NAME, DocumentKeyword.SCHEMA);
 		dbTables.add(documentKeywords);
 
-		RowItemContainer<CitedReference> citedReferences = createRelationshipContainer(
-				ISI.CITED_REFERENCES_TABLE_NAME, CitedReference.SCHEMA);
-		dbTables.add(citedReferences);
+		// Not filled with data, but here to complete the table model.
+		dbTables.add(createRelationshipContainer(ISI.CITED_REFERENCES_TABLE_NAME, CitedReference.SCHEMA));
+		dbTables.add(createRelationshipContainer(ISI.CITED_PATENTS_TABLE_NAME, CitedPatent.SCHEMA));
+		dbTables.add(createRelationshipContainer(ISI.DOCUMENT_OCCURRENCES_TABLE_NAME, DocumentOccurrence.SCHEMA));
+		dbTables.add(createRelationshipContainer(ISI.PUBLISHER_ADDRESSES_TABLE_NAME, PublisherAddress.SCHEMA));
+		dbTables.add(createRelationshipContainer(ISI.RESEARCH_ADDRESSES_TABLE_NAME, ResearchAddress.SCHEMA));
 		
 		TableIterator rowNumbers = table.iterator();
 		while (rowNumbers.hasNext()) {

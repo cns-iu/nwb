@@ -20,7 +20,7 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		DOCUMENT_KEYWORDS_KEYWORD_FK;
 
 		public DerbyFieldType type() {
-			return DerbyFieldType.INTEGER;
+			return DerbyFieldType.FOREIGN_KEY;
 		}
 	}
 	

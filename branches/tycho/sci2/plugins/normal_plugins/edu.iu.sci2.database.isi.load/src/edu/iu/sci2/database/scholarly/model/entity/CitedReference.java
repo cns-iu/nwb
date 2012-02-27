@@ -20,7 +20,7 @@ public class CitedReference extends RowItem<CitedReference> {
 		CITED_REFERENCES_REFERENCE_FK;
 
 		public DerbyFieldType type() {
-			return DerbyFieldType.INTEGER;
+			return DerbyFieldType.FOREIGN_KEY;
 		}
 	}
 	
@@ -35,16 +35,16 @@ public class CitedReference extends RowItem<CitedReference> {
 
 	public static Iterable<CitedReference> makeCitedReferences(
 			Document document, List<Reference> references) {
-		List<CitedReference> documentKeywords = Lists.newArrayList();
+		List<CitedReference> citedReferences = Lists.newArrayList();
 		
 		for (Reference r: references) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 			putPK(attribs, Field.CITED_REFERENCES_DOCUMENT_FK, document);
 			putPK(attribs, Field.CITED_REFERENCES_REFERENCE_FK, r);
 			
-			documentKeywords.add(new CitedReference(attribs));
+			citedReferences.add(new CitedReference(attribs));
 		}
 		
-		return documentKeywords;
+		return citedReferences;
 	}
 }

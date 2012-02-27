@@ -19,7 +19,7 @@ public class Editor extends RowItem<Editor> {
 		EDITORS_PERSON_FK;
 
 		public DerbyFieldType type() {
-			return DerbyFieldType.INTEGER;
+			return DerbyFieldType.FOREIGN_KEY;
 		}
 	}
 	
