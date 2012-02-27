@@ -45,6 +45,6 @@ Export-Package: edu.iu.sci2.database.isi.load,
  edu.iu.sci2.database.isi.load.utilities.parser.exception,
  edu.iu.sci2.database.scholarly,
  edu.iu.sci2.database.scholarly.model.entity
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: edu.iu.sci2.database.isi.merge;bundle-version="0.0.1",
  edu.iu.nwb.converter.prefusecsv;bundle-version="0.7.0"
