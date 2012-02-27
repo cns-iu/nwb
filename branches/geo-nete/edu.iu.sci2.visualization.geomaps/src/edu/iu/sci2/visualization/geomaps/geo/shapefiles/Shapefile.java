@@ -17,6 +17,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
@@ -34,6 +35,8 @@ public enum Shapefile {
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
 			ImmutableSet.of(
+					Inset.ALASKA),
+			ImmutableSet.of(
 					AnchorPoint.NEAR_ALEUTIAN_ISLANDS,
 					AnchorPoint.NEAR_PUERTO_RICO)),
 	WORLD(
@@ -41,6 +44,7 @@ public enum Shapefile {
 			"World",
 			"NAME",
 			KnownProjectedCRSDescriptor.ECKERT_IV,
+			ImmutableSet.<Inset>of(),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALASKA,
 					AnchorPoint.NEAR_ANTARCTICA));
@@ -66,6 +70,7 @@ public enum Shapefile {
 	private final String featureAttributeName;
 	private final KnownProjectedCRSDescriptor defaultProjectedCrs;
 	private final SimpleFeatureSource featureSource;
+	private final ImmutableSet<Inset> insets;
 	private final ImmutableCollection<AnchorPoint> anchorPoints;
 
 	private Shapefile(
@@ -73,10 +78,12 @@ public enum Shapefile {
 			String niceName,
 			String featureAttributeName,
 			KnownProjectedCRSDescriptor defaultProjectedCrs,
+			Collection<Inset> insets,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
 		this.niceName = niceName;
 		this.featureAttributeName = featureAttributeName;
 		this.defaultProjectedCrs = defaultProjectedCrs;
+		this.insets = ImmutableSet.copyOf(insets);
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
 		
 		try {
@@ -92,6 +99,19 @@ public enum Shapefile {
 		return Objects.firstNonNull( // TODO ?
 				featureSource.getSchema().getCoordinateReferenceSystem(),
 				DEFAULT_SOURCE_CRS);
+	}
+	
+	public Coordinate translateForInset(String featureName, Coordinate coordinate) {
+		if (Collections2.transform(insets, new Function<Inset, String>() { // TODO no
+			@Override
+			public String apply(Inset inset) {
+				return inset.featureName();
+			}			
+		}).contains(featureName)) {
+			return null; // TODO
+		}
+		
+		return coordinate;
 	}
 
 	@Override
@@ -144,6 +164,59 @@ public enum Shapefile {
 		}
 	}
 	
+	
+	public static class Inset {
+		public static final Inset ALASKA = Inset.of("Alaska", new Coordinate(), new Coordinate(), 0.0, 0.0); // TODO real values
+
+		private final String featureName;
+		private final Coordinate southwestCoordinate;
+		private final Coordinate northeastCoordinate;
+		private final double longitudeTranslation;
+		private final double latitudeTranslation;
+
+		public Inset(String featureName, Coordinate southwestCoordinate,
+				Coordinate northeastCoordinate, double longitudeTranslation,
+				double latitudeTranslation) {
+			this.featureName = featureName;
+			this.southwestCoordinate = southwestCoordinate;
+			this.northeastCoordinate = northeastCoordinate;
+			this.longitudeTranslation = longitudeTranslation;
+			this.latitudeTranslation = latitudeTranslation;
+		}
+		private static Inset of(String featureName, Coordinate southwestCoordinate,
+				Coordinate northeastCoordinate, double longitudeTranslation,
+				double latitudeTranslation) {
+			return new Inset(featureName, southwestCoordinate, northeastCoordinate,
+					longitudeTranslation, latitudeTranslation);
+		}
+		
+		
+		public Coordinate translate(Coordinate coordinate) {
+			return new Coordinate(
+					coordinate.x + longitudeTranslation,
+					coordinate.y + latitudeTranslation);
+		}
+		
+		public String featureName() {
+			return featureName;
+		}
+		
+		public Coordinate southwestCoordinate() {
+			return southwestCoordinate;
+		}
+		
+		public Coordinate northeastCoordinate() {
+			return northeastCoordinate;
+		}
+		
+		public double longitudeTranslation() {
+			return longitudeTranslation;
+		}
+		
+		public double latitudeTranslation() {
+			return latitudeTranslation;
+		}
+	}
 
 	public static class AnchorPoint {
 		public static final Shapefile.AnchorPoint NEAR_ALASKA =
