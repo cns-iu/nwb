@@ -1,6 +1,7 @@
 package edu.iu.sci2.database.scholarly.model.entity;
 
 import static edu.iu.sci2.database.scopus.load.EntityUtils.putPK;
+import static edu.iu.sci2.database.scopus.load.EntityUtils.putValue;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -15,11 +16,16 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Editor extends RowItem<Editor> {
 	public static enum Field implements DBField {
-		EDITORS_DOCUMENT_FK,
-		EDITORS_PERSON_FK;
+		EDITORS_DOCUMENT_FK(DerbyFieldType.FOREIGN_KEY),
+		EDITORS_PERSON_FK(DerbyFieldType.FOREIGN_KEY),
+		ORDER_LISTED(DerbyFieldType.INTEGER);
 
+		private final DerbyFieldType fieldType;
+		private Field(DerbyFieldType type) {
+			this.fieldType = type;
+		}
 		public DerbyFieldType type() {
-			return DerbyFieldType.FOREIGN_KEY;
+			return this.fieldType;
 		}
 	}
 	
@@ -37,11 +43,13 @@ public class Editor extends RowItem<Editor> {
 	public static List<Editor> makeEditors(Document document,
 			List<Person> people) {
 		List<Editor> editors = new ArrayList<Editor>();
-
+		int sequence = 1;
+		
 		for (Person p : people) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 			putPK(attribs, Field.EDITORS_DOCUMENT_FK, document);
 			putPK(attribs, Field.EDITORS_PERSON_FK, p);
+			putValue(attribs, Field.ORDER_LISTED, sequence++);
 			
 			editors.add(new Editor(attribs));
 		}

@@ -1,6 +1,7 @@
 package edu.iu.sci2.database.scholarly.model.entity;
 
 import static edu.iu.sci2.database.scopus.load.EntityUtils.putPK;
+import static edu.iu.sci2.database.scopus.load.EntityUtils.putValue;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -16,11 +17,16 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	public static enum Field implements DBField {
-		DOCUMENT_KEYWORDS_DOCUMENT_FK,
-		DOCUMENT_KEYWORDS_KEYWORD_FK;
-
+		DOCUMENT_KEYWORDS_DOCUMENT_FK(DerbyFieldType.FOREIGN_KEY),
+		DOCUMENT_KEYWORDS_KEYWORD_FK(DerbyFieldType.FOREIGN_KEY),
+		ORDER_LISTED(DerbyFieldType.INTEGER);
+		
+		private final DerbyFieldType fieldType;
+		private Field(DerbyFieldType type) {
+			this.fieldType = type;
+		}
 		public DerbyFieldType type() {
-			return DerbyFieldType.FOREIGN_KEY;
+			return this.fieldType;
 		}
 	}
 	
@@ -36,11 +42,14 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	public static Iterable<DocumentKeyword> makeDocumentKeywords(
 			Document document, List<Keyword> keywords) {
 		List<DocumentKeyword> documentKeywords = Lists.newArrayList();
+		int keywordNumber = 1;
 		
 		for (Keyword k : keywords) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
+			
 			putPK(attribs, Field.DOCUMENT_KEYWORDS_DOCUMENT_FK, document);
 			putPK(attribs, Field.DOCUMENT_KEYWORDS_KEYWORD_FK, k);
+			putValue(attribs, Field.ORDER_LISTED, keywordNumber++);
 			
 			documentKeywords.add(new DocumentKeyword(attribs));
 		}
