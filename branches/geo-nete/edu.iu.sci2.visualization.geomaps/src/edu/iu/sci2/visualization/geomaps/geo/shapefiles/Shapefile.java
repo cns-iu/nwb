@@ -166,28 +166,20 @@ public enum Shapefile {
 	
 	
 	public static class Inset {
-		public static final Inset ALASKA = Inset.of("Alaska", new Coordinate(), new Coordinate(), 0.0, 0.0); // TODO real values
+		public static final Inset ALASKA = Inset.of("Alaska", +20.0, -40.0); // TODO real values
 
 		private final String featureName;
-		private final Coordinate southwestCoordinate;
-		private final Coordinate northeastCoordinate;
 		private final double longitudeTranslation;
 		private final double latitudeTranslation;
 
-		public Inset(String featureName, Coordinate southwestCoordinate,
-				Coordinate northeastCoordinate, double longitudeTranslation,
-				double latitudeTranslation) {
+		public Inset(String featureName, double longitudeTranslation, double latitudeTranslation) {
 			this.featureName = featureName;
-			this.southwestCoordinate = southwestCoordinate;
-			this.northeastCoordinate = northeastCoordinate;
 			this.longitudeTranslation = longitudeTranslation;
 			this.latitudeTranslation = latitudeTranslation;
 		}
-		private static Inset of(String featureName, Coordinate southwestCoordinate,
-				Coordinate northeastCoordinate, double longitudeTranslation,
-				double latitudeTranslation) {
-			return new Inset(featureName, southwestCoordinate, northeastCoordinate,
-					longitudeTranslation, latitudeTranslation);
+		private static Inset of(
+				String featureName, double longitudeTranslation, double latitudeTranslation) {
+			return new Inset(featureName, longitudeTranslation, latitudeTranslation);
 		}
 		
 		
@@ -199,14 +191,6 @@ public enum Shapefile {
 		
 		public String featureName() {
 			return featureName;
-		}
-		
-		public Coordinate southwestCoordinate() {
-			return southwestCoordinate;
-		}
-		
-		public Coordinate northeastCoordinate() {
-			return northeastCoordinate;
 		}
 		
 		public double longitudeTranslation() {
