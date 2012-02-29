@@ -17,6 +17,7 @@ import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
+import edu.iu.sci2.visualization.bipartitenet.PageDirector.Layout;
 import edu.iu.sci2.visualization.bipartitenet.component.CanvasContainer;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
@@ -35,42 +36,44 @@ public class LongLabelRunner {
 		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "totaldesirability", "linkdesirability");
 		BipartiteGraphDataModel model = importer.constructModelFromFile(LongLabelRunner.class.getResourceAsStream("long-labels.nwb"));
 		
-		renderOnScreen(model);
-		renderToPNG(model);
-		renderToEps(model);
+		PageDirector.Layout layout = PageDirector.Layout.SQUARE;
+		
+		renderOnScreen(model, layout);
+		renderToPNG(model, layout);
+		renderToEps(model, layout);
 	}
 
-	private static void renderToPNG(BipartiteGraphDataModel model) throws IOException {
-		BufferedImage img = new BufferedImage(PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
+	private static void renderToPNG(BipartiteGraphDataModel model, Layout layout) throws IOException {
+		BufferedImage img = new BufferedImage(layout.getWidth(), layout.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = img.createGraphics();
 		g.setPaint(Color.white);
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File("BLAH.png"));
 	}
 	
-	private static void renderOnScreen(BipartiteGraphDataModel model) {
+	private static void renderOnScreen(BipartiteGraphDataModel model, Layout layout) {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setSize(PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT);
+		f.setSize(layout.getWidth(), layout.getHeight());
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
 		cc.add(r);
 		f.getContentPane().add(cc);
 		f.setVisible(true);
 	}
 
-	private static void renderToEps(BipartiteGraphDataModel model) throws IOException {
+	private static void renderToEps(BipartiteGraphDataModel model, Layout layout) throws IOException {
  		OutputStream out = new FileOutputStream("BLAH.eps");
 		EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
-		g2d.setupDocument(out, PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT);
-		g2d.setClip(0, 0, PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT);
+		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
+		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());
 //		g2d.drawString("Gah, does this show up as a string?", 10, 10);
-		PageDirector r = new PageDirector(model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
 		r.paint(g2d);
 		g2d.finish();
 		out.close();

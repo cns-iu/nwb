@@ -26,11 +26,9 @@ public class NodeView implements Paintable {
 	}
 
 	public int getCenterToTextDistance() {
-		return getMaxRadius() + NODE_TEXT_PADDING;
-	}
-
-	public int getMaxRadius() {
-		return PageDirector.MAX_RADIUS;
+		// round up
+		// no, this is wrong
+		return Math.round(0.5f + (float) maxHeight + NODE_TEXT_PADDING);
 	}
 
 	private Node getNode() {

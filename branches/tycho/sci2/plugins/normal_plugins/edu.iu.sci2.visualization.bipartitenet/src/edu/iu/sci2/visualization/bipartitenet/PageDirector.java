@@ -25,25 +25,83 @@ import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScale;
 
 public class PageDirector implements Paintable {
+	public static enum Layout {
+		PRINT(792, 612, 
+				new LineSegment2D(296, 100, 296, 412),
+				new LineSegment2D(792 - 296, 100, 792 - 296, 412),
+				12),
+		WEB(1280, 960, 
+				new LineSegment2D(480, 100, 480, 780),
+				new LineSegment2D(800, 100, 800, 780),
+				20),
+		SQUARE(800, 800, 
+				new LineSegment2D(300, 100, 300, 500), 
+				new LineSegment2D(500, 100, 500, 500),
+				15);
+		private final int width;
+		private final int height;
+		private final LineSegment2D leftLine;
+		private final LineSegment2D rightLine;
+		private final int maxNodeRadius;
+
+		private Layout(int width, int height, LineSegment2D leftLine, LineSegment2D rightLine, int maxNodeRadius) {
+			this.width = width;
+			this.height = height;
+			this.leftLine = leftLine;
+			this.rightLine = rightLine;
+			this.maxNodeRadius = maxNodeRadius;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public int getHeight() {
+			return height;
+		}
+
+		LineSegment2D getLeftLine() {
+			return leftLine;
+		}
+
+		LineSegment2D getRightLine() {
+			return rightLine;
+		}
+		
+		Point2D getLeftTitlePosition() {
+			return leftLine.getFirstPoint().translate(maxNodeRadius, -50);
+		}
+		
+		Point2D getRightTitlePosition() {
+			return rightLine.getFirstPoint().translate(- maxNodeRadius, -50);
+		}
+		
+		Point2D getCircleLegendPosition() {
+			return leftLine.getLastPoint().translate(-50, 50);
+		}
+		
+		Point2D getEdgeLegendPosition() {
+			return rightLine.getLastPoint().translate(50, 50);
+		}
+
+		public int getMaxNodeRadius() {
+			return maxNodeRadius;
+		}
+	}
+	
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	public static final int PAGE_HEIGHT = 800;
-	public static final int PAGE_WIDTH = 800;
-	public static final int MAX_RADIUS = 15;
-
-	private static final LineSegment2D LEFT_LINE = new LineSegment2D(300, 100, 300, 500);
-	private static final LineSegment2D RIGHT_LINE = new LineSegment2D(500, 100, 500, 500);
-	
 	public static final Font BASIC_FONT = findBasicFont();
-	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 16);
+	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
 
-	private static final Point2D CIRCLE_LEGEND_POSITION = new Point2D(250, 600);
-	private static final Point2D LEFT_TITLE_POSITION = LEFT_LINE.getFirstPoint().translate(MAX_RADIUS, -50);
-	private static final Point2D RIGHT_TITLE_POSITION = RIGHT_LINE.getFirstPoint().translate(- MAX_RADIUS, -50);
-	private static final Point2D EDGE_LEGEND_POSITION = new Point2D(550, 600);
+	private final Layout layout;
 
-	public PageDirector(final BipartiteGraphDataModel dataModel, final String leftSideType, String leftSideTitle, final String rightSideType, final String rightSideTitle) {
+	public PageDirector(final Layout layout, 
+			final BipartiteGraphDataModel dataModel, 
+			final String leftSideType, final String leftSideTitle, 
+			final String rightSideType, final String rightSideTitle) {
+		this.layout = layout;
 		this.dataModel = dataModel;
 
 		// Make codings for the nodes and edges (size and color)
@@ -60,16 +118,17 @@ public class PageDirector implements Paintable {
 		}
 		
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
-				LEFT_LINE, RIGHT_LINE, nodeCoding, edgeCoding);
+				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), nodeCoding, edgeCoding);
 		painter.add(renderer);
 		
 		// The titles of the two columns
-		painter.add(new RightAlignedLabel(LEFT_TITLE_POSITION, leftSideTitle, TITLE_FONT));
+		painter.add(new RightAlignedLabel(layout.getLeftTitlePosition(), leftSideTitle, TITLE_FONT));
+		final Point2D rightTitlePosition = layout.getRightTitlePosition();
 		painter.add(new Paintable() {
 			@Override
 			public void paint(Graphics2D g) {
 				g.setFont(TITLE_FONT);
-				g.drawString(rightSideTitle, (float) RIGHT_TITLE_POSITION.getX(), (float) RIGHT_TITLE_POSITION.getY());
+				g.drawString(rightSideTitle, (float) rightTitlePosition.getX(), (float) rightTitlePosition.getY());
 			}
 		});
 	}
@@ -102,7 +161,7 @@ public class PageDirector implements Paintable {
 				Math.max(
 					dataModel.getLeftNodes().size(), 
 					dataModel.getRightNodes().size());
-		return Math.min(MAX_RADIUS, LEFT_LINE.getLength() / maxNodesOnOneSide);
+		return Math.min(layout.getMaxNodeRadius(), layout.getLeftLine().getLength() / maxNodesOnOneSide);
 	}
 
 	private Scale<Double, Double> makeNodeCoding() {
@@ -132,16 +191,16 @@ public class PageDirector implements Paintable {
 		ImmutableList<Double> labels = 
 				ImmutableList.<Double>builder().add(0.0).addAll(coding.getExtrema()).build();
 		CircleRadiusLegend legend = new CircleRadiusLegend(
-				CIRCLE_LEGEND_POSITION, "Circle Area: "
+				layout.getCircleLegendPosition(), "Circle Area: "
 						+ dataModel.getNodeValueAttribute(), coding, labels,
-				MAX_RADIUS);
+				layout.getMaxNodeRadius());
 		return legend;
 	}
 
 	private Paintable makeEdgeLegend(Scale<Double, Color> edgeCoding) {
 		ImmutableList<Double> edgeLegendLabels = 
 				ImmutableList.<Double>builder().add(0.0).addAll(edgeCoding.getExtrema()).build();
-		EdgeWeightLegend legend = new EdgeWeightLegend(EDGE_LEGEND_POSITION, 
+		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
 				"Edge Weight: " + dataModel.getEdgeValueAttribute(),
 				edgeCoding, edgeLegendLabels);
 		return legend;

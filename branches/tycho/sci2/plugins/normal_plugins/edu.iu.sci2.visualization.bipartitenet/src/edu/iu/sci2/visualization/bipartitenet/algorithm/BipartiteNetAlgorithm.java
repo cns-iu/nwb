@@ -26,6 +26,7 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
+import edu.iu.sci2.visualization.bipartitenet.PageDirector.Layout;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
@@ -59,7 +60,9 @@ public class BipartiteNetAlgorithm implements Algorithm {
 			if (!model.hasAnyNodes()) {
 				throw new AlgorithmExecutionException("Input graph has no nodes, can't make a meaningful graph.  Stopping.");
 			}
-			PageDirector r = new PageDirector(model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
+			PageDirector r = new PageDirector(Layout.SQUARE, model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
+			
+			// TODO Decide whether to include the PNG rendering in the desktop version.  It doesn't work for the NETE people (javax.imageio.ImageIO isn't in their version of Java maybe?)
 			
 			Data pngData = drawToPNGFile(r);
 			Data psData = drawToPSFile(r);
@@ -79,8 +82,10 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		OutputStream out = new FileOutputStream(outFile);
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
-		g2d.setupDocument(out, PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT);
-		g2d.setClip(0, 0, PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT);
+		
+		PageDirector.Layout layout = PageDirector.Layout.SQUARE;
+		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
+		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		paintable.paint(g2d);
 		g2d.finish();
 		out.close();
@@ -95,7 +100,8 @@ public class BipartiteNetAlgorithm implements Algorithm {
 	}
 
 	private Data drawToPNGFile(Paintable paintable) throws IOException {
-		BufferedImage img = new BufferedImage(PageDirector.PAGE_WIDTH, PageDirector.PAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
+		PageDirector.Layout layout = PageDirector.Layout.SQUARE;
+		BufferedImage img = new BufferedImage(layout.getWidth(), layout.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = img.createGraphics();
 		g.setPaint(Color.white);
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
