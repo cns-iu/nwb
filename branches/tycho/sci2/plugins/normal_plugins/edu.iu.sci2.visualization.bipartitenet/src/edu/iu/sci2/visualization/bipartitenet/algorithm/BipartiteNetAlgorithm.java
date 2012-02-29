@@ -40,10 +40,12 @@ public class BipartiteNetAlgorithm implements Algorithm {
 	private final String rightSideType;
 	private final String leftSideTitle;
 	private final String rightSideTitle;
+	private final Layout layout;
 
-	public BipartiteNetAlgorithm(Data parentData, File nwbFile, String nodeWeightColumn, String edgeWeightColumn,
+	public BipartiteNetAlgorithm(Data parentData, File nwbFile, Layout layout, String nodeWeightColumn, String edgeWeightColumn,
 			String leftSideType, String leftSideTitle, String rightSideType, String rightSideTitle, LogService log) {
 		this.parentData = parentData;
+		this.layout = layout;
 		this.leftSideType = leftSideType;
 		this.leftSideTitle = leftSideTitle;
 		this.rightSideType = rightSideType;
@@ -60,9 +62,7 @@ public class BipartiteNetAlgorithm implements Algorithm {
 			if (!model.hasAnyNodes()) {
 				throw new AlgorithmExecutionException("Input graph has no nodes, can't make a meaningful graph.  Stopping.");
 			}
-			PageDirector r = new PageDirector(Layout.SQUARE, model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
-			
-			// TODO Decide whether to include the PNG rendering in the desktop version.  It doesn't work for the NETE people (javax.imageio.ImageIO isn't in their version of Java maybe?)
+			PageDirector r = new PageDirector(layout, model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
 			
 			Data pngData = drawToPNGFile(r);
 			Data psData = drawToPSFile(r);
@@ -83,7 +83,6 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
 		
-		PageDirector.Layout layout = PageDirector.Layout.SQUARE;
 		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
 		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		paintable.paint(g2d);
@@ -100,7 +99,6 @@ public class BipartiteNetAlgorithm implements Algorithm {
 	}
 
 	private Data drawToPNGFile(Paintable paintable) throws IOException {
-		PageDirector.Layout layout = PageDirector.Layout.SQUARE;
 		BufferedImage img = new BufferedImage(layout.getWidth(), layout.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = img.createGraphics();
 		g.setPaint(Color.white);
@@ -118,7 +116,6 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		metadata.put(DataProperty.PARENT, parentData);
 
 		return outData;
-
 	}
 
 }
