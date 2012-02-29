@@ -227,38 +227,39 @@ public class JournalsMapAlgorithm implements Algorithm {
 						.intValue());
 		visualization.render(new GraphicsState(g2d),
 				visualization.getDimension());
-
-		try {
-			List<CategoryBreakdownDocumentRenderer> categoryBreakdowns = getCategoryBreakdowns(mapOfScience);
-			for (CategoryBreakdownDocumentRenderer categoryBreakdown : categoryBreakdowns) {
-				g2d.nextPage();
-				g2d.setGraphicContext(new GraphicContext());
-				g2d.setupDocument(
-						out,
-						Double.valueOf(
-								categoryBreakdown.getDimension().getWidth())
-								.intValue(),
-						Double.valueOf(
-								categoryBreakdown.getDimension()
-										.getHeight()).intValue());
-				g2d.setClip(
-						0,
-						0,
-						Double.valueOf(
-								categoryBreakdown.getDimension().getWidth())
-								.intValue(),
-						Double.valueOf(
-								categoryBreakdown.getDimension()
-										.getHeight()).intValue());
-				categoryBreakdown.render(new GraphicsState(g2d),
-						visualization.getDimension());
+		if (this.webVersion == false) {
+			try {
+				List<CategoryBreakdownDocumentRenderer> categoryBreakdowns = getCategoryBreakdowns(mapOfScience);
+				for (CategoryBreakdownDocumentRenderer categoryBreakdown : categoryBreakdowns) {
+					g2d.nextPage();
+					g2d.setGraphicContext(new GraphicContext());
+					g2d.setupDocument(
+							out,
+							Double.valueOf(
+									categoryBreakdown.getDimension().getWidth())
+									.intValue(),
+							Double.valueOf(
+									categoryBreakdown.getDimension()
+											.getHeight()).intValue());
+					g2d.setClip(
+							0,
+							0,
+							Double.valueOf(
+									categoryBreakdown.getDimension().getWidth())
+									.intValue(),
+							Double.valueOf(
+									categoryBreakdown.getDimension()
+											.getHeight()).intValue());
+					categoryBreakdown.render(new GraphicsState(g2d),
+							visualization.getDimension());
+				}
+			} catch (CategoryBreakdownCreationException e) {
+				this.logger
+						.log(LogService.LOG_ERROR,
+								"There was a problem creating the detailed summary of categories and their journals.  The output postscript file may have errors."
+										+ System.getProperty("line.separator")
+										+ e.getMessage(), e);
 			}
-		} catch (CategoryBreakdownCreationException e) {
-			this.logger
-					.log(LogService.LOG_ERROR,
-							"There was a problem creating the detailed summary of categories and their journals.  The output postscript file may have errors."
-									+ System.getProperty("line.separator")
-									+ e.getMessage(), e);
 		}
 		g2d.finish();
 	}
