@@ -269,12 +269,11 @@ public class ScopusTableModelParser {
 		putField(attribs, Document.Field.PUBLICATION_YEAR, row, ScopusField.YEAR);
 		putField(attribs, Document.Field.PUBLICATION_DATE, row, ScopusField.YEAR);
 		putField(attribs, Document.Field.CITED_YEAR, row, ScopusField.YEAR);
-		putField(attribs, Document.Field.CITED_REFERENCE_COUNT, row, ScopusField.CITED_BY);
+		putField(attribs, Document.Field.TIMES_CITED, row, ScopusField.CITED_BY);
 		putField(attribs, Document.Field.ISBN, row, ScopusField.ISBN);
 		putField(attribs, Document.Field.ISSUE, row, ScopusField.ISSUE);
 		putField(attribs, Document.Field.LANGUAGE, row, ScopusField.LANGUAGE_OF_ORIGINAL_DOCUMENT);
 		putField(attribs, Document.Field.DOCUMENT_VOLUME, row, ScopusField.VOLUME);
-		
 		
 		
 		// Make our own Page Count, since it's often missing from the file.
