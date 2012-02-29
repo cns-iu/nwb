@@ -132,7 +132,10 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 			if (normalColumnName.contains("journal")) {
 				if (normalColumnName.contains("name")
 						|| normalColumnName.contains("title")) {
-					return 100;
+					if (normalColumnName.contains("full")) {
+						return 100;
+					}
+					return 50;
 				}
 
 				return 4;
