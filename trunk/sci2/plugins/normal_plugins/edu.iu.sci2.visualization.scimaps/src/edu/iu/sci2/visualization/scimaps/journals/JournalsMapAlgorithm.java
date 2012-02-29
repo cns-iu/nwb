@@ -78,7 +78,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		Map<String, Integer> journalNameAndHitCount = getJournalNameAndHitCount(
-				this.table, this.journalColumnName);
+				this.table, this.journalColumnName, this.logger);
 		RenderableVisualization visualization = null;
 
 		MapOfScience mapOfScience = new MapOfScience(journalNameAndHitCount);
@@ -109,8 +109,20 @@ public class JournalsMapAlgorithm implements Algorithm {
 	}
 
 	private static Map<String, Integer> getJournalNameAndHitCount(
-			Table myTable, String myJournalColumnName)
+			Table myTable, String myJournalColumnName, LogService logger)
 			throws AlgorithmExecutionException {
+		if (myTable == null) {
+			String message = "The table may not be null.";
+			throw new IllegalArgumentException(message);
+		}
+		if (myJournalColumnName == null) {
+			String message = "The myJournalColumnName may not be null.";
+			throw new IllegalArgumentException(message);
+		}
+		if (logger == null) {
+			String message = "The logger may not be null.";
+			throw new IllegalArgumentException(message);
+		}
 		Map<String, Integer> journalCounts = new HashMap<String, Integer>();
 
 		for (Iterator<Tuple> rows = myTable.tuples(); rows.hasNext();) {
@@ -118,6 +130,10 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 			if (row.canGetString(myJournalColumnName)) {
 				String journalName = row.getString(myJournalColumnName);
+				if (journalName == null) {
+					logger.log(LogService.LOG_WARNING, "A row representing journal names was null and was ignored.");
+					continue;
+				}
 				incrementHitCount(journalCounts, journalName);
 			} else {
 				String message = "Error reading table: Could not read value in column "
