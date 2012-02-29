@@ -154,7 +154,7 @@ show
 
 0 0 moveto 
 otherFont
-(NIH funding data rendered using 'Temporal Bar Graph') show
+(NIH funding data rendered using "Temporal Bar Graph") show
 0 otherFontSize lineSpacing add translate
 
 dup % (query) (query)
