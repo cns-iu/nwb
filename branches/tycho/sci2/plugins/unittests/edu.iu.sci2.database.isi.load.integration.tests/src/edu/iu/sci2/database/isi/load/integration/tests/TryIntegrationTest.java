@@ -22,7 +22,6 @@ import org.cishell.service.database.Database;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.FileUtilities;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
@@ -36,7 +35,7 @@ public class TryIntegrationTest {
 	
 	/**
 	 * Sets up logging, so that you can see all the SQL statements.  They're logged to "derby.log"
-	 * in the root directory of this plugin.
+	 * in the "database" directory of this plugin (after you've run it). 
 	 * @throws Exception 
 	 */
 	@BeforeClass
