@@ -57,7 +57,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 } def
 
 /datelineLineWidth { 1 } def
-/datelineDashSize { 15 } def
+/datelineDashSize { 2 } def
 /dateline { % (label) x => -
 	gsave
 	visualizationLeft visualizationBottom translate
