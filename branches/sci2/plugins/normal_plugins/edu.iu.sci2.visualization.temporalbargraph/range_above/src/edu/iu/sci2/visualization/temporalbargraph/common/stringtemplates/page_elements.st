@@ -229,7 +229,7 @@ queryinfoDefinitions(queryInfoFontSize) ::= <<
 /queryInfoFontSize { <queryInfoFontSize> } def
 /queryInfo { % (query) (info)
 	gsave
-	0.75 0.75 0.75 setrgbcolor
+	0 0 0 setrgbcolor
 	/ArialMT queryInfoFontSize selectfont
 	queryinfoLeft % x
 	queryinfoBottom queryInfoFontSize queryInfoFontSize add add % y
@@ -265,7 +265,7 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 	/howtoTextFontSize { <howtoTextFontSize> } def
 	gsave
 	/howtoLineSpacing { 1.0 } def
-	0.6 0.6 0.6 setrgbcolor % #999999
+	0 0 0 setrgbcolor
 	/ArialMT howtoTextFontSize selectfont
 	howtoLeft howtoBottom translate
 	0 0 moveto

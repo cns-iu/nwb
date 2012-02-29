@@ -154,7 +154,7 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		
 		double otherFontSize = 10;
 		String otherFontType = "ArialMT";
-		Color otherFontColor = new Color(0x999999);
+		Color otherFontColor = new Color(0x000000);
 		attributes.put("otherFontSize", Double.toString(otherFontSize));
 		attributes.put("otherFontType", otherFontType);
 		float[] otherFontRGB = otherFontColor.getRGBColorComponents(null);
