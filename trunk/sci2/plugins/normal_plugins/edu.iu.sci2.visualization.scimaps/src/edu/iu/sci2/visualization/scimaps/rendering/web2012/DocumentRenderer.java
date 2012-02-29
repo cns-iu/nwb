@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
+import edu.iu.sci2.visualization.scimaps.rendering.print2012.HowToArea;
 import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
@@ -61,6 +62,9 @@ public class DocumentRenderer implements RenderableVisualization {
 		String legendSubtitle = "Unclasified: "
 				+ mapOfScience.prettyCountOfUnmappedPublications();
 
+		HowToArea howto = new HowToArea();
+		howto.render(state, 600.0f, 760.0f);
+		
 		CircleSizeLegend legend = new CircleSizeLegend(
 				mapOfScience.getMappedWeights(), scalingFactor, legendTitle,
 				legendSubtitle);
