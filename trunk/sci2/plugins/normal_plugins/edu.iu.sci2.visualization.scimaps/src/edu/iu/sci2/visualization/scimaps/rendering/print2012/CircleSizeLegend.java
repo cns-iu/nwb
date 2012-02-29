@@ -131,7 +131,7 @@ public class CircleSizeLegend {
 
 		// Draw title				
 		state.setFontSize(CircleSizeLegend.KEY_LABEL_FONT_SIZE);
-		state.setGray(CircleSizeLegend.KEY_LABEL_BRIGHTNESS);
+		state.current.setColor(Color.black);
 		state.current.drawString(getLegendTitle(), 0, 0);
 		state.current.translate(0, CircleSizeLegend.KEY_LABEL_FONT_SIZE);
 
@@ -144,7 +144,7 @@ public class CircleSizeLegend {
 		
 		//Draw subtitle
 		double subtitleFontSize = 10;
-		Color subtitleColor = Color.darkGray;
+		Color subtitleColor = Color.black;
 		state.setFontSize(subtitleFontSize);
 		state.current.setColor(subtitleColor);
 		state.current.drawString(getLegendSubtitle(), 0, 0);

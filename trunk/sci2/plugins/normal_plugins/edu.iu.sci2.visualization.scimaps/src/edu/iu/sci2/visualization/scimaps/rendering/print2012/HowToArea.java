@@ -39,7 +39,7 @@ public class HowToArea {
 		state.current.drawString(this.title, 0, 0);
 		state.current.translate(0, titleFontSize);
 
-		Color bodyColor = Color.gray;
+		Color bodyColor = Color.black;
 		double bodyFontSize = 12;
 		state.current.setColor(bodyColor);
 		state.setFontSize(bodyFontSize);

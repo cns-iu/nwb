@@ -56,7 +56,7 @@ public class Header {
 		double titleFontSize = 16;
 		Color titleColor = new Color(0, 0, 0);
 		double slugFontSize = 12;
-		Color slugColor = new Color(100, 100, 100);
+		Color slugColor = Color.black;
 		state.setFontSize(titleFontSize);
 		state.current.translate(leftMargin, topMargin);
 

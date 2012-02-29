@@ -16,7 +16,7 @@ public class CopyrightInfo {
 		state.save();
 		state.current.translate(0, topBound);
 		
-		Color copyrightColor = Color.gray;
+		Color copyrightColor = Color.black;
 		double copyrightFontSize = 12;
 		state.current.setColor(copyrightColor);
 		state.setFontSize(copyrightFontSize);
