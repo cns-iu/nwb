@@ -42,6 +42,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /labelbarSpacing { visualizationLabelBarFontSize } def
 /labelbarLabel { % (label) [x] [y] => -
 	gsave
+	0 0 0 setrgbcolor
 	exch  % [y] [x]
 	dup  % [y] [x] [x]
 	3 -1 roll % [x] [x] [y]
