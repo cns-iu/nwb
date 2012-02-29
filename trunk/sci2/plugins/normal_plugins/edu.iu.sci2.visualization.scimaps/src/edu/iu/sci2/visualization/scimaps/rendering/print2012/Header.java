@@ -47,7 +47,7 @@ public class Header {
 						messageForm.format(messageArguments));
 		DateTime dateTime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("MMMM dd, yyyy | KK:mm:ss a zzz");
+				.forPattern("MMMM dd, yyyy | KK:mm a zzz");
 		dateSlug = formatter.print(dateTime);
 	}
 
