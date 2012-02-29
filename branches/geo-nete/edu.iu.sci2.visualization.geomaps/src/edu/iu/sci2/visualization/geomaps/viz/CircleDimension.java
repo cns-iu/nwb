@@ -65,12 +65,7 @@ public enum CircleDimension implements VizDimension {
 												interpolator.inRange().pointB());
 								double unscaledValueForMidrangeArea = scaling().invert(midpointOfScaledData);
 								double midrangeArea = interpolator.apply(midpointOfScaledData);
-								
-								System.out.println("interpolator.inRange() = " + interpolator.inRange());
-								System.out.println("midpointOfScaledData = " + midpointOfScaledData);
-								System.out.println("unscaledValueForMidrangeArea = " + unscaledValueForMidrangeArea);
-								System.out.println("midrangeArea = " + midrangeArea);
-								
+
 								AreaLegend areaLegend =
 										new AreaLegend(generalLegend, unscaledValueForMidrangeArea, midrangeArea);
 								

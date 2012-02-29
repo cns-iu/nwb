@@ -99,15 +99,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 				"midLabel", doubleFormatter.format(areaLegend.dataValueForOutputMidpoint()));
 		invocationTemplate.setAttribute(
 				"maxLabel", doubleFormatter.format(areaLegend.dataRange().pointB()));
-		
-		System.out.println("areaLegend.getNumericFormatType() = " + areaLegend.numericFormatType());
-		System.out.println("areaLegend.getDataRange().getPointA() = " + areaLegend.dataRange().pointA());
-		System.out.println("doubleFormatter.format(areaLegend.getDataRange().getPointA()) = " + doubleFormatter.format(areaLegend.dataRange().pointA()));
-		System.out.println("areaLegend.getDataValueForOutRangeMidpoint() = " + areaLegend.dataValueForOutputMidpoint());
-		System.out.println("doubleFormatter.format(areaLegend.getDataValueForOutRangeMidpoint()) = " + doubleFormatter.format(areaLegend.dataValueForOutputMidpoint()));
-		System.out.println("areaLegend.getDataRange().getPointB() = " + areaLegend.dataRange().pointB());
-		System.out.println("doubleFormatter.format(areaLegend.getDataRange().getPointB()) = " + doubleFormatter.format(areaLegend.dataRange().pointB()));
-		
+
 		invocationTemplate.setAttribute(
 				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(

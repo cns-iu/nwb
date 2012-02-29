@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.geo.shapefiles;
 
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -9,22 +10,26 @@ import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.vividsolutions.jts.geom.Coordinate;
-
+import com.vividsolutions.jts.geom.Geometry;
+import org.geotools.referencing.operation.transform.AffineTransform2D;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 
@@ -34,8 +39,7 @@ public enum Shapefile {
 			"United States",
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
-			ImmutableSet.of(
-					Inset.ALASKA),
+			ImmutableSet.of(Inset.ALASKA),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALEUTIAN_ISLANDS,
 					AnchorPoint.NEAR_PUERTO_RICO)),
@@ -71,6 +75,7 @@ public enum Shapefile {
 	private final KnownProjectedCRSDescriptor defaultProjectedCrs;
 	private final SimpleFeatureSource featureSource;
 	private final ImmutableSet<Inset> insets;
+	private final transient ImmutableMap<String, Inset> insetForFeatureName;
 	private final ImmutableCollection<AnchorPoint> anchorPoints;
 
 	private Shapefile(
@@ -85,6 +90,13 @@ public enum Shapefile {
 		this.defaultProjectedCrs = defaultProjectedCrs;
 		this.insets = ImmutableSet.copyOf(insets);
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
+		
+		this.insetForFeatureName = Maps.uniqueIndex(insets, new Function<Inset, String>() {
+			@Override
+			public String apply(Inset inset) {
+				return inset.featureName().toLowerCase(); // TODO fix normalization at both ends
+			}			
+		});
 		
 		try {
 			DataStore dataStore = new ShapefileDataStore(url);
@@ -101,17 +113,18 @@ public enum Shapefile {
 				DEFAULT_SOURCE_CRS);
 	}
 	
-	public Coordinate translateForInset(String featureName, Coordinate coordinate) {
-		if (Collections2.transform(insets, new Function<Inset, String>() { // TODO no
-			@Override
-			public String apply(Inset inset) {
-				return inset.featureName();
-			}			
-		}).contains(featureName)) {
-			return null; // TODO
+	public Geometry translateForInset(String rawFeatureName, Geometry geometry) throws MismatchedDimensionException, TransformException {
+		String featureName = rawFeatureName.toLowerCase(); // TODO fix normalization at both ends
+		
+		if (!insetForFeatureName.containsKey(featureName)) {
+			return geometry;
 		}
 		
-		return coordinate;
+		return insetForFeatureName.get(featureName).translate(geometry);
+	}
+	
+	public String extractFeatureName(SimpleFeature feature) {
+		return String.valueOf(feature.getAttribute(featureAttributeName));
 	}
 
 	@Override
@@ -133,7 +146,7 @@ public enum Shapefile {
 	
 	public ImmutableCollection<AnchorPoint> anchorPoints() {
 		return anchorPoints;
-	}	
+	}
 	
 	public ReferencedEnvelope getBounds() throws IOException { // TODO
 		ReferencedEnvelope bounds = featureSource.getBounds();
@@ -164,20 +177,31 @@ public enum Shapefile {
 		}
 	}
 	
+//	public FeatureIterator<SimpleFeature> features() {
+//		try {
+//			return Iterators.transform(
+//					featureSource.getFeatures().features(),
+//					new Function<SimpleFeature, SimpleFeature>() {
+//						
+//					});
+//		} catch (IOException e) {
+//			throw new ShapefileFeatureRetrievalException("Error accessing shapefile: " + e.getMessage(), e);
+//		}
+//	}
 	
 	public static class Inset {
-		public static final Inset ALASKA = Inset.of("Alaska", +20.0, -40.0); // TODO real values
+		public static final Inset ALASKA = Inset.translating("Alaska", +20.0, -40.0); // TODO test these values
 
 		private final String featureName;
 		private final double longitudeTranslation;
 		private final double latitudeTranslation;
 
-		public Inset(String featureName, double longitudeTranslation, double latitudeTranslation) {
+		private Inset(String featureName, double longitudeTranslation, double latitudeTranslation) {
 			this.featureName = featureName;
 			this.longitudeTranslation = longitudeTranslation;
 			this.latitudeTranslation = latitudeTranslation;
 		}
-		private static Inset of(
+		public static Inset translating(
 				String featureName, double longitudeTranslation, double latitudeTranslation) {
 			return new Inset(featureName, longitudeTranslation, latitudeTranslation);
 		}
@@ -187,6 +211,13 @@ public enum Shapefile {
 			return new Coordinate(
 					coordinate.x + longitudeTranslation,
 					coordinate.y + latitudeTranslation);
+		}
+		
+		public Geometry translate(Geometry geometry) throws MismatchedDimensionException, TransformException {
+			return JTS.transform(
+					geometry,
+					new AffineTransform2D(AffineTransform.getTranslateInstance(
+							longitudeTranslation, latitudeTranslation)));
 		}
 		
 		public String featureName() {
@@ -206,7 +237,7 @@ public enum Shapefile {
 		public static final Shapefile.AnchorPoint NEAR_ALASKA =
 				AnchorPoint.at(
 						"Near Alaska",
-						new Coordinate(-179,	89 - GeometryProjector.NORTH_POLE_CROP_HEIGHT_IN_DEGREES));
+						new Coordinate(-179, 89 - GeometryProjector.NORTH_POLE_CROP_HEIGHT_IN_DEGREES));
 		public static final Shapefile.AnchorPoint NEAR_ALEUTIAN_ISLANDS =
 				AnchorPoint.at(
 						"Near Aleutian Islands",

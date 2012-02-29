@@ -76,6 +76,7 @@ public class GeoMapViewPS {
 		
 		FeaturePrinter featurePrinter =
 			new FeaturePrinter(
+					geoMap.getShapefile(),
 					geoMap.getShapefile().viewOfFeatureCollection(),
 					geoMap.getGeometryProjector(),
 					geoMapViewPageArea,
@@ -161,11 +162,11 @@ public class GeoMapViewPS {
 			SimpleFeature feature = it.next();
 			Geometry geometry;
 			try {				
-				geometry = geoMap.project((Geometry) feature.getDefaultGeometry());
+				geometry = geoMap.project(geoMap.getShapefile().translateForInset(geoMap.getShapefile().extractFeatureName(feature), (Geometry) feature.getDefaultGeometry()));
 			} catch (IllegalArgumentException e) {
 				// TODO !
-				System.out.println("iae for feature " + feature.getAttribute("NAME"));
-				System.out.println(e.getMessage());
+				System.err.println("IllegalArgumentException for feature " + feature.getAttribute("NAME"));
+				System.err.println(e.getMessage());
 				continue;
 			}
 

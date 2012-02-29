@@ -23,6 +23,7 @@ import org.osgi.service.log.LogService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -31,6 +32,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
@@ -43,6 +45,7 @@ public class FeaturePrinter {
 	public static final double BORDER_LINE_WIDTH = 0.4;
 	public static final String INDENT = "  ";
 	
+	private final Shapefile shapefile;
 	private final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private final GeometryProjector geometryProjector;
 	private final GeoMapViewPageArea geoMapViewPageArea;
@@ -51,10 +54,12 @@ public class FeaturePrinter {
 	private Map<String, Boolean> featureWasColoredMap;
 	
 	public FeaturePrinter(
+			Shapefile shapefile,
 			FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection,
 			GeometryProjector geometryProjector,
 			GeoMapViewPageArea geoMapViewPageArea,
 			String shapefileFeatureNameKey) {
+		this.shapefile = shapefile;
 		this.featureCollection = featureCollection;
 		this.geometryProjector = geometryProjector;
 		this.geoMapViewPageArea = geoMapViewPageArea;
@@ -81,7 +86,7 @@ public class FeaturePrinter {
 					@Override
 					public String apply(FeatureView featureView) {
 						return featureView.getFeatureName();
-					}			
+					}
 				});
 		
 		// Write PostScript to draw and color the features
@@ -173,7 +178,8 @@ public class FeaturePrinter {
 			ImmutableMap<String, FeatureView> featureColorMap)
 				throws IOException, TransformException, AlgorithmExecutionException {
 		Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
-		Geometry geometry = geometryProjector.projectGeometry(rawGeometry);
+		Geometry translatedGeometry = shapefile.translateForInset(shapefile.extractFeatureName(feature), rawGeometry);
+		Geometry geometry = geometryProjector.projectGeometry(translatedGeometry);
 
 		String name = extractNameFromFeature(feature);
 
@@ -190,12 +196,13 @@ public class FeaturePrinter {
 			Geometry subgeometry,
 			BufferedWriter out,
 			Map<String, FeatureView> featureColorMap,
-			String name)
+			final String name)
 				throws IOException {
-		Coordinate[] coordinates = subgeometry.getCoordinates();
-		if (coordinates.length > 0) {
+		List<Coordinate> coordinates = ImmutableList.copyOf(subgeometry.getCoordinates());
+		
+		if (coordinates.size() > 0) {			
 			Coordinate firstCoordinate =
-				geoMapViewPageArea.getDisplayCoordinate(coordinates[0]);
+				geoMapViewPageArea.getDisplayCoordinate(coordinates.get(0));
 
 			out.write(INDENT + "newpath" + "\n");
 			out.write(INDENT + INDENT + (firstCoordinate.x) + " " + (firstCoordinate.y) + " moveto\n");
@@ -215,11 +222,11 @@ public class FeaturePrinter {
 			 * we assume that that line isn't really meant to be drawn, we stroke the path up
 			 * to the last "good" coordinate, and start a new path.
 			 */
-			for (int cc = 1; cc < coordinates.length; cc++) {
+			for (int cc = 1; cc < coordinates.size(); cc++) {
 				Coordinate coordinate =
-					geoMapViewPageArea.getDisplayCoordinate(coordinates[cc]);
+					geoMapViewPageArea.getDisplayCoordinate(coordinates.get(cc));
 				Coordinate previousCoordinate =
-					geoMapViewPageArea.getDisplayCoordinate(coordinates[cc - 1]);
+					geoMapViewPageArea.getDisplayCoordinate(coordinates.get(cc - 1));
 				
 				/* A closed path consisting of two or more points at the same location is a
 				 * degenerate path. A degenerate path will be drawn only if you have set the line
