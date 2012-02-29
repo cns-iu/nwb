@@ -228,40 +228,46 @@ public class JournalsMapAlgorithm implements Algorithm {
 		visualization.render(new GraphicsState(g2d),
 				visualization.getDimension());
 		if (this.webVersion == false) {
-			try {
-				List<CategoryBreakdownDocumentRenderer> categoryBreakdowns = getCategoryBreakdowns(mapOfScience);
-				for (CategoryBreakdownDocumentRenderer categoryBreakdown : categoryBreakdowns) {
-					g2d.nextPage();
-					g2d.setGraphicContext(new GraphicContext());
-					g2d.setupDocument(
-							out,
-							Double.valueOf(
-									categoryBreakdown.getDimension().getWidth())
-									.intValue(),
-							Double.valueOf(
-									categoryBreakdown.getDimension()
-											.getHeight()).intValue());
-					g2d.setClip(
-							0,
-							0,
-							Double.valueOf(
-									categoryBreakdown.getDimension().getWidth())
-									.intValue(),
-							Double.valueOf(
-									categoryBreakdown.getDimension()
-											.getHeight()).intValue());
-					categoryBreakdown.render(new GraphicsState(g2d),
-							visualization.getDimension());
-				}
-			} catch (CategoryBreakdownCreationException e) {
-				this.logger
-						.log(LogService.LOG_ERROR,
-								"There was a problem creating the detailed summary of categories and their journals.  The output postscript file may have errors."
-										+ System.getProperty("line.separator")
-										+ e.getMessage(), e);
-			}
+			addCategoryBreakdownPages(visualization, mapOfScience, out, g2d);
 		}
 		g2d.finish();
+	}
+
+	private void addCategoryBreakdownPages(
+			RenderableVisualization visualization, MapOfScience mapOfScience,
+			OutputStream out, PSDocumentGraphics2D g2d) throws IOException {
+		try {
+			List<CategoryBreakdownDocumentRenderer> categoryBreakdowns = getCategoryBreakdowns(mapOfScience);
+			for (CategoryBreakdownDocumentRenderer categoryBreakdown : categoryBreakdowns) {
+				g2d.nextPage();
+				g2d.setGraphicContext(new GraphicContext());
+				g2d.setupDocument(
+						out,
+						Double.valueOf(
+								categoryBreakdown.getDimension().getWidth())
+								.intValue(),
+						Double.valueOf(
+								categoryBreakdown.getDimension()
+										.getHeight()).intValue());
+				g2d.setClip(
+						0,
+						0,
+						Double.valueOf(
+								categoryBreakdown.getDimension().getWidth())
+								.intValue(),
+						Double.valueOf(
+								categoryBreakdown.getDimension()
+										.getHeight()).intValue());
+				categoryBreakdown.render(new GraphicsState(g2d),
+						visualization.getDimension());
+			}
+		} catch (CategoryBreakdownCreationException e) {
+			this.logger
+					.log(LogService.LOG_ERROR,
+							"There was a problem creating the detailed summary of categories and their journals.  The output postscript file may have errors."
+									+ System.getProperty("line.separator")
+									+ e.getMessage(), e);
+		}
 	}
 
 	public static class CategoryBreakdownCreationException extends Exception {
@@ -305,7 +311,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			}
 
 			// Done to avoid 'java.util.ConcurrentModificationException'
-			for (Category category : new HashSet<Category>(allCategoryJournal.keySet())) {
+			for (Category category : new TreeSet<Category>(allCategoryJournal.keySet())) {
 				SortedSet<Journal> journals = allCategoryJournal
 						.remove(category);
 				int categorySpace = categoryTextSize
