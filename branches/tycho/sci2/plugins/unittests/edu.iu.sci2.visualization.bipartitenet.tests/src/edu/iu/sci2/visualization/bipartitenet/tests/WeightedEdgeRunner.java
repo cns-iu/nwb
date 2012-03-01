@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.bipartitenet.tests;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -50,7 +51,7 @@ public class WeightedEdgeRunner {
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File("BLAH.png"));
 	}
@@ -58,11 +59,12 @@ public class WeightedEdgeRunner {
 	private static void renderOnScreen(BipartiteGraphDataModel model, Layout layout) {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setSize(layout.getWidth(), layout.getHeight());
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
 		cc.add(r);
 		f.getContentPane().add(cc);
+		cc.setPreferredSize(new Dimension(layout.getWidth(), layout.getHeight()));
+		f.pack();
 		f.setVisible(true);
 	}
 
@@ -72,7 +74,7 @@ public class WeightedEdgeRunner {
 		EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
 		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
 		r.paint(g2d);
 		g2d.finish();
 		out.close();

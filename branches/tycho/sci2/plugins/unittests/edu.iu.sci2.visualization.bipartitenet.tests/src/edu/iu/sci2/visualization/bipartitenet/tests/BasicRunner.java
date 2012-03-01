@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.bipartitenet.tests;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -36,7 +37,7 @@ public class BasicRunner {
 		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "APPL_ID", "totalawarded", null);
 		BipartiteGraphDataModel model = importer.constructModelFromFile(BasicRunner.class.getResourceAsStream("big-boring-network.nwb"));
 		
-		PageDirector.Layout layout = PageDirector.Layout.SQUARE;
+		PageDirector.Layout layout = PageDirector.Layout.WEB;
 		
 		renderOnScreen(model, layout);
 		renderToPNG(model, layout);
@@ -58,11 +59,12 @@ public class BasicRunner {
 	private static void renderOnScreen(BipartiteGraphDataModel model, Layout layout) {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setSize(layout.getWidth(), layout.getHeight());
 		CanvasContainer cc = new CanvasContainer();
 		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
 		cc.add(r);
 		f.getContentPane().add(cc);
+		cc.setPreferredSize(new Dimension(layout.getWidth(), layout.getHeight()));
+		f.pack();
 		f.setVisible(true);
 	}
 
