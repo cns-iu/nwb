@@ -21,13 +21,8 @@ public class CircleSizeLegend {
 	 * Brightnesses correspond to PostScript's setgray command. 0 is black, 1 is
 	 * white.
 	 */
-	public static final float CIRCLE_BRIGHTNESS = 0.3f;
-	public static final float EXTREMA_LABEL_BRIGHTNESS = 0.3f;
 	public static final float EXTREMA_LABEL_FONT_SIZE = 12f;
-	public static final float TYPE_LABEL_BRIGHTNESS = 0.0f;
 	public static final float TYPE_LABEL_FONT_SIZE = 12f;
-	public static final float SCALING_LABEL_BRIGHTNESS = 0.25f;
-	public static final float KEY_LABEL_BRIGHTNESS = 0.3f;
 	public static final float KEY_LABEL_FONT_SIZE = 14f;
 
 	private float minArea;
@@ -40,7 +35,7 @@ public class CircleSizeLegend {
 	private float scalingFactor;
 	private String legendTitle;
 	private String legendSubtitle;
-	
+
 	public CircleSizeLegend(Collection<Float> values, float scalingFactor,
 			String legendTitle, String legendSubtitle) {
 		this.scalingFactor = scalingFactor;
@@ -100,7 +95,8 @@ public class CircleSizeLegend {
 		return maxLabel;
 	}
 
-	public void render(GraphicsState state, float leftBoundary, float rightBoundary) {
+	public void render(GraphicsState state, float leftBoundary,
+			float rightBoundary) {
 		state.save();
 
 		float minRadius = Node
@@ -129,7 +125,7 @@ public class CircleSizeLegend {
 
 		state.current.translate(leftBoundary, rightBoundary);
 
-		// Draw title				
+		// Draw title
 		state.setFontSize(CircleSizeLegend.KEY_LABEL_FONT_SIZE);
 		state.current.setColor(Color.black);
 		state.current.drawString(getLegendTitle(), 0, 0);
@@ -137,30 +133,39 @@ public class CircleSizeLegend {
 
 		// Translate over by the center of the title so that 0 0 is centered.
 		FontMetrics fontMetrics = state.current.getFontMetrics();
-		Rectangle2D titleBounds = fontMetrics.getStringBounds(getLegendTitle(), state.current);
-		Rectangle2D subtitleBounds = fontMetrics.getStringBounds(getLegendSubtitle(), state.current);
+		Rectangle2D titleBounds = fontMetrics.getStringBounds(getLegendTitle(),
+				state.current);
+		Rectangle2D subtitleBounds = fontMetrics.getStringBounds(
+				getLegendSubtitle(), state.current);
 		double shiftX = titleBounds.getCenterX() - subtitleBounds.getCenterX();
 		state.current.translate(shiftX, 0);
-		
-		//Draw subtitle
-		double subtitleFontSize = 10;
+
+		// Draw subtitle
+		double subtitleFontSize = 12;
 		Color subtitleColor = Color.black;
 		state.setFontSize(subtitleFontSize);
 		state.current.setColor(subtitleColor);
 		state.current.drawString(getLegendSubtitle(), 0, 0);
-		
+
 		// Draw the graphic
 		// TODO could this be made into a shape or something?
 		state.setFontSize(CircleSizeLegend.EXTREMA_LABEL_FONT_SIZE);
-		NodeRenderer.render(state, circleX, minCircleY, minRadius,
-				CircleSizeLegend.CIRCLE_BRIGHTNESS);
-		state.current.drawString(getMinLabel(), labelX, minLabelY);
-		NodeRenderer.render(state, circleX, midCircleY, midRadius,
-				CircleSizeLegend.CIRCLE_BRIGHTNESS);
-		state.current.drawString(getMidLabel(), labelX, midLabelY);
-		NodeRenderer.render(state, circleX, maxCircleY, maxRadius,
-				CircleSizeLegend.CIRCLE_BRIGHTNESS);
-		state.current.drawString(getMaxLabel(), labelX, maxLabelY);
+		
+		// HACK this is because the map of science in the web version is scaled
+		// and the circles need to match.
+		state.current.translate(-shiftX, 0); // recenter
+		state.current.scale(2.0, 2.0);
+		NodeRenderer.render(state, circleX, minCircleY, minRadius, 0.0);
+		state.current.scale(0.5, 0.5);
+		state.current.drawString(getMinLabel(), labelX * 2, minLabelY * 2);
+		state.current.scale(2.0, 2.0);
+		NodeRenderer.render(state, circleX, midCircleY, midRadius, 0.0);
+		state.current.scale(0.5, 0.5);
+		state.current.drawString(getMidLabel(), labelX * 2, midLabelY * 2);
+		state.current.scale(2.0, 2.0);
+		NodeRenderer.render(state, circleX, maxCircleY, maxRadius, 0.0);
+		state.current.scale(0.5, 0.5);
+		state.current.drawString(getMaxLabel(), labelX * 2, maxLabelY * 2);
 
 		state.restore();
 	}

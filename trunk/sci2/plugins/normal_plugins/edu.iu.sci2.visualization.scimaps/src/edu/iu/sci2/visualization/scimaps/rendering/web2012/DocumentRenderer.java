@@ -63,12 +63,12 @@ public class DocumentRenderer implements RenderableVisualization {
 				+ mapOfScience.prettyCountOfUnmappedPublications();
 
 		HowToArea howto = new HowToArea();
-		howto.render(state, 600.0f, 760.0f);
+		howto.render(state, 600.0f, 650.0f);
 		
 		CircleSizeLegend legend = new CircleSizeLegend(
 				mapOfScience.getMappedWeights(), scalingFactor, legendTitle,
 				legendSubtitle);
-		legend.render(state, 100.0f, 760.0f);
+		legend.render(state, 100.0f, 650.0f);
 
 	}
 
