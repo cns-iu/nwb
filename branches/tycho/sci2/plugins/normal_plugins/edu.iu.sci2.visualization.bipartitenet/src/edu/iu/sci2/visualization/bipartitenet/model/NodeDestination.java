@@ -4,12 +4,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 
 public enum NodeDestination {
 	LEFT {
@@ -17,13 +19,15 @@ public enum NodeDestination {
 		
 		@Override
 		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
-			TextLayout layout = fitTextLayout(nv.getLabel(), g, maxHeight);
-			Rectangle2D textBounds = layout.getBounds();
-			double x = nv.getNodeCenter().getX()
-					- nv.getCenterToTextDistance() - textBounds.getWidth();
-
-			layout.draw(g, (float) x, (float) (nv.getNodeCenter().getY()
-					- getFontCenterHeight(g)));
+			SimpleLabelPainter painter =
+					new SimpleLabelPainter(
+							nv.getNodeCenter().translate(- nv.getCenterToTextDistance(), 0),
+							XAlignment.RIGHT,
+							YAlignment.STRIKE_HEIGHT,
+							nv.getLabel(),
+							fitFontWithinHeight(g.getFontRenderContext(), maxHeight), null);
+			
+			painter.paint(g);
 		}
 
 		@Override
@@ -36,11 +40,15 @@ public enum NodeDestination {
 	RIGHT {
 		@Override
 		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
-			TextLayout layout = fitTextLayout(nv.getLabel(), g, maxHeight);
-			double x = nv.getNodeCenter().getX() + nv.getCenterToTextDistance();
+			SimpleLabelPainter painter =
+					new SimpleLabelPainter(
+							nv.getNodeCenter().translate(nv.getCenterToTextDistance(), 0),
+							XAlignment.LEFT,
+							YAlignment.STRIKE_HEIGHT,
+							nv.getLabel(),
+							fitFontWithinHeight(g.getFontRenderContext(), maxHeight), null);
 			
-			layout.draw(g, (float) x, (float) (nv.getNodeCenter().getY()
-					- getFontCenterHeight(g)));
+			painter.paint(g);
 		}
 
 		@Override
@@ -54,14 +62,6 @@ public enum NodeDestination {
 	private static final Font LABEL_FONT = PageDirector.BASIC_FONT;
 	public abstract void paintLabel(NodeView nv, Graphics2D g, double maxHeight);
 	public abstract Color getFillColor();
-	
-	
-	private static TextLayout fitTextLayout(String label, Graphics2D g, double maxHeight) {
-		FontRenderContext frc = g.getFontRenderContext();
-		Font currentFont = fitFontWithinHeight(frc, maxHeight);
-		
-		return new TextLayout(label, currentFont, frc);
-	}
 	
 	private static Font fitFontWithinHeight(FontRenderContext frc, double maxHeight) {
 		Font currentFont = LABEL_FONT;
@@ -78,8 +78,4 @@ public enum NodeDestination {
 		return currentFont;
 	}
 	
-	private static float getFontCenterHeight(Graphics2D g) {
-		 LineMetrics lm = g.getFont().getLineMetrics("Asdf", g.getFontRenderContext());
-		 return lm.getStrikethroughOffset();
-	}
 }

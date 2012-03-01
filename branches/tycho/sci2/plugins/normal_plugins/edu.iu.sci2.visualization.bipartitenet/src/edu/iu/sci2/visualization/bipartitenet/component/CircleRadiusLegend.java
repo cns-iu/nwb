@@ -12,6 +12,8 @@ import math.geom2d.line.LineSegment2D;
 import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
 public class CircleRadiusLegend implements Paintable {
@@ -21,7 +23,7 @@ public class CircleRadiusLegend implements Paintable {
 	private final String title;
 	private final double maxRadius;
 	
-	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD, 14);
+	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD);
 	private static final Font LEGEND_FONT = PageDirector.BASIC_FONT.deriveFont(Font.PLAIN, 10);
 	
 	private static final int LABEL_X_OFFSET = 5; // from outer edge of circles to the labels
@@ -67,18 +69,18 @@ public class CircleRadiusLegend implements Paintable {
 	}
 	
 	private void paintDataLabels(Graphics2D g) {
-		Point2D labelsTop = topCenter.translate(LABEL_X_OFFSET, LEGEND_Y_OFFSET + 8);
+		Point2D labelsTop = topCenter.translate(LABEL_X_OFFSET, LEGEND_Y_OFFSET);
 		LineSegment2D labelLine = new LineSegment2D(labelsTop, labelsTop.translate(0, 2 * maxRadius)); // the line "points" downward
 		
 		ImmutableList<Double> reversedValues = labeledValues.reverse();
 		
 		int numLabels = reversedValues.size();
-		double denominator = Math.max(1, numLabels);
+		double denominator = Math.max(1, numLabels - 1);
 	
-		g.setFont(LEGEND_FONT);
 		for (int i = 0; i < numLabels; i++) {
-			Point2D labelPoint = labelLine.getPoint(i / denominator);
-			g.drawString(reversedValues.get(i).toString(), (float) labelPoint.getX(), (float) labelPoint.getY());
+			Point2D labelPoint = labelLine.getPoint((i) / denominator);
+			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT,
+					reversedValues.get(i).toString(), LEGEND_FONT, null).paint(g);
 		}		
 	}
 }

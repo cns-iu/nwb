@@ -12,6 +12,8 @@ import math.geom2d.line.LineSegment2D;
 import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
 public class EdgeWeightLegend implements Paintable {
@@ -24,9 +26,8 @@ public class EdgeWeightLegend implements Paintable {
 	private static final double ARROW_LENGTH = 40;
 	private static final int BETWEEN_ARROW_Y_OFFSET = 10;
 	private static final int LABEL_X_OFFSET = 10;
-	private static final int LABEL_Y_OFFSET = 4; // about half the height6 of the legend font
 	
-	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD, 14);
+	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD);
 	private static final Font LEGEND_FONT = PageDirector.BASIC_FONT.deriveFont(Font.PLAIN, 10);
 	
 
@@ -47,18 +48,21 @@ public class EdgeWeightLegend implements Paintable {
 
 	private void paintArrows(Graphics2D gForLabels) {
 		Graphics2D g = (Graphics2D) gForLabels.create();
-		gForLabels.setFont(LEGEND_FONT);
 		Point2D arrowsTopCenter = topCenter.translate(0, LEGEND_Y_OFFSET);
 		Point2D arrowStart = arrowsTopCenter.translate(-ARROW_LENGTH/2, 0);
 		for (Double value : labeledValues.reverse()) {
+			// loop invariant: arrowStart is the start of the current arrow
 			Point2D arrowEnd = arrowStart.translate(ARROW_LENGTH, 0);
 			LineSegment2D line = new LineSegment2D(arrowStart, arrowEnd);
 			g.setColor(coding.apply(value));
 			line.draw(g);
 			EdgeView.drawArrowHead(line, g);
 			
-			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, LABEL_Y_OFFSET);
-			gForLabels.drawString(value.toString(), (float) labelPoint.getX(), (float) labelPoint.getY());
+			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, 0);
+			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT, value.toString(), LEGEND_FONT, null)
+				.paint(gForLabels);
+			
+			// preserve invariant
 			arrowStart = arrowStart.translate(0, BETWEEN_ARROW_Y_OFFSET);
 		}
 		

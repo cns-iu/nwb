@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
-import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
@@ -27,7 +26,6 @@ public class NodeView implements Paintable {
 
 	public int getCenterToTextDistance() {
 		// round up
-		// no, this is wrong
 		return Math.round(0.5f + (float) maxHeight + NODE_TEXT_PADDING);
 	}
 

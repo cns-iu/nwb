@@ -14,39 +14,43 @@ import edu.iu.sci2.visualization.bipartitenet.component.CircleRadiusLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.EdgeWeightLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
-import edu.iu.sci2.visualization.bipartitenet.component.RightAlignedLabel;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
 import edu.iu.sci2.visualization.bipartitenet.scale.ColorIntensityScale;
-import edu.iu.sci2.visualization.bipartitenet.scale.ConstantValue;
 import edu.iu.sci2.visualization.bipartitenet.scale.ConstantColor;
+import edu.iu.sci2.visualization.bipartitenet.scale.ConstantValue;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScale;
 
 public class PageDirector implements Paintable {
 	public static enum Layout {
-		PRINT(792, 612, 
-				new LineSegment2D(296, 100, 296, 412),
-				new LineSegment2D(792 - 296, 100, 792 - 296, 412),
+		PRINT(792, 612,
+				new Point2D(792 / 2, 48), // title center of baseline
+				new LineSegment2D(296, 144, 296, 412),
+				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
 				12),
-		WEB(1280, 960, 
+		WEB(1280, 960,
+				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
-				20),
-		SQUARE(800, 800, 
-				new LineSegment2D(300, 100, 300, 500), 
-				new LineSegment2D(500, 100, 500, 500),
-				15);
+				20);
+		
 		private final int width;
 		private final int height;
 		private final LineSegment2D leftLine;
 		private final LineSegment2D rightLine;
 		private final int maxNodeRadius;
+		private final Point2D titlePosition;
 
-		private Layout(int width, int height, LineSegment2D leftLine, LineSegment2D rightLine, int maxNodeRadius) {
+		private Layout(int width, int height, Point2D titlePosition, 
+				LineSegment2D leftLine, LineSegment2D rightLine, int maxNodeRadius) {
 			this.width = width;
 			this.height = height;
+			this.titlePosition = titlePosition;
 			this.leftLine = leftLine;
 			this.rightLine = rightLine;
 			this.maxNodeRadius = maxNodeRadius;
@@ -76,12 +80,23 @@ public class PageDirector implements Paintable {
 			return rightLine.getFirstPoint().translate(- maxNodeRadius, -50);
 		}
 		
+		Point2D getTitlePosition() {
+			return titlePosition;
+		}
+
 		Point2D getCircleLegendPosition() {
 			return leftLine.getLastPoint().translate(-50, 50);
 		}
 		
 		Point2D getEdgeLegendPosition() {
 			return rightLine.getLastPoint().translate(50, 50);
+		}
+		
+		Point2D getFooterPosition() {
+			Point2D thePoint = new Point2D(width / 2.0, height - 20);
+			System.out.println(thePoint);
+			return thePoint;
+//			return new Point2D(300, 300);
 		}
 
 		public int getMaxNodeRadius() {
@@ -92,10 +107,14 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	public static final Font BASIC_FONT = findBasicFont();
+	public static final Font BASIC_FONT = findBasicFont(10);
 	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
+	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
+	private static final String TITLE = "Bipartite Network Graph";
 
 	private final Layout layout;
+	
+	private final String footer = "NIH’s Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
 
 	public PageDirector(final Layout layout, 
 			final BipartiteGraphDataModel dataModel, 
@@ -121,16 +140,24 @@ public class PageDirector implements Paintable {
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), nodeCoding, edgeCoding);
 		painter.add(renderer);
 		
+		// The main title
+		Point2D titleBaseline = layout.getTitlePosition();
+		// Position's null if there should be no title 
+		if (titleBaseline != null) {
+			painter.add(
+					new SimpleLabelPainter(titleBaseline, XAlignment.CENTER, YAlignment.BASELINE,
+							TITLE, TITLE_FONT, null));
+		}
+		
 		// The titles of the two columns
-		painter.add(new RightAlignedLabel(layout.getLeftTitlePosition(), leftSideTitle, TITLE_FONT));
-		final Point2D rightTitlePosition = layout.getRightTitlePosition();
-		painter.add(new Paintable() {
-			@Override
-			public void paint(Graphics2D g) {
-				g.setFont(TITLE_FONT);
-				g.drawString(rightSideTitle, (float) rightTitlePosition.getX(), (float) rightTitlePosition.getY());
-			}
-		});
+		painter.add(new SimpleLabelPainter(layout.getLeftTitlePosition(), 
+				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, SUB_TITLE_FONT, null));
+		painter.add(new SimpleLabelPainter(layout.getRightTitlePosition(), 
+				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, SUB_TITLE_FONT, null));
+		
+		// The footer
+		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
+				XAlignment.CENTER, YAlignment.BASELINE, footer, BASIC_FONT, Color.gray));
 	}
 
 	/**
@@ -138,14 +165,14 @@ public class PageDirector implements Paintable {
 	 * be present on a Windows or Linux system, and falls back to Java's default font.
 	 * @return
 	 */
-	private static Font findBasicFont() {
+	private static Font findBasicFont(int size) {
 		final String JAVA_FALLBACK_FONT = "Dialog";
 		ImmutableList<String> fontFamiliesToTry =
 				ImmutableList.of("Arial", "Helvetica", "FreeSans", "Nimbus Sans");
 		
 		Font thisFont = new Font(JAVA_FALLBACK_FONT, Font.PLAIN, 12);
 		for (String family : fontFamiliesToTry) {
-			thisFont = new Font(family, Font.PLAIN, 12);
+			thisFont = new Font(family, Font.PLAIN, size);
 			if (! thisFont.getFamily().equals(JAVA_FALLBACK_FONT)) {
 				// found one that the system has!
 				break;
