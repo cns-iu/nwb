@@ -190,15 +190,9 @@ public enum CircleDimension implements VizDimension {
 		}
 	};
 	
-	// Page layout sizes and dimensions
-	//public static final Dimension<Double> COLOR_GRADIENT_DIMENSION = Dimension.ofSize(
-	//		0.8 * (LegendComposite.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
-	//		10.0);
-	public static final int INNER_COLOR_GRADIENT_HEIGHT = 10;
-	public static final double INNER_COLOR_GRADIENT_WIDTH =
-			0.8 * (LegendComposite.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size());
-	public static final int OUTER_COLOR_GRADIENT_HEIGHT = INNER_COLOR_GRADIENT_HEIGHT;
-	public static final double OUTER_COLOR_GRADIENT_WIDTH = INNER_COLOR_GRADIENT_WIDTH;
+	public static final Dimension<Double> COLOR_GRADIENT_DIMENSION = Dimension.ofSize(
+			0.8 * (LegendComposite.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
+			10.0);
 	public static final double AREA_LEGEND_LOWER_LEFT_X =
 			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
 			+ ((2.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());

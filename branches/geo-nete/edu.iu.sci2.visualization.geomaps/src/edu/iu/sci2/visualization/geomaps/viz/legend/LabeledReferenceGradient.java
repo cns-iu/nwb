@@ -49,8 +49,7 @@ public class LabeledReferenceGradient implements PostScriptable {
 	private final double lowerLeftX; // TODO Just say no to absolute positioning
 	@Deprecated
 	private final double lowerLeftY; // TODO Just say no to absolute positioning
-	private final double gradientWidth;
-	private final double gradientHeight; //private Dimension<Double> dimension;
+	private Dimension<Double> dimension;
 	private boolean hasPrintedDefinitions;
 
 	/**
@@ -62,12 +61,11 @@ public class LabeledReferenceGradient implements PostScriptable {
 	 * @param hasPrintedDefinitions
 	 */
 	public LabeledReferenceGradient(ColorLegend legend, double lowerLeftX, double lowerLeftY,
-			double gradientWidth, double gradientHeight) { //Dimension<Double> dimension) {
+			Dimension<Double> dimension) {
 		this.legend = legend;
 		this.lowerLeftX = lowerLeftX;
 		this.lowerLeftY = lowerLeftY;
-		this.gradientWidth = gradientWidth;
-		this.gradientHeight = gradientHeight; //this.dimension = dimension;
+		this.dimension = dimension;
 		
 		this.hasPrintedDefinitions = false;
 	}
@@ -94,9 +92,8 @@ public class LabeledReferenceGradient implements PostScriptable {
 		invocationTemplate.setAttribute("x", lowerLeftX);
 		invocationTemplate.setAttribute("y", lowerLeftY);
 		
-		invocationTemplate.setAttribute("gradientWidth", gradientWidth);
-		invocationTemplate.setAttribute("gradientHeight", gradientHeight); //dimension.getWidth());
-		//invocationTemplate.setAttribute("gradientHeight", dimension.getHeight());
+		invocationTemplate.setAttribute("gradientWidth", dimension.getWidth());
+		invocationTemplate.setAttribute("gradientHeight", dimension.getHeight());
 		
 		invocationTemplate.setAttribute("gradientResolution", GRADIENT_RESOLUTION);
 		

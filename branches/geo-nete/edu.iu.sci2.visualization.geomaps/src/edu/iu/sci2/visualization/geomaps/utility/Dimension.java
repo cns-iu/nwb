@@ -41,8 +41,10 @@ public class Dimension<T> {
 		if (!(thatObject instanceof Dimension<?>)) { return false; }
 		Dimension<?> that = (Dimension<?>) thatObject;
 
-		return Objects.equal(this.width, that.width) &&
-			   Objects.equal(this.height, that.height);
+		return Objects.equal(this.width,
+							 that.width) &&
+			   Objects.equal(this.height,
+					   		 that.height);
 	}
 	
 	@Override

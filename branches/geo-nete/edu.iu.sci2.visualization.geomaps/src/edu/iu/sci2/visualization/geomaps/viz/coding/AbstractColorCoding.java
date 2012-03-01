@@ -35,8 +35,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
 				createColorLegend(numericFormatType), lowerLeftX(), lowerLeftY(),
-				CircleDimension.INNER_COLOR_GRADIENT_WIDTH,
-				CircleDimension.INNER_COLOR_GRADIENT_HEIGHT); //CircleDimension.COLOR_GRADIENT_DIMENSION);
+				CircleDimension.COLOR_GRADIENT_DIMENSION);
 
 		return labeledReferenceGradient;
 	}
