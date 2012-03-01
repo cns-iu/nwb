@@ -79,26 +79,26 @@ public class LabeledReferenceCircles implements PostScriptable {
 		
 		invocationTemplate.setAttribute(
 				"minRadius",
-				Circle.calculateRadiusFromArea(areaLegend.vizRange().pointA()));
+				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointA()));
 		invocationTemplate.setAttribute(
 				"midRadius",
-				Circle.calculateRadiusFromArea(areaLegend.midpointArea()));
+				Circle.calculateRadiusFromArea(areaLegend.getMidpointArea()));
 		invocationTemplate.setAttribute(
 				"maxRadius",
-				Circle.calculateRadiusFromArea(areaLegend.vizRange().pointB()));
+				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointB()));
 		
 		invocationTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
 		
 		UnsignedZeroFormat doubleFormatter =
 			NumberFormatFactory.getNumberFormat(
 					areaLegend.numericFormatType(),
-					areaLegend.dataRange().pointA(), areaLegend.dataValueForOutputMidpoint(), areaLegend.dataRange().pointB());
+					areaLegend.getDataRange().getPointA(), areaLegend.getDataValueForOutputMidpoint(), areaLegend.getDataRange().getPointB());
 		invocationTemplate.setAttribute(
-				"minLabel", doubleFormatter.format(areaLegend.dataRange().pointA()));
+				"minLabel", doubleFormatter.format(areaLegend.getDataRange().getPointA()));
 		invocationTemplate.setAttribute(
-				"midLabel", doubleFormatter.format(areaLegend.dataValueForOutputMidpoint()));
+				"midLabel", doubleFormatter.format(areaLegend.getDataValueForOutputMidpoint()));
 		invocationTemplate.setAttribute(
-				"maxLabel", doubleFormatter.format(areaLegend.dataRange().pointB()));
+				"maxLabel", doubleFormatter.format(areaLegend.getDataRange().getPointB()));
 
 		invocationTemplate.setAttribute(
 				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);

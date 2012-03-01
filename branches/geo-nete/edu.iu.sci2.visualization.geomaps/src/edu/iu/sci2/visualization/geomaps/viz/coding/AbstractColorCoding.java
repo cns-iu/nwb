@@ -29,8 +29,6 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 
 	public abstract double lowerLeftY();
 
-	public abstract String legendDescription();
-
 	public abstract Color defaultColor();
 
 	@Override
@@ -38,7 +36,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
 				createColorLegend(numericFormatType), lowerLeftX(), lowerLeftY(),
 				CircleDimension.INNER_COLOR_GRADIENT_WIDTH,
-				CircleDimension.INNER_COLOR_GRADIENT_HEIGHT);
+				CircleDimension.INNER_COLOR_GRADIENT_HEIGHT); //CircleDimension.COLOR_GRADIENT_DIMENSION);
 
 		return labeledReferenceGradient;
 	}
@@ -46,7 +44,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	private ColorLegend createColorLegend(NumericFormatType numericFormatType) throws LegendCreationException {
 		try {
 			double midpointOfScaledData = Averages.meanOfDoubles(
-					interpolator.inRange().pointA(), interpolator.inRange().pointB());
+					interpolator.getInRange().getPointA(), interpolator.getInRange().getPointB());
 			double unscaledValueForMidrangeColor = scaling().invert(midpointOfScaledData);
 
 			ColorLegend colorLegend = new ColorLegend(

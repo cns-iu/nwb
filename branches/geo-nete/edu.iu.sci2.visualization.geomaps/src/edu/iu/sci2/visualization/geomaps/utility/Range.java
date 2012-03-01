@@ -36,11 +36,11 @@ public class Range<T> {
 	}
 	
 	
-	public T pointA() {
+	public T getPointA() {
 		return pointA;
 	}
 
-	public T pointB() {
+	public T getPointB() {
 		return pointB;
 	}
 

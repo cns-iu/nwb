@@ -17,6 +17,7 @@ import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
+import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
@@ -45,7 +46,7 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
 				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange) {
-					Range<Double> vizRange = DEFAULT_CIRCLE_AREA_RANGE;		
+					Range<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;		
 					final Interpolator<Double> interpolator = Interpolator1D.between(dataRange, vizRange);
 					
 					return new AbstractCoding<CircleDimension, Double>(this, usableRange, interpolator) {
@@ -55,14 +56,19 @@ public enum CircleDimension implements VizDimension {
 						}
 
 						@Override
+						public String legendDescription() {
+							return "Area";
+						}
+						
+						@Override
 						public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
 							VizLegend<Double> generalLegend = makeVizLegend(numericFormatType);
 							
 							try {
 								double midpointOfScaledData =
 										Averages.meanOfDoubles(
-												interpolator.inRange().pointA(),
-												interpolator.inRange().pointB());
+												interpolator.getInRange().getPointA(),
+												interpolator.getInRange().getPointB());
 								double unscaledValueForMidrangeArea = scaling().invert(midpointOfScaledData);
 								double midrangeArea = interpolator.apply(midpointOfScaledData);
 
@@ -184,21 +190,23 @@ public enum CircleDimension implements VizDimension {
 		}
 	};
 	
-	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE = Range.between(0.1, Circle.DEFAULT_CIRCLE_AREA_MAXIMUM);
-	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
-			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
-			+ ((1.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+	// Page layout sizes and dimensions
+	//public static final Dimension<Double> COLOR_GRADIENT_DIMENSION = Dimension.ofSize(
+	//		0.8 * (LegendComposite.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
+	//		10.0);
 	public static final int INNER_COLOR_GRADIENT_HEIGHT = 10;
 	public static final double INNER_COLOR_GRADIENT_WIDTH =
 			0.8 * (LegendComposite.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size());
-	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
-			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS;
-	// Page layout sizes and dimensions
+	public static final int OUTER_COLOR_GRADIENT_HEIGHT = INNER_COLOR_GRADIENT_HEIGHT;
+	public static final double OUTER_COLOR_GRADIENT_WIDTH = INNER_COLOR_GRADIENT_WIDTH;
 	public static final double AREA_LEGEND_LOWER_LEFT_X =
 			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
 			+ ((2.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
-	public static final int OUTER_COLOR_GRADIENT_HEIGHT = INNER_COLOR_GRADIENT_HEIGHT;
-	public static final double OUTER_COLOR_GRADIENT_WIDTH = INNER_COLOR_GRADIENT_WIDTH;
+	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
+			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS;
+	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
+			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
+			+ ((1.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;

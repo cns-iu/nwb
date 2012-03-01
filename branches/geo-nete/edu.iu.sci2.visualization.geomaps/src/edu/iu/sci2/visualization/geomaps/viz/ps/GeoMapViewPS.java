@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.utilities.FileUtilities;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -53,7 +52,7 @@ public class GeoMapViewPS {
 
 	
 	public File writeToPSFile(String authorName, String dataLabel)
-				throws IOException, AlgorithmExecutionException, TransformException {		
+				throws IOException, TransformException {		
 		File psFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", OUTPUT_FILE_EXTENSION);
 		
@@ -80,7 +79,7 @@ public class GeoMapViewPS {
 					geoMap.getShapefile().viewOfFeatureCollection(),
 					geoMap.getGeometryProjector(),
 					geoMapViewPageArea,
-					geoMap.getShapefile().featureAttributeName());
+					geoMap.getShapefile().getFeatureAttributeName());
 		featurePrinter.printFeatures(out, geoMap.getFeatureViews());
 
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circlePrinterDefinitions").toString());
@@ -108,7 +107,7 @@ public class GeoMapViewPS {
 		
 		
 		PageMetadata pageMetadata = new PageMetadata(TITLE, geoMap.getSubtitle());
-		pageMetadata.add(geoMap.getKnownProjectedCRSDescriptor().niceName() + " Projection");
+		pageMetadata.add(geoMap.getKnownProjectedCRSDescriptor().getNiceName() + " Projection");
 		pageMetadata.add(timestamp());
 		pageMetadata.add(authorName);
 		out.write(pageMetadata.toPostScript());
@@ -162,7 +161,7 @@ public class GeoMapViewPS {
 			SimpleFeature feature = it.next();
 			Geometry geometry;
 			try {				
-				geometry = geoMap.project(geoMap.getShapefile().translateForInset(geoMap.getShapefile().extractFeatureName(feature), (Geometry) feature.getDefaultGeometry()));
+				geometry = geoMap.project(geoMap.getShapefile().inset(geoMap.getShapefile().extractFeatureName(feature), (Geometry) feature.getDefaultGeometry()));
 			} catch (IllegalArgumentException e) {
 				// TODO !
 				System.err.println("IllegalArgumentException for feature " + feature.getAttribute("NAME"));

@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import com.google.common.base.Strings;
+
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 
 public class PageHeader {
@@ -26,19 +28,9 @@ public class PageHeader {
 	
 	@Override
 	public String toString() {
-		String s = "";
-		
-		if (stringSpecified(dataLabel)) {
-			s += ("Generated from " + dataLabel);
-		}
-		
-		return s;
+		return Strings.isNullOrEmpty(dataLabel) ? "" : ("Generated from " + dataLabel);
 	}
 
-	private static boolean stringSpecified(String string) {
-		return ((string != null) && (!("".equals(string))));
-	}
-	
 	public String toPostScript() {
 		StringBuilder builder = new StringBuilder();
 		
@@ -48,14 +40,9 @@ public class PageHeader {
 		builder.append(INDENT + "setfont" + "\n");
 		builder.append(INDENT + FONT_BRIGHTNESS + " setgray" + "\n");
 		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + lowerLeftYInPoints + " moveto" + "\n");
-		builder.append(INDENT + "(" + escapeForPostScript(toString()) + ") show" + "\n");
+		builder.append(INDENT + "(" + PSUtility.escapeForPostScript(toString()) + ") show" + "\n");
 		builder.append("grestore" + "\n");
 		
 		return builder.toString();
-	}
-	
-	public static String escapeForPostScript(String string) {
-		// Replace each backslash with two backslashes
-		return string.replace("\\", "\\\\");
 	}
 }

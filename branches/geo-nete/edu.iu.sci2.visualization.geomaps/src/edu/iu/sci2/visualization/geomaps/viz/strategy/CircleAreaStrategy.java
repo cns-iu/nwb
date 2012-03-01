@@ -14,7 +14,7 @@ public class CircleAreaStrategy implements Strategy {
 		return new CircleAreaStrategy(area);
 	}
 
-	public double area() {
+	public double getArea() {
 		return area;
 	}
 

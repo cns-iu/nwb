@@ -35,8 +35,8 @@ public class NumberFormatFactory {
 		}
 
 		private static boolean rangeIsInThousands(Range<? extends Number> range) {
-			return (range.pointA().doubleValue() >= 1000) &&
-				   (range.pointB().doubleValue() < 10000);
+			return (range.getPointA().doubleValue() >= 1000) &&
+				   (range.getPointB().doubleValue() < 10000);
 		}
 
 		private static boolean mentionsSomethingLikeYear(final String string) {
@@ -46,7 +46,6 @@ public class NumberFormatFactory {
 		}
 	}
 		
-	public static final double TOLERANCE = 1.0;
 	public static final int ATTEMPT_LIMIT = 8;
 	
 	public static UnsignedZeroFormat getNumberFormat(NumericFormatType numericFormatType, double... values) {

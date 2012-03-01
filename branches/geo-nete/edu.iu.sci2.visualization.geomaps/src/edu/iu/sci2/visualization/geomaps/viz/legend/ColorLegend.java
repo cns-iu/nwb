@@ -24,28 +24,28 @@ public class ColorLegend implements Legend<Double, Color> {
 
 	
 	@Override
-	public Range<Double> dataRange() {
-		return vizLegend.dataRange();
+	public Range<Double> getDataRange() {
+		return vizLegend.getDataRange();
 	}
 
 	public String getScalingLabel() {
-		return vizLegend.scalingLabel();
+		return vizLegend.getScalingLabel();
 	}
 
 	@Override
-	public Range<Color> vizRange() {
-		return vizLegend.vizRange();
+	public Range<Color> getVizRange() {
+		return vizLegend.getVizRange();
 	}
 
 	public String getLegendDescription() {
-		return vizLegend.legendDescription();
+		return vizLegend.getLegendDescription();
 	}
 
 	public String getColumnName() {
-		return vizLegend.dataColumnName();
+		return vizLegend.getDataColumnName();
 	}
 
 	public NumericFormatType getNumericFormatType() {
-		return vizLegend.numericFormatType();
+		return vizLegend.getNumericFormatType();
 	}
 }

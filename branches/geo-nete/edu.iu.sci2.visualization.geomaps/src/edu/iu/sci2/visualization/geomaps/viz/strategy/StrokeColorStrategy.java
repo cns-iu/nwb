@@ -11,7 +11,7 @@ public class StrokeColorStrategy extends ColorStrategy {
 		this.color = color;
 	}
 	public static StrokeColorStrategy forColor(Color color) {
-		return new StrokeColorStrategy(color);
+		return (color == null) ? theDefault() : new StrokeColorStrategy(color);
 	}
 	public static StrokeColorStrategy theDefault() {
 		return forColor(DEFAULT_COLOR);

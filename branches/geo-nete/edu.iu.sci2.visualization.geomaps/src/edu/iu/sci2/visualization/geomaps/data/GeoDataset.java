@@ -142,7 +142,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return stage.transformTo(this);
 	}
 
-	public ImmutableCollection<Binding<D>> bindings() {
+	public ImmutableCollection<Binding<D>> getBindings() {
 		return bindings;
 	}
 	

@@ -6,6 +6,7 @@ import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.utility.ColorTuples;
+import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
@@ -49,7 +50,7 @@ public class LabeledReferenceGradient implements PostScriptable {
 	@Deprecated
 	private final double lowerLeftY; // TODO Just say no to absolute positioning
 	private final double gradientWidth;
-	private final double gradientHeight;
+	private final double gradientHeight; //private Dimension<Double> dimension;
 	private boolean hasPrintedDefinitions;
 
 	/**
@@ -61,12 +62,12 @@ public class LabeledReferenceGradient implements PostScriptable {
 	 * @param hasPrintedDefinitions
 	 */
 	public LabeledReferenceGradient(ColorLegend legend, double lowerLeftX, double lowerLeftY,
-			double gradientWidth, double gradientHeight) {
+			double gradientWidth, double gradientHeight) { //Dimension<Double> dimension) {
 		this.legend = legend;
 		this.lowerLeftX = lowerLeftX;
 		this.lowerLeftY = lowerLeftY;
 		this.gradientWidth = gradientWidth;
-		this.gradientHeight = gradientHeight;
+		this.gradientHeight = gradientHeight; //this.dimension = dimension;
 		
 		this.hasPrintedDefinitions = false;
 	}
@@ -94,17 +95,18 @@ public class LabeledReferenceGradient implements PostScriptable {
 		invocationTemplate.setAttribute("y", lowerLeftY);
 		
 		invocationTemplate.setAttribute("gradientWidth", gradientWidth);
-		invocationTemplate.setAttribute("gradientHeight", gradientHeight);
+		invocationTemplate.setAttribute("gradientHeight", gradientHeight); //dimension.getWidth());
+		//invocationTemplate.setAttribute("gradientHeight", dimension.getHeight());
 		
 		invocationTemplate.setAttribute("gradientResolution", GRADIENT_RESOLUTION);
 		
-		Color minColor = legend.vizRange().pointA();
+		Color minColor = legend.getVizRange().getPointA();
 		double[] minColorTuple = ColorTuples.asTuple(minColor);		
 		invocationTemplate.setAttribute("minColorRed", minColorTuple[0]);
 		invocationTemplate.setAttribute("minColorGreen", minColorTuple[1]);
 		invocationTemplate.setAttribute("minColorBlue", minColorTuple[2]);
 		
-		Color maxColor = legend.vizRange().pointB();
+		Color maxColor = legend.getVizRange().getPointB();
 		double[] maxColorTuple = ColorTuples.asTuple(maxColor);	
 		invocationTemplate.setAttribute("maxColorRed", maxColorTuple[0]);
 		invocationTemplate.setAttribute("maxColorGreen", maxColorTuple[1]);
@@ -113,12 +115,12 @@ public class LabeledReferenceGradient implements PostScriptable {
 		UnsignedZeroFormat doubleFormatter =
 			NumberFormatFactory.getNumberFormat(
 					legend.getNumericFormatType(),
-					legend.dataRange().pointA(),
+					legend.getDataRange().getPointA(),
 					legend.getDataValueForOutRangeMidpoint(),
-					legend.dataRange().pointB());
-		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(legend.dataRange().pointA()));
+					legend.getDataRange().getPointB());
+		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(legend.getDataRange().getPointA()));
 		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(legend.getDataValueForOutRangeMidpoint()));
-		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.dataRange().pointB()));
+		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.getDataRange().getPointB()));
 		
 		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);

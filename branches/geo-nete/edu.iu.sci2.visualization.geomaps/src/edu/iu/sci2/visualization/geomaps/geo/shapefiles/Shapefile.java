@@ -13,23 +13,28 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.referencing.operation.transform.AffineTransform2D;
+
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 
@@ -39,7 +44,7 @@ public enum Shapefile {
 			"United States",
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
-			ImmutableSet.of(Inset.ALASKA),
+			ImmutableSet.of(Inset.ALASKA, Inset.HAWAII, Inset.PUERTO_RICO),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALEUTIAN_ISLANDS,
 					AnchorPoint.NEAR_PUERTO_RICO)),
@@ -60,7 +65,7 @@ public enum Shapefile {
 					new Function<Shapefile, String>() {
 						@Override
 						public String apply(Shapefile shapefile) {
-							return shapefile.niceName(); }}));
+							return shapefile.getNiceName(); }}));
 	public static ImmutableSet<String> byNiceNames() {
 		return FOR_NICE_NAME.keySet();
 	}
@@ -74,8 +79,7 @@ public enum Shapefile {
 	private final String featureAttributeName;
 	private final KnownProjectedCRSDescriptor defaultProjectedCrs;
 	private final SimpleFeatureSource featureSource;
-	private final ImmutableSet<Inset> insets;
-	private final transient ImmutableMap<String, Inset> insetForFeatureName;
+	private final ImmutableMap<String, Inset> insetForFeatureName;
 	private final ImmutableCollection<AnchorPoint> anchorPoints;
 
 	private Shapefile(
@@ -88,7 +92,6 @@ public enum Shapefile {
 		this.niceName = niceName;
 		this.featureAttributeName = featureAttributeName;
 		this.defaultProjectedCrs = defaultProjectedCrs;
-		this.insets = ImmutableSet.copyOf(insets);
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
 		
 		this.insetForFeatureName = Maps.uniqueIndex(insets, new Function<Inset, String>() {
@@ -113,7 +116,7 @@ public enum Shapefile {
 				DEFAULT_SOURCE_CRS);
 	}
 	
-	public Geometry translateForInset(String rawFeatureName, Geometry geometry) throws MismatchedDimensionException, TransformException {
+	public Geometry inset(String rawFeatureName, Geometry geometry) throws MismatchedDimensionException, TransformException {
 		String featureName = rawFeatureName.toLowerCase(); // TODO fix normalization at both ends
 		
 		if (!insetForFeatureName.containsKey(featureName)) {
@@ -124,7 +127,28 @@ public enum Shapefile {
 	}
 	
 	public String extractFeatureName(SimpleFeature feature) {
-		return String.valueOf(feature.getAttribute(featureAttributeName));
+		Object featureName = feature.getAttribute(featureAttributeName);
+		
+		if (featureName == null) {
+			String message =
+					String.format(
+							"Feature %s has no \"%s\" property.  " +
+							"Consider using one of these properties: " +
+							Joiner.on(",").join(Lists.transform(
+									viewOfFeatureCollection().getSchema().getAttributeDescriptors(),
+									new Function<AttributeDescriptor, String>() {
+										@Override
+										public String apply(AttributeDescriptor input) {
+											return input.getName().toString();
+										}									
+									}),
+							"\n",
+							feature,
+							featureAttributeName));
+			
+			throw new RuntimeException(message); // TODO !
+		}
+		return String.valueOf(featureName);
 	}
 
 	@Override
@@ -132,19 +156,19 @@ public enum Shapefile {
 		return niceName;
 	}
 
-	public String niceName() {
+	public String getNiceName() {
 		return niceName;
 	}
 	
-	public String featureAttributeName() {
+	public String getFeatureAttributeName() {
 		return featureAttributeName;
 	}
 	
-	public KnownProjectedCRSDescriptor defaultProjectedCrs() {
+	public KnownProjectedCRSDescriptor getDefaultProjectedCrs() {
 		return defaultProjectedCrs;
 	}
 	
-	public ImmutableCollection<AnchorPoint> anchorPoints() {
+	public ImmutableCollection<AnchorPoint> getAnchorPoints() {
 		return anchorPoints;
 	}
 	
@@ -157,16 +181,16 @@ public enum Shapefile {
 		return bounds;
 	}
 	
-	public static void main(String[] args) { // TODO
-		try {
-			Shapefile.WORLD.getBounds();
-			System.out.println();
-			Shapefile.UNITED_STATES.getBounds();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) { // TODO
+//		try {
+//			Shapefile.WORLD.getBounds();
+//			System.out.println();
+//			Shapefile.UNITED_STATES.getBounds();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> viewOfFeatureCollection()
 			throws ShapefileFeatureRetrievalException {
@@ -190,46 +214,48 @@ public enum Shapefile {
 //	}
 	
 	public static class Inset {
-		public static final Inset ALASKA = Inset.translating("Alaska", +20.0, -40.0); // TODO test these values
-
+		public static final Inset ALASKA = Inset.inset(
+				"Alaska", 0.3, new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
+		public static final Inset HAWAII = Inset.inset(
+				"Hawaii", 1, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
+		public static final Inset PUERTO_RICO = Inset.inset(
+				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
+		
 		private final String featureName;
-		private final double longitudeTranslation;
-		private final double latitudeTranslation;
+		private final MathTransform transform;
 
-		private Inset(String featureName, double longitudeTranslation, double latitudeTranslation) {
-			this.featureName = featureName;
-			this.longitudeTranslation = longitudeTranslation;
-			this.latitudeTranslation = latitudeTranslation;
+		private Inset(String featureName, MathTransform transform) {
+			this.featureName = featureName;			
+			this.transform = transform;
+			
 		}
-		public static Inset translating(
-				String featureName, double longitudeTranslation, double latitudeTranslation) {
-			return new Inset(featureName, longitudeTranslation, latitudeTranslation);
+		public static Inset inset(
+				String featureName, double scaling, Coordinate anchor, Coordinate dest) {
+			AffineTransform preScale = AffineTransform.getTranslateInstance(-anchor.x, -anchor.y);
+			AffineTransform scale = AffineTransform.getScaleInstance(scaling, scaling);
+			AffineTransform postScale = AffineTransform.getTranslateInstance(dest.x, dest.y);			
+
+			return new Inset(
+					featureName, new AffineTransform2D(preConcatenate(preScale, scale, postScale)));
 		}
-		
-		
-		public Coordinate translate(Coordinate coordinate) {
-			return new Coordinate(
-					coordinate.x + longitudeTranslation,
-					coordinate.y + latitudeTranslation);
-		}
-		
-		public Geometry translate(Geometry geometry) throws MismatchedDimensionException, TransformException {
-			return JTS.transform(
-					geometry,
-					new AffineTransform2D(AffineTransform.getTranslateInstance(
-							longitudeTranslation, latitudeTranslation)));
-		}
+				
 		
 		public String featureName() {
 			return featureName;
 		}
 		
-		public double longitudeTranslation() {
-			return longitudeTranslation;
+		public Geometry translate(Geometry geometry) throws MismatchedDimensionException, TransformException {
+			return JTS.transform(geometry, transform);
 		}
 		
-		public double latitudeTranslation() {
-			return latitudeTranslation;
+		private static AffineTransform preConcatenate(
+				AffineTransform first, AffineTransform... rest) {
+			AffineTransform concat = (AffineTransform) first.clone();
+			for (AffineTransform subsequent : rest) {
+				concat.preConcatenate(subsequent);
+			}
+			
+			return concat;
 		}
 	}
 

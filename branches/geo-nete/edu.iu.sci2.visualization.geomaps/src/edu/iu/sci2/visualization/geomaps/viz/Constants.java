@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import com.google.common.collect.ImmutableMap;
 
+import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
 
@@ -34,6 +35,9 @@ public class Constants {
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS =
 		PAGE_MARGIN_SIZE_IN_POINTS + (0.25 * POINTS_PER_INCH);
 
+	//public static final Dimension<Double> LEGEND_PAGE_AREA_DIMENSION_IN_POINTS = Dimension.ofSize(
+	//		0.7 * MAP_PAGE_AREA_WIDTH_IN_POINTS,
+	//		1.2 * POINTS_PER_INCH);
 	public static final double LEGEND_PAGE_AREA_WIDTH_IN_POINTS =
 		0.7 * MAP_PAGE_AREA_WIDTH_IN_POINTS;
 	public static final double LEGEND_PAGE_AREA_HEIGHT_IN_POINTS =
@@ -41,7 +45,7 @@ public class Constants {
 	
 	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS =
 		(PAGE_WIDTH_IN_POINTS
-		- LEGEND_PAGE_AREA_WIDTH_IN_POINTS)
+		- LEGEND_PAGE_AREA_WIDTH_IN_POINTS) //LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth())
 		+ PAGE_MARGIN_SIZE_IN_POINTS;
 	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS =
 		PAGE_FOOTER_HEIGHT_IN_POINTS;
@@ -63,7 +67,7 @@ public class Constants {
 	public static double calculatePageHeightInPoints(double mapHeightInPoints) {
 		return (Constants.PAGE_HEADER_HEIGHT_IN_POINTS
 				+ mapHeightInPoints
-				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS
+				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS //Constants.LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight()
 				+ Constants.PAGE_FOOTER_HEIGHT_IN_POINTS);
 	}
 }

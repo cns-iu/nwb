@@ -18,38 +18,38 @@ public class AreaLegend implements Legend<Double, Double> {
 		this.midpointArea = midpointArea;
 	}
 
-	public double dataValueForOutputMidpoint() {
+	public double getDataValueForOutputMidpoint() {
 		return dataValueForMidpointArea;
 	}
 	
-	public double midpointArea() {
+	public double getMidpointArea() {
 		return midpointArea;
 	}
 	
 	
 	public String scalingLabel() {
-		return vizLegend.scalingLabel();
+		return vizLegend.getScalingLabel();
 	}
 
 	public String legendDescription() {
-		return vizLegend.legendDescription();
+		return vizLegend.getLegendDescription();
 	}
 
 	public String columnName() {
-		return vizLegend.dataColumnName();
+		return vizLegend.getDataColumnName();
 	}
 
 	public NumericFormatType numericFormatType() {
-		return vizLegend.numericFormatType();
+		return vizLegend.getNumericFormatType();
 	}
 
 	@Override
-	public Range<Double> dataRange() {
-		return vizLegend.dataRange();
+	public Range<Double> getDataRange() {
+		return vizLegend.getDataRange();
 	}
 
 	@Override
-	public Range<Double> vizRange() {
-		return vizLegend.vizRange();
+	public Range<Double> getVizRange() {
+		return vizLegend.getVizRange();
 	}	
 }

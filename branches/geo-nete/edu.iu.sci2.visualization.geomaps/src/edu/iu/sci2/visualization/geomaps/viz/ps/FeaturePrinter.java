@@ -9,23 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -70,7 +65,7 @@ public class FeaturePrinter {
 	public void printFeatures(
 			BufferedWriter out,
 			Collection<FeatureView> featureViews)
-				throws IOException, AlgorithmExecutionException, TransformException {
+				throws IOException, TransformException {
 		/* Record that all features have not been colored.
 		 * This Map is updated in printFeature and read in reportUnfoundFeatures.
 		 */
@@ -176,17 +171,18 @@ public class FeaturePrinter {
 			BufferedWriter out,
 			SimpleFeature feature,
 			ImmutableMap<String, FeatureView> featureColorMap)
-				throws IOException, TransformException, AlgorithmExecutionException {
+				throws IOException, TransformException {
+		String featureName = shapefile.extractFeatureName(feature);
+		
 		Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
-		Geometry translatedGeometry = shapefile.translateForInset(shapefile.extractFeatureName(feature), rawGeometry);
-		Geometry geometry = geometryProjector.projectGeometry(translatedGeometry);
+		Geometry insetGeometry = shapefile.inset(featureName, rawGeometry);
+		Geometry geometry = geometryProjector.projectGeometry(insetGeometry);
 
-		String name = extractNameFromFeature(feature);
 
 		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
-			out.write(INDENT + "% Feature, " + shapefileFeatureNameKey + " = " + name + ", subgeometry " + gg + "\n");
+			out.write(INDENT + "% Feature, " + shapefileFeatureNameKey + " = " + featureName + ", subgeometry " + gg + "\n");
 			Geometry subgeometry = geometry.getGeometryN(gg);
-			printGeometry(subgeometry, out, featureColorMap, name);
+			printGeometry(subgeometry, out, featureColorMap, featureName);
 		}
 
 		out.write("\n");
@@ -257,6 +253,9 @@ public class FeaturePrinter {
 			}
 
 			out.write(INDENT + "closepath" + "\n");
+			
+			out.write("\n/Garamond findfont 12.0 scalefont setfont\n0.0 setgray\n"); // TODO
+			out.write(String.format("\n\n(%s) show\n\n", name.replace(')', ' ').replace('(', ' '))); // TODO
 
 			writeInkingCommands(out, featureColorMap, name);
 		}
@@ -288,32 +287,5 @@ public class FeaturePrinter {
 	private static double distance(Coordinate coordinate1, Coordinate coordinate2) {
 		return Math.hypot((coordinate1.x - coordinate2.x),
 						  (coordinate1.y - coordinate2.y));
-	}
-
-	// TODO This should probably throw an unchecked exception
-	private String extractNameFromFeature(SimpleFeature feature) throws AlgorithmExecutionException {
-		Property nameProperty = feature.getProperty(shapefileFeatureNameKey);
-
-		if (nameProperty == null) {
-			String message =
-					String.format(
-							"Feature %s has no \"%s\" property.  " +
-							"Consider using one of these properties: " +
-							Joiner.on(",").join(Lists.transform(
-									featureCollection.getSchema().getAttributeDescriptors(),
-									new Function<AttributeDescriptor, String>() {
-										@Override
-										public String apply(AttributeDescriptor input) {
-											return input.getName().toString();
-										}									
-									}),
-							"\n",
-							feature,
-							shapefileFeatureNameKey));
-			
-			throw new AlgorithmExecutionException(message);
-		}
-
-		return (String) nameProperty.getValue();
 	}
 }

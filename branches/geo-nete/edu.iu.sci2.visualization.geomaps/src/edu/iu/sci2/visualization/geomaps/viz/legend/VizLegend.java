@@ -29,27 +29,27 @@ public class VizLegend<U> {
 		this.numericFormatType = numericFormatType;
 	}
 
-	public Range<Double> dataRange() {
+	public Range<Double> getDataRange() {
 		return dataRange;
 	}
 
-	public Range<U> vizRange() {
+	public Range<U> getVizRange() {
 		return vizRange;
 	}
 
-	public String scalingLabel() {
+	public String getScalingLabel() {
 		return scalingLabel;
 	}
 
-	public String legendDescription() {
+	public String getLegendDescription() {
 		return legendDescription;
 	}
 
-	public String dataColumnName() {
+	public String getDataColumnName() {
 		return dataColumnName;
 	}
 
-	public NumericFormatType numericFormatType() {
+	public NumericFormatType getNumericFormatType() {
 		return numericFormatType;
 	}
 }

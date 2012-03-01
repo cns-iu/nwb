@@ -9,7 +9,10 @@ public class FillColorStrategy extends ColorStrategy {
 		this.color = color;
 	}
 	public static ColorStrategy forColor(Color color) {
-		return (color == null) ? (new NullColorStrategy()) : (new FillColorStrategy(color));
+		return (color == null) ? theDefault() : (new FillColorStrategy(color));
+	}
+	public static ColorStrategy theDefault() {
+		return new NullColorStrategy();
 	}
 	
 	

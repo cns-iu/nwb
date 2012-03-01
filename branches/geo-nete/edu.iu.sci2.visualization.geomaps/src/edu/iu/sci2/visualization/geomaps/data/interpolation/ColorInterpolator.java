@@ -12,8 +12,8 @@ public class ColorInterpolator implements Interpolator<Color> {
 	private final InterpolatorND interpolator3D;
 
 	private ColorInterpolator(Range<Double> inRange, Range<Color> outRange) {
-		final double[] outMinTuple = ColorTuples.asTuple(outRange.pointA());
-		final double[] outMaxTuple = ColorTuples.asTuple(outRange.pointB());
+		final double[] outMinTuple = ColorTuples.asTuple(outRange.getPointA());
+		final double[] outMaxTuple = ColorTuples.asTuple(outRange.getPointB());
 		
 		this.interpolator3D = InterpolatorND.between(
 				inRange, Range.between(outMinTuple, outMaxTuple));
@@ -29,14 +29,14 @@ public class ColorInterpolator implements Interpolator<Color> {
 	}
 
 	@Override
-	public Range<Double> inRange() {
-		return interpolator3D.inRange();
+	public Range<Double> getInRange() {
+		return interpolator3D.getInRange();
 	}
 
 	@Override
-	public Range<Color> outRange() {
+	public Range<Color> getOutRange() {
 		return Range.between(
-				ColorTuples.asColor(interpolator3D.outRange().pointA()),
-				ColorTuples.asColor(interpolator3D.outRange().pointB()));
+				ColorTuples.asColor(interpolator3D.getOutRange().getPointA()),
+				ColorTuples.asColor(interpolator3D.getOutRange().getPointB()));
 	}
 }

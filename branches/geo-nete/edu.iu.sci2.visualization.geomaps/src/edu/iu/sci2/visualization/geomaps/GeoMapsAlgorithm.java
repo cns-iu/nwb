@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,7 +60,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 
 	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplates();
 	public static final String STRING_TEMPLATE_FILE_PATH =
-		"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/geomap.st";
+		"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/geomap.stg";
 	
 	public static final String SHAPEFILE_ID = "shapefile";
 	public static final String PROJECTION_ID = "projection";
@@ -141,7 +142,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.niceName());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
 			parameters.put("authorName", "Joseph Biberstine");
 
@@ -166,6 +167,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			File outFile = (File) outData[0].getData();
 			System.out.println(outFile.getAbsolutePath());
 			System.out.println(".. Done.");
+			Desktop.getDesktop().open(outFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

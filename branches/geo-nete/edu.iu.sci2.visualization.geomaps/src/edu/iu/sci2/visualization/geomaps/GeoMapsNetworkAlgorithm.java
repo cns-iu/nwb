@@ -89,12 +89,12 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			Data inDatum = this.data[0];
 			File inFile = (File) inDatum.getData();
 			
-			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.defaultProjectedCrs();
+			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
 			if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
 				knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceName((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 			}
 
-			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.anchorPoints();
+			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.getAnchorPoints();
 			List<Circle> anchorPointsAsCircles = drawAnchorPoints(anchorPoints);
 
 			GeoMap geoMap = new GeoMap(

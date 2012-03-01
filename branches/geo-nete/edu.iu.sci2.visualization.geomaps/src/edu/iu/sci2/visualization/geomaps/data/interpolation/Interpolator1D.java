@@ -25,10 +25,10 @@ public class Interpolator1D implements Interpolator<Double> {
 	private static double interpolate(
 			double value, Range<Double> inRange, Range<Double> outRange) {
 		return interpolate(value,
-						   inRange.pointA().doubleValue(),
-						   inRange.pointB().doubleValue(),
-						   outRange.pointA().doubleValue(),
-						   outRange.pointB().doubleValue());
+						   inRange.getPointA().doubleValue(),
+						   inRange.getPointB().doubleValue(),
+						   outRange.getPointA().doubleValue(),
+						   outRange.getPointB().doubleValue());
 	}
 
 	private static double interpolate(
@@ -41,12 +41,12 @@ public class Interpolator1D implements Interpolator<Double> {
 	}
 
 	@Override
-	public Range<Double> inRange() {
+	public Range<Double> getInRange() {
 		return inRange;
 	}
 	
 	@Override
-	public Range<Double> outRange() {
+	public Range<Double> getOutRange() {
 		return outRange;
 	}
 }

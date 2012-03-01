@@ -28,13 +28,15 @@ public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implem
 	@Override
 	public abstract PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException;
 
+	public abstract String legendDescription();
+	
 	
 	public VizLegend<V> makeVizLegend(NumericFormatType numericFormatType) {
 		return new VizLegend<V>(
 				usableRange,
-				interpolator.outRange(),
+				interpolator.getOutRange(),
 				scaling().toString(),
-				"Area",
+				legendDescription(),
 				columnName(),
 				numericFormatType);
 	}

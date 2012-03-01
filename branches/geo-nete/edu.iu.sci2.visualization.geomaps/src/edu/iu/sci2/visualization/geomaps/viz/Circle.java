@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
+import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPageArea;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
@@ -20,11 +21,15 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 public class Circle {
 	private final Coordinate coordinate;
 	private final EnumMap<CircleDimension, Strategy> strategies;
-	public static final double DEFAULT_CIRCLE_RADIUS_MINIMUM = 0.00135 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
-	public static final double DEFAULT_CIRCLE_RADIUS_MAXIMUM = 0.03 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
-	public static final double DEFAULT_CIRCLE_AREA_MINIMUM = calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MINIMUM);
-	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM = calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MAXIMUM);
-	public static final double DEFAULT_CIRCLE_AREA = 0.1 * DEFAULT_CIRCLE_AREA_MAXIMUM;
+	public static final Range<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
+			Range.between(
+					0.00135 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS,
+					0.03 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS);
+	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE =
+			Range.between(
+					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),
+					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointB()));
+	public static final double DEFAULT_CIRCLE_AREA = 0.1 * DEFAULT_CIRCLE_AREA_RANGE.getPointB();
 	public static final double DEFAULT_CIRCLE_LINE_WIDTH = 1.5;
 	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.1;
 	public static final Color DEFAULT_OUTLINE_COLOR = Color.BLACK;
@@ -39,7 +44,7 @@ public class Circle {
 	
 	public String toPostScript(GeometryProjector geometryProjector, GeoMapViewPageArea geoMapViewPageArea) throws TransformException {
 		// TODO ugly cast
-		double radius = calculateRadiusFromArea(((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).area());
+		double radius = calculateRadiusFromArea(((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).getArea());
 		Strategy innerColorStrategy = strategyFor(CircleDimension.INNER_COLOR);
 		Strategy outerColorStrategy = strategyFor(CircleDimension.OUTER_COLOR);
 

@@ -19,7 +19,7 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 
 public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 	ECKERT_IV("Eckert IV", new EPSGCode("EPSG:54012")),
-	WINKEL_TRIPEL("Winkel Tripel",
+	WINKEL_TRIPEL("Winkel Tripel", // TODO findCentralMeridian is broken on Winkel
 			new WKT("PROJCS[\"World_Winkel_Tripel_NGS\"," +
 					"GEOGCS[\"GCS_WGS_1984\"," +
 					"DATUM[\"D_WGS_1984\"," +
@@ -46,7 +46,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 						new Function<KnownProjectedCRSDescriptor, String>() {
 							@Override
 							public String apply(KnownProjectedCRSDescriptor shapefile) {
-								return shapefile.niceName();
+								return shapefile.getNiceName();
 							}
 						}));
 	public static Set<String> byNiceNames() {
@@ -66,7 +66,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 	}
 	
 
-	public String niceName() {
+	public String getNiceName() {
 		return niceName;
 	}
 
