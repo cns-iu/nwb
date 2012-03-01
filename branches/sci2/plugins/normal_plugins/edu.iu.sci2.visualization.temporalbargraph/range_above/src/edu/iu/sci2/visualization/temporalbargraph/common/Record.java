@@ -1,11 +1,7 @@
 package edu.iu.sci2.visualization.temporalbargraph.common;
 
-import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
@@ -16,13 +12,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 
-import prefuse.data.Schema;
-import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.data.tuple.TableTuple;
-import prefuse.data.tuple.TupleManager;
-import prefuse.util.collections.IntIterator;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
@@ -42,16 +34,14 @@ public class Record {
 			.from(new Comparator<Record>() {
 				@Override
 				public int compare(Record r1, Record r2) {
-					return DateTimeComparator.getInstance().compare(
-							r1.getStartDate(), r2.getStartDate());
+					return ComparisonChain.start().compare(r1.getStartDate(), r2.getStartDate()).compare(r1.getLabel(), r2.getLabel()).result();
 				}
 			});
 	public static final Ordering<Record> END_DATE_ORDERING = Ordering
 			.from(new Comparator<Record>() {
 				@Override
 				public int compare(Record r1, Record r2) {
-					return DateTimeComparator.getInstance().compare(
-							r1.getEndDate(), r2.getEndDate());
+					return ComparisonChain.start().compare(r1.getEndDate(), r2.getEndDate()).compare(r1.getLabel(), r2.getLabel()).result();
 				}
 			});
 
