@@ -5,8 +5,7 @@ import java.util.List;
 import org.cishell.utilities.ToCaseFunction;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class SubstringOrderings {
@@ -30,7 +29,6 @@ public class SubstringOrderings {
 	public static Ordering<String> explicit(
 			String leastCandidateSubstring,
 			String... remainingCandidateSubstringsInOrder) {
-		return explicit(ImmutableList.copyOf(
-				ObjectArrays.concat(leastCandidateSubstring, remainingCandidateSubstringsInOrder)));
+		return explicit(Lists.asList(leastCandidateSubstring, remainingCandidateSubstringsInOrder));
 	}	
 }

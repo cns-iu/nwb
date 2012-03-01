@@ -17,9 +17,9 @@ public class StringPredicates {
 	}
 	
 	/**
-	 * @see #isContainedBy(String)
 	 * @param normalizer	A String->String Function applied to the base string and candidate substring before testing.
 	 * @return	A Predicate for whether {@code string}.contains(a candidate substring).
+	 * @see String#contains(CharSequence)
 	 */
 	public static Predicate<String> isContainedBy(
 			final String string,

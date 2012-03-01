@@ -39,11 +39,6 @@ public class Constants {
 			LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth();
 	public static final double LEGEND_PAGE_AREA_HEIGHT_IN_POINTS =
 			LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight();
-	static {
-		System.out.println(LEGEND_PAGE_AREA_DIMENSION_IN_POINTS);
-		System.out.println(LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight());
-		System.out.println(LEGEND_PAGE_AREA_HEIGHT_IN_POINTS);
-	}
 	
 	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS =
 		(PAGE_WIDTH_IN_POINTS
