@@ -52,7 +52,7 @@ public class GeoMapViewPageArea {
 
 	private static double calculateDisplayCenterY(double displayHeightInPoints) {
 		return (Constants.PAGE_FOOTER_HEIGHT_IN_POINTS
-				+ Constants.LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight() + (displayHeightInPoints / 2.0)); //Constants.LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight() + (displayHeightInPoints / 2.0));
+				+ Constants.LEGEND_PAGE_AREA_DIMENSION.getHeight() + (displayHeightInPoints / 2.0)); //Constants.LEGEND_PAGE_AREA_DIMENSION.getHeight() + (displayHeightInPoints / 2.0));
 	}
 
 	// Transform ordinate z from the data space to the display space.

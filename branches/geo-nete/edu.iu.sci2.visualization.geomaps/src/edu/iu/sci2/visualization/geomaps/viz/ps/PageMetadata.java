@@ -14,9 +14,9 @@ public class PageMetadata {
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	
 	public static final double LOWER_LEFT_X_IN_POINTS =
-		Constants.METADATA_PAGE_AREA_LOWER_LEFT_X_IN_POINTS;
+		Constants.METADATA_PAGE_AREA_LOWER_LEFT_POINT.getX();
 	public static final double LOWER_LEFT_Y_IN_POINTS =
-		Constants.METADATA_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS;
+		Constants.METADATA_PAGE_AREA_LOWER_LEFT_POINT.getY();
 	
 	private final String title;
 	private final String subtitle;

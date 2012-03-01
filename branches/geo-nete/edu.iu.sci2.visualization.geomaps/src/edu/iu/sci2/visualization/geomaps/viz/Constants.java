@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -32,28 +33,28 @@ public class Constants {
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS =
 		PAGE_MARGIN_IN_POINTS + (0.25 * POINTS_PER_INCH);
 
-	public static final Dimension<Double> LEGEND_PAGE_AREA_DIMENSION_IN_POINTS = Dimension.ofSize(
+	public static final Dimension<Double> LEGEND_PAGE_AREA_DIMENSION = Dimension.ofSize(
 			0.7 * MAP_PAGE_AREA_WIDTH_IN_POINTS,
 			1.2 * POINTS_PER_INCH);
 	
-	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS =
-		(PAGE_WIDTH_IN_POINTS
-		- LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth())
-		+ PAGE_MARGIN_IN_POINTS;
-	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS =
-			PAGE_FOOTER_HEIGHT_IN_POINTS;
+	public static final Point2D.Double LEGEND_PAGE_AREA_LOWER_LEFT_POINT = new Point2D.Double(
+			(PAGE_WIDTH_IN_POINTS
+					- LEGEND_PAGE_AREA_DIMENSION.getWidth())
+					+ PAGE_MARGIN_IN_POINTS,
+			PAGE_FOOTER_HEIGHT_IN_POINTS);
 	
 	
-	public static final double DEFAULT_LOWER_LEFT_Y_IN_POINTS =
-			LEGEND_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS
-			+ (0.75 * LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight());
+	public static final double LEGEND_COMPOSITE_WIDTH_IN_POINTS = LEGEND_PAGE_AREA_DIMENSION.getWidth();
+	public static final Point2D.Double LEGEND_COMPOSITE_LOWER_LEFT_POINT = new Point2D.Double(
+			LEGEND_PAGE_AREA_LOWER_LEFT_POINT.getX(),
+			LEGEND_PAGE_AREA_LOWER_LEFT_POINT.getY() + (0.75 * LEGEND_PAGE_AREA_DIMENSION.getHeight()));
 	
 	
-	public static final double METADATA_PAGE_AREA_LOWER_LEFT_X_IN_POINTS =
-		PAGE_MARGIN_IN_POINTS;
-	public static final double METADATA_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS =
-		DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-
+	public static final Point2D.Double METADATA_PAGE_AREA_LOWER_LEFT_POINT = new Point2D.Double(
+			PAGE_MARGIN_IN_POINTS, LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY());
+	
+	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
+			LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX() + (0.5 * LEGEND_COMPOSITE_WIDTH_IN_POINTS);
 	
 	public static final ImmutableMap<String, Range<Color>> COLOR_RANGES = ImmutableMap.of(
 			"Yellow to Blue", Range.between(new Color(255, 255, 158), new Color(37, 52, 148)),
@@ -66,19 +67,7 @@ public class Constants {
 	public static double calculatePageHeightInPoints(double mapHeightInPoints) {
 		return (PAGE_HEADER_HEIGHT_IN_POINTS
 				+ mapHeightInPoints
-				+ LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight()
+				+ LEGEND_PAGE_AREA_DIMENSION.getHeight()
 				+ PAGE_FOOTER_HEIGHT_IN_POINTS);
 	}
-
-
-	
-
-	public static final double DEFAULT_LOWER_LEFT_X_IN_POINTS =
-	LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS;
-
-	public static final double DEFAULT_WIDTH_IN_POINTS = LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth();
-
-	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
-	DEFAULT_LOWER_LEFT_X_IN_POINTS
-	+ (0.5 * DEFAULT_WIDTH_IN_POINTS);
 }

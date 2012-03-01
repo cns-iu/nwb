@@ -60,7 +60,7 @@ public enum FeatureDimension implements VizDimension {
 
 						@Override
 						public double lowerLeftY() {
-							return Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+							return Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY();
 						}
 
 						@Override

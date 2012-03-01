@@ -74,7 +74,7 @@ public enum CircleDimension implements VizDimension {
 								AreaLegend areaLegend =
 										new AreaLegend(generalLegend, unscaledValueForMidrangeArea, midrangeArea);
 								
-								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(areaLegend, CircleDimension.AREA_LEGEND_LOWER_LEFT_X, Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS);
+								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(areaLegend, CircleDimension.AREA_LEGEND_LOWER_LEFT_X, Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY());
 								
 								return labeledCircleSizes;
 							} catch (ScalingException e) {
@@ -125,7 +125,7 @@ public enum CircleDimension implements VizDimension {
 
 						@Override
 						public double lowerLeftY() {
-							return Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+							return Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY();
 						}
 
 						@Override
@@ -176,7 +176,7 @@ public enum CircleDimension implements VizDimension {
 
 						@Override
 						public double lowerLeftY() {
-							return Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+							return Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY();
 						}
 
 						@Override
@@ -190,16 +190,18 @@ public enum CircleDimension implements VizDimension {
 	};
 	
 	public static final Dimension<Double> COLOR_GRADIENT_DIMENSION = Dimension.ofSize(
-			0.8 * (Constants.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
+			0.8 * (Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
 			10.0);
-	public static final double AREA_LEGEND_LOWER_LEFT_X =
-			Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS
-			+ ((2.0 * Constants.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+	// TODO Can do better on these three..
 	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
-			Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS;
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX()
+			+ ((0.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
-			Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS
-			+ ((1.0 * Constants.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX()
+			+ ((1.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+	public static final double AREA_LEGEND_LOWER_LEFT_X =
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX()
+			+ ((2.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;
