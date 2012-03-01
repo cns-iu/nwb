@@ -25,26 +25,12 @@ public class Header {
 		titleSlug = title;
 		generatedFromSlug = "Generated from " + generatedFrom;
 
-		// All to make the language match for the last sentence...
-		// TODO extend this functionality for the other text in the slug.
-		MessageFormat messageForm = new MessageFormat("{0}");
-		double[] pubLimits = { 0, 1, 2 };
-		String[] pubStrings = { "{1} publications are", "1 publication is",
-				"{1} publications are" };
-		ChoiceFormat choiceForm = new ChoiceFormat(pubLimits, pubStrings);
-		Format[] formats = { choiceForm, NumberFormat.getInstance() };
-		messageForm.setFormats(formats);
-		Object[] messageArguments = {
-				mapOfScience.countOfUnmappedPublications(),
-				mapOfScience.countOfUnmappedPublications() };
-
 		exploreSlug = String
-				.format("Explore publication activity: %s out of %s publications were mapped to %s subdiciplines and %s diciplines.  Exactly %s unclassified.",
+				.format("Explore publication activity: %s out of %s publications were mapped to %s subdiciplines and %s diciplines.",
 						mapOfScience.prettyCountOfMappedPublications(),
 						mapOfScience.prettyCountOfPublications(),
 						mapOfScience.prettyCountOfMappedSubdiciplines(),
-						mapOfScience.prettyCountOfCategoriesUsed(),
-						messageForm.format(messageArguments));
+						mapOfScience.prettyCountOfCategoriesUsed());
 		DateTime dateTime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
 				.forPattern("MMMM dd, yyyy | KK:mm a zzz");
