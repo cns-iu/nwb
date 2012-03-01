@@ -7,8 +7,9 @@
   
 
    <parent>
-   	<groupId>edu.iu.sci2.plugins</groupId>
-   	<artifactId>plugins</artifactId>
-   	<version>1.0.0</version>
+   	<groupId>edu.iu.sci2.normal_plugins</groupId>
+   	<artifactId>normal_plugins</artifactId>
+   	<version>0.0.1-SNAPSHOT</version>
+   	<relativePath>..</relativePath>
    </parent>
 </project>
