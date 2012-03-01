@@ -13,7 +13,7 @@ public class PageHeader {
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
 	public static final double LOWER_LEFT_X_IN_POINTS =
-		Constants.PAGE_MARGIN_SIZE_IN_POINTS;
+		Constants.PAGE_MARGIN_IN_POINTS;
 		
 	private final String dataLabel;
 	private final double lowerLeftYInPoints;
@@ -23,7 +23,7 @@ public class PageHeader {
 		this.dataLabel = dataLabel;
 		
 		this.lowerLeftYInPoints =
-			pageHeightInPoints - Constants.PAGE_MARGIN_SIZE_IN_POINTS - FONT_SIZE;
+			pageHeightInPoints - Constants.PAGE_MARGIN_IN_POINTS - FONT_SIZE;
 	}
 	
 	@Override

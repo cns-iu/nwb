@@ -20,41 +20,37 @@ public class Constants {
 	
 	public static final double MAP_CENTER_X_IN_POINTS = PAGE_WIDTH_IN_POINTS / 2.0;
 	
-	public static final double PAGE_MARGIN_SIZE_IN_POINTS = 0.5 * POINTS_PER_INCH;
+	public static final double PAGE_MARGIN_IN_POINTS = 0.5 * POINTS_PER_INCH;
 	
 	/* No map page area height is necessary since, as we are fixing the aspect
 	 * ratio, it will be implied by the map page area width.
 	 * See calculatePageHeightInPoints(double).
 	 */
 	public static final double MAP_PAGE_AREA_WIDTH_IN_POINTS =
-		(PAGE_WIDTH_IN_POINTS - (2 * PAGE_MARGIN_SIZE_IN_POINTS));
+		(PAGE_WIDTH_IN_POINTS - (2 * PAGE_MARGIN_IN_POINTS));
 	
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS =
-		PAGE_MARGIN_SIZE_IN_POINTS + (0.25 * POINTS_PER_INCH);
+		PAGE_MARGIN_IN_POINTS + (0.25 * POINTS_PER_INCH);
 
 	public static final Dimension<Double> LEGEND_PAGE_AREA_DIMENSION_IN_POINTS = Dimension.ofSize(
 			0.7 * MAP_PAGE_AREA_WIDTH_IN_POINTS,
 			1.2 * POINTS_PER_INCH);
-	public static final double LEGEND_PAGE_AREA_WIDTH_IN_POINTS =
-			LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth();
-	public static final double LEGEND_PAGE_AREA_HEIGHT_IN_POINTS =
-			LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight();
 	
 	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS =
 		(PAGE_WIDTH_IN_POINTS
-		- LEGEND_PAGE_AREA_WIDTH_IN_POINTS)
-		+ PAGE_MARGIN_SIZE_IN_POINTS;
+		- LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth())
+		+ PAGE_MARGIN_IN_POINTS;
 	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS =
 			PAGE_FOOTER_HEIGHT_IN_POINTS;
 	
 	
 	public static final double DEFAULT_LOWER_LEFT_Y_IN_POINTS =
 			LEGEND_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS
-			+ (0.75 * LEGEND_PAGE_AREA_HEIGHT_IN_POINTS);
+			+ (0.75 * LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight());
 	
 	
 	public static final double METADATA_PAGE_AREA_LOWER_LEFT_X_IN_POINTS =
-		PAGE_MARGIN_SIZE_IN_POINTS;
+		PAGE_MARGIN_IN_POINTS;
 	public static final double METADATA_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS =
 		DEFAULT_LOWER_LEFT_Y_IN_POINTS;
 
@@ -70,7 +66,7 @@ public class Constants {
 	public static double calculatePageHeightInPoints(double mapHeightInPoints) {
 		return (PAGE_HEADER_HEIGHT_IN_POINTS
 				+ mapHeightInPoints
-				+ LEGEND_PAGE_AREA_HEIGHT_IN_POINTS
+				+ LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getHeight()
 				+ PAGE_FOOTER_HEIGHT_IN_POINTS);
 	}
 
@@ -80,5 +76,9 @@ public class Constants {
 	public static final double DEFAULT_LOWER_LEFT_X_IN_POINTS =
 	LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS;
 
-	public static final double DEFAULT_WIDTH_IN_POINTS = LEGEND_PAGE_AREA_WIDTH_IN_POINTS;
+	public static final double DEFAULT_WIDTH_IN_POINTS = LEGEND_PAGE_AREA_DIMENSION_IN_POINTS.getWidth();
+
+	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
+	DEFAULT_LOWER_LEFT_X_IN_POINTS
+	+ (0.5 * DEFAULT_WIDTH_IN_POINTS);
 }

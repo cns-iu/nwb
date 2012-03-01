@@ -18,9 +18,9 @@ public class PageFooter {
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
 	public static final double LOWER_LEFT_X_IN_POINTS =
-		Constants.PAGE_MARGIN_SIZE_IN_POINTS;
+		Constants.PAGE_MARGIN_IN_POINTS;
 	public static final double LOWER_LEFT_Y_IN_POINTS =
-		Constants.PAGE_MARGIN_SIZE_IN_POINTS;
+		Constants.PAGE_MARGIN_IN_POINTS;
 
 	private static final String SEP = " | ";
 	

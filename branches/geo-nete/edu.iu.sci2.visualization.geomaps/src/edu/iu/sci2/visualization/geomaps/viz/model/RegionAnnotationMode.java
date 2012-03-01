@@ -24,7 +24,6 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescrip
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
@@ -34,14 +33,6 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
-	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
-		Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS
-		+ (0.5 * Constants.DEFAULT_WIDTH_IN_POINTS);
-	public static final double COLOR_GRADIENT_WIDTH =
-		(Constants.PAGE_MARGIN_SIZE_IN_POINTS
-		+ Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS)
-		- COLOR_GRADIENT_LOWER_LEFT_X;
-	public static final int COLOR_GRADIENT_HEIGHT = 10;
 	public static final String FEATURE_NAME_ID = "featureName";
 	public static final String COLOR_COLUMN_NAME_ID = "featureColorColumnName";
 	public static final String COLOR_SCALING_ID = "featureColorScaling";

@@ -17,7 +17,6 @@ import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
-import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.FillColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
@@ -56,7 +55,7 @@ public enum FeatureDimension implements VizDimension {
 
 						@Override
 						public double lowerLeftX() {
-							return RegionAnnotationMode.COLOR_GRADIENT_LOWER_LEFT_X;
+							return Constants.COLOR_GRADIENT_LOWER_LEFT_X;
 						}
 
 						@Override
