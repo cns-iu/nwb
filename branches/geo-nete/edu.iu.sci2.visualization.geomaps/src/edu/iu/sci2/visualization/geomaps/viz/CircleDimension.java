@@ -24,7 +24,6 @@ import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.AreaLegend;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceCircles;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegend;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
@@ -75,7 +74,7 @@ public enum CircleDimension implements VizDimension {
 								AreaLegend areaLegend =
 										new AreaLegend(generalLegend, unscaledValueForMidrangeArea, midrangeArea);
 								
-								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(areaLegend, CircleDimension.AREA_LEGEND_LOWER_LEFT_X, LegendComposite.DEFAULT_LOWER_LEFT_Y_IN_POINTS);
+								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(areaLegend, CircleDimension.AREA_LEGEND_LOWER_LEFT_X, Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS);
 								
 								return labeledCircleSizes;
 							} catch (ScalingException e) {
@@ -126,7 +125,7 @@ public enum CircleDimension implements VizDimension {
 
 						@Override
 						public double lowerLeftY() {
-							return LegendComposite.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+							return Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
 						}
 
 						@Override
@@ -177,7 +176,7 @@ public enum CircleDimension implements VizDimension {
 
 						@Override
 						public double lowerLeftY() {
-							return LegendComposite.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+							return Constants.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
 						}
 
 						@Override
@@ -191,16 +190,16 @@ public enum CircleDimension implements VizDimension {
 	};
 	
 	public static final Dimension<Double> COLOR_GRADIENT_DIMENSION = Dimension.ofSize(
-			0.8 * (LegendComposite.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
+			0.8 * (Constants.DEFAULT_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
 			10.0);
 	public static final double AREA_LEGEND_LOWER_LEFT_X =
-			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
-			+ ((2.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+			Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS
+			+ ((2.0 * Constants.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
-			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS;
+			Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS;
 	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
-			LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
-			+ ((1.0 * LegendComposite.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+			Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS
+			+ ((1.0 * Constants.DEFAULT_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;

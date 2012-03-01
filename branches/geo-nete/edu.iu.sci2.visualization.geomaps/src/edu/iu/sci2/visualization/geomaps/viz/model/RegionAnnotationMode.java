@@ -29,15 +29,14 @@ import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
 	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
-		LegendComposite.DEFAULT_LOWER_LEFT_X_IN_POINTS
-		+ (0.5 * LegendComposite.DEFAULT_WIDTH_IN_POINTS);
+		Constants.DEFAULT_LOWER_LEFT_X_IN_POINTS
+		+ (0.5 * Constants.DEFAULT_WIDTH_IN_POINTS);
 	public static final double COLOR_GRADIENT_WIDTH =
 		(Constants.PAGE_MARGIN_SIZE_IN_POINTS
 		+ Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS)
