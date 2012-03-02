@@ -58,6 +58,7 @@ public enum NodeDestination {
 		}
 	};
 
+	private static final int SPACING_BETWEEN_LABELS = 2;
 	private static final int MINIMUM_FONT_SIZE = 2;
 	private static final Font LABEL_FONT = PageDirector.BASIC_FONT;
 	public abstract void paintLabel(NodeView nv, Graphics2D g, double maxHeight);
@@ -70,7 +71,7 @@ public enum NodeDestination {
 			TextLayout tl = new TextLayout("Alg", currentFont, frc); // "Alg" is a good height test with its risers and descenders
 			Rectangle2D textBounds = tl.getBounds();
 			// "+1" to leave a bit of a margin
-			if (textBounds.getHeight() + 1 < maxHeight) {
+			if (textBounds.getHeight() + SPACING_BETWEEN_LABELS < maxHeight) {
 				break;
 			}
 		}
