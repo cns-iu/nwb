@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -146,15 +148,54 @@ public class GeoMapViewPS {
 		}
 	}
 	
-	private GeoMapViewPageArea calculateMapBoundingBox() throws TransformException {
-		/* Identify extreme values for the X and Y dimensions
-		 * among the Geometries in our featureCollection.
-		 * Note that this is *after* Geometry preparation (cropping and projecting).
-		 */
-		double dataMinX = Double.POSITIVE_INFINITY;
-		double dataMinY = Double.POSITIVE_INFINITY;
-		double dataMaxX = Double.NEGATIVE_INFINITY;
-		double dataMaxY = Double.NEGATIVE_INFINITY;
+//	public static Iterator<Coordinate> allCoordinates(
+//			FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection) {
+//		return new AbstractIterator<Coordinate>() {
+//
+//			@Override
+//			protected Coordinate computeNext() {
+//				// TODO Auto-generated method stub
+//				return null;
+//			}
+//			
+//		};
+//	}
+	
+	/*
+	 * For each feature
+	 * 		Project it to a Geometry, then for each subgeometry
+	 * 			Each coordinate
+	 */
+	
+//	public Iterator<SimpleFeature> asProperIterator(final FeatureIterator<SimpleFeature> featureIterator) {
+//		return new AbstractIterator<SimpleFeature>() {
+//			@Override
+//			protected SimpleFeature computeNext() {
+//				while (featureIterator.hasNext()) {
+//					return featureIterator.next();
+//				}
+//				
+//				return endOfData();
+//			}
+//		};
+//	}
+//	
+//	public List<Geometry> subgeometries(Geometry geometry) {
+//		List<Geometry> subgeometries = Lists.newArrayListWithCapacity(geometry.getNumGeometries()); // TODO safe to assume?
+//		
+//		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
+//			subgeometries.add(geometry.getGeometryN(gg));
+//		}
+//		
+//		return subgeometries;
+//	}
+	
+	/**
+	 * Identify extreme values for the X and Y dimensions among the projected features from our featureCollection.
+	 * Note that this is <em>after</em> Geometry preparation (cropping and projecting).
+	 */	
+	private GeoMapViewPageArea calculateMapBoundingBox() throws TransformException {	
+		Rectangle2D.Double rectangle = null;
 
 		FeatureIterator<SimpleFeature> it = geoMap.getShapefile().viewOfFeatureCollection().features();
 		while (it.hasNext()) {
@@ -175,32 +216,36 @@ public class GeoMapViewPS {
 				Coordinate[] coordinates = subgeometry.getCoordinates();
 
 				for (Coordinate coordinate : coordinates) {
-					dataMinX = Math.min(coordinate.x, dataMinX);
-					dataMinY = Math.min(coordinate.y, dataMinY);
-					dataMaxX = Math.max(coordinate.x, dataMaxX);
-					dataMaxY = Math.max(coordinate.y, dataMaxY);
+					Point2D.Double point = GeoMapViewPageArea.asPoint2D(coordinate);
+					
+					if (rectangle == null) {
+						rectangle = new Rectangle2D.Double(point.x, point.y, 0, 0);
+					}
+					
+					rectangle.add(point);
 				}
 			}
 		}
 		it.close();
 		
-		// Exaggerate the data range a bit to provide a buffer around it in the map.
-		double xRange = dataMaxX - dataMinX;
-		double xBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * xRange;
-		double bufferedDataMinX = dataMinX - xBufferSize;
-		double bufferedDataMaxX = dataMaxX + xBufferSize;
-		
-		double yRange = dataMaxY - dataMinY;
-		double yBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * yRange;
-		double bufferedDataMinY = dataMinY - yBufferSize;
-		double bufferedDataMaxY = dataMaxY + yBufferSize;
+		Rectangle2D.Double bufferedRectangle = addSmallBufferAround(rectangle);
 
-		return new GeoMapViewPageArea(
-				bufferedDataMinX,
-				bufferedDataMinY,
-				bufferedDataMaxX,
-				bufferedDataMaxY);
+		return new GeoMapViewPageArea(bufferedRectangle);
 	}
+
+	private static Rectangle2D.Double addSmallBufferAround(Rectangle2D.Double rectangle) {
+		return rectangle; // TODO actually add the buffer
+//		double xRange = dataMaxX - dataMinX;
+//		double xBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * xRange;
+//		double bufferedDataMinX = dataMinX - xBufferSize;
+//		double bufferedDataMaxX = dataMaxX + xBufferSize;
+//		
+//		double yRange = dataMaxY - dataMinY;
+//		double yBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * yRange;
+//		double bufferedDataMinY = dataMinY - yBufferSize;
+//		double bufferedDataMaxY = dataMaxY + yBufferSize;
+	}
+
 
 	private void writeCodeHeader(
 			BufferedWriter out, String outputPSFileName) throws IOException {

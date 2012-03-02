@@ -25,21 +25,21 @@ public class GeoMapViewPageArea {
 	private final double scale;
 	private final double displayHeightInPoints;
 
-	public GeoMapViewPageArea(double dataMinX, double dataMinY, double dataMaxX,
-			double dataMaxY) {
+	public GeoMapViewPageArea(Rectangle2D.Double rectangle) {
+		// TODO inline these 4
 		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;
 
-		this.dataCenterX = Averages.meanOfDoubles(dataMinX, dataMaxX);
-		this.dataCenterY = Averages.meanOfDoubles(dataMinY, dataMaxY);
+		this.dataCenterX = Averages.meanOfDoubles(rectangle.getMinX(), rectangle.getMaxX());
+		this.dataCenterY = Averages.meanOfDoubles(rectangle.getMinY(), rectangle.getMaxY());
 
-		this.scale = calculateScale(dataMinX, dataMaxX);
+		this.scale = calculateScale(rectangle.getMinX(), rectangle.getMaxX());
 
-		this.displayHeightInPoints = (scale * (dataMaxY - dataMinY));
+		this.displayHeightInPoints = (scale * (rectangle.getMaxY() - rectangle.getMinY()));
 		this.displayCenterYInPoints = calculateDisplayCenterY(displayHeightInPoints);
 
 		this.displayRectangle = rectangleWithCorners(
-				asPoint2D(getDisplayCoordinate(new Coordinate(dataMinX, dataMinY))),
-				asPoint2D(getDisplayCoordinate(new Coordinate(dataMaxX, dataMaxY))));
+				asPoint2D(getDisplayCoordinate(new Coordinate(rectangle.getMinX(), rectangle.getMinY()))),
+				asPoint2D(getDisplayCoordinate(new Coordinate(rectangle.getMaxX(), rectangle.getMaxY()))));
 	}
 	
 	public static Rectangle2D.Double rectangleWithCorners(Point2D.Double corner, Point2D.Double oppositeCorner) {
