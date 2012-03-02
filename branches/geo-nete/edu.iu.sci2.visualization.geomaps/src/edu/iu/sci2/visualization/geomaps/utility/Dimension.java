@@ -3,7 +3,7 @@ package edu.iu.sci2.visualization.geomaps.utility;
 import com.google.common.base.Objects;
 
 /**
- * A simple two-dimensional (width and height), generic-valued dimension value class.  
+ * A simple two-dimensional, generic-valued dimension value class.  
  */
 public class Dimension<T> {
 	private final T width;
@@ -18,6 +18,13 @@ public class Dimension<T> {
 	}
 	public static <T> Dimension<T> copyOf(Dimension<T> dimension) {
 		return ofSize(dimension.width, dimension.height);
+	}	
+	public static Dimension<Integer> fromAWTDimension(java.awt.Dimension awtDimension) {
+		return ofSize(awtDimension.width, awtDimension.height);
+	}
+	
+	public static java.awt.Dimension copyAsAWTDimension(Dimension<? extends Number> dimension) {
+		return new java.awt.Dimension(dimension.width.intValue(), dimension.height.intValue());
 	}
 	
 	

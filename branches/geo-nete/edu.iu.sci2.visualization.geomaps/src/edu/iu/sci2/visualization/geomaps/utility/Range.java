@@ -7,9 +7,14 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Ordering;
 
+/* TODO We may wish to replace this with com.google.common.collect.Range.
+ * To do so, we will need to only parameterize on Comparable types.
+ * To do that, we will need to stop talking of a Range<Color> and instead use some Comparable
+ * proxy that is interpreted externally as a Color.
+ */
 /**
- * @param <T>	Not necessarily a Comparable type, but it should be a type such that between any
- * 				two values there is conceptually a continuum of intermediate values of the same type
+ * @param <T>	Not necessarily a Comparable type, but one such that between any two values there
+ * 				is conceptually a continuum of intermediate values of the same type
  * 				(e.g. Double, Color).
  */
 public class Range<T> {
