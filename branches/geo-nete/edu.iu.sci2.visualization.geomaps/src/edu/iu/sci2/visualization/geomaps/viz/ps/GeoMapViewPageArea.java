@@ -18,26 +18,23 @@ public class GeoMapViewPageArea {
 
 	public static final String INDENT = "  ";
 
+	private final Double dataRectangle;
 	private final Rectangle2D.Double displayRectangle;
-
-	private final double displayCenterXInPoints, displayCenterYInPoints;
-	private Double dataRectangle;
+	private final Point2D.Double displayCenter;
 	private final double scale;
 	private final double displayHeightInPoints;
 
-	public GeoMapViewPageArea(Rectangle2D.Double dataBoundingRectangle) {
-		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;
+	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle) {
+		this.dataRectangle = dataRectangle;
+		
+		this.scale = (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / (dataRectangle.getMaxX() - dataRectangle.getMinX()));
 
-		this.dataRectangle = dataBoundingRectangle;
-
-		this.scale = calculateScale(dataBoundingRectangle.getMinX(), dataBoundingRectangle.getMaxX());
-
-		this.displayHeightInPoints = (scale * (dataBoundingRectangle.getMaxY() - dataBoundingRectangle.getMinY()));
-		this.displayCenterYInPoints = calculateDisplayCenterY(displayHeightInPoints);
+		this.displayHeightInPoints = (scale * (dataRectangle.getMaxY() - dataRectangle.getMinY()));
+		this.displayCenter = new Point2D.Double(Constants.MAP_CENTER_X_IN_POINTS, calculateDisplayCenterY(displayHeightInPoints));
 
 		this.displayRectangle = rectangleWithCorners(
-				asPoint2D(getDisplayCoordinate(new Coordinate(dataBoundingRectangle.getMinX(), dataBoundingRectangle.getMinY()))),
-				asPoint2D(getDisplayCoordinate(new Coordinate(dataBoundingRectangle.getMaxX(), dataBoundingRectangle.getMaxY()))));
+				asPoint2D(getDisplayCoordinate(new Coordinate(dataRectangle.getMinX(), dataRectangle.getMinY()))),
+				asPoint2D(getDisplayCoordinate(new Coordinate(dataRectangle.getMaxX(), dataRectangle.getMaxY()))));
 	}
 	
 	public static Rectangle2D.Double rectangleWithCorners(Point2D.Double corner, Point2D.Double oppositeCorner) {
@@ -68,15 +65,9 @@ public class GeoMapViewPageArea {
 	public Coordinate getDisplayCoordinate(Coordinate coordinate) {
 		return new Coordinate(
 				positionOnDisplay(
-						coordinate.x, displayCenterXInPoints, scale, dataRectangle.getCenterX()),
+						coordinate.x, displayCenter.getX(), scale, dataRectangle.getCenterX()),
 				positionOnDisplay(
-						coordinate.y, displayCenterYInPoints, scale, dataRectangle.getCenterY()));
-	}
-
-	private static double calculateScale(double dataMinX, double dataMaxX) {
-		double dataWidth = dataMaxX - dataMinX;
-
-		return (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataWidth);
+						coordinate.y, displayCenter.getY(), scale, dataRectangle.getCenterY()));
 	}
 
 	public String toPostScript() {
