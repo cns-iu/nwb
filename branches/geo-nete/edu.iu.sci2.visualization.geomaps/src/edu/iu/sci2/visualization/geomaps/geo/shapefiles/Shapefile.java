@@ -180,17 +180,7 @@ public enum Shapefile {
 		System.out.println(bounds.getMaxY());
 		return bounds;
 	}
-	
-//	public static void main(String[] args) { // TODO
-//		try {
-//			Shapefile.WORLD.getBounds();
-//			System.out.println();
-//			Shapefile.UNITED_STATES.getBounds();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+
 
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> viewOfFeatureCollection()
 			throws ShapefileFeatureRetrievalException {
@@ -200,26 +190,15 @@ public enum Shapefile {
 			throw new ShapefileFeatureRetrievalException("Error accessing shapefile: " + e.getMessage(), e);
 		}
 	}
-	
-//	public FeatureIterator<SimpleFeature> features() {
-//		try {
-//			return Iterators.transform(
-//					featureSource.getFeatures().features(),
-//					new Function<SimpleFeature, SimpleFeature>() {
-//						
-//					});
-//		} catch (IOException e) {
-//			throw new ShapefileFeatureRetrievalException("Error accessing shapefile: " + e.getMessage(), e);
-//		}
-//	}
+
 	
 	public static class Inset {
 		public static final Inset ALASKA = Inset.inset(
-				"Alaska", 0.3, new Coordinate(-129.7, 52.3), new Coordinate(-125.7, 48.5)); //new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
+				"Alaska", new Coordinate(-129.7, 52.3), new Coordinate(-125.7, 48.5));
 		public static final Inset HAWAII = Inset.inset(
-				"Hawaii", 1, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
+				"Hawaii", new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
 		public static final Inset PUERTO_RICO = Inset.inset(
-				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
+				"Puerto Rico", new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
 		
 		private final String featureName;
 		private final MathTransform transform;
@@ -230,58 +209,14 @@ public enum Shapefile {
 			
 		}
 		public static Inset inset(
-				String featureName, double scaling, Coordinate anchor, Coordinate dest) {
-//			AbstractMathTransform prePreScale = new AbstractMathTransform() {
-//				@Override
-//				public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
-//						throws TransformException {
-//					for (int pp = 0; pp < numPts; pp++) {
-//						int srcBaseIndex = srcOff + (pp * 2);
-//						int dstBaseIndex = dstOff + (pp * 2);
-//						
-////						System.out.println("srcPts = " + Doubles.asList(srcPts));
-////						System.out.println("dstPts = " + Doubles.asList(srcPts));
-//						
-//						dstPts[dstBaseIndex] = (srcPts[srcBaseIndex] + 180.0) % 360;
-//						dstPts[dstBaseIndex + 1] = (srcPts[srcBaseIndex + 1] + 90.0) % 180;
-//						
-////						System.out.println(dstPts[dstBaseIndex] + ", " + dstPts[dstBaseIndex + 1]);
-//					}
-//				}
-//
-//				@Override
-//				public int getSourceDimensions() {
-//					return 2;
-//				}
-//
-//				@Override
-//				public int getTargetDimensions() {
-//					return 2;
-//				}				
-//			};
-			
-			
-//			AffineTransform preScale = AffineTransform.getTranslateInstance(-anchor.x, -anchor.y);
-//			AffineTransform scale = AffineTransform.getScaleInstance(scaling, scaling);
-//			AffineTransform postScale = AffineTransform.getTranslateInstance(dest.x, dest.y);
-			AffineTransform postScale = AffineTransform.getTranslateInstance(dest.x - anchor.x, dest.y - anchor.y);
-//			AffineTransform postPostScale = AffineTransform.getTranslateInstance(-180.0, -90.0);
-			AffineTransform2D inner = new AffineTransform2D(preConcatenate(
-//					preScale, scale, 
-					postScale
-//					, postPostScale
-					));
-
-			
-			return new Inset(featureName, inner); //ConcatenatedTransform.create(inner, prePreScale));
+				String featureName, Coordinate anchor, Coordinate dest) {
+			return new Inset(
+					featureName,
+					new AffineTransform2D(
+							AffineTransform.getTranslateInstance(
+									dest.x - anchor.x, dest.y - anchor.y)));
 		}
-		
-//		public static void main(String[] args) {
-//			for (int ii = -170; ii < 170; ii += 10) {
-//				System.out.println(Joiner.on(",").join(ImmutableList.of(ii, ii % 360, (ii+180)%360, (ii+180)%360 - 180)));
-//			}
-//		}
-				
+
 		
 		public String featureName() {
 			return featureName;
@@ -289,16 +224,6 @@ public enum Shapefile {
 		
 		public Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
 			return JTS.transform(geometry, transform);
-		}
-		
-		private static AffineTransform preConcatenate(
-				AffineTransform first, AffineTransform... rest) {
-			AffineTransform concat = (AffineTransform) first.clone();
-			for (AffineTransform subsequent : rest) {
-				concat.preConcatenate(subsequent);
-			}
-			
-			return concat;
 		}
 	}
 
