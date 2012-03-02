@@ -41,10 +41,10 @@ public class GeoMapViewPS {
 	public GeoMapViewPS(GeoMap geoMap) throws ShapefilePostScriptWriterException {
 		try {
 			this.geoMap = geoMap;
-			this.geoMapViewPageArea = calculateMapBoundingBox();
+			this.geoMapViewPageArea = new GeoMapViewPageArea(calculateMapBoundingRectangle());
 			
 			this.pageHeightInPoints =
-				Constants.calculatePageHeightInPoints(geoMapViewPageArea.getMapHeightInPoints());
+				Constants.calculatePageHeightInPoints(geoMapViewPageArea.getDisplayRectangle().getHeight());
 			
 			
 		} catch (TransformException e) {
@@ -194,7 +194,7 @@ public class GeoMapViewPS {
 	 * Identify extreme values for the X and Y dimensions among the projected features from our featureCollection.
 	 * Note that this is <em>after</em> Geometry preparation (cropping and projecting).
 	 */	
-	private GeoMapViewPageArea calculateMapBoundingBox() throws TransformException {	
+	private Rectangle2D.Double calculateMapBoundingRectangle() throws TransformException {	
 		Rectangle2D.Double rectangle = null;
 
 		FeatureIterator<SimpleFeature> it = geoMap.getShapefile().viewOfFeatureCollection().features();
@@ -216,7 +216,7 @@ public class GeoMapViewPS {
 				Coordinate[] coordinates = subgeometry.getCoordinates();
 
 				for (Coordinate coordinate : coordinates) {
-					Point2D.Double point = GeoMapViewPageArea.asPoint2D(coordinate);
+					Point2D.Double point = GeoMapViewPS.asPoint2D(coordinate);
 					
 					if (rectangle == null) {
 						rectangle = new Rectangle2D.Double(point.x, point.y, 0, 0);
@@ -230,7 +230,7 @@ public class GeoMapViewPS {
 		
 		Rectangle2D.Double bufferedRectangle = addSmallBufferAround(rectangle);
 
-		return new GeoMapViewPageArea(bufferedRectangle);
+		return bufferedRectangle;
 	}
 
 	private static Rectangle2D.Double addSmallBufferAround(Rectangle2D.Double rectangle) {
@@ -269,6 +269,10 @@ public class GeoMapViewPS {
 //				+ "setpagedevice" + "\n"
 //				+ "} if" + "\n");
 //		out.write("\n");
+	}
+
+	public static Point2D.Double asPoint2D(Coordinate coordinate) { // TODO temporary bridge, replace all non-geo Coordinates with Point2D.Doubles soon ... or not, the map looks pretty good without these margins 
+		return new Point2D.Double(coordinate.x, coordinate.y);
 	}
 
 	public static class ShapefilePostScriptWriterException extends Exception {
