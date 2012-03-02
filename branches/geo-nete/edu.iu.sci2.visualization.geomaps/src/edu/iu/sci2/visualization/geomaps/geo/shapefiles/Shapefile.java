@@ -194,9 +194,9 @@ public enum Shapefile {
 	
 	public static class Inset {
 		public static final Inset ALASKA = Inset.inset(
-				"Alaska", new Coordinate(-129.7, 52.3), new Coordinate(-125.7, 48.5));
+				"Alaska", new Coordinate(-129.7, 52.3), new Coordinate(-79.1, 49.9));
 		public static final Inset HAWAII = Inset.inset(
-				"Hawaii", new Coordinate(-155.7, 18.9), new Coordinate(-112.4, 22.2));
+				"Hawaii", new Coordinate(-155.7, 18.9), new Coordinate(-107.4, 22.2));
 		public static final Inset PUERTO_RICO = Inset.inset(
 				"Puerto Rico", new Coordinate(-67.3, 18.3), new Coordinate(-77.8, 23.8));
 		
