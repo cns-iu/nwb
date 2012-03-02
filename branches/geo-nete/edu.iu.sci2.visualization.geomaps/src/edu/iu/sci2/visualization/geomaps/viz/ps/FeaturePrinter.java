@@ -253,9 +253,6 @@ public class FeaturePrinter {
 			}
 
 			out.write(INDENT + "closepath" + "\n");
-			
-			out.write("\n/Garamond findfont 12.0 scalefont setfont\n0.0 setgray\n"); // TODO
-			out.write(String.format("\n\n(%s) show\n\n", name.replace(')', ' ').replace('(', ' '))); // TODO
 
 			writeInkingCommands(out, featureColorMap, name);
 		}
