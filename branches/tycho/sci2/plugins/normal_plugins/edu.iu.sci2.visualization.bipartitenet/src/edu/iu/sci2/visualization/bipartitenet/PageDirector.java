@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.bipartitenet;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
@@ -107,7 +108,7 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	public static final Font BASIC_FONT = findBasicFont(10);
+	public static final Font BASIC_FONT = findBasicFont(12);
 	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
 	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
 	private static final String TITLE = "Bipartite Network Graph";
@@ -235,6 +236,8 @@ public class PageDirector implements Paintable {
 
 	@Override
 	public void paint(Graphics2D g) {
+		// avoid lop-sided circles
+		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 		painter.paint(g);
 	}
 }
