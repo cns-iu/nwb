@@ -1,6 +1,13 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.Arrays;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 public class PSUtility {
 	private PSUtility() {}
@@ -31,5 +38,23 @@ public class PSUtility {
 
 	public static String setgray(double brightness) {
 		return String.format("%f setgray ", brightness);
-	}	
+	}
+	
+	public static String path(Point2D.Double first, Point2D.Double... rest) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("newpath ");
+		builder.append(String.format("%s moveto ", xy(first)));
+		
+		for (Point2D.Double point : rest) {
+			builder.append(String.format("%s lineto ", xy(point)));
+		}
+		
+		builder.append("closepath ");
+		
+		return builder.toString();		
+	}
+	
+	public static String xy(Point2D.Double point) {
+		return String.format("%f %f ", point.x, point.y);
+	}
 }

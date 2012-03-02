@@ -48,18 +48,15 @@ public class GeoMapViewPageArea {
 				Interpolator1D.between(Rectangles.xRange(dataRectangle), Rectangles.xRange(displayRectangle)).apply(coordinate.x),
 				Interpolator1D.between(Rectangles.yRange(dataRectangle), Rectangles.yRange(displayRectangle)).apply(coordinate.y));
 	}
-
+	
 	public String toPostScript() {
 		String s = "";
 
-		s += "newpath" + "\n";
-		
-		// TODO Replace with PathIterator over displayRectangle?
-		s += INDENT + displayRectangle.getMinX() + " " + displayRectangle.getMinY() + " moveto" + "\n";
-		s += INDENT + displayRectangle.getMinX() + " " + displayRectangle.getMaxY() + " lineto" + "\n";
-		s += INDENT + displayRectangle.getMaxX() + " " + displayRectangle.getMaxY() + " lineto"	+ "\n";
-		s += INDENT + displayRectangle.getMaxX() + " " + displayRectangle.getMinY() + " lineto" + "\n";
-		s += "closepath" + "\n";
+		s += PSUtility.path(
+				new Point2D.Double(displayRectangle.getMinX(), displayRectangle.getMinY()),
+				new Point2D.Double(displayRectangle.getMinX(), displayRectangle.getMaxY()),
+				new Point2D.Double(displayRectangle.getMaxX(), displayRectangle.getMaxY()),
+				new Point2D.Double(displayRectangle.getMaxX(), displayRectangle.getMinY()));
 		
 		if (!BACKGROUND_TRANSPARENT) {
 			s += "gsave" + "\n";
