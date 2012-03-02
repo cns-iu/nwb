@@ -35,10 +35,8 @@ public class PageHeader {
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("gsave" + "\n");
-		builder.append(INDENT + "/" + FONT_NAME + " findfont" + "\n");
-		builder.append(INDENT + FONT_SIZE + " scalefont" + "\n");
-		builder.append(INDENT + "setfont" + "\n");
-		builder.append(INDENT + FONT_BRIGHTNESS + " setgray" + "\n");
+		builder.append(PSUtility.findscalesetfont(FONT_NAME, FONT_SIZE) + "\n");
+		builder.append(PSUtility.setgray(FONT_BRIGHTNESS) + "\n");
 		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + lowerLeftYInPoints + " moveto" + "\n");
 		builder.append(INDENT + "(" + PSUtility.escapeForPostScript(toString()) + ") show" + "\n");
 		builder.append("grestore" + "\n");

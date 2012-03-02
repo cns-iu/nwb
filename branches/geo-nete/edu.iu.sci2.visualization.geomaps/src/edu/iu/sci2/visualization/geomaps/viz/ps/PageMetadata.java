@@ -44,16 +44,16 @@ public class PageMetadata {
 		builder.append(INDENT + "% Show title and subtitle" + "\n");
 		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + LOWER_LEFT_Y_IN_POINTS + " moveto" + "\n");
 		
-		builder.append(INDENT + "/" + FONT_NAME + " findfont " + TITLE_FONT_SIZE + " scalefont setfont" + "\n");
-		builder.append(INDENT + TITLE_FONT_BRIGHTNESS + " setgray" + "\n");
+		builder.append(PSUtility.findscalesetfont(FONT_NAME, TITLE_FONT_SIZE) + "\n");
+		builder.append(PSUtility.setgray(TITLE_FONT_BRIGHTNESS) + "\n");
 		builder.append(INDENT + "gsave" + "\n");
 		builder.append(INDENT + INDENT + "(" + title + ") show " + "( ) show " + "((" + subtitle + ")) show" +"\n");
 		builder.append(INDENT + "grestore" + "\n");
 		
 		builder.append(INDENT + "% Show the rest of the metadata" + "\n");
 		builder.append(INDENT + "0 " + (-(TITLE_FONT_SIZE + 5)) + " rmoveto");
-		builder.append(INDENT + "/" + FONT_NAME + " findfont " + OTHER_DATA_FONT_SIZE + " scalefont setfont" + "\n");
-		builder.append(INDENT + OTHER_DATA_FONT_BRIGHTNESS + " setgray" + "\n");
+		builder.append(PSUtility.findscalesetfont(FONT_NAME, OTHER_DATA_FONT_SIZE) + "\n");
+		builder.append(PSUtility.setgray(OTHER_DATA_FONT_BRIGHTNESS) + "\n");
 		for (String metadatum : metadata) {
 			builder.append(INDENT + "gsave" + "\n");
 			builder.append(INDENT + INDENT + "(" + metadatum + ")" + " show" + "\n");

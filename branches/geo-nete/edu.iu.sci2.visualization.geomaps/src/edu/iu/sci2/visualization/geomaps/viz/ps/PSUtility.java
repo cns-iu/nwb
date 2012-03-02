@@ -23,5 +23,13 @@ public class PSUtility {
 	 */
 	public static String escapeForPostScript(String string) {
 		return string.replace("\\", "\\\\");
+	}
+
+	public static String findscalesetfont(String fontName, double fontSize) {
+		return String.format("/%s findfont %f scalefont setfont ", fontName, fontSize);
+	}
+
+	public static String setgray(double brightness) {
+		return String.format("%f setgray ", brightness);
 	}	
 }

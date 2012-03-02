@@ -182,7 +182,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("longitude", "Longitude");
 		parameters.put("circleAreaColumnName", "Population (thousands)");
 		parameters.put("circleAreaScaling", Scaling.Logarithmic.toString());
-		parameters.put("outerColorColumnName", CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
+		parameters.put("outerColorColumnName", "Population (thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
 		parameters.put("outerColorScaling", Scaling.Linear.toString());
 		parameters.put("outerColorRange", "Yellow to Blue");
 		parameters.put("innerColorColumnName", "Population (thousands)");

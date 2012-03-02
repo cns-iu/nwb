@@ -88,7 +88,7 @@ public class FeaturePrinter {
 		out.write("% Features" + "\n");
 		out.write("gsave" + "\n");
 		out.write(INDENT + BORDER_LINE_WIDTH + " setlinewidth" + "\n");
-		out.write(INDENT + BORDER_BRIGHTNESS + " setgray" + "\n");
+		out.write(PSUtility.setgray(BORDER_BRIGHTNESS) + "\n");
 		out.write("\n");
 
 		FeatureIterator<SimpleFeature> iterator = featureCollection.features();
@@ -106,6 +106,7 @@ public class FeaturePrinter {
 		
 		reportUnfoundFeatures();
 	}
+
 
 	/* Find all feature names in featureColorMap that were never actually
 	 * used to color a feature.  These represent rows (regions) in the table
