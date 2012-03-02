@@ -1,6 +1,8 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -16,8 +18,8 @@ public class GeoMapViewPageArea {
 
 	public static final String INDENT = "  ";
 
-	private final double displayLowerLeftX, displayLowerLeftY;
-	private final double displayUpperRightX, displayUpperRightY;
+	private final Rectangle2D.Double displayRectangle;
+
 	private final double displayCenterXInPoints, displayCenterYInPoints;
 	private final double dataCenterX, dataCenterY;
 	private final double scale;
@@ -35,15 +37,19 @@ public class GeoMapViewPageArea {
 		this.displayHeightInPoints = (scale * (dataMaxY - dataMinY));
 		this.displayCenterYInPoints = calculateDisplayCenterY(displayHeightInPoints);
 
-		Coordinate displayLowerLeftCorner =
-			getDisplayCoordinate(new Coordinate(dataMinX, dataMinY));
-		this.displayLowerLeftX = displayLowerLeftCorner.x;
-		this.displayLowerLeftY = displayLowerLeftCorner.y;
-
-		Coordinate displayUpperRightCorner =
-			getDisplayCoordinate(new Coordinate(dataMaxX, dataMaxY));
-		this.displayUpperRightX = displayUpperRightCorner.x;
-		this.displayUpperRightY = displayUpperRightCorner.y;
+		this.displayRectangle = rectangleWithCorners(
+				asPoint2D(getDisplayCoordinate(new Coordinate(dataMinX, dataMinY))),
+				asPoint2D(getDisplayCoordinate(new Coordinate(dataMaxX, dataMaxY))));
+	}
+	
+	public static Rectangle2D.Double rectangleWithCorners(Point2D.Double corner, Point2D.Double oppositeCorner) {
+		Rectangle2D.Double rectangle = new Rectangle2D.Double();
+		rectangle.setFrameFromDiagonal(corner, oppositeCorner);
+		return rectangle;
+	}
+	
+	public static Point2D.Double asPoint2D(Coordinate coordinate) { // TODO temporary bridge, replace all non-geo Coordinates with Point2D.Doubles soon 
+		return new Point2D.Double(coordinate.x, coordinate.y);
 	}
 
 	public double getMapHeightInPoints() {
@@ -77,10 +83,12 @@ public class GeoMapViewPageArea {
 		String s = "";
 
 		s += "newpath" + "\n";
-		s += INDENT + displayLowerLeftX + " " + displayLowerLeftY + " moveto" + "\n";
-		s += INDENT + displayLowerLeftX + " " + displayUpperRightY + " lineto" + "\n";
-		s += INDENT + displayUpperRightX + " " + displayUpperRightY + " lineto"	+ "\n";
-		s += INDENT + displayUpperRightX + " " + displayLowerLeftY + " lineto" + "\n";
+		
+		// TODO Replace with PathIterator over displayRectangle?
+		s += INDENT + displayRectangle.getMinX() + " " + displayRectangle.getMinY() + " moveto" + "\n";
+		s += INDENT + displayRectangle.getMinX() + " " + displayRectangle.getMaxY() + " lineto" + "\n";
+		s += INDENT + displayRectangle.getMaxX() + " " + displayRectangle.getMaxY() + " lineto"	+ "\n";
+		s += INDENT + displayRectangle.getMaxX() + " " + displayRectangle.getMinY() + " lineto" + "\n";
 		s += "closepath" + "\n";
 		
 		if (!BACKGROUND_TRANSPARENT) {
@@ -104,19 +112,7 @@ public class GeoMapViewPageArea {
 		return s;
 	}
 
-	public double getLowerLeftX() {
-		return displayLowerLeftX;
-	}
-
-	public double getLowerLeftY() {
-		return displayLowerLeftY;
-	}
-
-	public double getUpperRightX() {
-		return displayUpperRightX;
-	}
-
-	public double getUpperRightY() {
-		return displayUpperRightY;
+	public Rectangle2D.Double getDisplayRectangle() {
+		return displayRectangle;
 	}
 }

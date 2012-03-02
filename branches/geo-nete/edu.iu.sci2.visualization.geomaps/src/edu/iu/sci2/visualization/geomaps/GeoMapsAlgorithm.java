@@ -28,7 +28,6 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
-import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
