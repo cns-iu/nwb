@@ -3,10 +3,12 @@ package edu.iu.sci2.visualization.geomaps.viz.ps;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
+import edu.iu.sci2.visualization.geomaps.utility.Dimension;
+import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 
 public class GeoMapViewPageArea {
@@ -18,21 +20,29 @@ public class GeoMapViewPageArea {
 
 	public static final String INDENT = "  ";
 
-	private final Double dataRectangle;
+	private final Rectangle2D.Double dataRectangle;
 	private final Rectangle2D.Double displayRectangle;
-	private final Point2D.Double displayCenter;
-	private final double scale;
 	private final double displayHeightInPoints;
 
 	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle) {
 		this.dataRectangle = dataRectangle;
 		
-		this.scale = (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataRectangle.getWidth());		
+		double scale = (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataRectangle.getWidth());		
 		this.displayHeightInPoints = (scale * dataRectangle.getHeight());
-		this.displayCenter = new Point2D.Double(Constants.MAP_CENTER_X_IN_POINTS, calculateDisplayCenterY(displayHeightInPoints));
-		this.displayRectangle = rectangleWithCorners(
-				getDisplayPoint(pointAsCoordinate(minPointOf(dataRectangle))),
-				getDisplayPoint(pointAsCoordinate(maxPointOf(dataRectangle))));
+		Point2D.Double displayCenter = new Point2D.Double(Constants.MAP_CENTER_X_IN_POINTS, calculateDisplayCenterY(displayHeightInPoints));
+		
+		this.displayRectangle = rectangleFromCenter(displayCenter, Dimension.ofSize(scale * dataRectangle.getWidth(), displayHeightInPoints));
+	}
+
+	public static Rectangle2D.Double rectangleFromCenter(Point2D.Double displayCenter, Dimension<Double> dimension) {
+		Rectangle2D.Double rectangle = new Rectangle2D.Double();
+		rectangle.setFrameFromCenter(
+				displayCenter,
+				new Point2D.Double(
+						displayCenter.x + 0.5 * dimension.getWidth(),
+						displayCenter.y + 0.5 * dimension.getHeight()));
+		
+		return rectangle;
 	}
 	
 	public static Rectangle2D.Double rectangleWithCorners(Point2D.Double corner, Point2D.Double oppositeCorner) {
@@ -53,6 +63,14 @@ public class GeoMapViewPageArea {
 		return new Point2D.Double(rectangle.getMaxX(), rectangle.getMaxY());
 	}
 	
+	public static Range<Double> xRange(Rectangle2D.Double rectangle) {
+		return Range.between(rectangle.getMinX(), rectangle.getMaxX());
+	}
+	
+	public static Range<Double> yRange(Rectangle2D.Double rectangle) {
+		return Range.between(rectangle.getMinY(), rectangle.getMaxY());
+	}
+	
 	public static Point2D.Double asPoint2D(Coordinate coordinate) { // TODO temporary bridge, replace all non-geo Coordinates with Point2D.Doubles soon ... or not, the map looks pretty good without these margins 
 		return new Point2D.Double(coordinate.x, coordinate.y);
 	}
@@ -66,18 +84,10 @@ public class GeoMapViewPageArea {
 				+ Constants.LEGEND_PAGE_AREA_DIMENSION.getHeight() + (displayHeightInPoints / 2.0)); //Constants.LEGEND_PAGE_AREA_DIMENSION.getHeight() + (displayHeightInPoints / 2.0));
 	}
 
-	// Transform ordinate z from the data space to the display space.
-	private static double positionOnDisplay(double z, double displayCenterInPoints,
-			double scale, double dataCenter) {
-		return displayCenterInPoints + (scale * (z - dataCenter));
-	}
-
 	public Point2D.Double getDisplayPoint(Coordinate coordinate) {
 		return new Point2D.Double(
-				positionOnDisplay(
-						coordinate.x, displayCenter.getX(), scale, dataRectangle.getCenterX()),
-				positionOnDisplay(
-						coordinate.y, displayCenter.getY(), scale, dataRectangle.getCenterY()));
+				Interpolator1D.between(xRange(dataRectangle), xRange(displayRectangle)).apply(coordinate.x),
+				Interpolator1D.between(yRange(dataRectangle), yRange(displayRectangle)).apply(coordinate.y));
 	}
 
 	public String toPostScript() {
