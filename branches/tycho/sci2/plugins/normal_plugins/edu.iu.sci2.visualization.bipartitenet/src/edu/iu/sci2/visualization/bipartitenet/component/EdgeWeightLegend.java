@@ -3,8 +3,6 @@ package edu.iu.sci2.visualization.bipartitenet.component;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.GlyphVector;
-import java.awt.geom.Rectangle2D;
 
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
@@ -17,10 +15,11 @@ import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlig
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
 public class EdgeWeightLegend implements Paintable {
-	private Point2D topCenter;
-	private String title;
-	private Scale<Double, Color> coding;
-	private ImmutableList<Double> labeledValues;
+	private final Point2D topCenter;
+	private final String title;
+	private final Scale<Double, Color> coding;
+	private final ImmutableList<Double> labeledValues;
+	private final SimpleLabelPainter titlePainter;
 	
 	private static final int LEGEND_Y_OFFSET = 25; // from top of label to top of arrows
 	private static final double ARROW_LENGTH = 40;
@@ -38,11 +37,15 @@ public class EdgeWeightLegend implements Paintable {
 		this.title = title;
 		this.coding = coding;
 		this.labeledValues = labeledValues;
+		
+		this.titlePainter = new SimpleLabelPainter(this.topCenter, 
+				XAlignment.CENTER, YAlignment.ASCENT, 
+				this.title, TITLE_FONT, null);
 	}
 
 	@Override
 	public void paint(Graphics2D g) {
-		paintLabel(g);
+		this.titlePainter.paint(g);
 		paintArrows(g);
 	}
 
@@ -66,13 +69,5 @@ public class EdgeWeightLegend implements Paintable {
 			arrowStart = arrowStart.translate(0, BETWEEN_ARROW_Y_OFFSET);
 		}
 		
-	}
-
-	private void paintLabel(Graphics2D g) {
-		GlyphVector titleGV = TITLE_FONT.createGlyphVector(g.getFontRenderContext(), title);
-		Rectangle2D bounds = titleGV.getVisualBounds();
-		float x = (float) (topCenter.getX() - bounds.getCenterX());
-		float y = (float) (topCenter.getY() - bounds.getY());
-		g.drawGlyphVector(titleGV, x, y);
 	}
 }

@@ -2,8 +2,6 @@ package edu.iu.sci2.visualization.bipartitenet.component;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.GlyphVector;
-import java.awt.geom.Rectangle2D;
 
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
@@ -22,6 +20,7 @@ public class CircleRadiusLegend implements Paintable {
 	private final Point2D topCenter;
 	private final String title;
 	private final double maxRadius;
+	private final SimpleLabelPainter titlePainter;
 	
 	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD);
 	private static final Font LEGEND_FONT = PageDirector.BASIC_FONT.deriveFont(Font.PLAIN, 10);
@@ -38,23 +37,18 @@ public class CircleRadiusLegend implements Paintable {
 		this.coding = coding;
 		this.labeledValues = labeledValues;
 		this.maxRadius = maxRadius;
+		this.titlePainter = new SimpleLabelPainter(this.topCenter, 
+				XAlignment.CENTER, YAlignment.ASCENT, 
+				this.title, TITLE_FONT, null);
 	}
 
 
 	@Override
 	public void paint(Graphics2D g) {
-		paintTitle(g);
+		this.titlePainter.paint(g);
+		
 		paintCircles(g);
 		paintDataLabels(g);
-	}
-
-	private void paintTitle(Graphics2D g) {
-		// TODO Use drawString?
-		GlyphVector titleGV = TITLE_FONT.createGlyphVector(g.getFontRenderContext(), title);
-		Rectangle2D bounds = titleGV.getVisualBounds();
-		float x = (float) (topCenter.getX() - bounds.getCenterX());
-		float y = (float) (topCenter.getY() - bounds.getY());
-		g.drawGlyphVector(titleGV, x, y);
 	}
 
 	private void paintCircles(Graphics2D g) {
