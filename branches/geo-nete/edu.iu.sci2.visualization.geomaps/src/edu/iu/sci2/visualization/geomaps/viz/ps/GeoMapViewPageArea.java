@@ -31,14 +31,26 @@ public class GeoMapViewPageArea {
 		this.displayHeightInPoints = (scale * dataRectangle.getHeight());
 		this.displayCenter = new Point2D.Double(Constants.MAP_CENTER_X_IN_POINTS, calculateDisplayCenterY(displayHeightInPoints));
 		this.displayRectangle = rectangleWithCorners(
-				getDisplayPoint(new Coordinate(dataRectangle.getMinX(), dataRectangle.getMinY())),
-				getDisplayPoint(new Coordinate(dataRectangle.getMaxX(), dataRectangle.getMaxY())));
+				getDisplayPoint(pointAsCoordinate(minPointOf(dataRectangle))),
+				getDisplayPoint(pointAsCoordinate(maxPointOf(dataRectangle))));
 	}
 	
 	public static Rectangle2D.Double rectangleWithCorners(Point2D.Double corner, Point2D.Double oppositeCorner) {
 		Rectangle2D.Double rectangle = new Rectangle2D.Double();
 		rectangle.setFrameFromDiagonal(corner, oppositeCorner);
 		return rectangle;
+	}
+	
+	public static Coordinate pointAsCoordinate(Point2D.Double point) {
+		return new Coordinate(point.x, point.y);
+	}
+	
+	public static Point2D.Double minPointOf(Rectangle2D.Double rectangle) {
+		return new Point2D.Double(rectangle.getMinX(), rectangle.getMinY());
+	}
+	
+	public static Point2D.Double maxPointOf(Rectangle2D.Double rectangle) {
+		return new Point2D.Double(rectangle.getMaxX(), rectangle.getMaxY());
 	}
 	
 	public static Point2D.Double asPoint2D(Coordinate coordinate) { // TODO temporary bridge, replace all non-geo Coordinates with Point2D.Doubles soon ... or not, the map looks pretty good without these margins 
