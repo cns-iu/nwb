@@ -137,11 +137,11 @@ public class GeoMapViewPS {
 	 * Given a latitude and longitude in a {@link Coordinate} object, projects it onto the
 	 * current map as well as possible.
 	 */
-	public Coordinate coordinateToPagePosition(Coordinate coordinate) { // TODO what the hell is up with the exception handling here
+	public Point2D.Double coordinateToPagePoint(Coordinate coordinate) { // TODO what the hell is up with the exception handling here
 		Coordinate intermediateCoord = geoMap.project(coordinate);
 		
 		if (intermediateCoord != null) {
-			return geoMapViewPageArea.getDisplayCoordinate(intermediateCoord);
+			return geoMapViewPageArea.getDisplayPoint(intermediateCoord);
 		} else {
 			// can happen if the point would not be displayed (so the Geometry becomes empty)
 			return null;

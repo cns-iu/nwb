@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -198,11 +200,11 @@ public class FeaturePrinter {
 		List<Coordinate> coordinates = ImmutableList.copyOf(subgeometry.getCoordinates());
 		
 		if (coordinates.size() > 0) {			
-			Coordinate firstCoordinate =
-				geoMapViewPageArea.getDisplayCoordinate(coordinates.get(0));
+			Point2D.Double firstPoint =
+				geoMapViewPageArea.getDisplayPoint(coordinates.get(0));
 
 			out.write(INDENT + "newpath" + "\n");
-			out.write(INDENT + INDENT + (firstCoordinate.x) + " " + (firstCoordinate.y) + " moveto\n");
+			out.write(INDENT + INDENT + (firstPoint.x) + " " + (firstPoint.y) + " moveto\n");
 
 			/* Many projections involve interruptions.
 			 * Practically, this may mean that one coordinate of a geometry is on "one side"
@@ -220,10 +222,10 @@ public class FeaturePrinter {
 			 * to the last "good" coordinate, and start a new path.
 			 */
 			for (int cc = 1; cc < coordinates.size(); cc++) {
-				Coordinate coordinate =
-					geoMapViewPageArea.getDisplayCoordinate(coordinates.get(cc));
-				Coordinate previousCoordinate =
-					geoMapViewPageArea.getDisplayCoordinate(coordinates.get(cc - 1));
+				Point2D.Double point =
+					geoMapViewPageArea.getDisplayPoint(coordinates.get(cc));
+				Point2D.Double previousPoint =
+					geoMapViewPageArea.getDisplayPoint(coordinates.get(cc - 1));
 				
 				/* A closed path consisting of two or more points at the same location is a
 				 * degenerate path. A degenerate path will be drawn only if you have set the line
@@ -234,22 +236,22 @@ public class FeaturePrinter {
 				 * In an attempt to avoid some subtleties with degenerate paths,
 				 * we skip any coordinate coincident to the previous.
 				 */
-				if (coordinate.equals2D(previousCoordinate)) {
+				if (Objects.equal(point, previousPoint)) {
 					continue;
 				}
 				
-				if (isAProbableInterruptionGlitch(coordinate, previousCoordinate)) {
-					System.err.println(name + ":\n\t" + coordinate.x + ", " + coordinate.y);
-					System.err.println("\tdistance = " + distance(coordinate, previousCoordinate));
+				if (isAProbableInterruptionGlitch(point, previousPoint)) {
+					System.err.println(name + ":\n\t" + point.x + ", " + point.y);
+					System.err.println("\tdistance = " + point.distance(previousPoint));
 					
 					out.write("% Probable line glitch across polar cuts." + "\n");
 					out.write("% Inserting a mid-Geometry stroke and " +
 								"starting new path at next coordinate." + "\n");
 					out.write(INDENT + "stroke" + "\n");
 					out.write(INDENT + "newpath" + "\n");
-					out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " moveto\n");
+					out.write(INDENT + INDENT + (point.x) + " " + (point.y) + " moveto\n");
 				} else {
-					out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " lineto\n");
+					out.write(INDENT + INDENT + (point.x) + " " + (point.y) + " lineto\n");
 				}
 			}
 
@@ -259,9 +261,9 @@ public class FeaturePrinter {
 		}
 	}
 
-	private static boolean isAProbableInterruptionGlitch(Coordinate coordinate,
-			Coordinate previousCoordinate) {
-		return (distance(coordinate, previousCoordinate) > INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD);
+	private static boolean isAProbableInterruptionGlitch(Point2D.Double point1,
+			Point2D.Double point2) {
+		return (point1.distance(point2) > INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD);
 	}
 
 	private void writeInkingCommands(
@@ -280,10 +282,5 @@ public class FeaturePrinter {
 		
 		// Stroke the border
 		out.write("stroke" + "\n");
-	}
-	
-	private static double distance(Coordinate coordinate1, Coordinate coordinate2) {
-		return Math.hypot((coordinate1.x - coordinate2.x),
-						  (coordinate1.y - coordinate2.y));
 	}
 }

@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.EnumMap;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
@@ -55,16 +56,16 @@ public class Circle {
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
-		Coordinate displayCoordinate = geoMapViewPageArea.getDisplayCoordinate(point.getCoordinate());
+		Point2D.Double displayPoint = geoMapViewPageArea.getDisplayPoint(point.getCoordinate());
 
 		StringBuilder builder = new StringBuilder();
 		
 		double outlineRadius = radius + Circle.OUTLINE_ADDITIONAL_RADIUS;
-		builder.append(PostScriptable.INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + outlineRadius + " circle" + "\n");
+		builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + outlineRadius + " circle" + "\n");
 		builder.append(outerColorStrategy.toPostScript());
 		
 		// Create and paint the circle path
-		builder.append(PostScriptable.INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
+		builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + radius + " circle" + "\n");
 		builder.append(innerColorStrategy.toPostScript());
 		
 		builder.append("\n");

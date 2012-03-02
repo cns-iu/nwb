@@ -27,14 +27,12 @@ public class GeoMapViewPageArea {
 	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle) {
 		this.dataRectangle = dataRectangle;
 		
-		this.scale = (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / (dataRectangle.getMaxX() - dataRectangle.getMinX()));
-
-		this.displayHeightInPoints = (scale * (dataRectangle.getMaxY() - dataRectangle.getMinY()));
+		this.scale = (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataRectangle.getWidth());		
+		this.displayHeightInPoints = (scale * dataRectangle.getHeight());
 		this.displayCenter = new Point2D.Double(Constants.MAP_CENTER_X_IN_POINTS, calculateDisplayCenterY(displayHeightInPoints));
-
 		this.displayRectangle = rectangleWithCorners(
-				asPoint2D(getDisplayCoordinate(new Coordinate(dataRectangle.getMinX(), dataRectangle.getMinY()))),
-				asPoint2D(getDisplayCoordinate(new Coordinate(dataRectangle.getMaxX(), dataRectangle.getMaxY()))));
+				getDisplayPoint(new Coordinate(dataRectangle.getMinX(), dataRectangle.getMinY())),
+				getDisplayPoint(new Coordinate(dataRectangle.getMaxX(), dataRectangle.getMaxY())));
 	}
 	
 	public static Rectangle2D.Double rectangleWithCorners(Point2D.Double corner, Point2D.Double oppositeCorner) {
@@ -62,8 +60,8 @@ public class GeoMapViewPageArea {
 		return displayCenterInPoints + (scale * (z - dataCenter));
 	}
 
-	public Coordinate getDisplayCoordinate(Coordinate coordinate) {
-		return new Coordinate(
+	public Point2D.Double getDisplayPoint(Coordinate coordinate) {
+		return new Point2D.Double(
 				positionOnDisplay(
 						coordinate.x, displayCenter.getX(), scale, dataRectangle.getCenterX()),
 				positionOnDisplay(

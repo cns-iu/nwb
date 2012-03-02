@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -188,11 +189,11 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
-				Coordinate pagePosition = postScriptWriter.coordinateToPagePosition(longLat);
-				if (pagePosition == null) {
+				Point2D.Double pagePoint = postScriptWriter.coordinateToPagePoint(longLat);
+				if (pagePoint == null) {
 					return null;
 				}
-				return pagePosition.x;
+				return pagePoint.x;
 			}
 		};
 		
@@ -209,15 +210,15 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
-				Coordinate pagePosition = postScriptWriter.coordinateToPagePosition(longLat);
-				if (pagePosition == null) {
+				Point2D.Double pagePoint = postScriptWriter.coordinateToPagePoint(longLat);
+				if (pagePoint == null) {
 					// This is only in one of the two X/Y methods because both methods are called on
 					// each incoming point, and everything gets computed twice.  :-(
 					// So we don't want to double-log the info.
 					logger.log(LogService.LOG_INFO, "Leaving out point at " + longLat.toString() + ": outside projection bounds");
 					return null;
 				}
-				return pagePosition.y;
+				return pagePoint.y;
 			}
 		};
 	}
