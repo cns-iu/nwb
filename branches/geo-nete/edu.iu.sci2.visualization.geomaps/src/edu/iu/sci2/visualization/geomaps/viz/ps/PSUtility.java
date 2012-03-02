@@ -2,12 +2,6 @@ package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.Arrays;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 public class PSUtility {
 	private PSUtility() {}
