@@ -1,10 +1,12 @@
 group visualization;
 
-visualizationAreaDefinitions(topVizPosition) ::= <<
+visualizationAreaDefinitions(topVizPosition, pointsPerDay, pointsPerY) ::= <<
 
 %%%%%%%%%%%
 % Viz Area 
 %%%%%%%%%%%
+/pointsPerDay { <pointsPerDay> } def % unused here but useful for legends
+/pointsPerY { <pointsPerY> } def % unused here but useful for legends
 /topVizPosition { <topVizPosition> } def
 /leftTextMargin { visualizationLeft } def
 

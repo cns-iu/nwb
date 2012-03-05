@@ -321,3 +321,94 @@ howto() ::= <<
 howto
 
 >>
+
+/**
+Area Legend
+
+This will draw a few boxes to describe area further.  NOTE!  The bottom specified is used as the top!!
+
+gapYearValue is the number of years, as a decimal rounded to one place that prepresents the distance between the year ticks. 
+*/
+areaLegendDefinitions(daysPerPoint) ::= <<
+
+%%%%%%%%%%%%%%%%
+%  AreaLegend  %
+%%%%%%%%%%%%%%%%
+/areaLegend {
+	/daysPerPoint { <daysPerPoint> } def
+	/areaLegendTop { areaLegendBottom } def % HACK.  Sadly I chose the wrong dimentions to specify.  I should have done top and left.  Until I fix that, this is here.
+	/fontSize { 10 } def
+	/gapWidth { 50 } def
+	/space { 5 } def
+	
+	/draw0Legend { true } def
+	/bigBarHeight { 18 } def
+	/medBarHeight { 7.2 } def
+	/smallBarHeight { 2 } def
+	gsave
+	/ArialMT fontSize selectfont
+	0 0 moveto
+	300 100 translate
+	% Draw the big bar and label
+	0 0 moveto
+		gapWidth 0 rlineto
+		0 bigBarHeight neg rlineto
+		gapWidth neg 0 rlineto
+	fill
+	0 bigBarHeight space add neg translate
+	
+	% Draw the med bar and label
+	0 0 moveto
+		gapWidth 0 rlineto
+		0 medBarHeight neg rlineto
+		gapWidth neg 0 rlineto
+	fill
+	0 medBarHeight space add neg translate
+	
+	% Draw the small bar and label
+	0 0 moveto
+		gapWidth 0 rlineto
+		0 smallBarHeight neg rlineto
+		gapWidth neg 0 rlineto
+	fill
+	0 smallBarHeight space add neg translate
+	
+	% Draw the 0 bar and lable if needed
+	0 0 moveto
+	  draw0Legend 
+	  {
+		gsave
+	    [2] 0 setdash
+		0 setlinewidth
+		gapWidth 0 rlineto
+		stroke
+		grestore
+		0 2 space add neg translate
+	  } 
+	if
+	
+	% Draw the year line
+	%%
+	% This creates a notch, but I don't know how to fix that.
+	%%
+	0 0 moveto
+	0 5 neg rlineto stroke
+	0 0 moveto
+	gapWidth 0 rlineto stroke
+	gapWidth 0 moveto
+	0 5 neg rlineto stroke
+	% Draw the year label
+	0 fontSize neg translate
+	0 5 neg moveto
+	gapWidth daysPerPoint mul 365 div 20 string cvs 0 5 getinterval ( Year(s)) concatstrings show
+	0 fontSize space add neg translate
+	grestore
+} def
+
+>>
+
+areaLegend() ::= <<
+
+areaLegend
+
+>>

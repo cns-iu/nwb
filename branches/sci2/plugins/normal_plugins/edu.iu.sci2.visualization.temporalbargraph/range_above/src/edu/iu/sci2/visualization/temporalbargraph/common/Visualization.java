@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.color.ColorRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
@@ -35,8 +34,17 @@ public class Visualization extends AbstractVisualization {
 	private List<String> visualizations;
 	
 	private List<Record> records;
+	
+	private double pointsPerY;
+	private double pointsPerDay;
 
-	public static StringTemplateGroup group = AbstractVisualization.group;
+	public double getPointsPerY() {
+		return this.pointsPerY;
+	}
+	
+	public double getPointsPerDay() {
+		return this.pointsPerDay;
+	}
 
 	public Visualization(CSVWriter csvWriter, List<Record> records,
 			DoubleDimension size, boolean scaleToOnePage,
@@ -44,35 +52,49 @@ public class Visualization extends AbstractVisualization {
 			throws PostScriptCreationException {
 		
 		this.records = records;
-		vizAreaStartDate = getFirstNewYearBeforeStartDate(records);
-		vizAreaEndDate = getFirstNewYearAfterLastEndDate(records);
+		this.vizAreaStartDate = getFirstNewYearBeforeStartDate(records);
+		this.vizAreaEndDate = getFirstNewYearAfterLastEndDate(records);
 
 		this.size = size;
 
 		Collections.sort(records, Record.START_DATE_ORDERING);
-		List<PostScriptBar> bars = createBars(records, csvWriter, vizAreaStartDate, colorRegistry);
+		List<PostScriptBar> bars = createBars(records, csvWriter, this.vizAreaStartDate, colorRegistry);
 		
-		int totalDays = Days.daysBetween(vizAreaStartDate, vizAreaEndDate).getDays();
+		int totalDays = Days.daysBetween(this.vizAreaStartDate, this.vizAreaEndDate).getDays();
 		if (totalDays == 0){
 			throw new PostScriptCreationException("You must have atleast 1 day between start and end dates to visualize.");
 		}		
 		
-		vizAreaTotalDays = totalDays;
+		this.vizAreaTotalDays = totalDays;
 
+
+		double barMarginTotal = this.size.getHeight() * 0.25; // 25 percent of the
+															// graph height will
+															// distributed as
+															// spaces between
+															// bars
+		double usableYPoints = (this.size.getHeight() - barMarginTotal);
+		double usableXPoints = this.size.getWidth();
+
+		this.pointsPerDay = usableXPoints / this.vizAreaTotalDays;
+		
+		this.pointsPerY = usableYPoints / this.vizAreaDeltaY;
+		
+		
 		if (scaleToOnePage) {
-			visualizations = new ArrayList<String>();
-			vizAreaDeltaY = getTotalAmountPerDay(bars);
+			this.visualizations = new ArrayList<String>();
+			this.vizAreaDeltaY = getTotalAmountPerDay(bars);
 			String page = getVisualizationArea(bars);
-			visualizations.add(page);
+			this.visualizations.add(page);
 		} else {
 			double topNDeltaY = getTopNDeltaYSum(bars, MAX_BARS_PER_PAGE);
-			visualizations = new LinkedList<String>();
+			this.visualizations = new LinkedList<String>();
 			List<List<PostScriptBar>> splitBars = splitBars(bars,
 					MAX_BARS_PER_PAGE);
 			for (List<PostScriptBar> pageBars : splitBars) {
-				vizAreaDeltaY = topNDeltaY;
+				this.vizAreaDeltaY = topNDeltaY;
 				String page = getVisualizationArea(pageBars);
-				visualizations.add(page);
+				this.visualizations.add(page);
 			}
 		}
 
@@ -81,7 +103,7 @@ public class Visualization extends AbstractVisualization {
 	protected String getBarsArea(List<PostScriptBar> bars) {
 		StringBuilder barsArea = new StringBuilder();
 
-		double barMarginTotal = size.getHeight() * 0.25; // 25 percent of the
+		double barMarginTotal = this.size.getHeight() * 0.25; // 25 percent of the
 															// graph height will
 															// distributed as
 															// spaces between
@@ -93,15 +115,16 @@ public class Visualization extends AbstractVisualization {
 																	// and
 																	// bottom
 
-		double usableYPoints = (size.getHeight() - barMarginTotal);
-		double usableXPoints = size.getWidth();
+		double usableYPoints = (this.size.getHeight() - barMarginTotal);
+		double usableXPoints = this.size.getWidth();
 
-		double pointsPerDay = usableXPoints / vizAreaTotalDays;
-		double pointsPerY = usableYPoints / vizAreaDeltaY;
+		this.pointsPerDay = usableXPoints / this.vizAreaTotalDays;
+		
+		this.pointsPerY = usableYPoints / this.vizAreaDeltaY;
 
 		// maybe the actual bars on the page will not require all the space. In
 		// this case, space out the bars using bar spacing.
-		double spaceUsedByBars = getTotalAmountPerDay(bars) * pointsPerY;
+		double spaceUsedByBars = getTotalAmountPerDay(bars) * this.pointsPerY;
 
 		if (spaceUsedByBars < usableYPoints) {
 			double extraSpace = usableYPoints - spaceUsedByBars;
@@ -126,15 +149,15 @@ public class Visualization extends AbstractVisualization {
 		double previousEndY = 0;
 		for (PostScriptBar bar : bars) {
 			double startY = previousEndY + barSpacing;
-			double changeInY = bar.amountPerDay() * pointsPerY;
+			double changeInY = bar.amountPerDay() * this.pointsPerY;
 			StringTemplate visualizationLabelBar = group
 					.getInstanceOf("visualizationLabelBar");
 			visualizationLabelBar.setAttribute("label", bar.getName());
 			visualizationLabelBar.setAttribute("x1", bar.daysSinceEarliest()
-					* pointsPerDay);
+					* this.pointsPerDay);
 			visualizationLabelBar.setAttribute("y1", startY);
 			visualizationLabelBar.setAttribute("deltaX", bar.lengthInDays()
-					* pointsPerDay);
+					* this.pointsPerDay);
 			visualizationLabelBar.setAttribute("deltaY", changeInY);
 			visualizationLabelBar.setAttribute("color", getRGB(bar.getColor()));
 
@@ -150,21 +173,16 @@ public class Visualization extends AbstractVisualization {
 	protected String getDateLinesArea(){
 		StringBuilder datelineArea = new StringBuilder();
 		List<String> dateLines = new LinkedList<String>();
-		List<DateTime> newYearsDates = getNewYearsDates(vizAreaStartDate, vizAreaEndDate);
+		List<DateTime> newYearsDates = getNewYearsDates(this.vizAreaStartDate, this.vizAreaEndDate);
 		
 		if(newYearsDates.size() > MAX_LINEDATES){
 			newYearsDates = decimate(newYearsDates, DateTimeComparator.getInstance(), MAX_LINEDATES);
-			
 		}
 
 		for (DateTime newYear : newYearsDates) {
 
-			double usableXPoints = size.getWidth();
-
-			double pointsPerDay = usableXPoints / vizAreaTotalDays;
-
 			String label = Integer.toString(newYear.toLocalDate().getYear());
-			double x = Days.daysBetween(vizAreaStartDate, newYear).getDays() * pointsPerDay;
+			double x = Days.daysBetween(this.vizAreaStartDate, newYear).getDays() * this.pointsPerDay;
 			
 			StringTemplate datelineTemplate =
 					group.getInstanceOf("visualizationDateLine");
@@ -208,29 +226,31 @@ public class Visualization extends AbstractVisualization {
 
 	@Override
 	public String renderVisualizationPostscript(int visualizationNumber) {
-		return visualizations.get(visualizationNumber);
+		return this.visualizations.get(visualizationNumber);
 	}
 
 	@Override
 	public int numberOfVisualizations() {
-		return visualizations.size();
+		return this.visualizations.size();
 	}
 
 	@Override
 	public String renderDefinitionsPostscript() {
 		StringTemplate definitionsTemplate = group
 				.getInstanceOf("visualizationAreaDefinitions");
-		definitionsTemplate.setAttribute("topVizPosition", size.getHeight());
+		definitionsTemplate.setAttribute("topVizPosition", this.size.getHeight());
+		definitionsTemplate.setAttribute("pointsPerDay", this.getPointsPerDay());
+		definitionsTemplate.setAttribute("pointsPerY", this.getPointsPerY());
 		return definitionsTemplate.toString();
 	}
 
 	@Override
 	public double minRecordValue() {
-		return Record.AMOUNT_ORDERING.min(records).getAmount();
+		return Record.AMOUNT_ORDERING.min(this.records).getAmount();
 	}
 
 	@Override
 	public double maxRecordValue() {
-		return Record.AMOUNT_ORDERING.max(records).getAmount();
+		return Record.AMOUNT_ORDERING.max(this.records).getAmount();
 	}
 }

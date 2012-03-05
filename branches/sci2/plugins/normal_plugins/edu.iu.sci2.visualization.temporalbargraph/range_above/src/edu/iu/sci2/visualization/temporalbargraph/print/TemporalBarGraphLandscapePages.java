@@ -42,7 +42,6 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
-
 		this.legendText = legendText;
 		this.categoryText = categoryText;
 		this.query = query;
@@ -95,9 +94,19 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		pageElements.add(getFooterPageElement());
 		pageElements.add(getTitlePageElement());
 		pageElements.add(getHowtoPageElement());
+		pageElements.add(getAreaLegendElement());
 		return pageElements;
 	}
 
+	private PageElement getAreaLegendElement() {
+		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
+		areaDefinitionsTemplate.setAttribute("daysPerPoint", Math.pow(this.visualizations.getPointsPerDay(), -1));
+		
+		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
+		
+		return new PageElement("legendArea", 400, 100, areaTemplate, areaDefinitionsTemplate);
+	}
+	
 	private PageElement getLegendPageElement() {
 		StringTemplate legendTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTop");
@@ -170,7 +179,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 				titleDefinitionsTemplate);
 	}
 
-	private PageElement getHowtoPageElement() {
+	private static PageElement getHowtoPageElement() {
 		StringTemplate howtoTemplate = pageElementsGroup.getInstanceOf("howto");
 
 		StringTemplate howtoDefinitionsTemplate = pageElementsGroup
