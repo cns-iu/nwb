@@ -230,23 +230,22 @@ circleAreaLegendDefinitions() ::= <<
 			
 				font extremaLabelFontSize scalefont setfont
 				
-				/minLabelwidth {minLabel stringwidth pop} bind def
-				/midLabelwidth {midLabel stringwidth pop} bind def
-				/maxLabelwidth {maxLabel stringwidth pop} bind def
+				/minLabelWidth {minLabel stringwidth pop} bind def
+				/midLabelWidth {midLabel stringwidth pop} bind def
+				/maxLabelWidth {maxLabel stringwidth pop} bind def
 
 				/circleX {maxRadius} bind def
-				/minCircleY {minRadius neg 5 sub} bind def
-				/midCircleY {midRadius neg 5 sub} bind def
 				/maxCircleY {maxRadius neg 5 sub} bind def
+				/midCircleY {maxCircleY maxRadius sub midRadius add} bind def
+				/minCircleY {maxCircleY maxRadius sub minRadius add} bind def
 				
 				/labelX {2 maxRadius mul 5 add} bind def
-				/minLabelY {minCircleY extremaLabelFontSize 2 div sub} bind def
+				/minLabelY {minCircleY minRadius add} bind def
 				% Try to put vertically position the mid and max labels
 				% so that they center on their circle's center, but if that
-				% would result in overlapping labels, position them yet lower
-				% to prevent that.
-				/midLabelY {midCircleY extremaLabelFontSize 2 div sub minLabelY extremaLabelFontSize sub 2min} bind def
-				/maxLabelY {maxCircleY extremaLabelFontSize 2 div sub midLabelY extremaLabelFontSize sub 2min} bind def
+				% would result in overlapping labels, position them higher to prevent that.
+				/midLabelY {midCircleY midRadius add .7 extremaLabelFontSize mul sub} bind def
+				/maxLabelY {maxCircleY maxRadius add .7 extremaLabelFontSize mul sub} bind def
 				
 				% Minimum
 				%   Circle
@@ -427,13 +426,13 @@ colorLegendDefinitions() ::= <<
 				font extremaLabelFontSize scalefont setfont
 				extremaLabelBrightness setgray
 				
-				/minLabelwidth {minLabel stringwidth pop} bind def
-				/midLabelwidth {midLabel stringwidth pop} bind def
-				/maxLabelwidth {maxLabel stringwidth pop} bind def
+				/minLabelWidth {minLabel stringwidth pop} bind def
+				/midLabelWidth {midLabel stringwidth pop} bind def
+				/maxLabelWidth {maxLabel stringwidth pop} bind def
 				
 				/minLabelX {0} bind def
-				/midLabelX {gradientWidth 2 div midLabelwidth 2 div sub} bind def
-				/maxLabelX {gradientWidth maxLabelwidth sub} bind def
+				/midLabelX {gradientWidth 2 div midLabelWidth 2 div sub} bind def
+				/maxLabelX {gradientWidth maxLabelWidth sub} bind def
 				
 				/labelY {0 5 sub gradientHeight sub 5 sub extremaLabelFontSize sub} bind def
 

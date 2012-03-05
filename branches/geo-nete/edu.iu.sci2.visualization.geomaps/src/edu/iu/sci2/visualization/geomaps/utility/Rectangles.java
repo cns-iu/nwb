@@ -7,7 +7,7 @@ public class Rectangles {
 	private Rectangles() {}
 
 	
-	public static Rectangle2D.Double fromCenterWithDimensions(
+	public static Rectangle2D.Double forCenterWithDimensions(
 			Point2D.Double displayCenter, Dimension<Double> dimension) {
 		Rectangle2D.Double rectangle = new Rectangle2D.Double();
 		

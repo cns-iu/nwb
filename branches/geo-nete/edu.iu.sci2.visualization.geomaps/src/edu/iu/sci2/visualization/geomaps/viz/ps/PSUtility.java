@@ -16,7 +16,7 @@ public class PSUtility {
 		float green = colorComponents[1];
 		float blue = colorComponents[2];
 		
-		return String.format("%f %f %f setrgbcolor\n", red, green, blue);
+		return String.format("%f %f %f setrgbcolor ", red, green, blue);
 	}
 
 	/**

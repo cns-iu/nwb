@@ -40,7 +40,7 @@ public class GeoMapViewPageArea {
 								(displayDimension.getHeight() / 2.0)));
 		
 		
-		this.displayRectangle = Rectangles.fromCenterWithDimensions(displayCenter, displayDimension);
+		this.displayRectangle = Rectangles.forCenterWithDimensions(displayCenter, displayDimension);
 	}
 	
 	public Point2D.Double getDisplayPoint(Coordinate coordinate) {
