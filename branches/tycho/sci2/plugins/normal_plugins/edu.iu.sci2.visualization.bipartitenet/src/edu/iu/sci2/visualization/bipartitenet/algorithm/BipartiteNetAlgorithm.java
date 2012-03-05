@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
 
+
+import org.apache.fop.render.ps.NativeTextHandler;
 import javax.imageio.ImageIO;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
@@ -82,6 +84,7 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		OutputStream out = new FileOutputStream(outFile);
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
+		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
 		
 		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
 		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());

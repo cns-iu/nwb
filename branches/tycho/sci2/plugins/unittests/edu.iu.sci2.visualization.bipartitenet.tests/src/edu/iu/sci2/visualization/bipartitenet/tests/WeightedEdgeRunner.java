@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import org.apache.fop.render.ps.NativeTextHandler;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
@@ -37,7 +38,7 @@ public class WeightedEdgeRunner {
 		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "totaldesirability", "linkdesirability");
 		BipartiteGraphDataModel model = importer.constructModelFromFile(WeightedEdgeRunner.class.getResourceAsStream("node-and-edge-weighted.nwb"));
 		
-		PageDirector.Layout layout = PageDirector.Layout.WEB;
+		PageDirector.Layout layout = PageDirector.Layout.PRINT;
 		
 		renderOnScreen(model, layout);
 		renderToPNG(model, layout);
@@ -73,6 +74,7 @@ public class WeightedEdgeRunner {
  		OutputStream out = new FileOutputStream("BLAH.eps");
 		EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
+		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
 		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
 		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
 		r.paint(g2d);
