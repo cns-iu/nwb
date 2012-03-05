@@ -7,14 +7,14 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFac
 
 
 public class ColorLegend implements Legend<Double, Color> {
-	private final VizLegend<Color> vizLegend;
+	private final VizLegendModel<Color> vizLegendModel;
 	private final double dataValueForColorMidpoint;
 	
 
 	public ColorLegend(
-			VizLegend<Color> generalLegend,
+			VizLegendModel<Color> generalLegend,
 			double dataValueForOutputMidpoint) {
-		this.vizLegend = generalLegend;
+		this.vizLegendModel = generalLegend;
 		this.dataValueForColorMidpoint = dataValueForOutputMidpoint;
 	}
 
@@ -25,27 +25,27 @@ public class ColorLegend implements Legend<Double, Color> {
 	
 	@Override
 	public Range<Double> getDataRange() {
-		return vizLegend.getDataRange();
+		return vizLegendModel.getDataRange();
 	}
 
 	public String getScalingLabel() {
-		return vizLegend.getScalingLabel();
+		return vizLegendModel.getScalingLabel();
 	}
 
 	@Override
 	public Range<Color> getVizRange() {
-		return vizLegend.getVizRange();
+		return vizLegendModel.getVizRange();
 	}
 
 	public String getLegendDescription() {
-		return vizLegend.getLegendDescription();
+		return vizLegendModel.getLegendDescription();
 	}
 
 	public String getColumnName() {
-		return vizLegend.getDataColumnName();
+		return vizLegendModel.getDataColumnName();
 	}
 
 	public NumericFormatType getNumericFormatType() {
-		return vizLegend.getNumericFormatType();
+		return vizLegendModel.getNumericFormatType();
 	}
 }

@@ -42,7 +42,7 @@ public class NumberFormatFactory {
 		private static boolean mentionsSomethingLikeYear(final String string) {
 			return Iterables.any(
 					ImmutableSet.of("year", "yr", "date", "time"),
-					StringPredicates.isContainedBy(string, ToCaseFunction.LOWER));
+					StringPredicates.isSubstringOf(string, ToCaseFunction.LOWER));
 		}
 	}
 		

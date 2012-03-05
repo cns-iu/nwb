@@ -21,7 +21,7 @@ public class SubstringOrderings {
 			public Integer apply(final String string) {
 				return Lists2.lastIndexOf(
 						candidateSubstringsInOrder,
-						StringPredicates.isContainedBy(string, ToCaseFunction.LOWER));
+						StringPredicates.isSubstringOf(string, ToCaseFunction.LOWER));
 			}			
 		});
 	}

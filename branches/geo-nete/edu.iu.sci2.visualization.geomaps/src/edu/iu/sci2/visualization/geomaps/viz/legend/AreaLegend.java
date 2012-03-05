@@ -5,15 +5,15 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFac
 
 
 public class AreaLegend implements Legend<Double, Double> {
-	private final VizLegend<Double> vizLegend;
+	private final VizLegendModel<Double> vizLegendModel;
 	private final double dataValueForMidpointArea;
 	private final double midpointArea;
 	
 	public AreaLegend(
-			VizLegend<Double> generalLegend,
+			VizLegendModel<Double> generalLegend,
 			double dataValueForMidpointArea,
 			double midpointArea) {
-		this.vizLegend = generalLegend;
+		this.vizLegendModel = generalLegend;
 		this.dataValueForMidpointArea = dataValueForMidpointArea;
 		this.midpointArea = midpointArea;
 	}
@@ -28,28 +28,28 @@ public class AreaLegend implements Legend<Double, Double> {
 	
 	
 	public String scalingLabel() {
-		return vizLegend.getScalingLabel();
+		return vizLegendModel.getScalingLabel();
 	}
 
 	public String legendDescription() {
-		return vizLegend.getLegendDescription();
+		return vizLegendModel.getLegendDescription();
 	}
 
 	public String columnName() {
-		return vizLegend.getDataColumnName();
+		return vizLegendModel.getDataColumnName();
 	}
 
 	public NumericFormatType numericFormatType() {
-		return vizLegend.getNumericFormatType();
+		return vizLegendModel.getNumericFormatType();
 	}
 
 	@Override
 	public Range<Double> getDataRange() {
-		return vizLegend.getDataRange();
+		return vizLegendModel.getDataRange();
 	}
 
 	@Override
 	public Range<Double> getVizRange() {
-		return vizLegend.getVizRange();
+		return vizLegendModel.getVizRange();
 	}	
 }

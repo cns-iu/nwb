@@ -19,10 +19,12 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
+import com.google.common.base.Equivalence;
+import com.google.common.base.Equivalences;
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -30,6 +32,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.utility.Iterables2;
+import edu.iu.sci2.visualization.geomaps.utility.Lists2;
+import edu.iu.sci2.visualization.geomaps.utility.Points;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
@@ -190,6 +195,20 @@ public class FeaturePrinter {
 
 		out.write("\n");
 	}
+	
+	public static void main(String[] args) {		
+		System.out.println(Iterables2.split(ImmutableList.<Integer>of(1), new Equivalence<Integer>() {
+			@Override
+			protected boolean doEquivalent(Integer a, Integer b) {
+				return Math.abs(b - a) <= 1;
+			}
+
+			@Override
+			protected int doHash(Integer t) {
+				return 0;
+			}			
+		}));
+	}
 
 	private void printGeometry(
 			Geometry subgeometry,
@@ -198,72 +217,33 @@ public class FeaturePrinter {
 			final String name)
 				throws IOException {
 		List<Coordinate> coordinates = ImmutableList.copyOf(subgeometry.getCoordinates());
-		
-		if (coordinates.size() > 0) {			
-			Point2D.Double firstPoint =
-				geoMapViewPageArea.getDisplayPoint(coordinates.get(0));
 
-			out.write(INDENT + "newpath" + "\n");
-			out.write(INDENT + INDENT + (firstPoint.x) + " " + (firstPoint.y) + " moveto\n");
-
-			/* Many projections involve interruptions.
-			 * Practically, this may mean that one coordinate of a geometry is on "one side"
-			 * of the interruption and the next is on the "other".
-			 * In GeometryProjecter, we account for interruptions at the meridian opposite that
-			 * which will be central in the visualization.  That check does NOT account for
-			 * non-opposite-meridianial interruptions, such as polar interruptions in a conic
-			 * projection of the whole world.
-			 * Without a special check, this code would naively draw an unwanted and ugly line
-			 * between two points which could projected at opposite ends of the world.
-			 * Therefore, we must check the distance between each coordinate that we process
-			 * and the previous.
-			 * If their distance is greater than INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD,
-			 * we assume that that line isn't really meant to be drawn, we stroke the path up
-			 * to the last "good" coordinate, and start a new path.
-			 */
-			for (int cc = 1; cc < coordinates.size(); cc++) {
-				Point2D.Double point =
-					geoMapViewPageArea.getDisplayPoint(coordinates.get(cc));
-				Point2D.Double previousPoint =
-					geoMapViewPageArea.getDisplayPoint(coordinates.get(cc - 1));
-				
-				/* A closed path consisting of two or more points at the same location is a
-				 * degenerate path. A degenerate path will be drawn only if you have set the line
-				 * caps to round caps. If your line caps are not round caps, or if the path is not
-				 * closed, the path will not be drawn. If the path is drawn, it will appear as a
-				 * filled circle center at the point."
-				 * 
-				 * In an attempt to avoid some subtleties with degenerate paths,
-				 * we skip any coordinate coincident to the previous.
-				 */
-				if (Objects.equal(point, previousPoint)) {
-					continue;
-				}
-				
-				if (isAProbableInterruptionGlitch(point, previousPoint)) {
-					System.err.println(name + ":\n\t" + point.x + ", " + point.y);
-					System.err.println("\tdistance = " + point.distance(previousPoint));
-					
-					out.write("% Probable line glitch across polar cuts." + "\n");
-					out.write("% Inserting a mid-Geometry stroke and " +
-								"starting new path at next coordinate." + "\n");
-					out.write(INDENT + "stroke" + "\n");
-					out.write(INDENT + "newpath" + "\n");
-					out.write(INDENT + INDENT + (point.x) + " " + (point.y) + " moveto\n");
-				} else {
-					out.write(INDENT + INDENT + (point.x) + " " + (point.y) + " lineto\n");
-				}
-			}
-
-			out.write(INDENT + "closepath" + "\n");
-
-			writeInkingCommands(out, featureColorMap, name);
+		if (coordinates.isEmpty()) {
+			return;
 		}
-	}
-
-	private static boolean isAProbableInterruptionGlitch(Point2D.Double point1,
-			Point2D.Double point2) {
-		return (point1.distance(point2) > INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD);
+		
+		List<Point2D.Double> displayPoints = Lists.transform(
+				coordinates,
+				new Function<Coordinate, Point2D.Double>() {
+					@Override
+					public Point2D.Double apply(Coordinate input) {
+						return geoMapViewPageArea.displayPointFor(input);
+					}					
+				});
+		
+		List<Point2D.Double> distinctDisplayPoints =
+				Lists2.omitConsecutiveDuplicates(displayPoints, Equivalences.equals());
+		
+		List<List<Point2D.Double>> paths = Iterables2.split(
+				distinctDisplayPoints,
+				Points.distanceEquivalenceWithTolerance(
+						INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD)); 
+		
+		for (List<Point2D.Double> path : paths) {
+			out.write(PSUtility.path(path) + " stroke ");
+		}
+		
+		writeInkingCommands(out, featureColorMap, name);
 	}
 
 	private void writeInkingCommands(

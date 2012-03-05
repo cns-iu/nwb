@@ -65,7 +65,7 @@ public class GeoMapViewPS {
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 		out.write("\n");
 		
-		out.write((new PageHeader(dataLabel, pageHeightInPoints)).toPostScript() + "\n");
+//		out.write((new PageHeader(dataLabel, pageHeightInPoints)).toPostScript() + "\n");
 		out.write((new PageFooter()).toPostScript() + "\n");
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
@@ -141,7 +141,7 @@ public class GeoMapViewPS {
 		Coordinate intermediateCoord = geoMap.project(coordinate);
 		
 		if (intermediateCoord != null) {
-			return geoMapViewPageArea.getDisplayPoint(intermediateCoord);
+			return geoMapViewPageArea.displayPointFor(intermediateCoord);
 		} else {
 			// can happen if the point would not be displayed (so the Geometry becomes empty)
 			return null;
@@ -205,7 +205,7 @@ public class GeoMapViewPS {
 				geometry = geoMap.project(geoMap.getShapefile().inset(geoMap.getShapefile().extractFeatureName(feature), (Geometry) feature.getDefaultGeometry()));
 			} catch (IllegalArgumentException e) {
 				// TODO !
-				System.err.println("IllegalArgumentException for feature " + feature.getAttribute("NAME"));
+				System.err.println("IllegalArgumentException for feature " + geoMap.getShapefile().extractFeatureName(feature));
 				System.err.println(e.getMessage());
 				continue;
 			}
@@ -216,7 +216,7 @@ public class GeoMapViewPS {
 				Coordinate[] coordinates = subgeometry.getCoordinates();
 
 				for (Coordinate coordinate : coordinates) {
-					Point2D.Double point = GeoMapViewPS.asPoint2D(coordinate);
+					Point2D.Double point = asPoint2D(coordinate);
 					
 					if (rectangle == null) {
 						rectangle = new Rectangle2D.Double(point.x, point.y, 0, 0);

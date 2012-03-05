@@ -19,7 +19,7 @@ public class RelativeDifferences {
 
 			@Override
 			protected int doHash(Double t) {
-				return 0; // TODO document very strongly or else throw new UnsupportedOperationException();
+				return 0; // TODO document very strongly or else throw new UnsupportedOperationException()
 			}
 		};
 	}

@@ -3,7 +3,7 @@ package edu.iu.sci2.visualization.geomaps.viz.legend;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 
-public class VizLegend<U> {
+public class VizLegendModel<U> {
 	private final Range<Double> dataRange;
 	private final Range<U> vizRange;
 	private final String scalingLabel;
@@ -19,7 +19,7 @@ public class VizLegend<U> {
 	 * @param dataColumnName
 	 * @param numericFormatType
 	 */
-	public VizLegend(Range<Double> dataRange, Range<U> vizRange, String scalingLabel,
+	public VizLegendModel(Range<Double> dataRange, Range<U> vizRange, String scalingLabel,
 			String legendDescription, String dataColumnName, NumericFormatType numericFormatType) {
 		this.dataRange = dataRange;
 		this.vizRange = vizRange;

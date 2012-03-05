@@ -43,16 +43,20 @@ public class GeoMapViewPageArea {
 		this.displayRectangle = Rectangles.forCenterWithDimensions(displayCenter, displayDimension);
 	}
 	
-	public Point2D.Double getDisplayPoint(Coordinate coordinate) {
+	public Point2D.Double displayPointFor(Coordinate coordinate) {
 		return new Point2D.Double(
 				Interpolator1D.between(Rectangles.xRange(dataRectangle), Rectangles.xRange(displayRectangle)).apply(coordinate.x),
 				Interpolator1D.between(Rectangles.yRange(dataRectangle), Rectangles.yRange(displayRectangle)).apply(coordinate.y));
 	}
 	
+	public Rectangle2D.Double getDisplayRectangle() {
+		return displayRectangle;
+	}
+
 	public String toPostScript() {
 		String s = "";
 
-		s += PSUtility.path(
+		s += PSUtility.closedPath(
 				new Point2D.Double(displayRectangle.getMinX(), displayRectangle.getMinY()),
 				new Point2D.Double(displayRectangle.getMinX(), displayRectangle.getMaxY()),
 				new Point2D.Double(displayRectangle.getMaxX(), displayRectangle.getMaxY()),
@@ -77,9 +81,5 @@ public class GeoMapViewPageArea {
 		}
 
 		return s;
-	}
-
-	public Rectangle2D.Double getDisplayRectangle() {
-		return displayRectangle;
 	}
 }

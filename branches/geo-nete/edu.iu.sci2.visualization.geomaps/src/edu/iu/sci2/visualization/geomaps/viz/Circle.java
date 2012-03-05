@@ -50,13 +50,13 @@ public class Circle {
 		Strategy outerColorStrategy = strategyFor(CircleDimension.OUTER_COLOR);
 
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-		Point rawPoint = geometryFactory.createPoint(coordinate);
+		Point coordinatePoint = geometryFactory.createPoint(coordinate);
 		/* Note we transform here, not project, because our "projection" involves
 		 * cropping and in cropping we might subtract out rawPoint.
 		 * Then we wouldn't be able to draw this Circle.
 		 */
-		Geometry point = geometryProjector.transformGeometry(rawPoint);
-		Point2D.Double displayPoint = geoMapViewPageArea.getDisplayPoint(point.getCoordinate());
+		Geometry projectedPoint = geometryProjector.transformGeometry(coordinatePoint);
+		Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint.getCoordinate());
 
 		StringBuilder builder = new StringBuilder();
 		

@@ -6,7 +6,7 @@ import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegend;
+import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegendModel;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -31,8 +31,8 @@ public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implem
 	public abstract String legendDescription();
 	
 	
-	public VizLegend<V> makeVizLegend(NumericFormatType numericFormatType) {
-		return new VizLegend<V>(
+	public VizLegendModel<V> makeVizLegend(NumericFormatType numericFormatType) {
+		return new VizLegendModel<V>(
 				usableRange,
 				interpolator.getOutRange(),
 				scaling().toString(),

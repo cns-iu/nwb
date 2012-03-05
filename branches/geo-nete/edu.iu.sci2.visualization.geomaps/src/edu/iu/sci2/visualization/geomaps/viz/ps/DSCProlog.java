@@ -10,7 +10,7 @@ import edu.iu.sci2.visualization.geomaps.viz.Constants;
  */
 public class DSCProlog {
 	public static final String CREATOR_DSC_COMMENT_VALUE =
-		"Geo Maps plug-in for the Sciï¿½ Tool, a product of the Cyberinfrastructure " +
+		"Geo Maps plug-in for the Sci² Tool, a product of the Cyberinfrastructure " +
 		"for Network Science Center (http://cns.iu.edu) at Indiana University";
 	public static final int NUMBER_OF_PAGES_DSC_COMMENT_VALUE = 1;
 	private static final String PAGE_ORDER_DSC_COMMENT_VALUE = "Ascend";
@@ -35,8 +35,7 @@ public class DSCProlog {
 		s += ("%%PageOrder: " + PAGE_ORDER_DSC_COMMENT_VALUE + "\n");
 		s += ("%%BoundingBox: " + createBoundingBoxCommentValue() + "\n");
 		/* TODO GhostScript obeys, Distiller ignores.  Non-standard.
-		 * Note that GhostScript seems to be sensitive to where this comment is in the prolog,
-		 * so don't move it.
+		 * GhostScript seems to be sensitive to where this comment occurs in the prolog.
 		 */
 		s += ("%%Orientation: Landscape" + "\n");
 		s += ("%%Page: 1" + "\n");

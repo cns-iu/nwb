@@ -193,11 +193,11 @@ public enum Shapefile {
 
 	
 	public static class Inset {
-		public static final Inset ALASKA = Inset.inset(
-				"Alaska", new Coordinate(-129.7, 52.3), new Coordinate(-79.1, 49.9));
-		public static final Inset HAWAII = Inset.inset(
+		public static final Inset ALASKA = Inset.translating(
+				"Alaska", new Coordinate(-129.7, 52.3), new Coordinate(-120.0, 27.9));
+		public static final Inset HAWAII = Inset.translating(
 				"Hawaii", new Coordinate(-155.7, 18.9), new Coordinate(-107.4, 22.2));
-		public static final Inset PUERTO_RICO = Inset.inset(
+		public static final Inset PUERTO_RICO = Inset.translating(
 				"Puerto Rico", new Coordinate(-67.3, 18.3), new Coordinate(-77.8, 23.8));
 		
 		private final String featureName;
@@ -208,13 +208,13 @@ public enum Shapefile {
 			this.transform = transform;
 			
 		}
-		public static Inset inset(
-				String featureName, Coordinate anchor, Coordinate dest) {
+		public static Inset translating(
+				String featureName, Coordinate anchor, Coordinate newAnchor) {
 			return new Inset(
 					featureName,
 					new AffineTransform2D(
 							AffineTransform.getTranslateInstance(
-									dest.x - anchor.x, dest.y - anchor.y)));
+									newAnchor.x - anchor.x, newAnchor.y - anchor.y)));
 		}
 
 		

@@ -25,7 +25,7 @@ import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.AreaLegend;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceCircles;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegend;
+import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegendModel;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
@@ -61,7 +61,7 @@ public enum CircleDimension implements VizDimension {
 						
 						@Override
 						public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
-							VizLegend<Double> generalLegend = makeVizLegend(numericFormatType);
+							VizLegendModel<Double> generalLegend = makeVizLegend(numericFormatType);
 							
 							try {
 								double midpointOfScaledData =
