@@ -329,49 +329,64 @@ This will draw a few boxes to describe area further.  NOTE!  The bottom specifie
 
 gapYearValue is the number of years, as a decimal rounded to one place that prepresents the distance between the year ticks. 
 */
-areaLegendDefinitions(daysPerPoint) ::= <<
+areaLegendDefinitions(barWidth, bigBarHeight, bigBarValue, medBarHeight, medBarValue, smallBarHeight, smallBarValue, yearValue) ::= <<
 
 %%%%%%%%%%%%%%%%
 %  AreaLegend  %
 %%%%%%%%%%%%%%%%
 /areaLegend {
-	/daysPerPoint { <daysPerPoint> } def
 	/areaLegendTop { areaLegendBottom } def % HACK.  Sadly I chose the wrong dimentions to specify.  I should have done top and left.  Until I fix that, this is here.
 	/fontSize { 10 } def
-	/gapWidth { 50 } def
-	/space { 5 } def
+	/barWidth { <barWidth> } def
+	/space { 6 } def
 	
 	/draw0Legend { true } def
-	/bigBarHeight { 18 } def
-	/medBarHeight { 7.2 } def
-	/smallBarHeight { 2 } def
+	/bigBarHeight { <bigBarHeight> } def
+	/medBarHeight { <medBarHeight> } def
+	/smallBarHeight { <smallBarHeight> } def
+	
+	/bigBarValue { (<bigBarValue>) } def
+	/medBarValue { (<medBarValue>) } def
+	/smallBarValue { (<smallBarValue>) } def
+	
+	/yearValue { (<yearValue> Year(s)) } def
+	
 	gsave
 	/ArialMT fontSize selectfont
 	0 0 moveto
-	300 100 translate
+	areaLegendLeft areaLegendTop translate
 	% Draw the big bar and label
 	0 0 moveto
-		gapWidth 0 rlineto
+		barWidth 0 rlineto
 		0 bigBarHeight neg rlineto
-		gapWidth neg 0 rlineto
+		barWidth neg 0 rlineto
 	fill
+	barWidth 5 add 0 moveto
+	0 bigBarHeight 2 div neg 1 add rmoveto 
+	bigBarValue centerTextLine bigBarValue show
 	0 bigBarHeight space add neg translate
 	
 	% Draw the med bar and label
 	0 0 moveto
-		gapWidth 0 rlineto
+		barWidth 0 rlineto
 		0 medBarHeight neg rlineto
-		gapWidth neg 0 rlineto
+		barWidth neg 0 rlineto
 	fill
+	barWidth 5 add 0 moveto
+	0 medBarHeight 2 div neg 1 add rmoveto 
+	medBarValue centerTextLine medBarValue show
 	0 medBarHeight space add neg translate
 	
 	% Draw the small bar and label
 	0 0 moveto
-		gapWidth 0 rlineto
+		barWidth 0 rlineto
 		0 smallBarHeight neg rlineto
-		gapWidth neg 0 rlineto
+		barWidth neg 0 rlineto
 	fill
-	0 smallBarHeight space add neg translate
+	barWidth 5 add 0 moveto
+	0 smallBarHeight 2 div neg 1 add rmoveto 
+	smallBarValue centerTextLine smallBarValue show
+	0 smallBarHeight space 4 add add neg translate
 	
 	% Draw the 0 bar and lable if needed
 	0 0 moveto
@@ -380,10 +395,12 @@ areaLegendDefinitions(daysPerPoint) ::= <<
 		gsave
 	    [2] 0 setdash
 		0 setlinewidth
-		gapWidth 0 rlineto
+		barWidth 0 rlineto
 		stroke
+		barWidth 5 add 0 moveto
+		(0) centerTextLine (0) show
 		grestore
-		0 2 space add neg translate
+		0 space neg translate
 	  } 
 	if
 	
@@ -394,15 +411,16 @@ areaLegendDefinitions(daysPerPoint) ::= <<
 	0 0 moveto
 	0 5 neg rlineto stroke
 	0 0 moveto
-	gapWidth 0 rlineto stroke
-	gapWidth 0 moveto
+	barWidth 0 rlineto stroke
+	barWidth 0 moveto
 	0 5 neg rlineto stroke
 	% Draw the year label
 	0 fontSize neg translate
 	0 5 neg moveto
-	gapWidth daysPerPoint mul 365 div 20 string cvs 0 5 getinterval ( Year(s)) concatstrings show
+	yearValue show
 	0 fontSize space add neg translate
 	grestore
+
 } def
 
 >>

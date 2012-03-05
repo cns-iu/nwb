@@ -27,16 +27,17 @@ public class Visualization extends AbstractVisualization {
 	private DateTime vizAreaEndDate;
 
 	private DoubleDimension size;
-
+	
 	private double vizAreaTotalDays;
 	private double vizAreaDeltaY;
+	
+	private double usableXPoints, usableYPoints;
+	private double pointsPerDay, pointsPerY;
+	private double barMarginTotal;
 
 	private List<String> visualizations;
-	
 	private List<Record> records;
-	
-	private double pointsPerY;
-	private double pointsPerDay;
+
 
 	public double getPointsPerY() {
 		return this.pointsPerY;
@@ -45,7 +46,7 @@ public class Visualization extends AbstractVisualization {
 	public double getPointsPerDay() {
 		return this.pointsPerDay;
 	}
-
+	
 	public Visualization(CSVWriter csvWriter, List<Record> records,
 			DoubleDimension size, boolean scaleToOnePage,
 			ColorRegistry<String> colorRegistry)
@@ -67,32 +68,32 @@ public class Visualization extends AbstractVisualization {
 		
 		this.vizAreaTotalDays = totalDays;
 
+		/*
+		 * 25 percent of the graph height will distributed as spaces between
+		 * bars
+		 */
+		this.barMarginTotal = this.size.getHeight() * 0.25;
+				
+		this.usableXPoints = this.size.getWidth();
+		this.usableYPoints = (this.size.getHeight() - this.barMarginTotal);
+		this.pointsPerDay = this.usableXPoints / this.vizAreaTotalDays;
 
-		double barMarginTotal = this.size.getHeight() * 0.25; // 25 percent of the
-															// graph height will
-															// distributed as
-															// spaces between
-															// bars
-		double usableYPoints = (this.size.getHeight() - barMarginTotal);
-		double usableXPoints = this.size.getWidth();
-
-		this.pointsPerDay = usableXPoints / this.vizAreaTotalDays;
-		
-		this.pointsPerY = usableYPoints / this.vizAreaDeltaY;
-		
-		
 		if (scaleToOnePage) {
 			this.visualizations = new ArrayList<String>();
 			this.vizAreaDeltaY = getTotalAmountPerDay(bars);
+			this.pointsPerY = this.usableYPoints / this.vizAreaDeltaY;
 			String page = getVisualizationArea(bars);
 			this.visualizations.add(page);
 		} else {
 			double topNDeltaY = getTopNDeltaYSum(bars, MAX_BARS_PER_PAGE);
+			this.vizAreaDeltaY = topNDeltaY;
+			this.pointsPerY = this.usableYPoints / this.vizAreaDeltaY;
 			this.visualizations = new LinkedList<String>();
+			
 			List<List<PostScriptBar>> splitBars = splitBars(bars,
 					MAX_BARS_PER_PAGE);
+			
 			for (List<PostScriptBar> pageBars : splitBars) {
-				this.vizAreaDeltaY = topNDeltaY;
 				String page = getVisualizationArea(pageBars);
 				this.visualizations.add(page);
 			}
@@ -103,28 +104,14 @@ public class Visualization extends AbstractVisualization {
 	protected String getBarsArea(List<PostScriptBar> bars) {
 		StringBuilder barsArea = new StringBuilder();
 
-		double barMarginTotal = this.size.getHeight() * 0.25; // 25 percent of the
-															// graph height will
-															// distributed as
-															// spaces between
-															// bars
-		double barSpacing = (barMarginTotal / (bars.size() + 2)); // there will
-																	// be a
-																	// margin at
-																	// the top
-																	// and
-																	// bottom
-
-		double usableYPoints = (this.size.getHeight() - barMarginTotal);
-		double usableXPoints = this.size.getWidth();
-
-		this.pointsPerDay = usableXPoints / this.vizAreaTotalDays;
-		
-		this.pointsPerY = usableYPoints / this.vizAreaDeltaY;
+		/*
+		 * there will be a margin at the top and bottom
+		 */
+		double barSpacing = (this.barMarginTotal / (bars.size() + 2)); 
 
 		// maybe the actual bars on the page will not require all the space. In
 		// this case, space out the bars using bar spacing.
-		double spaceUsedByBars = getTotalAmountPerDay(bars) * this.pointsPerY;
+		double spaceUsedByBars = getTotalAmountPerDay(bars) * pointsPerY;
 
 		if (spaceUsedByBars < usableYPoints) {
 			double extraSpace = usableYPoints - spaceUsedByBars;
@@ -149,15 +136,15 @@ public class Visualization extends AbstractVisualization {
 		double previousEndY = 0;
 		for (PostScriptBar bar : bars) {
 			double startY = previousEndY + barSpacing;
-			double changeInY = bar.amountPerDay() * this.pointsPerY;
+			double changeInY = bar.amountPerDay() * pointsPerY;
 			StringTemplate visualizationLabelBar = group
 					.getInstanceOf("visualizationLabelBar");
 			visualizationLabelBar.setAttribute("label", bar.getName());
 			visualizationLabelBar.setAttribute("x1", bar.daysSinceEarliest()
-					* this.pointsPerDay);
+					* pointsPerDay);
 			visualizationLabelBar.setAttribute("y1", startY);
 			visualizationLabelBar.setAttribute("deltaX", bar.lengthInDays()
-					* this.pointsPerDay);
+					* pointsPerDay);
 			visualizationLabelBar.setAttribute("deltaY", changeInY);
 			visualizationLabelBar.setAttribute("color", getRGB(bar.getColor()));
 
@@ -182,7 +169,7 @@ public class Visualization extends AbstractVisualization {
 		for (DateTime newYear : newYearsDates) {
 
 			String label = Integer.toString(newYear.toLocalDate().getYear());
-			double x = Days.daysBetween(this.vizAreaStartDate, newYear).getDays() * this.pointsPerDay;
+			double x = Days.daysBetween(this.vizAreaStartDate, newYear).getDays() * pointsPerDay;
 			
 			StringTemplate datelineTemplate =
 					group.getInstanceOf("visualizationDateLine");
@@ -239,8 +226,8 @@ public class Visualization extends AbstractVisualization {
 		StringTemplate definitionsTemplate = group
 				.getInstanceOf("visualizationAreaDefinitions");
 		definitionsTemplate.setAttribute("topVizPosition", this.size.getHeight());
-		definitionsTemplate.setAttribute("pointsPerDay", this.getPointsPerDay());
-		definitionsTemplate.setAttribute("pointsPerY", this.getPointsPerY());
+		definitionsTemplate.setAttribute("pointsPerDay", 10);
+		definitionsTemplate.setAttribute("pointsPerY", 10);
 		return definitionsTemplate.toString();
 	}
 

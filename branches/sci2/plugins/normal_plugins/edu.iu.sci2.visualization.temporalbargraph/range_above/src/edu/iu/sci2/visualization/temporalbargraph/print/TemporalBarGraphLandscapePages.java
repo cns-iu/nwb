@@ -99,12 +99,30 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	}
 
 	private PageElement getAreaLegendElement() {
+		double daysPerPoint = Math.pow(this.visualizations.getPointsPerDay(), -1);
+		double yPerPoint = Math.pow(this.visualizations.getPointsPerY(), -1);
+		double barWidth = 50;
+		double yearValue = barWidth * daysPerPoint / 365.0;
+		double bigBarHeight = 18;
+		double bigBarValue = (daysPerPoint * barWidth) * (yPerPoint * bigBarHeight);
+		double medBarHeight = 6;
+		double medBarValue = (daysPerPoint * barWidth) * (yPerPoint * medBarHeight);
+		double smallBarHeight = 2;
+		double smallBarValue = (daysPerPoint * barWidth) * (yPerPoint * smallBarHeight);
+		
 		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
-		areaDefinitionsTemplate.setAttribute("daysPerPoint", Math.pow(this.visualizations.getPointsPerDay(), -1));
+		areaDefinitionsTemplate.setAttribute("barWidth", String.valueOf(barWidth));
+		areaDefinitionsTemplate.setAttribute("bigBarHeight", bigBarHeight);
+		areaDefinitionsTemplate.setAttribute("medBarHeight", medBarHeight);
+		areaDefinitionsTemplate.setAttribute("smallBarHeight", smallBarHeight);
+		areaDefinitionsTemplate.setAttribute("bigBarValue", formatter.format(bigBarValue));
+		areaDefinitionsTemplate.setAttribute("medBarValue", formatter.format(medBarValue));
+		areaDefinitionsTemplate.setAttribute("smallBarValue", formatter.format(smallBarValue));
+		areaDefinitionsTemplate.setAttribute("yearValue", formatter.format(yearValue));
 		
 		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
 		
-		return new PageElement("legendArea", 400, 100, areaTemplate, areaDefinitionsTemplate);
+		return new PageElement("areaLegend", 300, 100, areaTemplate, areaDefinitionsTemplate);
 	}
 	
 	private PageElement getLegendPageElement() {
