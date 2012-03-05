@@ -220,8 +220,7 @@ public class PageDirector implements Paintable {
 				ImmutableList.<Double>builder().add(0.0).addAll(coding.getExtrema()).build();
 		CircleRadiusLegend legend = new CircleRadiusLegend(
 				layout.getCircleLegendPosition(), "Circle Area: "
-						+ dataModel.getNodeValueAttribute(), coding, labels,
-				layout.getMaxNodeRadius());
+						+ dataModel.getNodeValueAttribute(), coding, labels);
 		return legend;
 	}
 

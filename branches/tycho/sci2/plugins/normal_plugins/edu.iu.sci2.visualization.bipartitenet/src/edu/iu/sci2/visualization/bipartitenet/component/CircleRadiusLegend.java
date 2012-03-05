@@ -6,8 +6,10 @@ import java.awt.Graphics2D;
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.line.LineSegment2D;
+import math.geom2d.line.StraightLine2D;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
@@ -19,7 +21,6 @@ public class CircleRadiusLegend implements Paintable {
 	private final ImmutableList<Double> labeledValues;
 	private final Point2D topCenter;
 	private final String title;
-	private final double maxRadius;
 	private final SimpleLabelPainter titlePainter;
 	
 	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD);
@@ -31,12 +32,11 @@ public class CircleRadiusLegend implements Paintable {
 	
 	public CircleRadiusLegend(Point2D topCenter, String title,
 			Scale<Double,Double> coding,
-			ImmutableList<Double> labeledValues, double maxRadius) {
+			ImmutableList<Double> labeledValues) {
 		this.topCenter = topCenter;
 		this.title = title;
 		this.coding = coding;
 		this.labeledValues = labeledValues;
-		this.maxRadius = maxRadius;
 		this.titlePainter = new SimpleLabelPainter(this.topCenter, 
 				XAlignment.CENTER, YAlignment.ASCENT, 
 				this.title, TITLE_FONT, null);
@@ -47,24 +47,26 @@ public class CircleRadiusLegend implements Paintable {
 	public void paint(Graphics2D g) {
 		this.titlePainter.paint(g);
 		
-		paintCircles(g);
-		paintDataLabels(g);
+		LineSegment2D maxDiameter = paintCircles(g);
+		paintDataLabels(g, maxDiameter);
 	}
 
-	private void paintCircles(Graphics2D g) {
-		Point2D legendTopCenter = topCenter.translate(0, LEGEND_Y_OFFSET);
+	private LineSegment2D paintCircles(Graphics2D g) {
+		double maxActualRadius = coding.apply(Ordering.natural().max(labeledValues));
+		Point2D circleTopCenter = topCenter.translate(- maxActualRadius, LEGEND_Y_OFFSET);
+		Point2D circleBottomCenter = circleTopCenter.translate(0, 2 * maxActualRadius);
 		for (Double value : labeledValues) {
 			double radius = coding.apply(value);
-			// circle center
-			double circleX = legendTopCenter.getX() - maxRadius,
-					circleY = legendTopCenter.getY() + 2 * maxRadius - radius;
-			new Circle2D(circleX, circleY, radius).draw(g);
+			Point2D circleCenter = circleBottomCenter.translate(0, - radius);
+			new Circle2D(circleCenter, radius).draw(g);
 		}
+		
+		return new LineSegment2D(circleTopCenter, circleBottomCenter);
 	}
 	
-	private void paintDataLabels(Graphics2D g) {
+	private void paintDataLabels(Graphics2D g, LineSegment2D maxDiameter) {
 		Point2D labelsTop = topCenter.translate(LABEL_X_OFFSET, LEGEND_Y_OFFSET);
-		LineSegment2D labelLine = new LineSegment2D(labelsTop, labelsTop.translate(0, 2 * maxRadius)); // the line "points" downward
+		StraightLine2D labelLine = maxDiameter.getParallel(labelsTop);
 		
 		ImmutableList<Double> reversedValues = labeledValues.reverse();
 		
