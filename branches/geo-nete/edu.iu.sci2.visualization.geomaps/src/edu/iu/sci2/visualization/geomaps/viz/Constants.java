@@ -37,7 +37,7 @@ public class Constants {
 			0.7 * MAP_PAGE_AREA_WIDTH_IN_POINTS,
 			1.2 * POINTS_PER_INCH);
 	
-	public static final Point2D.Double LEGEND_PAGE_AREA_LOWER_LEFT_POINT = new Point2D.Double(
+	public static final Point2D.Double LEGEND_PAGE_AREA_LOWER_LEFT = new Point2D.Double(
 			(PAGE_WIDTH_IN_POINTS
 					- LEGEND_PAGE_AREA_DIMENSION.getWidth())
 					+ PAGE_MARGIN_IN_POINTS,
@@ -45,16 +45,13 @@ public class Constants {
 	
 	
 	public static final double LEGEND_COMPOSITE_WIDTH_IN_POINTS = LEGEND_PAGE_AREA_DIMENSION.getWidth();
-	public static final Point2D.Double LEGEND_COMPOSITE_LOWER_LEFT_POINT = new Point2D.Double(
-			LEGEND_PAGE_AREA_LOWER_LEFT_POINT.getX(),
-			LEGEND_PAGE_AREA_LOWER_LEFT_POINT.getY() + (0.75 * LEGEND_PAGE_AREA_DIMENSION.getHeight()));
+	public static final Point2D.Double LEGEND_COMPOSITE_LOWER_LEFT = new Point2D.Double(
+			LEGEND_PAGE_AREA_LOWER_LEFT.getX(),
+			LEGEND_PAGE_AREA_LOWER_LEFT.getY() + (0.75 * LEGEND_PAGE_AREA_DIMENSION.getHeight()));
 	
 	
-	public static final Point2D.Double METADATA_PAGE_AREA_LOWER_LEFT_POINT = new Point2D.Double(
-			PAGE_MARGIN_IN_POINTS, LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY());
-	
-	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
-			LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX() + (0.5 * LEGEND_COMPOSITE_WIDTH_IN_POINTS);
+	public static final Point2D.Double HEADER_LOWER_LEFT = new Point2D.Double(
+			PAGE_MARGIN_IN_POINTS, LEGEND_COMPOSITE_LOWER_LEFT.getY());
 	
 	public static final ImmutableMap<String, Range<Color>> COLOR_RANGES = ImmutableMap.of(
 			"Yellow to Blue", Range.between(new Color(255, 255, 158), new Color(37, 52, 148)),

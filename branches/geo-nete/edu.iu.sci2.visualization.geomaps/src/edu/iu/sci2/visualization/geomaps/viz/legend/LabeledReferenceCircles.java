@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.legend;
 
+import java.awt.geom.Point2D;
+
 import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
@@ -32,23 +34,15 @@ public class LabeledReferenceCircles implements PostScriptable {
 	public static final String FONT_NAME = Constants.FONT_NAME;
 
 	private AreaLegend areaLegend;
-	/* These "lower lefts" are the lower left corners of the key text,
-	 * e.g., "Population" or "Number of Works Authored" or what have you.
-	 * This is an ex post facto change so that the legend components align
-	 * vertically by their type and key text labels rather than by their
-	 * extrema labels (as it was before).
-	 */
-	private final double lowerLeftX;
-	private final double lowerLeftY;
+	private final Point2D.Double keyTextLowerLeft;
 	
 	private boolean hasPrintedDefinitions;
 
 
 	public LabeledReferenceCircles(
-			AreaLegend areaLegend, double lowerLeftX,  double lowerLeftY) {
+			AreaLegend areaLegend, Point2D.Double keyTextLowerLeft) {
 		this.areaLegend = areaLegend;
-		this.lowerLeftX = lowerLeftX;
-		this.lowerLeftY = lowerLeftY;
+		this.keyTextLowerLeft = keyTextLowerLeft;
 		
 		this.hasPrintedDefinitions = false;
 	}
@@ -74,8 +68,8 @@ public class LabeledReferenceCircles implements PostScriptable {
 		StringTemplate invocationTemplate =
 			GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circleAreaLegend");
 		
-		invocationTemplate.setAttribute("x", lowerLeftX);
-		invocationTemplate.setAttribute("y", lowerLeftY);
+		invocationTemplate.setAttribute("x", keyTextLowerLeft.x);
+		invocationTemplate.setAttribute("y", keyTextLowerLeft.y);
 		
 		invocationTemplate.setAttribute(
 				"minRadius",

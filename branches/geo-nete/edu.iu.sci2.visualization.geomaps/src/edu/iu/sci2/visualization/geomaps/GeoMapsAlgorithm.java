@@ -28,7 +28,6 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
-import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
@@ -181,13 +180,13 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("latitude", "Latitude");
 		parameters.put("longitude", "Longitude");
 		parameters.put("circleAreaColumnName", "Population (thousands)");
-		parameters.put("circleAreaScaling", Scaling.Logarithmic.toString());
+		parameters.put("circleAreaScaling", Scaling.Linear.toString());
 		parameters.put("outerColorColumnName", "Population (thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
 		parameters.put("outerColorScaling", Scaling.Linear.toString());
 		parameters.put("outerColorRange", "Yellow to Red");
-		parameters.put("innerColorColumnName", CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
+		parameters.put("innerColorColumnName", "Population (thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
-		parameters.put("innerColorRange", "Yellow to Red");
+		parameters.put("innerColorRange", "Gray to Black");
 		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
 		return algorithmFactory;
 	}

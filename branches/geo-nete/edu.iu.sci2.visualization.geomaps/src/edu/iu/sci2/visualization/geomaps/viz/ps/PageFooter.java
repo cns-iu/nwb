@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import java.awt.geom.Point2D;
+
 import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
@@ -17,10 +19,8 @@ public class PageFooter {
 	public static final double FONT_SIZE = 6;
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
-	public static final double LOWER_LEFT_X_IN_POINTS =
-		Constants.PAGE_MARGIN_IN_POINTS;
-	public static final double LOWER_LEFT_Y_IN_POINTS =
-		Constants.PAGE_MARGIN_IN_POINTS;
+	public static final Point2D.Double LOWER_LEFT =
+			new Point2D.Double(Constants.PAGE_MARGIN_IN_POINTS, Constants.PAGE_MARGIN_IN_POINTS);
 
 	private static final String SEP = " | ";
 	
@@ -42,7 +42,7 @@ public class PageFooter {
 		
 		builder.append(PSUtility.findscalesetfont(FONT_NAME, FONT_SIZE) + "\n");
 		builder.append(PSUtility.setgray(FONT_BRIGHTNESS) + "\n");
-		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + LOWER_LEFT_Y_IN_POINTS + " moveto" + "\n");
+		builder.append(INDENT + LOWER_LEFT.x + " " + LOWER_LEFT.y + " moveto" + "\n");
 		
 		builder.append(INDENT + "(" + ATTRIBUTION_PREFIX + ") show" + "\n");
 		

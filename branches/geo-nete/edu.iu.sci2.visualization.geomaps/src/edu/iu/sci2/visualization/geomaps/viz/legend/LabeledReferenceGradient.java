@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.legend;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
 import org.antlr.stringtemplate.StringTemplate;
 
@@ -46,25 +47,14 @@ public class LabeledReferenceGradient implements PostScriptable {
 	 * extrema labels (as it was before).
 	 */
 	@Deprecated
-	private final double lowerLeftX; // TODO Just say no to absolute positioning
-	@Deprecated
-	private final double lowerLeftY; // TODO Just say no to absolute positioning
+	private final Point2D.Double lowerLeft; // TODO Just say no to absolute positioning
 	private Dimension<Double> dimension;
 	private boolean hasPrintedDefinitions;
 
-	/**
-	 * @param legend
-	 * @param lowerLeftX
-	 * @param lowerLeftY
-	 * @param gradientWidth
-	 * @param gradientHeight
-	 * @param hasPrintedDefinitions
-	 */
-	public LabeledReferenceGradient(ColorLegend legend, double lowerLeftX, double lowerLeftY,
+	public LabeledReferenceGradient(ColorLegend legend, Point2D.Double lowerLeft,
 			Dimension<Double> dimension) {
 		this.legend = legend;
-		this.lowerLeftX = lowerLeftX;
-		this.lowerLeftY = lowerLeftY;
+		this.lowerLeft = lowerLeft;
 		this.dimension = dimension;
 		
 		this.hasPrintedDefinitions = false;
@@ -89,8 +79,8 @@ public class LabeledReferenceGradient implements PostScriptable {
 		StringTemplate invocationTemplate =
 			GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("colorLegend");
 		
-		invocationTemplate.setAttribute("x", lowerLeftX);
-		invocationTemplate.setAttribute("y", lowerLeftY);
+		invocationTemplate.setAttribute("x", lowerLeft.x);
+		invocationTemplate.setAttribute("y", lowerLeft.y);
 		
 		invocationTemplate.setAttribute("gradientWidth", dimension.getWidth());
 		invocationTemplate.setAttribute("gradientHeight", dimension.getHeight());

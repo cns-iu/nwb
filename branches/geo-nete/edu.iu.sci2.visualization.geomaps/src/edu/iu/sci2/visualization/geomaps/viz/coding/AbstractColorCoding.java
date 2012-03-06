@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.coding;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
@@ -25,16 +26,14 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 		super(binding, usableRange, interpolator);
 	}
 
-	public abstract double lowerLeftX();
-
-	public abstract double lowerLeftY();
+	public abstract Point2D.Double lowerLeft();
 
 	public abstract Color defaultColor();
 
 	@Override
 	public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
-				createColorLegend(numericFormatType), lowerLeftX(), lowerLeftY(),
+				createColorLegend(numericFormatType), lowerLeft(),
 				CircleDimension.COLOR_GRADIENT_DIMENSION);
 
 		return labeledReferenceGradient;

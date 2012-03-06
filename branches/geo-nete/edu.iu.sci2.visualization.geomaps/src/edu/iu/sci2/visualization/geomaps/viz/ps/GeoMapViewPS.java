@@ -108,11 +108,11 @@ public class GeoMapViewPS {
 		out.write("\n");
 		
 		
-		PageMetadata pageMetadata = new PageMetadata(TITLE, geoMap.getSubtitle());
-		pageMetadata.add(geoMap.getKnownProjectedCRSDescriptor().getNiceName() + " Projection");
-		pageMetadata.add(timestamp());
-		pageMetadata.add(authorName);
-		out.write(pageMetadata.toPostScript());
+		PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle());
+		pageHeader.add(geoMap.getKnownProjectedCRSDescriptor().getNiceName() + " Projection");
+		pageHeader.add(timestamp());
+		pageHeader.add(authorName);
+		out.write(pageHeader.toPostScript());
 		out.write("\n");
 		
 		out.write(geoMap.getLegendComposite().toPostScript());
@@ -148,48 +148,6 @@ public class GeoMapViewPS {
 		}
 	}
 	
-//	public static Iterator<Coordinate> allCoordinates(
-//			FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection) {
-//		return new AbstractIterator<Coordinate>() {
-//
-//			@Override
-//			protected Coordinate computeNext() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//			
-//		};
-//	}
-	
-	/*
-	 * For each feature
-	 * 		Project it to a Geometry, then for each subgeometry
-	 * 			Each coordinate
-	 */
-	
-//	public Iterator<SimpleFeature> asProperIterator(final FeatureIterator<SimpleFeature> featureIterator) {
-//		return new AbstractIterator<SimpleFeature>() {
-//			@Override
-//			protected SimpleFeature computeNext() {
-//				while (featureIterator.hasNext()) {
-//					return featureIterator.next();
-//				}
-//				
-//				return endOfData();
-//			}
-//		};
-//	}
-//	
-//	public List<Geometry> subgeometries(Geometry geometry) {
-//		List<Geometry> subgeometries = Lists.newArrayListWithCapacity(geometry.getNumGeometries()); // TODO safe to assume?
-//		
-//		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
-//			subgeometries.add(geometry.getGeometryN(gg));
-//		}
-//		
-//		return subgeometries;
-//	}
-	
 	/**
 	 * Identify extreme values for the X and Y dimensions among the projected features from our featureCollection.
 	 * Note that this is <em>after</em> Geometry preparation (cropping and projecting).
@@ -216,7 +174,7 @@ public class GeoMapViewPS {
 				Coordinate[] coordinates = subgeometry.getCoordinates();
 
 				for (Coordinate coordinate : coordinates) {
-					Point2D.Double point = asPoint2D(coordinate);
+					Point2D.Double point = new Point2D.Double(coordinate.x, coordinate.y);
 					
 					if (rectangle == null) {
 						rectangle = new Rectangle2D.Double(point.x, point.y, 0, 0);
@@ -234,16 +192,7 @@ public class GeoMapViewPS {
 	}
 
 	private static Rectangle2D.Double addSmallBufferAround(Rectangle2D.Double rectangle) {
-		return rectangle; // TODO actually add the buffer
-//		double xRange = dataMaxX - dataMinX;
-//		double xBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * xRange;
-//		double bufferedDataMinX = dataMinX - xBufferSize;
-//		double bufferedDataMaxX = dataMaxX + xBufferSize;
-//		
-//		double yRange = dataMaxY - dataMinY;
-//		double yBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * yRange;
-//		double bufferedDataMinY = dataMinY - yBufferSize;
-//		double bufferedDataMaxY = dataMaxY + yBufferSize;
+		return rectangle; // TODO actually add the buffer ... or don't, the map looks pretty good without it
 	}
 
 
@@ -269,10 +218,6 @@ public class GeoMapViewPS {
 //				+ "setpagedevice" + "\n"
 //				+ "} if" + "\n");
 //		out.write("\n");
-	}
-
-	public static Point2D.Double asPoint2D(Coordinate coordinate) { // TODO temporary bridge, replace all non-geo Coordinates with Point2D.Doubles soon ... or not, the map looks pretty good without these margins 
-		return new Point2D.Double(coordinate.x, coordinate.y);
 	}
 
 	public static class ShapefilePostScriptWriterException extends Exception {

@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.List;
@@ -45,10 +46,12 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
 				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange) {
-					Range<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;		
-					final Interpolator<Double> interpolator = Interpolator1D.between(dataRange, vizRange);
+					Range<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
+					Range<Double> usableRangeFromZero = Range.between(0.0, usableRange.getPointB()); // TODO !?
+					Range<Double> dataRangeFromZero = Range.between(0.0, dataRange.getPointB()); // TODO !?
+					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, vizRange);
 					
-					return new AbstractCoding<CircleDimension, Double>(this, usableRange, interpolator) {
+					return new AbstractCoding<CircleDimension, Double>(this, usableRangeFromZero, interpolator) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return CircleAreaStrategy.forArea(interpolator.apply(value));
@@ -74,7 +77,11 @@ public enum CircleDimension implements VizDimension {
 								AreaLegend areaLegend =
 										new AreaLegend(generalLegend, unscaledValueForMidrangeArea, midrangeArea);
 								
-								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(areaLegend, CircleDimension.AREA_LEGEND_LOWER_LEFT_X, Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY());
+								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(
+										areaLegend,
+										new Point2D.Double(
+												CircleDimension.AREA_LEGEND_LOWER_LEFT_X,
+												Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY()));
 								
 								return labeledCircleSizes;
 							} catch (ScalingException e) {
@@ -119,13 +126,10 @@ public enum CircleDimension implements VizDimension {
 						}
 
 						@Override
-						public double lowerLeftX() {
-							return CircleDimension.OUTER_COLOR_LEGEND_LOWER_LEFT_X;
-						}
-
-						@Override
-						public double lowerLeftY() {
-							return Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY();
+						public Point2D.Double lowerLeft() {
+							return new Point2D.Double(
+									CircleDimension.OUTER_COLOR_LEGEND_LOWER_LEFT_X,
+									Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY());
 						}
 
 						@Override
@@ -170,13 +174,10 @@ public enum CircleDimension implements VizDimension {
 						}
 
 						@Override
-						public double lowerLeftX() {
-							return CircleDimension.INNER_COLOR_LEGEND_LOWER_LEFT_X;
-						}
-
-						@Override
-						public double lowerLeftY() {
-							return Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY();
+						public Point2D.Double lowerLeft() {
+							return new Point2D.Double(
+									CircleDimension.INNER_COLOR_LEGEND_LOWER_LEFT_X,
+									Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY());
 						}
 
 						@Override
@@ -194,13 +195,13 @@ public enum CircleDimension implements VizDimension {
 			10.0);
 	// TODO Can do better on these three..
 	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX()
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()
 			+ ((0.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX()
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()
 			+ ((1.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	public static final double AREA_LEGEND_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getX()
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()
 			+ ((2.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
 	
 	private String columnNameParameterId;

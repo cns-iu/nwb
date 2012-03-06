@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.List;
@@ -54,13 +55,10 @@ public enum FeatureDimension implements VizDimension {
 						}
 
 						@Override
-						public double lowerLeftX() {
-							return Constants.COLOR_GRADIENT_LOWER_LEFT_X;
-						}
-
-						@Override
-						public double lowerLeftY() {
-							return Constants.LEGEND_COMPOSITE_LOWER_LEFT_POINT.getY();
+						public Point2D.Double lowerLeft() {
+							return new Point2D.Double(
+									FeatureDimension.COLOR_GRADIENT_LOWER_LEFT_X,
+									Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY());
 						}
 
 						@Override
@@ -72,6 +70,9 @@ public enum FeatureDimension implements VizDimension {
 			};
 		}
 	};
+	
+	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX() + (0.5 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS);
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;

@@ -1,46 +1,66 @@
-//package edu.iu.sci2.visualization.geomaps.viz.ps;
-//
-//import com.google.common.base.Strings;
-//
-//import edu.iu.sci2.visualization.geomaps.viz.Constants;
-//
-//public class PageHeader {
-//	public static final String INDENT = "    ";
-//	public static final String SEP = " | ";
-//	
-//	public static final String FONT_NAME = Constants.FONT_NAME;
-//	public static final double FONT_SIZE = 6;
-//	public static final double FONT_BRIGHTNESS = 0.35;
-//	
-//	public static final double LOWER_LEFT_X_IN_POINTS =
-//		Constants.PAGE_MARGIN_IN_POINTS;
-//		
-//	private final String dataLabel;
-//	private final double lowerLeftYInPoints;
-//
-//	
-//	public PageHeader(String dataLabel, double pageHeightInPoints) {
-//		this.dataLabel = dataLabel;
-//		
-//		this.lowerLeftYInPoints =
-//			pageHeightInPoints - Constants.PAGE_MARGIN_IN_POINTS - FONT_SIZE;
-//	}
-//	
-//	@Override
-//	public String toString() {
-//		return Strings.isNullOrEmpty(dataLabel) ? "" : ("Generated from " + dataLabel);
-//	}
-//
-//	public String toPostScript() {
-//		StringBuilder builder = new StringBuilder();
-//		
-//		builder.append("gsave" + "\n");
-//		builder.append(PSUtility.findscalesetfont(FONT_NAME, FONT_SIZE) + "\n");
-//		builder.append(PSUtility.setgray(FONT_BRIGHTNESS) + "\n");
-//		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + lowerLeftYInPoints + " moveto" + "\n");
-//		builder.append(INDENT + "(" + PSUtility.escapeForPostScript(toString()) + ") show" + "\n");
-//		builder.append("grestore" + "\n");
-//		
-//		return builder.toString();
-//	}
-//}
+package edu.iu.sci2.visualization.geomaps.viz.ps;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.iu.sci2.visualization.geomaps.viz.Constants;
+
+public class PageHeader {
+	public static final String INDENT = "	";
+	public static final String FONT_NAME = Constants.FONT_NAME;
+	public static final double TITLE_FONT_SIZE = 12;
+	public static final double TITLE_FONT_BRIGHTNESS = 0.0;
+	public static final double OTHER_DATA_FONT_SIZE = 10;
+	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
+	
+	public static final Point2D.Double LOWER_LEFT = Constants.HEADER_LOWER_LEFT;
+	
+	private final String title;
+	private final String subtitle;
+	private final List<String> info;
+	
+	
+	public PageHeader(String title, String subtitle) {
+		this.title = title;
+		this.subtitle = subtitle;
+		
+		this.info = new ArrayList<String>();
+	}
+	
+	
+	public void add(String infoBit) {
+		info.add(infoBit);
+	}
+	
+	public String toPostScript() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("% Page info" + "\n");
+		builder.append("gsave" + "\n");
+		
+		builder.append(INDENT + "% Show title and subtitle" + "\n");
+		builder.append(INDENT + LOWER_LEFT.x + " " + LOWER_LEFT.y + " moveto" + "\n");
+		
+		builder.append(PSUtility.findscalesetfont(FONT_NAME, TITLE_FONT_SIZE) + "\n");
+		builder.append(PSUtility.setgray(TITLE_FONT_BRIGHTNESS) + "\n");
+		builder.append(INDENT + "gsave" + "\n");
+		builder.append(INDENT + INDENT + "(" + title + ") show " + "( ) show " + "((" + subtitle + ")) show" +"\n");
+		builder.append(INDENT + "grestore" + "\n");
+		
+		builder.append(INDENT + "% Show the rest of the info" + "\n");
+		builder.append(INDENT + "0 " + (-(TITLE_FONT_SIZE + 5)) + " rmoveto");
+		builder.append(PSUtility.findscalesetfont(FONT_NAME, OTHER_DATA_FONT_SIZE) + "\n");
+		builder.append(PSUtility.setgray(OTHER_DATA_FONT_BRIGHTNESS) + "\n");
+		for (String infoBit : info) {
+			builder.append(INDENT + "gsave" + "\n");
+			builder.append(INDENT + INDENT + "(" + infoBit + ")" + " show" + "\n");
+			builder.append(INDENT + "grestore" + "\n");
+			builder.append(INDENT + "0 " + (-(OTHER_DATA_FONT_SIZE + 5)) + " rmoveto" + "\n");
+		}
+		
+		builder.append("grestore" + "\n");
+		
+		return builder.toString();
+	}
+}
