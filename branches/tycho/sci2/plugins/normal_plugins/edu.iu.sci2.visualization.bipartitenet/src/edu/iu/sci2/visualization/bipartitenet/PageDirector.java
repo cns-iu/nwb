@@ -4,12 +4,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.bipartitenet.component.CircleRadiusLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.EdgeWeightLegend;
@@ -95,9 +97,7 @@ public class PageDirector implements Paintable {
 		
 		Point2D getFooterPosition() {
 			Point2D thePoint = new Point2D(width / 2.0, height - 20);
-			System.out.println(thePoint);
 			return thePoint;
-//			return new Point2D(300, 300);
 		}
 
 		public int getMaxNodeRadius() {
@@ -216,20 +216,22 @@ public class PageDirector implements Paintable {
 	}
 
 	private Paintable makeNodeLegend(Scale<Double,Double> coding) {
-		ImmutableList<Double> labels = 
-				ImmutableList.<Double>builder().add(0.0).addAll(coding.getExtrema()).build();
+		ArrayList<Double> labels = Lists.newArrayList(coding.getExtrema());
+		double halfway = (labels.get(0) + labels.get(1)) / 2.0;
+		labels.add(1, halfway);
 		CircleRadiusLegend legend = new CircleRadiusLegend(
 				layout.getCircleLegendPosition(), "Circle Area: "
-						+ dataModel.getNodeValueAttribute(), coding, labels);
+						+ dataModel.getNodeValueAttribute(), coding, ImmutableList.copyOf(labels));
 		return legend;
 	}
 
-	private Paintable makeEdgeLegend(Scale<Double, Color> edgeCoding) {
-		ImmutableList<Double> edgeLegendLabels = 
-				ImmutableList.<Double>builder().add(0.0).addAll(edgeCoding.getExtrema()).build();
+	private Paintable makeEdgeLegend(Scale<Double, Color> coding) {
+		ArrayList<Double> labels = Lists.newArrayList(coding.getExtrema());
+		double halfway = (labels.get(0) + labels.get(1)) / 2.0;
+		labels.add(1, halfway);
 		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
 				"Edge Weight: " + dataModel.getEdgeValueAttribute(),
-				edgeCoding, edgeLegendLabels);
+				coding, ImmutableList.copyOf(labels));
 		return legend;
 	}
 
