@@ -108,10 +108,11 @@ public class GeoMapViewPS {
 		out.write("\n");
 		
 		
-		PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle());
-		pageHeader.add(geoMap.getKnownProjectedCRSDescriptor().getNiceName() + " Projection");
-		pageHeader.add(timestamp());
-		pageHeader.add(authorName);
+		PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(),
+				String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
+				PSUtility.escapeForPostScript(dataLabel),
+				timestamp(),
+				authorName);
 		out.write(pageHeader.toPostScript());
 		out.write("\n");
 		

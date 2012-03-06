@@ -1,8 +1,8 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 
@@ -18,20 +18,14 @@ public class PageHeader {
 	
 	private final String title;
 	private final String subtitle;
-	private final List<String> info;
+	private final ImmutableList<String> extraInfo;
 	
-	
-	public PageHeader(String title, String subtitle) {
+	public PageHeader(String title, String subtitle, String... extraInfo) {
 		this.title = title;
-		this.subtitle = subtitle;
-		
-		this.info = new ArrayList<String>();
+		this.subtitle = subtitle;		
+		this.extraInfo = ImmutableList.copyOf(extraInfo);
 	}
 	
-	
-	public void add(String infoBit) {
-		info.add(infoBit);
-	}
 	
 	public String toPostScript() {
 		StringBuilder builder = new StringBuilder();
@@ -52,7 +46,7 @@ public class PageHeader {
 		builder.append(INDENT + "0 " + (-(TITLE_FONT_SIZE + 5)) + " rmoveto");
 		builder.append(PSUtility.findscalesetfont(FONT_NAME, OTHER_DATA_FONT_SIZE) + "\n");
 		builder.append(PSUtility.setgray(OTHER_DATA_FONT_BRIGHTNESS) + "\n");
-		for (String infoBit : info) {
+		for (String infoBit : extraInfo) {
 			builder.append(INDENT + "gsave" + "\n");
 			builder.append(INDENT + INDENT + "(" + infoBit + ")" + " show" + "\n");
 			builder.append(INDENT + "grestore" + "\n");
