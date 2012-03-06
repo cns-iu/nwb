@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
+import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
@@ -26,24 +27,24 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	public static DecimalFormat formatter = new DecimalFormat("###,###");
 	private Visualization visualizations;
 	private DoubleDimension size;
-	private String legendText;
+	private String areaColumn;
 	private String query;
-	private String categoryText;
+	private String categoryColumn;
 
 	public TemporalBarGraphLandscapePages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String legendText, String categoryText, String query)
+			DoubleDimension size, String areaColumn, String categoryColumn, String query)
 			throws PostScriptCreationException {
 
 		this.size = size;
 		DoubleDimension visualizationSize = new DoubleDimension(size.getWidth()
-				- (size.getWidth() * .25),
+				- (3 * (0.5 * POINTS_PER_INCH)),
 				(size.getHeight() - (size.getHeight() * .35)));
 
 		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
-		this.legendText = legendText;
-		this.categoryText = categoryText;
+		this.areaColumn = areaColumn;
+		this.categoryColumn = categoryColumn;
 		this.query = query;
 
 	}
@@ -68,7 +69,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		for (int ii = 0; ii < numberOfPages(); ii++) {
 			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
-			double visualizationLeft = 1.0 * POINTS_PER_INCH;
+			double visualizationLeft = 0.5 * POINTS_PER_INCH;
 			double visualizationBottom = 1.75 * POINTS_PER_INCH;
 			PageElement visualizationElement = new PageElement("visualization",
 					visualizationLeft, visualizationBottom, visualization,
@@ -122,25 +123,34 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		
 		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
 		
-		return new PageElement("areaLegend", 300, 100, areaTemplate, areaDefinitionsTemplate);
+		return new PageElement("areaLegend", 250, 100, areaTemplate, areaDefinitionsTemplate);
 	}
 	
 	private PageElement getLegendPageElement() {
 		StringTemplate legendTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTop");
-		legendTemplate.setAttribute("title", this.legendText);
-		legendTemplate.setAttribute("category", this.categoryText);
-		legendTemplate.setAttribute("min",
-				formatter.format(this.visualizations.minRecordValue()));
-		legendTemplate.setAttribute("max",
-				formatter.format(this.visualizations.maxRecordValue()));
-
+		
+		String colorText1, colorText2;
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE.equals(this.categoryColumn)) {
+			colorText1 = "";
+			colorText2 = "";
+		} else {
+			colorText1 = "Coloring based on \"" + this.categoryColumn + "\"";
+			colorText2 = "See end of PDF for color legend.";
+			
+		}
+		
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
+		legendDefinitionsTemplate.setAttribute("areaColumn", this.areaColumn);
+		legendDefinitionsTemplate.setAttribute("minArea", formatter.format(this.visualizations.minRecordValue()));
+		legendDefinitionsTemplate.setAttribute("maxArea", formatter.format(this.visualizations.maxRecordValue()));
+		legendDefinitionsTemplate.setAttribute("colorText1", colorText1);
+		legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
 
-		double leftBound = 1.0 * POINTS_PER_INCH;
-		double bottomBound = 0.5 * POINTS_PER_INCH;
-		return new PageElement("legendTitleTop", leftBound, bottomBound,
+		double leftBound = 0.5 * POINTS_PER_INCH;
+		double topBound = 100 - 14;
+		return new PageElement("legendTitleTop", leftBound, topBound,
 				legendTemplate, legendDefinitionsTemplate);
 	}
 
@@ -191,7 +201,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		
 		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("leftAlignedTitleWithQueryAndInfoDefinitions", attributes);
 
-		double leftBound = 1.0 * POINTS_PER_INCH;
+		double leftBound = 0.5 * POINTS_PER_INCH;
 		double bottomBound = this.size.getHeight() - 1.0 * POINTS_PER_INCH;
 		return new PageElement("leftAlignedTitleWithQueryAndInfo", leftBound, bottomBound, titleTemplate,
 				titleDefinitionsTemplate);
@@ -202,12 +212,12 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		StringTemplate howtoDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("howtoDefinitions");
-		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 10);
+		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 14);
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
-		double leftBound = 6.75 * POINTS_PER_INCH;
-		double bottomBound = 0.4 * POINTS_PER_INCH;
-		return new PageElement("howto", leftBound, bottomBound, howtoTemplate,
+		double leftBound = 400.0;
+		double topBound = 100.0;
+		return new PageElement("howto", leftBound, topBound, howtoTemplate,
 				howtoDefinitionsTemplate);
 	}
 

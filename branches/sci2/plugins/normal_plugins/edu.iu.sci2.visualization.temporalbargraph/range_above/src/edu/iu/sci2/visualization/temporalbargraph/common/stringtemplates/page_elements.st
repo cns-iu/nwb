@@ -43,74 +43,60 @@ includes the range.  You can see there is an option to center the title called
 */
 
 
-legendTitleTopDefinitions() ::= <<
+legendTitleTopDefinitions(areaColumn, minArea, maxArea, colorText1, colorText2) ::= <<
 
 %%%%%%%%%%%%%%%
 % Legend Area
 %%%%%%%%%%%%%%%
-/lineSpacing { 3.0 } def
+/legendTitleTopTop { legendTitleTopBottom } def % HACK until I redo all the postscript to work from the top down.
 
-/legendTitleTopTitleFontSize { 10.0 } def
+/legendTitleTopTitle { (Legend) } def
+/legendTitleTopArea { (Area size equals "<areaColumn>") } def
+/legendTitleTopMin { (Minimum = <minArea>) } def
+/legendTitleTopMax { (Maximum = <maxArea>) } def
+/legendTitleTopColor1 { (<colorText1>) } def
+/legendTitleTopColor2 { (<colorText2>) } def
+
+/lineSpacing { 3.0 } def
+/legendTitlteTopNormalFont { /ArialMT 10 selectfont } def
+/legendTitlteTopTitleFont { /Arial-BoldMT 14 selectfont } def
 
 
 /legendTitleTop { % (title) [min] [max] (category) => -
 	gsave
 	0 0 0 setrgbcolor
-	legendTitleTopLeft legendTitleTopBottom translate
+	legendTitleTopLeft legendTitleTopTop translate
 	0 0 moveto
-	legendTitleTopCategory
-	legendTitleTopRange
-	legendTitleTopTitle
+	legendTitlteTopTitleFont 
+	legendTitleTopTitle dup show
+	textheight neg 0 exch translate
+	0 0 moveto
+	legendTitlteTopNormalFont
+	legendTitleTopArea dup show
+	textheight neg 0 exch translate
+	0 0 moveto
+	legendTitleTopMin dup show
+	textheight 1 add neg 0 exch translate
+	0 0 moveto
+	legendTitleTopMax dup dup show
+	textheight neg 0 exch translate
+	textheight neg 0 exch translate
+	0 0 moveto
+	
+	legendTitleTopColor1 dup show
+	textheight neg 0 exch translate
+	0 0 moveto
+	legendTitleTopColor2 dup show
+	textheight neg 0 exch translate
+	0 0 moveto	
 	grestore
 } def
-
-/legendTitleTopCategory {
-	gsave
-	/Arial-BoldMT legendTitleTopTitleFontSize selectfont
-	0 0 moveto
-	show
-	grestore
-	0 legendTitleTopTitleFontSize lineSpacing add translate
-	0 0 moveto
-} def
-
-/legendTitleTopTitle {
-	gsave
-	/Arial-BoldMT legendTitleTopTitleFontSize selectfont
-	0 0 moveto
-	show
-	grestore
-	0 legendTitleTopTitleFontSize lineSpacing add translate
-	0 0 moveto
-} def 
-
-/legendTitleTopRange { % [max] [min] => translation to top of text + spacing
-	exch % [max] [min]
-	/rangeBodyFontSize { 10 } def
-	/ArialMT rangeBodyFontSize selectfont
-	
-	0 rangeBodyFontSize lineSpacing add translate
-	0 0 moveto
-	20 string cvs % [max] => (max)
-	(Maximum = ) exch concatstrings	
-	show
-	
-	0 rangeBodyFontSize lineSpacing add translate
-	0 0 moveto
-	20 string cvs
-	(Minimum = ) exch concatstrings
-	show
-	
-	0 rangeBodyFontSize lineSpacing add translate
-	0 0 moveto
-} def
-
 	
 >>
 
-legendTitleTop(title, min, max, category) ::= <<
+legendTitleTop() ::= <<
 
-(<title>) (<max>) (<min>) (<category>) legendTitleTop
+legendTitleTop
 
 >>
 
@@ -261,57 +247,34 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 %  Howto  %
 %%%%%%%%%%%
 /howto {
+	/howtoTop { howtoBottom } def % HACK!  This is a shortcut until I update the code
 	/howtoTitleFontSize { <howtoTitleFontSize> } def
+	/howtoTitleFont { /Arial-BoldMT howtoTitleFontSize selectfont } def
 	/howtoTextFontSize { <howtoTextFontSize> } def
-	gsave
+	/howtoTextFont { /ArialMT howtoTextFontSize selectfont } def
 	/howtoLineSpacing { 1.0 } def
+	
+	gsave
 	0 0 0 setrgbcolor
 	/ArialMT howtoTextFontSize selectfont
 	howtoLeft howtoBottom translate
-	0 0 moveto
-		
-	gsave
-	(colored according to category (if one exists).)
-	show
-	grestore
-	0 howtoTextFontSize howtoLineSpacing add rmoveto
+	0 howtoTitleFontSize neg moveto
+	gsave howtoTitleFont (How To Read This Map) show grestore
+	0 howtoTitleFontSize howtoLineSpacing add neg rmoveto
 	
-	gsave
-	(area based on the relative weight within the dataset, and is)
-	show
+	howtoTextFont
+	gsave (Temporal Bar Graph is a visualization of a dataset whose records have specific) show grestore
+	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
+	gsave (beginnings and endings, are weighted, and may belong to a distinct category. Each) show grestore
+	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
+	gsave (of the records is shown on the timeline, which spans the total time of the dataset, is) show grestore
+	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
+	gsave (given an area based on the relative weight within the dataset, and is colored) show grestore
+	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
+	gsave (according to the category (if one exists).) show grestore
+	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
 	grestore
-	0 howtoTextFontSize howtoLineSpacing add rmoveto
 	
-	gsave
-	(timeline, which spans the total time of the dataset, is given an)
-	show
-	grestore
-	0 howtoTextFontSize howtoLineSpacing add rmoveto
-	
-	gsave
-	(belong to a distinct category.  Each of the records is shown on the)
-	show
-	grestore
-	0 howtoTextFontSize howtoLineSpacing add rmoveto
-	
-	gsave
-	(have specific beginnings and endings, are weighted, and may)
-	show
-	grestore
-	0 howtoTextFontSize howtoLineSpacing add rmoveto
-	
-	gsave
-	(Temporal Bar Graph is a visualization of a dataset whose records)
-	show
-	grestore
-	0 howtoTextFontSize howtoLineSpacing add rmoveto
-	
-	
-	0.0 0.0 0.0 setrgbcolor
-	/Arial-BoldMT howtoTitleFontSize selectfont
-	(How To Read This Map)
-	show
-	grestore
 } def
 
 >>

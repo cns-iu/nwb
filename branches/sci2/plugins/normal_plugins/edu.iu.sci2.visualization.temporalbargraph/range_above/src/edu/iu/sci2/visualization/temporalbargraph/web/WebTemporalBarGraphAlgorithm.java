@@ -21,8 +21,7 @@ public class WebTemporalBarGraphAlgorithm extends
 	private LogService logger;
 	private Data inputData;
 
-	private String legendText;
-	private String categoryText;
+	private String areaColumn;
 	
 	private boolean shouldScaleOutput;
 	private ColorRegistry<String> colorRegistry;
@@ -44,20 +43,18 @@ public class WebTemporalBarGraphAlgorithm extends
 		 * find a good solution, please apply it to the colorRegistry and
 		 * categoryText too.
 		 */
-		this.legendText = "Area size equals \"" + sizeByColumn + "\"";
+		this.areaColumn = sizeByColumn;
 
 		this.shouldScaleOutput = shouldScaleOutput;
 		this.categoryColumn = categoryColumn;
 		
 		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
 				.equals(this.categoryColumn)) {
-			this.categoryText = "";
 			this.colorRegistry = new ColorRegistry<String>(
 					new TemporalBarGraphColorSchema(
 							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
 							TemporalBarGraphColorSchema.DEFAULT_COLOR));
 		} else {
-			this.categoryText = "Coloring based on \"" + this.categoryColumn + "\"";
 			this.colorRegistry = new ColorRegistry<String>(
 					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
 
@@ -87,7 +84,7 @@ public class WebTemporalBarGraphAlgorithm extends
 			throws PostScriptCreationException {
 
 		PostscriptDocument postscriptDocument = new PostscriptDocument(csvWriter, this.records,
-				this.shouldScaleOutput, this.legendText, this.categoryText, this.colorRegistry);
+				this.shouldScaleOutput, this.areaColumn, this.categoryColumn, this.colorRegistry);
 
 		return postscriptDocument.renderPostscript();
 	}

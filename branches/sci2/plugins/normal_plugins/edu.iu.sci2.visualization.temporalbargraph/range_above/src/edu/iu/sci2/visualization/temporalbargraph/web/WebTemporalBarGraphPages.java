@@ -13,6 +13,7 @@ import org.cishell.utilities.color.ColorRegistry;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
+import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
@@ -23,17 +24,17 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	public static DecimalFormat formatter = new DecimalFormat("###,###");	
 	private Visualization visualizations;
 	private DoubleDimension size;
-	private String legendText;
-	private String categoryText;
+	private String areaColumn;
+	private String categoryColumn;
 	
 	
 	public WebTemporalBarGraphPages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String legendText, String categoryText)
+			DoubleDimension size, String areaColumn, String categoryColumn)
 			throws PostScriptCreationException {
 		this.size = size;
-		this.legendText = legendText;
-		this.categoryText = categoryText;
+		this.areaColumn = areaColumn;
+		this.categoryColumn = categoryColumn;
 		
 		DoubleDimension visualizationSize = new DoubleDimension(1000.0, 775.0);
 		
@@ -65,26 +66,63 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	private List<PageElement> getPageElementsForAllPages() {
 		List<PageElement> pageElements = new ArrayList<PageElement>();
 		pageElements.add(getLegendPageElement());
+		pageElements.add(getAreaLegendElement());
 		pageElements.add(getFooterPageElement());
 		return pageElements;
+	}
+	
+	private PageElement getAreaLegendElement() {
+		double daysPerPoint = Math.pow(this.visualizations.getPointsPerDay(), -1);
+		double yPerPoint = Math.pow(this.visualizations.getPointsPerY(), -1);
+		double barWidth = 50;
+		double yearValue = barWidth * daysPerPoint / 365.0;
+		double bigBarHeight = 18;
+		double bigBarValue = (daysPerPoint * barWidth) * (yPerPoint * bigBarHeight);
+		double medBarHeight = 6;
+		double medBarValue = (daysPerPoint * barWidth) * (yPerPoint * medBarHeight);
+		double smallBarHeight = 2;
+		double smallBarValue = (daysPerPoint * barWidth) * (yPerPoint * smallBarHeight);
+		
+		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
+		areaDefinitionsTemplate.setAttribute("barWidth", String.valueOf(barWidth));
+		areaDefinitionsTemplate.setAttribute("bigBarHeight", bigBarHeight);
+		areaDefinitionsTemplate.setAttribute("medBarHeight", medBarHeight);
+		areaDefinitionsTemplate.setAttribute("smallBarHeight", smallBarHeight);
+		areaDefinitionsTemplate.setAttribute("bigBarValue", formatter.format(bigBarValue));
+		areaDefinitionsTemplate.setAttribute("medBarValue", formatter.format(medBarValue));
+		areaDefinitionsTemplate.setAttribute("smallBarValue", formatter.format(smallBarValue));
+		areaDefinitionsTemplate.setAttribute("yearValue", formatter.format(yearValue));
+		
+		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
+		
+		return new PageElement("areaLegend", 350, 100, areaTemplate, areaDefinitionsTemplate);
 	}
 	
 	private PageElement getLegendPageElement(){
 			StringTemplate legendTemplate = pageElementsGroup
 					.getInstanceOf("legendTitleTop");
-			legendTemplate.setAttribute("title", this.legendText);
-			legendTemplate.setAttribute("category", this.categoryText);
-			legendTemplate.setAttribute("min",
-					formatter.format(this.visualizations.minRecordValue()));
-			legendTemplate.setAttribute("max",
-					formatter.format(this.visualizations.maxRecordValue()));
-
+			
+			String colorText1, colorText2;
+			if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE.equals(this.categoryColumn)) {
+				colorText1 = "";
+				colorText2 = "";
+			} else {
+				colorText1 = "Coloring based on \"" + this.categoryColumn + "\"";
+				colorText2 = "See end of PDF for color legend.";
+				
+			}
+			
 			StringTemplate legendDefinitionsTemplate = pageElementsGroup
 					.getInstanceOf("legendTitleTopDefinitions");
+			legendDefinitionsTemplate.setAttribute("areaColumn", this.areaColumn);
+			legendDefinitionsTemplate.setAttribute("minArea", formatter.format(this.visualizations.minRecordValue()));
+			legendDefinitionsTemplate.setAttribute("maxArea", formatter.format(this.visualizations.maxRecordValue()));
+			legendDefinitionsTemplate.setAttribute("colorText1", colorText1);
+			legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
 
 			double leftBound = 1.0 * POINTS_PER_INCH;
-			double bottomBound = 50.0;
-			return new PageElement("legendTitleTop", leftBound, bottomBound,
+			double topBound = 100.0;
+			return new PageElement("legendTitleTop", leftBound, topBound,
 					legendTemplate, legendDefinitionsTemplate);
 	}
 	

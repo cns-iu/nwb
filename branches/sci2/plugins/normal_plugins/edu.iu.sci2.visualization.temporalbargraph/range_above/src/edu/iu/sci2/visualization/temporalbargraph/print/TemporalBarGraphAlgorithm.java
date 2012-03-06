@@ -77,21 +77,12 @@ public class TemporalBarGraphAlgorithm extends
 		}
 	}
 
+	@Override
 	protected String createPostScriptCode(CSVWriter csvWriter)
 			throws PostScriptCreationException {
 
-		String legendText = "Area size equals \"" + this.sizeByColumn + "\"";
-		String categoryText;
-		
-		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE.equals(this.categoryColumn)) {
-			categoryText = "";
-		} else {
-			categoryText = "Coloring based on \"" + this.categoryColumn + "\"";
-			
-		}
-		
 		PostscriptDocument postscriptDocument = new PostscriptDocument(
-				csvWriter, this.records, this.shouldScaleOutput, legendText, categoryText,
+				csvWriter, this.records, this.shouldScaleOutput, this.sizeByColumn, this.categoryColumn,
 				this.colorRegistry, this.query,
 				new DoubleDimension(this.pageWidth, this.pageHeight));
 

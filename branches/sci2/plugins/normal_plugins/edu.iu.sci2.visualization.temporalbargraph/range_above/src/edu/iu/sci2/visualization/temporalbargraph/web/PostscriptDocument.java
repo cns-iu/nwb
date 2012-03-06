@@ -23,7 +23,7 @@ public class PostscriptDocument extends
 	private WebTemporalBarGraphPages webTemporalBarGraphPages;
 	
 	public PostscriptDocument(CSVWriter csvWriter, List<Record> records,
-			boolean scaleToOnePage, String legendText, String categoryText,
+			boolean scaleToOnePage, String areaColumn, String categoryColumn,
 			ColorRegistry<String> colorRegistry) throws PostScriptCreationException {
 		
 		double pageHeight = WEB_HEIGHT / PIXELS_PER_INCH * POINTS_PER_INCH;
@@ -31,7 +31,7 @@ public class PostscriptDocument extends
 		
 		this.size = new DoubleDimension(pageWidth, pageHeight);
 		this.webTemporalBarGraphPages = new WebTemporalBarGraphPages(csvWriter, records, scaleToOnePage,
-				colorRegistry, getPageSize(), legendText, categoryText);
+				colorRegistry, getPageSize(), areaColumn, categoryColumn);
 
 	}
 
