@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.bipartitenet.component;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
@@ -43,6 +44,9 @@ public class NodeView implements Paintable {
 
 	@Override
 	public void paint(Graphics2D g) {
+		// avoid lop-sided circles
+		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
 		Circle2D circle = new Circle2D(nodeCenter.getX(), nodeCenter.getY(), getRadius());
 		node.getDestination().paintLabel(this, g, maxHeight);
 		g.setColor(node.getDestination().getFillColor());

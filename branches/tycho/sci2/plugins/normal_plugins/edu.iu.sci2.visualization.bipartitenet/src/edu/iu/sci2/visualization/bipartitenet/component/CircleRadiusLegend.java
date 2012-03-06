@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.bipartitenet.component;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
@@ -46,7 +47,10 @@ public class CircleRadiusLegend implements Paintable {
 	@Override
 	public void paint(Graphics2D g) {
 		this.titlePainter.paint(g);
-		
+
+		// avoid lop-sided circles
+		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
 		LineSegment2D maxDiameter = paintCircles(g);
 		paintDataLabels(g, maxDiameter);
 	}

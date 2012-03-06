@@ -237,8 +237,6 @@ public class PageDirector implements Paintable {
 
 	@Override
 	public void paint(Graphics2D g) {
-		// avoid lop-sided circles
-		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 		painter.paint(g);
 	}
 }
