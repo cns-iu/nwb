@@ -18,7 +18,7 @@ footerDefinitions(pageWidth) ::= <<
 /footer { % (footer)
 	gsave
 	0.6 0.6 0.6 setrgbcolor % #999999
-	/ArialMT footerFontSize selectfont
+	/Arial-ItalicMT footerFontSize selectfont
 	<pageWidth> 2 div footerFontSize footerBottom add center
 	show
 	grestore
