@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.common.CategoryBreakdown;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
@@ -30,6 +31,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	private String areaColumn;
 	private String query;
 	private String categoryColumn;
+	private CategoryBreakdown categoryBreakdown;
 
 	public TemporalBarGraphLandscapePages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
@@ -43,6 +45,9 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
+		
+		this.categoryBreakdown = new CategoryBreakdown(records, colorRegistry, 3, 400, 20);
+		System.out.println(this.categoryBreakdown.numberOfPages());
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;
 		this.query = query;
@@ -51,7 +56,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 	@Override
 	public int numberOfPages() {
-		return this.visualizations.numberOfVisualizations();
+		return this.visualizations.numberOfVisualizations() + this.categoryBreakdown.numberOfPages();
 	}
 
 	@Override
@@ -65,8 +70,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		String visualizationDefinitions = this.visualizations
 				.renderDefinitionsPostscript();
-
-		for (int ii = 0; ii < numberOfPages(); ii++) {
+		int nextPage = 0;
+		for (int ii = 0; ii < this.visualizations.numberOfVisualizations(); ii++) {
 			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
 			double visualizationLeft = 0.5 * POINTS_PER_INCH;
@@ -75,15 +80,38 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 					visualizationLeft, visualizationBottom, visualization,
 					visualizationDefinitions);
 
-			List<PageElement> pageElements = pageElementsSomePages.get(ii);
+			List<PageElement> pageElements = pageElementsSomePages.get(nextPage);
 
-			if (!pageElementsSomePages.containsKey(ii)) {
+			if (!pageElementsSomePages.containsKey(nextPage)) {
 				pageElements = new ArrayList<PageElement>();
 			}
 
 			pageElements.add(visualizationElement);
 
-			pageElementsSomePages.put(ii, pageElements);
+			pageElementsSomePages.put(nextPage, pageElements);
+			nextPage++;
+		}
+		
+		String categoryBreakdownDefinitions = this.categoryBreakdown.renderPostscriptDefinitions();
+		for (int ii = 0; ii < this.categoryBreakdown.numberOfPages(); ii++){
+			
+
+			List<PageElement> pageElements = pageElementsSomePages.get(nextPage);
+
+			if (!pageElementsSomePages.containsKey(nextPage)) {
+				pageElements = new ArrayList<PageElement>();
+			}
+
+			double categoryBreakdownLeft = 0.5 * POINTS_PER_INCH;
+			double categoryBreakdownTop = 525;
+			String categoryBreakdownPostscript = this.categoryBreakdown.renderPostscript(ii);
+			
+			PageElement categoryBreakdownElement = new PageElement("categoryBreakdown",
+					categoryBreakdownLeft, categoryBreakdownTop, categoryBreakdownPostscript,
+					categoryBreakdownDefinitions);
+			pageElements.add(categoryBreakdownElement);
+			pageElementsSomePages.put(nextPage, pageElements);
+			nextPage++;
 		}
 
 		return pageElementsSomePages;
@@ -91,11 +119,11 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 	private List<PageElement> getPageElementsForAllPages() {
 		List<PageElement> pageElements = new ArrayList<PageElement>();
-		pageElements.add(getLegendPageElement());
-		pageElements.add(getFooterPageElement());
 		pageElements.add(getTitlePageElement());
+		pageElements.add(getLegendPageElement());
 		pageElements.add(getHowtoPageElement());
 		pageElements.add(getAreaLegendElement());
+		pageElements.add(getFooterPageElement());
 		return pageElements;
 	}
 

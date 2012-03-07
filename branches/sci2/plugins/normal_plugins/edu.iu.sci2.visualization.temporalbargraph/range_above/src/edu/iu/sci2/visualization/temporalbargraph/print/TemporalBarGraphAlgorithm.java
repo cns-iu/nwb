@@ -61,10 +61,10 @@ public class TemporalBarGraphAlgorithm extends
 			this.colorRegistry = new ColorRegistry<String>(
 					new TemporalBarGraphColorSchema(
 							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
-							TemporalBarGraphColorSchema.DEFAULT_COLOR));
+							TemporalBarGraphColorSchema.DEFAULT_COLOR), false);
 		} else {
 			this.colorRegistry = new ColorRegistry<String>(
-					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
+					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA, false);
 
 		}
 
