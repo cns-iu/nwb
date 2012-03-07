@@ -2,10 +2,8 @@ package edu.iu.sci2.visualization.temporalbargraph.print;
 
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
 
-import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
