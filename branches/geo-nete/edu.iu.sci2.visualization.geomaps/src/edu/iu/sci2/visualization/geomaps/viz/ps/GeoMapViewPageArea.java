@@ -26,7 +26,11 @@ public class GeoMapViewPageArea {
 	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle) {
 		this.dataRectangle = dataRectangle;
 		
-		double scale = (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataRectangle.getWidth());		
+		double xScale = Constants.MAP_PAGE_AREA_MAX_WIDTH_IN_POINTS / dataRectangle.getWidth();
+		double yScale = Constants.MAP_PAGE_AREA_MAX_HEIGHT_IN_POINTS / dataRectangle.getHeight();		
+		double scale = Math.min(xScale, yScale);		
+//		double scale = (Constants.MAP_PAGE_AREA_MAX_HEIGHT_IN_POINTS / dataRectangle.getHeight());
+		
 		Dimension<Double> displayDimension =
 				Dimension.ofSize(
 						(scale * dataRectangle.getWidth()),

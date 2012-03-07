@@ -36,17 +36,11 @@ public class GeoMapViewPS {
 	
 	private final GeoMap geoMap;
 	private final GeoMapViewPageArea geoMapViewPageArea;
-	private final double pageHeightInPoints;
 
 	public GeoMapViewPS(GeoMap geoMap) throws ShapefilePostScriptWriterException {
 		try {
 			this.geoMap = geoMap;
 			this.geoMapViewPageArea = new GeoMapViewPageArea(calculateMapBoundingRectangle());
-			
-			this.pageHeightInPoints =
-				Constants.calculatePageHeightInPoints(geoMapViewPageArea.getDisplayRectangle().getHeight());
-			
-			
 		} catch (TransformException e) {
 			throw new ShapefilePostScriptWriterException(e);
 		}
@@ -65,7 +59,6 @@ public class GeoMapViewPS {
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 		out.write("\n");
 		
-//		out.write((new PageHeader(dataLabel, pageHeightInPoints)).toPostScript() + "\n");
 		out.write((new PageFooter()).toPostScript() + "\n");
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
@@ -109,8 +102,8 @@ public class GeoMapViewPS {
 		
 		
 		PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(),
-				String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
 				String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
+				String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
 				timestamp(),
 				authorName);
 		out.write(pageHeader.toPostScript());
@@ -197,11 +190,11 @@ public class GeoMapViewPS {
 	}
 
 
-	private void writeCodeHeader(
+	private static void writeCodeHeader(
 			BufferedWriter out, String outputPSFileName) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-		out.write((new DSCProlog(outputPSFileName, pageHeightInPoints)).toPostScript());
+		out.write((new DSCProlog(outputPSFileName, Constants.PAGE_HEIGHT_IN_POINTS)).toPostScript());
 		
 //		/* TODO We're using setpagedevice to force page dimensions
 //		 * corresponding to US Letter landscape.  This command

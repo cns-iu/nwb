@@ -16,31 +16,30 @@ public class Constants {
 	public static final String FONT_NAME = "Garamond";
 		
 	public static final double PAGE_WIDTH_IN_POINTS = 11.0 * POINTS_PER_INCH;
+	public static final double PAGE_HEIGHT_IN_POINTS = 8.5 * POINTS_PER_INCH;
 	
-	public static final double PAGE_HEADER_HEIGHT_IN_POINTS = 0.75 * POINTS_PER_INCH;
+	public static final double PAGE_HEADER_HEIGHT_IN_POINTS = 1.5 * POINTS_PER_INCH; // TODO Fix for metadata
 	
 	public static final double MAP_CENTER_X_IN_POINTS = PAGE_WIDTH_IN_POINTS / 2.0;
 	
 	public static final double PAGE_MARGIN_IN_POINTS = 0.5 * POINTS_PER_INCH;
 	
-	/* No map page area height is necessary since, as we are fixing the aspect
-	 * ratio, it will be implied by the map page area width.
-	 * See calculatePageHeightInPoints(double).
-	 */
-	public static final double MAP_PAGE_AREA_WIDTH_IN_POINTS =
-		(PAGE_WIDTH_IN_POINTS - (2 * PAGE_MARGIN_IN_POINTS));
+//	/* No map page area height is necessary since, as we are fixing the aspect
+//	 * ratio, it will be implied by the map page area width.
+//	 * See calculatePageHeightInPoints(double).
+//	 */
+//	public static final double MAP_PAGE_AREA_WIDTH_IN_POINTS =
+//		(PAGE_WIDTH_IN_POINTS - (2 * PAGE_MARGIN_IN_POINTS));
 	
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS =
 		PAGE_MARGIN_IN_POINTS + (0.25 * POINTS_PER_INCH);
 
 	public static final Dimension<Double> LEGEND_PAGE_AREA_DIMENSION = Dimension.ofSize(
-			0.7 * MAP_PAGE_AREA_WIDTH_IN_POINTS,
+			0.7 * PAGE_WIDTH_IN_POINTS,
 			1.2 * POINTS_PER_INCH);
 	
 	public static final Point2D.Double LEGEND_PAGE_AREA_LOWER_LEFT = new Point2D.Double(
-			(PAGE_WIDTH_IN_POINTS
-					- LEGEND_PAGE_AREA_DIMENSION.getWidth())
-					+ PAGE_MARGIN_IN_POINTS,
+			PAGE_MARGIN_IN_POINTS,
 			PAGE_FOOTER_HEIGHT_IN_POINTS);
 	
 	
@@ -51,7 +50,7 @@ public class Constants {
 	
 	
 	public static final Point2D.Double HEADER_LOWER_LEFT = new Point2D.Double(
-			PAGE_MARGIN_IN_POINTS, LEGEND_COMPOSITE_LOWER_LEFT.getY());
+			PAGE_MARGIN_IN_POINTS, PAGE_HEIGHT_IN_POINTS - PAGE_MARGIN_IN_POINTS);
 	
 	public static final ImmutableMap<String, Range<Color>> COLOR_RANGES = ImmutableMap.of(
 			"Yellow to Blue", Range.between(new Color(255, 255, 158), new Color(37, 52, 148)),
@@ -60,11 +59,10 @@ public class Constants {
 			"Blue to Red", Range.between(new Color(49, 243, 255), new Color(127, 4, 27)),
 			"Gray to Black", Range.between(new Color(214, 214, 214), new Color(0, 0 ,0)));
 
-	
-	public static double calculatePageHeightInPoints(double mapHeightInPoints) {
-		return (PAGE_HEADER_HEIGHT_IN_POINTS
-				+ mapHeightInPoints
-				+ LEGEND_PAGE_AREA_DIMENSION.getHeight()
-				+ PAGE_FOOTER_HEIGHT_IN_POINTS);
-	}
+	public static final double MAP_PAGE_AREA_MAX_HEIGHT_IN_POINTS = PAGE_HEIGHT_IN_POINTS -
+			(PAGE_HEADER_HEIGHT_IN_POINTS
+			+ LEGEND_PAGE_AREA_DIMENSION.getHeight()
+			+ PAGE_FOOTER_HEIGHT_IN_POINTS);
+
+	public static final double MAP_PAGE_AREA_MAX_WIDTH_IN_POINTS = PAGE_WIDTH_IN_POINTS - 2 * PAGE_MARGIN_IN_POINTS;
 }
