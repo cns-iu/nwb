@@ -123,7 +123,7 @@ public enum Shapefile {
 			return geometry;
 		}
 		
-		return insetForFeatureName.get(featureName).inset(geometry);
+		return insetForFeatureName.get(featureName).translate(geometry);
 	}
 	
 	public String extractFeatureName(SimpleFeature feature) {
@@ -180,7 +180,17 @@ public enum Shapefile {
 		System.out.println(bounds.getMaxY());
 		return bounds;
 	}
-
+	
+//	public static void main(String[] args) { // TODO
+//		try {
+//			Shapefile.WORLD.getBounds();
+//			System.out.println();
+//			Shapefile.UNITED_STATES.getBounds();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> viewOfFeatureCollection()
 			throws ShapefileFeatureRetrievalException {
@@ -190,15 +200,26 @@ public enum Shapefile {
 			throw new ShapefileFeatureRetrievalException("Error accessing shapefile: " + e.getMessage(), e);
 		}
 	}
-
+	
+//	public FeatureIterator<SimpleFeature> features() {
+//		try {
+//			return Iterators.transform(
+//					featureSource.getFeatures().features(),
+//					new Function<SimpleFeature, SimpleFeature>() {
+//						
+//					});
+//		} catch (IOException e) {
+//			throw new ShapefileFeatureRetrievalException("Error accessing shapefile: " + e.getMessage(), e);
+//		}
+//	}
 	
 	public static class Inset {
-		public static final Inset ALASKA = Inset.translating(
-				"Alaska", new Coordinate(-129.7, 52.3), new Coordinate(-120.0, 27.9));
-		public static final Inset HAWAII = Inset.translating(
-				"Hawaii", new Coordinate(-155.7, 18.9), new Coordinate(-107.4, 22.2));
-		public static final Inset PUERTO_RICO = Inset.translating(
-				"Puerto Rico", new Coordinate(-67.3, 18.3), new Coordinate(-77.8, 23.8));
+		public static final Inset ALASKA = Inset.inset(
+				"Alaska", 0.3, new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
+		public static final Inset HAWAII = Inset.inset(
+				"Hawaii", 1, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
+		public static final Inset PUERTO_RICO = Inset.inset(
+				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
 		
 		private final String featureName;
 		private final MathTransform transform;
@@ -208,22 +229,33 @@ public enum Shapefile {
 			this.transform = transform;
 			
 		}
-		public static Inset translating(
-				String featureName, Coordinate anchor, Coordinate newAnchor) {
-			return new Inset(
-					featureName,
-					new AffineTransform2D(
-							AffineTransform.getTranslateInstance(
-									newAnchor.x - anchor.x, newAnchor.y - anchor.y)));
-		}
+		public static Inset inset(
+				String featureName, double scaling, Coordinate anchor, Coordinate dest) {
+			AffineTransform preScale = AffineTransform.getTranslateInstance(-anchor.x, -anchor.y);
+			AffineTransform scale = AffineTransform.getScaleInstance(scaling, scaling);
+			AffineTransform postScale = AffineTransform.getTranslateInstance(dest.x, dest.y);			
 
+			return new Inset(
+					featureName, new AffineTransform2D(preConcatenate(preScale, scale, postScale)));
+		}
+				
 		
 		public String featureName() {
 			return featureName;
 		}
 		
-		public Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
+		public Geometry translate(Geometry geometry) throws MismatchedDimensionException, TransformException {
 			return JTS.transform(geometry, transform);
+		}
+		
+		private static AffineTransform preConcatenate(
+				AffineTransform first, AffineTransform... rest) {
+			AffineTransform concat = (AffineTransform) first.clone();
+			for (AffineTransform subsequent : rest) {
+				concat.preConcatenate(subsequent);
+			}
+			
+			return concat;
 		}
 	}
 
