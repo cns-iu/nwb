@@ -22,6 +22,7 @@ import org.osgi.service.log.LogService;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Equivalences;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -32,6 +33,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset;
 import edu.iu.sci2.visualization.geomaps.utility.Iterables2;
 import edu.iu.sci2.visualization.geomaps.utility.Lists2;
 import edu.iu.sci2.visualization.geomaps.utility.Points;
@@ -184,6 +186,11 @@ public class FeaturePrinter {
 		
 		Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
 		Geometry insetGeometry = shapefile.inset(featureName, rawGeometry);
+		
+		if (Objects.equal(featureName, Inset.ALASKA.featureName())) {
+			// TODO Special case to chop off Alaska's tail
+		}
+		
 		Geometry geometry = geometryProjector.projectGeometry(insetGeometry);
 
 

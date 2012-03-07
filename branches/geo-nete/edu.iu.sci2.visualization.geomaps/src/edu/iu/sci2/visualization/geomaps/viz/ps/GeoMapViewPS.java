@@ -31,7 +31,7 @@ public class GeoMapViewPS {
 
 	public static final String OUTPUT_FILE_EXTENSION = "ps";
 	
-	public static final String TITLE = "Geo Map";
+	public static final String TITLE = "Geospatial Map";
 	public static final String INDENT = "  ";
 	
 	private final GeoMap geoMap;

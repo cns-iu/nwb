@@ -28,7 +28,7 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
 
 public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
-	public static final String SUBTITLE = "Circles";
+	public static final String SUBTITLE = "Proportional Circles";
 
 	@Override
 	public Algorithm createAlgorithm(
@@ -40,7 +40,7 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 				data,
 				parameters,
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
-				"Geo Maps (Circles)",
+				"Geospatial Map (Proportional Circles)",
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 

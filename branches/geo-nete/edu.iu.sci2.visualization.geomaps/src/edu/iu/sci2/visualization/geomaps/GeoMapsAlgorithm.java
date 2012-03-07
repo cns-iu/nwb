@@ -141,9 +141,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceName());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
-			parameters.put("authorName", "Joseph Biberstine");
+//			parameters.put("authorName", "Joseph Biberstine");
 
 			URL testFileURL = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
 			File inFile = new File(testFileURL.toURI());
@@ -179,12 +179,12 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters) {
 		parameters.put("latitude", "Latitude");
 		parameters.put("longitude", "Longitude");
-		parameters.put("circleAreaColumnName", "Population (thousands)");
+		parameters.put("circleAreaColumnName", "Population (Thousands)");
 		parameters.put("circleAreaScaling", Scaling.Linear.toString());
-		parameters.put("outerColorColumnName", "Population (thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
+		parameters.put("outerColorColumnName", "Population (Thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
 		parameters.put("outerColorScaling", Scaling.Linear.toString());
 		parameters.put("outerColorRange", "Yellow to Red");
-		parameters.put("innerColorColumnName", "Population (thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
+		parameters.put("innerColorColumnName", "Population (Thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
 		parameters.put("innerColorRange", "Gray to Black");
 		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
@@ -195,7 +195,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private static AlgorithmFactory prepareFactoryForRegionsTest(
 			Dictionary<String, Object> parameters) {
 		parameters.put("featureName", "Country");
-		parameters.put("featureColorColumnName", "Population (thousands)");
+		parameters.put("featureColorColumnName", "Population (Thousands)");
 		parameters.put("featureColorScaling", Scaling.Logarithmic.toString());
 		parameters.put("featureColorRange", "Yellow to Blue");
 		AlgorithmFactory algorithmFactory =	new GeoMapsRegionsFactory();

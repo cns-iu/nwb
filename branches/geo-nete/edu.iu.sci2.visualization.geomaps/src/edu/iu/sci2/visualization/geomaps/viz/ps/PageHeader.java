@@ -1,8 +1,13 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.Collection;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 
@@ -18,12 +23,19 @@ public class PageHeader {
 	
 	private final String title;
 	private final String subtitle;
-	private final ImmutableList<String> extraInfo;
+	private final Collection<String> extraInfo;
 	
 	public PageHeader(String title, String subtitle, String... extraInfo) {
 		this.title = title;
 		this.subtitle = subtitle;		
-		this.extraInfo = ImmutableList.copyOf(extraInfo);
+		this.extraInfo = Collections2.filter(
+				Arrays.asList(extraInfo),
+				Predicates.not(new Predicate<String>() {
+					@Override
+					public boolean apply(String input) {
+						return Strings.isNullOrEmpty(input);
+					}					
+				}));
 	}
 	
 	

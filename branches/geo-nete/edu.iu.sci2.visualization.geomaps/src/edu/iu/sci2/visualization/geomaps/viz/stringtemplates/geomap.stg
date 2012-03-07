@@ -41,6 +41,24 @@ utilityDefinitions() ::= <<
 	end
 } bind def
 
+% <x> <y> <string> centerShow
+% Shows string at a position such that its bottom center is at the point (x,y) 
+/centerShowDict 1 dict def
+/centerShow {
+  centerShowDict begin
+    /string exch def
+    /y exch def
+    /x exch def
+
+    gsave
+      x y moveto
+      (string) dup stringwidth pop 2 div neg 0 rmoveto show
+    grestore
+    
+    show
+  end
+} bind def
+
 >>
 
 

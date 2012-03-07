@@ -31,7 +31,7 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
-	public static final String SUBTITLE = "Regions";
+	public static final String SUBTITLE = "Proportional Coloring";
 	
 	@Override
 	public Algorithm createAlgorithm(
@@ -42,7 +42,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				data,
 				parameters,
 				new RegionAnnotationMode(featureNameColumnName),
-				"Geo Maps (Regions)",
+				"Geospatial Map (Proportional Coloring)",
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	
