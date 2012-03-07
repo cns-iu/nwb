@@ -11,8 +11,10 @@ import oim.vivo.scimapcore.journal.Journal;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 
+@Deprecated
 public class DisciplineRenderer {
 
+	@Deprecated
 	public static void renderListHeader(GraphicsState state, double lineHeight,
 			Discipline discipline) {
 		state.current.translate(0, 1.3 * lineHeight);
@@ -29,6 +31,7 @@ public class DisciplineRenderer {
 		state.restore();
 	}
 
+	@Deprecated
 	public static void renderMappedDisciplines(GraphicsState state,
 			MapOfScience mapOfScience, double lineHeight) {
 		SortedMap<Discipline, SortedSet<Journal>> disciplinesToJournalsMap = mapOfScience
@@ -36,6 +39,7 @@ public class DisciplineRenderer {
 		renderDisciplines(state, disciplinesToJournalsMap, lineHeight);
 	}
 
+	@Deprecated
 	public static void renderUnmappedDisciplines(GraphicsState state,
 			MapOfScience mapOfScience, double lineHeight) {
 		SortedMap<Discipline, SortedSet<Journal>> disciplineToJournalsMap = mapOfScience
@@ -43,6 +47,7 @@ public class DisciplineRenderer {
 		renderDisciplines(state, disciplineToJournalsMap, lineHeight);
 	}
 
+	@Deprecated
 	public static void renderDisciplines(GraphicsState state,
 			SortedMap<Discipline, SortedSet<Journal>> disciplinesToJournalsMap,
 			double lineHeight) {

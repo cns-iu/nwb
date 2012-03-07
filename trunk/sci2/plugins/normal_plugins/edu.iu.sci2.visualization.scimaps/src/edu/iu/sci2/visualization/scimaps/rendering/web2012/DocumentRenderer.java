@@ -5,9 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.HowToArea;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
+import edu.iu.sci2.visualization.scimaps.rendering.common.CircleSizeLegend;
+import edu.iu.sci2.visualization.scimaps.rendering.common.CopyrightInfo;
+import edu.iu.sci2.visualization.scimaps.rendering.common.Footer;
+import edu.iu.sci2.visualization.scimaps.rendering.common.HowToArea;
+import edu.iu.sci2.visualization.scimaps.rendering.common.PageLegend;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
@@ -47,9 +51,9 @@ public class DocumentRenderer implements RenderableVisualization {
 		state.save();
 		// FIXME why is translation weird for the map of science?
 		double mapOfScienceBottom = 500;
-		double mapOfScienceLeft = 50;
+		double mapOfScienceLeft = 25;
 		state.current.translate(mapOfScienceLeft, mapOfScienceBottom);
-		state.current.scale(2.0, 2.0);
+		state.current.scale(2.1, 2.1);
 		
 		try {
 			MapOfScienceRenderer.render(state, this.mapOfScience, this.scalingFactor);
@@ -62,20 +66,13 @@ public class DocumentRenderer implements RenderableVisualization {
 		CopyrightInfo copyrightInfo = new CopyrightInfo();
 		copyrightInfo.render(state, 550.0f, (float) getDimension().getWidth());
 		
-		Footer footer = new Footer();
-		footer.render(state, 400.0f, 910.0f);
-
-		String legendTitle = "Circle Area: Fractional Journal Count";
-		String legendSubtitle = "Unclasified: "
-				+ this.mapOfScience.prettyCountOfUnmappedPublications();
-
-		HowToArea howto = new HowToArea();
-		howto.render(state, 600.0f, 650.0f);
+		Footer.render(state, 400.0f, 940.0f);
 		
-		CircleSizeLegend legend = new CircleSizeLegend(
-				this.mapOfScience.getMappedWeights(), this.scalingFactor, legendTitle,
-				legendSubtitle);
-		legend.render(state, 100.0f, 650.0f);
+		CircleSizeLegend circleSizeLegend = new CircleSizeLegend(2.0f);
+		circleSizeLegend.render(state, 275.0f, 770.0f);
+		
+		PageLegend pageLegend = new PageLegend((int) this.mapOfScience.countOfUnmappedPublications(), 0.0, 2838847273884834.0);
+		pageLegend.render(state, 50.0f, 770.0f);
 
 	}
 

@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.scimaps;
+package edu.iu.sci2.visualization.scimaps.rendering.common.scimaps;
 
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 

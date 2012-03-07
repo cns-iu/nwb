@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
+import edu.iu.sci2.visualization.scimaps.rendering.common.Footer;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
@@ -60,8 +61,7 @@ public class DisciplineBreakdownDocumentRenderer implements
 		new JournalBreakDownArea(this.journalsByDiscipline).render(state,
 				inch(10.0f), inch(6.0f));
 
-		Footer footer = new Footer((float) size.getWidth(), inch(8.0f));
-		footer.render(state);
+		Footer.renderAbout(state, (float) size.getWidth() / 2, inch(8.0f));
 	}
 
 	public Dimension getDimension() {

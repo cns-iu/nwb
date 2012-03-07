@@ -7,8 +7,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
+import edu.iu.sci2.visualization.scimaps.rendering.common.CircleSizeLegend;
+import edu.iu.sci2.visualization.scimaps.rendering.common.CopyrightInfo;
+import edu.iu.sci2.visualization.scimaps.rendering.common.Footer;
+import edu.iu.sci2.visualization.scimaps.rendering.common.HowToArea;
+import edu.iu.sci2.visualization.scimaps.rendering.common.PageLegend;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
@@ -67,16 +72,15 @@ public class DocumentRenderer implements RenderableVisualization {
 		header.render(state, inch(0.5f), inch(0.5f));
 		
 		HowToArea howto = new HowToArea();
-		howto.render(state, inch(4.5f), inch(6.5f));
+		howto.render(state, inch(5.5f), inch(6.3f));
+
+		Footer.renderAbout(state, (float) size.getWidth() / 2, inch(8.0f));
 		
-		Footer footer = new Footer((float) size.getWidth(), inch(8.0f));
-		footer.render(state);
+		CircleSizeLegend circleSizeLegend = new CircleSizeLegend();
+		circleSizeLegend.render(state, inch(3.25f), inch(6.3f));
 		
-		String legendTitle = "Circle Area: Fractional Journal Count";
-		String legendSubtitle = "Unclasified: " + this.mapOfScience.prettyCountOfUnmappedPublications();
-		
-		CircleSizeLegend legend = new CircleSizeLegend(this.mapOfScience.getMappedWeights(), this.scalingFactor, legendTitle, legendSubtitle);
-		legend.render(state, inch(1.0f), inch(6.5f));		
+		PageLegend pageLegend = new PageLegend((int) this.mapOfScience.countOfUnmappedPublications(), 0.0, 2838847273884834.0);
+		pageLegend.render(state, inch(0.5f), inch(6.3f));
 	}
 
 	public Dimension getDimension() {

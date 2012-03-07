@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.scimaps;
+package edu.iu.sci2.visualization.scimaps.rendering.common.scimaps;
 
 import java.awt.Color;
 
@@ -31,6 +31,15 @@ public class NodeRenderer {
 		state.restore();
 	}
 
+	/**
+	 * This supports only the old print2008, which only exists to support the USDA field rendering.
+	 *  TODO Update the USDA Field renderer.  I can't because I have no data to test it with.
+	 * @param state
+	 * @param x
+	 * @param y
+	 * @param radius
+	 */
+	@Deprecated
 	public static void render(GraphicsState state, double x, double y,
 			double radius, double brightness) {
 		state.save();

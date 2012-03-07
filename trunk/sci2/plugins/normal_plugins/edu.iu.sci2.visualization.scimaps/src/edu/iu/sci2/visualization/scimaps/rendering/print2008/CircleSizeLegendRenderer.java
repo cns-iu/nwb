@@ -1,15 +1,17 @@
 package edu.iu.sci2.visualization.scimaps.rendering.print2008;
 
 import oim.vivo.scimapcore.journal.Node;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.NodeRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.NodeRenderer;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 /**
  * This class renders the circle size legend.
  *
  */
+@Deprecated
 public class CircleSizeLegendRenderer {
 	
+	@Deprecated
 	public static void render(GraphicsState state, CircleSizeLegend legend) {
 		float minRadius = Node.calculateRadius(legend.getMinArea(), legend.getScalingFactor());
 		float midRadius = Node.calculateRadius(legend.getMidArea(), legend.getScalingFactor());

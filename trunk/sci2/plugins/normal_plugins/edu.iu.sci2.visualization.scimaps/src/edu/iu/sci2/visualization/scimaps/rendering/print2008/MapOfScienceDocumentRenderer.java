@@ -8,8 +8,8 @@ import java.awt.RenderingHints;
 import java.util.Date;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
-import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
@@ -17,6 +17,7 @@ import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
  * This class renders the print version of the map of science.
  *
  */
+@Deprecated // TODO Comment on why this stuff is deprecated.
 public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 	private String dataDisplayName;
 	private String inDataLabel;
@@ -30,6 +31,7 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 	private String circleSizeMeaning;
 	private Dimension size;
 
+	@Deprecated
 	public MapOfScienceDocumentRenderer(String dataDisplayName, String inDataLabel,
 			MapOfScience mapOfScience, double listFontSize, String titleSlug,
 			String locatedSlug, String unmatchedSlug, Date date,
@@ -50,6 +52,7 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 		this.size = size;
 	}
 
+	@Deprecated
 	public GraphicsState preRender(Graphics2D graphics, Dimension size) {
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
@@ -63,6 +66,7 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 		return graphicsState;
 	}
 
+	@Deprecated
 	public void render(GraphicsState state, Dimension size) {
 		double scale = 1;
 
@@ -76,6 +80,7 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 
 	}
 
+	@Deprecated
 	private void render(GraphicsState state) {
 		state.save();
 		HeaderFooterRenderer.render(state, new HeaderFooter(inDataLabel, date));
@@ -144,10 +149,12 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 				lineHeight);
 	}
 
+	@Deprecated
 	public String title() {
 		return "Science Map " + titleSlug + " for " + dataDisplayName;
 	}
 
+	@Deprecated
 	public Dimension getDimension() {
 		return this.size;
 	}

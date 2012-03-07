@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.web2012;
+package edu.iu.sci2.visualization.scimaps.rendering.common;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -17,7 +17,7 @@ public class CopyrightInfo {
 		state.current.translate(0, topBound);
 		
 		Color copyrightColor = Color.black;
-		double copyrightFontSize = 12;
+		double copyrightFontSize = 10;
 		state.current.setColor(copyrightColor);
 		state.setFontSize(copyrightFontSize);
 		String[] copyrightLines = copyrightText.split("\n");

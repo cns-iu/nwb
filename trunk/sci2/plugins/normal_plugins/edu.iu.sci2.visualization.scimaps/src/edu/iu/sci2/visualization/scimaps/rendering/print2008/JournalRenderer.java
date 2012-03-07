@@ -8,7 +8,9 @@ import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
  * This class renders the journal.
  * 
  */
+@Deprecated
 public class JournalRenderer {
+	@Deprecated
 	public static void render(GraphicsState state, Journal journal) {
 		String valueString = String.valueOf(journal.getJournalHitCount());
 		state.current.drawString(valueString,

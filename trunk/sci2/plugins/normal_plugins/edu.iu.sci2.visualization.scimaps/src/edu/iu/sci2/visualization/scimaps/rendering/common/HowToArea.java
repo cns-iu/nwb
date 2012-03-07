@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.web2012;
+package edu.iu.sci2.visualization.scimaps.rendering.common;
 
 import java.awt.Color;
 
@@ -31,22 +31,15 @@ public class HowToArea {
 		state.save();
 
 		state.current.translate(leftBoundary, topBoundary);
+		state.current.setColor(Color.BLACK);
 
-		Color titleColor = Color.black;
-		double titleFontSize = 14;
-		state.current.setColor(titleColor);
-		state.setFontSize(titleFontSize);
-		state.current.drawString(this.title, 0, 0);
-		state.current.translate(0, titleFontSize);
+		state.setBoldFont("Arial", 14);
+		state.drawStringAndTranslate(this.title, 0, 0);
 
-		Color bodyColor = Color.black;
-		double bodyFontSize = 12;
-		state.current.setColor(bodyColor);
-		state.setFontSize(bodyFontSize);
+		state.setFont("Arial", 10);
 		String[] bodyLines = this.body.split(newline);
 		for (String line : bodyLines) {
-			state.current.drawString(line, 0, 0);
-			state.current.translate(0, bodyFontSize);
+			state.drawStringAndTranslate(line, 0, 0);
 		}
 
 		state.restore();

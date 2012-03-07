@@ -10,7 +10,9 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
  * This class renders the header and footer
  *
  */
+@Deprecated
 public class HeaderFooterRenderer {
+	@Deprecated
 	public static void render(GraphicsState state, HeaderFooter headerfooter) {
 		state.setFontSize(8);
 		state.setGray(0.3);
