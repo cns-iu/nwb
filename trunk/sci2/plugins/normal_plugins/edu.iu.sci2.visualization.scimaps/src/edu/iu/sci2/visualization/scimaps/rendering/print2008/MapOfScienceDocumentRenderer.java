@@ -17,7 +17,7 @@ import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
  * This class renders the print version of the map of science.
  *
  */
-@Deprecated // TODO Comment on why this stuff is deprecated.
+@Deprecated // TODO This is depricated since it will not be kept current, but is needed for the USDA journals until I can get data and test that it works with the new code.
 public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 	private String dataDisplayName;
 	private String inDataLabel;
