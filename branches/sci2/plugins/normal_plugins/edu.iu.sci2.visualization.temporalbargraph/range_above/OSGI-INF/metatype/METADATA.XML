@@ -7,7 +7,6 @@
 		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
 		 <AD name="Size By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
 		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
-		 <AD name="Page Orientation" id="page_orientation" type="String" description="The orientation of the page." default="" />
 		 <AD name="Query" id="query" type="String" description="The query that created the data." default="" />
 		 <AD name="Categeory" id="category" type="String" description="The field used for identifying cagegories within the data and color coding the bars as those categories.  More than 10 unique categories is not recommended." default="" />
 		 <AD name="Scale Output?" id="should_scale_output" type="boolean" description="If selected, all the bars will be fit into a single page.  If not, 50 bars per page will be used." default="false"/>

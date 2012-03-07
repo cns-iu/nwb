@@ -27,7 +27,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 	/**
 	 * Pages can be landscapes or portrait. They are fixed at letter size for
 	 * now, but all of the code correctly uses the height and width for
-	 * arbitrary page sizes if this needs to be changed later
+	 * arbitrary page sizes if this needs to be changed later.
 	 * 
 	 */
 	public enum PageOrientation {
@@ -81,7 +81,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 		String sizeByColumn = parameters.get(SIZE_BY_FIELD_ID).toString();
 		String startDateFormat = (String) parameters.get(DATE_FORMAT_FIELD_ID);
 		String endDateFormat = (String) parameters.get(DATE_FORMAT_FIELD_ID);
-		String pageOrientation = (String) parameters.get(PAGE_ORIENTATION_ID);
+		String pageOrientation = PageOrientation.LANDSCAPE.toString();
 		String categoryColumn = (String) parameters.get(CATEGORY_FIELD_ID);
 
 		String query = (String) parameters.get(QUERY_ID);
@@ -147,11 +147,21 @@ public class TemporalBarGraphAlgorithmFactory extends
 						.formNumberAttributeDefinition(oldAttributeDefinition,
 								table);
 			} else if (oldAttributeDefinitionID.equals(PAGE_ORIENTATION_ID)) {
-				newAttributeDefinition = MutateParameterUtilities
-						.cloneToDropdownAttributeDefinition(
-								oldAttributeDefinition,
-								formOrientationLabels(),
-								formOrientationValues());
+				/*
+				 * To enable the Portrait version again, look in svn. If you are
+				 * lazy, here is an overview... 
+				 * 
+				 * put <AD name="Page Orientation" id="page_orientation" type="String" description="The orientation of the page." default="" />
+				 * into the metadata
+				 * 
+				 * add this
+				 * newAttributeDefinition =
+				 * MutateParameterUtilities .cloneToDropdownAttributeDefinition(
+				 * oldAttributeDefinition, formOrientationLabels(),
+				 * formOrientationValues());
+				 * 
+				 * here
+				 */
 			} else if (oldAttributeDefinitionID.equals(DATE_FORMAT_FIELD_ID)) {
 				Collection<String> dateFormatLabels = formDateFormatOptionLabels();
 				Collection<String> dateFormatOptions = formDateFormatOptionValues();
@@ -169,7 +179,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 				MutateParameterUtilities.mutateDefaultValue(oldParameters,
 						CATEGORY_FIELD_ID, DO_NOT_PROCESS_CATEGORY_VALUE);
 			}
-
+			
 			/*
 			 * This can take optional ADs and mutate them needlessly into
 			 * required ones, so be careful.
