@@ -87,7 +87,10 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 			}
 
 			pageElements.add(visualizationElement);
-
+			pageElements.add(getLegendPageElement());
+			pageElements.add(getHowtoPageElement());
+			pageElements.add(getAreaLegendElement());
+			
 			pageElementsSomePages.put(nextPage, pageElements);
 			nextPage++;
 		}
@@ -120,9 +123,6 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	private List<PageElement> getPageElementsForAllPages() {
 		List<PageElement> pageElements = new ArrayList<PageElement>();
 		pageElements.add(getTitlePageElement());
-		pageElements.add(getLegendPageElement());
-		pageElements.add(getHowtoPageElement());
-		pageElements.add(getAreaLegendElement());
 		pageElements.add(getFooterPageElement());
 		return pageElements;
 	}
