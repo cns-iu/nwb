@@ -36,7 +36,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;
 		
-		DoubleDimension visualizationSize = new DoubleDimension(1000.0, 775.0);
+		DoubleDimension visualizationSize = new DoubleDimension(1000.0, 725.0);
 		
 		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
@@ -48,7 +48,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		for(int ii = 0; ii < numberOfPages(); ii++){
 			String visualization = this.visualizations.renderVisualizationPostscript(ii);
-			PageElement visualizationElement = new PageElement("visualization", 100.0, 150.0, visualization, visualizationDefinitions);
+			PageElement visualizationElement = new PageElement("visualization", 100.0, 200.0, visualization, visualizationDefinitions);
 			
 			List<PageElement> pageElements = pageElementsSomePages.get(ii);			
 			if (!pageElementsSomePages.containsKey(ii)){
@@ -95,7 +95,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
 		
-		return new PageElement("areaLegend", 350, 100, areaTemplate, areaDefinitionsTemplate);
+		return new PageElement("areaLegend", 350, 150, areaTemplate, areaDefinitionsTemplate);
 	}
 	
 	private PageElement getLegendPageElement(){
@@ -107,7 +107,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 				colorText1 = "";
 				colorText2 = "";
 			} else {
-				colorText1 = "Coloring based on \"" + this.categoryColumn + "\"";
+				colorText1 = "Color: " + this.categoryColumn;
 				colorText2 = "See end of PDF for color legend.";
 				
 			}
@@ -121,7 +121,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 			legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
 
 			double leftBound = 1.0 * POINTS_PER_INCH;
-			double topBound = 100.0;
+			double topBound = 150.0;
 			return new PageElement("legendTitleTop", leftBound, topBound,
 					legendTemplate, legendDefinitionsTemplate);
 	}
