@@ -163,7 +163,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 			colorText1 = "";
 			colorText2 = "";
 		} else {
-			colorText1 = "Coloring based on \"" + this.categoryColumn + "\"";
+			colorText1 = "Color: " + this.categoryColumn;
 			colorText2 = "See end of PDF for color legend.";
 			
 		}

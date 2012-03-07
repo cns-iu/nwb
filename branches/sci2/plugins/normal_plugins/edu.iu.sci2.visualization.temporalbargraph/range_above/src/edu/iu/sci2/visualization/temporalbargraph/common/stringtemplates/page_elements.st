@@ -51,7 +51,7 @@ legendTitleTopDefinitions(areaColumn, minArea, maxArea, colorText1, colorText2) 
 /legendTitleTopTop { legendTitleTopBottom } def % HACK until I redo all the postscript to work from the top down.
 
 /legendTitleTopTitle { (Legend) } def
-/legendTitleTopArea { (Area size equals "<areaColumn>") } def
+/legendTitleTopArea { (Area size: <areaColumn>) } def
 /legendTitleTopMin { (Minimum = <minArea>) } def
 /legendTitleTopMax { (Maximum = <maxArea>) } def
 /legendTitleTopColor1 { (<colorText1>) } def
@@ -69,14 +69,14 @@ legendTitleTopDefinitions(areaColumn, minArea, maxArea, colorText1, colorText2) 
 	0 0 moveto
 	legendTitlteTopTitleFont 
 	legendTitleTopTitle dup show
-	textheight neg 0 exch translate
+	textheight 1 add neg 0 exch translate
 	0 0 moveto
 	legendTitlteTopNormalFont
 	legendTitleTopArea dup show
-	textheight neg 0 exch translate
+	textheight 2 add neg 0 exch translate
 	0 0 moveto
 	legendTitleTopMin dup show
-	textheight 1 add neg 0 exch translate
+	textheight 2 add neg 0 exch translate
 	0 0 moveto
 	legendTitleTopMax dup dup show
 	textheight neg 0 exch translate
@@ -84,10 +84,10 @@ legendTitleTopDefinitions(areaColumn, minArea, maxArea, colorText1, colorText2) 
 	0 0 moveto
 	
 	legendTitleTopColor1 dup show
-	textheight neg 0 exch translate
+	textheight 1 add neg 0 exch translate
 	0 0 moveto
 	legendTitleTopColor2 dup show
-	textheight neg 0 exch translate
+	textheight 1 add neg 0 exch translate
 	0 0 moveto	
 	grestore
 } def
