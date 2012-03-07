@@ -18,7 +18,6 @@ import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
-import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
@@ -190,9 +189,6 @@ public enum CircleDimension implements VizDimension {
 		}
 	};
 	
-	public static final Dimension<Double> COLOR_GRADIENT_DIMENSION = Dimension.ofSize(
-			0.8 * (Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
-			10.0);
 	// TODO Can do better on these three..
 	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
 			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()

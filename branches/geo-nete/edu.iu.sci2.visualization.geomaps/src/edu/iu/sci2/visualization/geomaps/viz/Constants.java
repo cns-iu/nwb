@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.geomaps.viz;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.util.EnumSet;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -65,4 +66,9 @@ public class Constants {
 			+ PAGE_FOOTER_HEIGHT_IN_POINTS);
 
 	public static final double MAP_PAGE_AREA_MAX_WIDTH_IN_POINTS = PAGE_WIDTH_IN_POINTS - 2 * PAGE_MARGIN_IN_POINTS;
+
+	public static final Dimension<Double> COLOR_GRADIENT_DIMENSION =
+			Dimension.ofSize(
+					0.8 * (LEGEND_COMPOSITE_WIDTH_IN_POINTS / EnumSet.allOf(CircleDimension.class).size()),
+					10.0);
 }

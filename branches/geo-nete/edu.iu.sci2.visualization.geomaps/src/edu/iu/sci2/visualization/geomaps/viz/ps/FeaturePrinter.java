@@ -225,6 +225,8 @@ public class FeaturePrinter {
 				Points.distanceEquivalenceWithTolerance(
 						INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD)); 
 		
+		out.write("\n" + "closepath" + "\n");
+		
 		for (List<Point2D.Double> path : paths) {
 			out.write(PSUtility.path(path) + " stroke ");
 		}

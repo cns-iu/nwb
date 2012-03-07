@@ -141,15 +141,15 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceName());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
 //			parameters.put("authorName", "Joseph Biberstine");
 
 			URL testFileURL = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
 			File inFile = new File(testFileURL.toURI());
 			AlgorithmFactory algorithmFactory;
-			algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			algorithmFactory = prepareFactoryForCirclesTest(parameters);
+			algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			
 			Data data = new BasicData(inFile, CSV_MIME_TYPE);
 			

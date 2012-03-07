@@ -72,7 +72,10 @@ public enum FeatureDimension implements VizDimension {
 	};
 	
 	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX() + (0.5 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS);
+			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX();
+	// TODO ?
+//			+ (0.5 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS)
+//			- (0.5 * Constants.COLOR_GRADIENT_DIMENSION.getWidth());
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;
