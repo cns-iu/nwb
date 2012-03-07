@@ -110,7 +110,7 @@ public class GeoMapViewPS {
 		
 		PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(),
 				String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
-				PSUtility.escapeForPostScript(dataLabel),
+				String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
 				timestamp(),
 				authorName);
 		out.write(pageHeader.toPostScript());
