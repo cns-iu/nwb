@@ -201,37 +201,17 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 	private PageElement getTitlePageElement() {
 		StringTemplate titleTemplate = pageElementsGroup
-				.getInstanceOf("leftAlignedTitleWithQueryAndInfo");
-		titleTemplate.setAttribute("title", "Temporal Bar Graph");
-		titleTemplate.setAttribute("query", this.query);
-		titleTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
-
-		Map<String, String> attributes = new HashMap<String, String>();
-		
-		double titleFontSize = 14;
-		String titleFontType = "Arial-BoldMT";
-		Color titleFontColor = new Color(0x000000);
-		attributes.put("titleFontSize", Double.toString(titleFontSize));
-		attributes.put("titleFontType", titleFontType);
-		float[] titleFontRGB = titleFontColor.getRGBColorComponents(null);
-		assert(titleFontRGB.length == 3);
-		attributes.put("titleFontColor", String.format("%f %f %f", titleFontRGB[0], titleFontRGB[1], titleFontRGB[2]));
-		
-		double otherFontSize = 10;
-		String otherFontType = "ArialMT";
-		Color otherFontColor = new Color(0x000000);
-		attributes.put("otherFontSize", Double.toString(otherFontSize));
-		attributes.put("otherFontType", otherFontType);
-		float[] otherFontRGB = otherFontColor.getRGBColorComponents(null);
-		assert(otherFontRGB.length == 3);
-		attributes.put("otherFontColor", String.format("%f %f %f", otherFontRGB[0], otherFontRGB[1], otherFontRGB[2]));
+				.getInstanceOf("pageHeading");
 		
 		
-		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("leftAlignedTitleWithQueryAndInfoDefinitions", attributes);
-
+		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("pageHeadingDefinitions");
+		titleDefinitionsTemplate.setAttribute("title", "Temporal Bar Graph");
+		titleDefinitionsTemplate.setAttribute("query", this.query);
+		titleDefinitionsTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
+		
 		double leftBound = 0.5 * POINTS_PER_INCH;
-		double bottomBound = this.size.getHeight() - 1.0 * POINTS_PER_INCH;
-		return new PageElement("leftAlignedTitleWithQueryAndInfo", leftBound, bottomBound, titleTemplate,
+		double bottomBound = this.size.getHeight() - 0.25 * POINTS_PER_INCH;
+		return new PageElement("pageHeading", leftBound, bottomBound, titleTemplate,
 				titleDefinitionsTemplate);
 	}
 

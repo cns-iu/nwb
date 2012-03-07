@@ -102,62 +102,47 @@ legendTitleTop
 
 /**
 	
-	Title - puts a page title with a query string, info about the generation,
-	and a date left aligned at the top.
+	Title - puts a page title with a user supplied string, and a date left aligned at the top.
 	
 */
 
-leftAlignedTitleWithQueryAndInfoDefinitions(titleFontType, titleFontSize, titleFontColor, otherFontType, otherFontSize, otherFontColor) ::= <<
+pageHeadingDefinitions(title, query, date) ::= <<
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Title - leftAlignedTitleWithQueryAndInfo
+% Title - pageHeading
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/leftAlignedTitleWithQueryAndInfo { % title query date
+/pageHeading {
+
+/pageHeadingTop { pageHeadingBottom } def % HACK until I've rewritten this
 /lineSpacing { 3.0 } def
-/titleFontSize { <titleFontSize> } def
-/titleFontType { /<titleFontType> } def
-/titleFontColor { <titleFontColor> } def
-/titleFont { 
-	titleFontType titleFontSize selectfont 
-	titleFontColor setrgbcolor
-} def
-/otherFontSize { <otherFontSize> } def
-/otherFontType { /<otherFontType> } def
-/otherFontColor { <otherFontColor> } def
-/otherFont {
-	otherFontType otherFontSize selectfont 
-	otherFontColor setrgbcolor
-} def
+/titleFontSize { 14 } def
+/titleFont { /Arial-BoldMT titleFontSize selectfont } def
+/otherFontSize { 10 } def
+/otherFont { /ArialMT otherFontSize selectfont } def
+
+/title { (<title>) } def
+/query { (<query>) } def
+/date { (<date>) } def
 
 gsave
-leftAlignedTitleWithQueryAndInfoLeft leftAlignedTitleWithQueryAndInfoBottom translate
 
+pageHeadingLeft pageHeadingTop translate
 0 0 moveto
-otherFont
-show
-0 otherFontSize lineSpacing add translate
+	
+0 titleFontSize neg moveto
+gsave titleFont title show grestore
+0 titleFontSize lineSpacing add neg rmoveto
 
-0 0 moveto 
-otherFont
-(NIH funding data rendered using "Temporal Bar Graph") show
-0 otherFontSize lineSpacing add translate
-
-dup % (query) (query)
-length 0 gt % query exists or doesn't
+query length 0 gt % query exists or doesn't
 { 
-	0 0 moveto
-	otherFont
-	show
-	0 otherFontSize lineSpacing add translate
+	gsave otherFont query show grestore
+	0 otherFontSize lineSpacing add neg rmoveto
 } 
-{ pop } 
-ifelse
+if
 
-0 0 moveto
-titleFont
-show
-0 titleFontSize lineSpacing add translate
+gsave otherFont date show grestore
+0 otherFontSize lineSpacing add neg rmoveto
 
 grestore
 
@@ -165,74 +150,9 @@ grestore
 
 >>
 
-leftAlignedTitleWithQueryAndInfo(title, query, date) ::= <<
+pageHeading() ::= <<
 
-(<title>) (<query>) (<date>) leftAlignedTitleWithQueryAndInfo
-
->>
-
-/**
-
-Title - puts a title at the top of the page
-
-*/
-
-pageTitleDefinitions(titleFontSize) ::= <<
-
-%%%%%%%%%%%%%%%
-% Title
-%%%%%%%%%%%%%%%
-/titleFontSize { <titleFontSize> } def
-
-/title { % (title) => -  
-	gsave
-	0.0 0.0 0.0 setrgbcolor  
-	/UniverseExtended titleFontSize selectfont  
-	titleLeft % x  
-	titleBottom titleFontSize add % y  
-	center % put it in the center of the x and y above 
-	show 
-	grestore 
-} def
-
->>
-
-pageTitle(title) ::= <<
-
-(<title>) title
-
->>
-
-/** 
-Query Info - this is a blurb about the query and information about how the rendering was done
-*/
-
-queryinfoDefinitions(queryInfoFontSize) ::= <<
-
-%%%%%%%%%%%
-% QueryInfo 
-%%%%%%%%%%%
-/queryInfoFontSize { <queryInfoFontSize> } def
-/queryInfo { % (query) (info)
-	gsave
-	0 0 0 setrgbcolor
-	/ArialMT queryInfoFontSize selectfont
-	queryinfoLeft % x
-	queryinfoBottom queryInfoFontSize queryInfoFontSize add add % y
-	center % center on the left value
-	show
-	queryinfoLeft % x
-	queryinfoBottom queryInfoFontSize add % y
-	center % put the info at the center of queryinfoLeft
-	show
-	grestore
-} def
-
->>
-
-queryinfo(query, date) ::= <<
-
-(<query>) (NIH funding data rendered by using 'Temporal Bar Graph' on <date>) queryInfo
+pageHeading
 
 >>
 
