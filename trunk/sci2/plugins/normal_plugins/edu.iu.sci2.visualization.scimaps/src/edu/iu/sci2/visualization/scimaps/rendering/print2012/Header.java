@@ -26,7 +26,7 @@ public class Header {
 		generatedFromSlug = "Generated from " + generatedFrom;
 
 		exploreSlug = String
-				.format("Explore publication activity: %s out of %s publications were mapped to %s subdiciplines and %s diciplines.",
+				.format("%s out of %s publications were mapped to %s subdiciplines and %s diciplines.",
 						mapOfScience.prettyCountOfMappedPublications(),
 						mapOfScience.prettyCountOfPublications(),
 						mapOfScience.prettyCountOfMappedSubdiciplines(),
