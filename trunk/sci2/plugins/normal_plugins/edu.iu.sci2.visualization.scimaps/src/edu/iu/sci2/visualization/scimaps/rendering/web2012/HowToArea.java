@@ -11,7 +11,7 @@ public class HowToArea {
 
 	public HowToArea() {
 		this.title = "How To Read This Map";
-		this.body = "The Map of Science is a visual representation of 554 sub-disciplines within 13"
+		this.body = "The Map of Science is a visual representation of 554 subdisciplines within 13"
 				+ newline
 				+ "disciplines of science and their relationships to one another, shown as points "
 				+ newline
@@ -19,7 +19,7 @@ public class HowToArea {
 				+ newline
 				+ "drawn the result of mapping a dataset's journals to the underlying "
 				+ newline
-				+ "sub-discipline(s) those journals contain. Mapped sub-disciplines are shown with "
+				+ "subdiscipline(s) those journals contain. Mapped subdisciplines are shown with "
 				+ newline
 				+ "size relative to the number matching journals and color from the discipline.  For "
 				+ newline
