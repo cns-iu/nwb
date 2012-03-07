@@ -13,7 +13,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import oim.vivo.scimapcore.journal.Category;
+import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Edge;
 import oim.vivo.scimapcore.journal.Journal;
 import oim.vivo.scimapcore.journal.Node;
@@ -39,7 +39,7 @@ public class MapOfScience {
 	public MapOfScience(Map<String, Integer> journalNameAndHitCount) {
 
 		try {
-			mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
+			this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +56,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public float countOfMappedPublications() {
-		return mappingResult.getMappedJournals().size();
+		return this.mappingResult.getMappedJournals().size();
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public float countOfUnmappedPublications() {
-		return mappingResult.getUnmappedJournals().size();
+		return this.mappingResult.getUnmappedJournals().size();
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public float countOfPublications() {
-		return mappingResult.getJournals().size();
+		return this.mappingResult.getJournals().size();
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public float countOfMappedSubdiciplines() {
-		return mappingResult.getMappedResult().size();
+		return this.mappingResult.getMappedResult().size();
 	}
 
 	/**
@@ -128,31 +128,31 @@ public class MapOfScience {
 	}
 
 	/**
-	 * Return a float representing the number of categories that contain all the
+	 * Return a float representing the number of disciplines that contain all the
 	 * publications.
 	 * 
 	 * @return
 	 */
-	public float countOfCategoriesUsed() {
-		Set<Category> categoriesUsed = new HashSet<Category>();
+	public float countOfDisciplinesUsed() {
+		Set<Discipline> disciplinesUsed = new HashSet<Discipline>();
 
 		Set<Integer> usedNodeIds = getMappedResults().keySet();
 		for (int usedNodeId : usedNodeIds) {
-			Category nodeCategory = Nodes.getNodeByID(usedNodeId).getCategory();
-			categoriesUsed.add(nodeCategory);
+			Discipline nodeDiscipline = Nodes.getNodeByID(usedNodeId).getDiscipline();
+			disciplinesUsed.add(nodeDiscipline);
 		}
 
-		return categoriesUsed.size();
+		return disciplinesUsed.size();
 	}
 
 	/**
-	 * Return a string representing a pretty version of the number of categories
+	 * Return a string representing a pretty version of the number of disciplines
 	 * that contain all the publications.
 	 * 
 	 * @return
 	 */
-	public String prettyCountOfCategoriesUsed() {
-		float count = countOfCategoriesUsed();
+	public String prettyCountOfDisciplinesUsed() {
+		float count = countOfDisciplinesUsed();
 		return formatter.format(count);
 	}
 
@@ -162,7 +162,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public Map<Integer, Float> getMappedResults() {
-		return mappingResult.getMappedResult();
+		return this.mappingResult.getMappedResult();
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public Map<String, Float> getUnmappedResults() {
-		return mappingResult.getUnmappedResult();
+		return this.mappingResult.getUnmappedResult();
 	}
 
 	/**
@@ -217,7 +217,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public Map<Integer, Float> getIdWeightMapping() {
-		return mappingResult.getMappedResult();
+		return this.mappingResult.getMappedResult();
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public Set<Journal> getJournals() {
-		return mappingResult.getJournals();
+		return this.mappingResult.getJournals();
 	}
 
 	/**
@@ -239,12 +239,12 @@ public class MapOfScience {
 	}
 
 	/**
-	 * Get a set of all the categories used in the map of science.
+	 * Get a set of all the disciplines used in the map of science.
 	 * 
 	 * @return
 	 */
-	public static Set<Category> getCategories() {
-		return ScienceMapping.getCategories();
+	public static Set<Discipline> getDisciplines() {
+		return ScienceMapping.getDisciplines();
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class MapOfScience {
 	 * @return
 	 */
 	public Set<Journal> getMappedJournals() {
-		return mappingResult.getMappedJournals();
+		return this.mappingResult.getMappedJournals();
 	}
 
 	/**
@@ -271,55 +271,55 @@ public class MapOfScience {
 	 * @return
 	 */
 	public Set<Journal> getUnmappedJournals() {
-		return mappingResult.getUnmappedJournals();
+		return this.mappingResult.getUnmappedJournals();
 	}
 
 	/**
-	 * This gives a mapping for all the categories used by the mapped (used)
+	 * This gives a mapping for all the disciplines used by the mapped (used)
 	 * journals.
 	 * 
 	 * @return
 	 */
-	public SortedMap<Category, SortedSet<Journal>> getMappedJournalsByCategory() {
-		return getJournalsByCategory(getMappedJournals());
+	public SortedMap<Discipline, SortedSet<Journal>> getMappedJournalsByDiscipline() {
+		return getJournalsByDiscipline(getMappedJournals());
 	}
 
 	/**
-	 * This gives a mapping for all the categories used by unused journals. This
-	 * should only return the NONE category.
+	 * This gives a mapping for all the disciplines used by unused journals. This
+	 * should only return the NONE discipline.
 	 * 
 	 * @return
 	 */
-	public SortedMap<Category, SortedSet<Journal>> getUnmappedJournalsByCategory() {
-		return getJournalsByCategory(getUnmappedJournals());
+	public SortedMap<Discipline, SortedSet<Journal>> getUnmappedJournalsByDiscipline() {
+		return getJournalsByDiscipline(getUnmappedJournals());
 	}
 
 	/**
-	 * Given a set of journals, it will return a mapping from the category used
-	 * by those journals to a list of the journals in that category.
+	 * Given a set of journals, it will return a mapping from the discipline used
+	 * by those journals to a list of the journals in that discipline.
 	 * 
 	 * @param journals
 	 * @return
 	 */
-	public static SortedMap<Category, SortedSet<Journal>> getJournalsByCategory(
+	public static SortedMap<Discipline, SortedSet<Journal>> getJournalsByDiscipline(
 			Set<Journal> journals) {
-		SortedMap<Category, SortedSet<Journal>> categoriesByJournal = new TreeMap<Category, SortedSet<Journal>>();
+		SortedMap<Discipline, SortedSet<Journal>> disciplinesByJournal = new TreeMap<Discipline, SortedSet<Journal>>();
 
 		for (Journal journal : journals) {
-			Category category = journal.getJournalCategory();
-			SortedSet<Journal> journalsForCategory = categoriesByJournal
-					.get(category);
+			Discipline discipline = journal.getJournalDiscipline();
+			SortedSet<Journal> journalsForDiscipline = disciplinesByJournal
+					.get(discipline);
 
-			if (journalsForCategory == null) {
-				journalsForCategory = new TreeSet<Journal>();
-				journalsForCategory.add(journal);
+			if (journalsForDiscipline == null) {
+				journalsForDiscipline = new TreeSet<Journal>();
+				journalsForDiscipline.add(journal);
 			} else {
-				journalsForCategory.add(journal);
+				journalsForDiscipline.add(journal);
 			}
 
-			categoriesByJournal.put(category, journalsForCategory);
+			disciplinesByJournal.put(discipline, journalsForDiscipline);
 		}
-		return categoriesByJournal;
+		return disciplinesByJournal;
 	}
 
 }

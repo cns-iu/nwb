@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
@@ -15,14 +16,14 @@ public class DocumentRenderer implements RenderableVisualization {
 
 	private MapOfScience mapOfScience;
 	private String generatedFrom;
-	private Dimension size;
+	private Dimension dimensions;
 	private float scalingFactor;
 
 	public DocumentRenderer(MapOfScience mapOfScience, String generatedFrom,
 			Dimension size, float scalingFactor) {
 		this.mapOfScience = mapOfScience;
 		this.generatedFrom = generatedFrom;
-		this.size = size;
+		this.dimensions = size;
 		this.scalingFactor = scalingFactor;
 	}
 
@@ -51,13 +52,18 @@ public class DocumentRenderer implements RenderableVisualization {
 		double mapOfScienceLeft = inch(0.0f);
 		state.current.translate(mapOfScienceLeft, mapOfScienceBottom);
 		state.current.scale(1.3, 1.3);
-		MapOfScienceRenderer.render(state, mapOfScience, scalingFactor);
+		try {
+			MapOfScienceRenderer.render(state, this.mapOfScience, this.scalingFactor);
+		} catch (MapOfScienceRenderingException e) {
+			// SOMEDAY change the interface to allow an exception to be thrown.
+			e.printStackTrace();
+		}
 		state.restore();
 		
 		CopyrightInfo copyrightInfo = new CopyrightInfo();
 		copyrightInfo.render(state, inch(5.5f), (float)size.getWidth());
 		
-		Header header = new Header(title(), generatedFrom, mapOfScience);
+		Header header = new Header(title(), this.generatedFrom, this.mapOfScience);
 		header.render(state, inch(0.5f), inch(0.5f));
 		
 		HowToArea howto = new HowToArea();
@@ -67,14 +73,14 @@ public class DocumentRenderer implements RenderableVisualization {
 		footer.render(state);
 		
 		String legendTitle = "Circle Area: Fractional Journal Count";
-		String legendSubtitle = "Unclasified: " + mapOfScience.prettyCountOfUnmappedPublications();
+		String legendSubtitle = "Unclasified: " + this.mapOfScience.prettyCountOfUnmappedPublications();
 		
-		CircleSizeLegend legend = new CircleSizeLegend(mapOfScience.getMappedWeights(), scalingFactor, legendTitle, legendSubtitle);
+		CircleSizeLegend legend = new CircleSizeLegend(this.mapOfScience.getMappedWeights(), this.scalingFactor, legendTitle, legendSubtitle);
 		legend.render(state, inch(1.0f), inch(6.5f));		
 	}
 
 	public Dimension getDimension() {
-		return size;
+		return this.dimensions;
 	}
-
+	
 }

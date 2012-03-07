@@ -123,7 +123,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 		MapOfScience map = new MapOfScience(mappingResult);
 
 		double listFontSize = fieldsAnalyzer.calculateListFontSize(MapOfScience
-				.getCategories());
+				.getDisciplines());
 
 		RenderableVisualization visualization = new MapOfScienceDocumentRenderer(
 				dataDisplayName, inDataLabel, map, listFontSize,

@@ -8,6 +8,8 @@ import java.awt.geom.Line2D;
 import java.util.Map;
 import java.util.Set;
 
+import oim.vivo.scimapcore.journal.Discipline;
+import oim.vivo.scimapcore.journal.Disciplines;
 import oim.vivo.scimapcore.journal.Edge;
 import oim.vivo.scimapcore.journal.Node;
 import oim.vivo.scimapcore.journal.Nodes;
@@ -22,59 +24,81 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 public class MapOfScienceRenderer {
 
 	public static void render(GraphicsState state, MapOfScience mapOfScience,
-			float scalingFactor) {
-			
+			float scalingFactor) throws MapOfScienceRenderingException {
+
 		state.setFontSize(6);
 		renderLeftSide(state);
 		renderRightSide(state);
-		
+
 		renderMapNodesAndEdges(state, mapOfScience, scalingFactor);
-		
-		renderCategoryLabels(state);
+
+		renderDisciplineLabels(state);
 	}
 
-	private static void renderCategoryLabel(GraphicsState state, String s,
-			float r, float g, float b, float x, float y) {
+	private static void renderDisciplineLabel(GraphicsState state, String label,
+			Discipline discipline, float x, float y) throws MapOfScienceRenderingException {
+		if (discipline == null) {
+			throw new MapOfScienceRenderingException(
+					"The category labeled '"
+							+ label
+							+ "' could not be located by id.  The underlying Map of Science might have changed and the algorithm needs to be updated.");
+		}
+		renderDisciplineLabel(state, label, discipline.getColor(), x, y);
+	}
+	
+	private static void renderDisciplineLabel(GraphicsState state, String label,
+			Color color, float x, float y) {
 		state.save();
-		state.current.setColor(new Color(r, g, b));
-		state.current.drawString(s, x, y);
+		state.current.setColor(color);
+		state.current.drawString(label, x, y);
 		state.restore();
 	}
 
-	public static void renderCategoryLabels(GraphicsState state) {
+	public static class MapOfScienceRenderingException extends Exception {
+		private static final long serialVersionUID = 7330170129647808546L;
+
+		public MapOfScienceRenderingException(String message) {
+			super(message);
+		}
+	}
+
+	public static void renderDisciplineLabels(GraphicsState state)
+			throws MapOfScienceRenderingException {
 		state.save();
 
 		state.setFontSize(8);
 
 		state.current.translate(0, inch(.33f));
 
-		renderCategoryLabel(state, "Social Sciences", 1, 1, 0, inch(6.2f),
+		// SOMEDAY fix the whole map of science so that the x and y in the dicipline can be used to render it.
+		
+		renderDisciplineLabel(state, "Social Sciences", Disciplines.getDisciplineById("13"), inch(6.2f),
 				inch(-1));
-		renderCategoryLabel(state, "Electrical Engineering", 1, .5216f, 1,
+		renderDisciplineLabel(state, "Electrical Engineering", Disciplines.getDisciplineById("7"),
 				inch(.9f), inch(-1.24f));
-		renderCategoryLabel(state, "& Computer Science", 1, .5216f, 1,
+		renderDisciplineLabel(state, "& Computer Science", Disciplines.getDisciplineById("7"),
 				inch(.9f), inch(-1.12f));
-		renderCategoryLabel(state, "Biology", 0, .6f, 0, inch(3.73f),
+		renderDisciplineLabel(state, "Biology", Disciplines.getDisciplineById("1"), inch(3.73f),
 				inch(-.6f));
-		renderCategoryLabel(state, "Biotechnology", 0, 1, .5f, inch(3.1f),
+		renderDisciplineLabel(state, "Biotechnology",Disciplines.getDisciplineById("2"), inch(3.1f),
 				inch(-1.45f));
-		renderCategoryLabel(state, "Brain Research", 1, .56f, 0, inch(5.63f),
+		renderDisciplineLabel(state, "Brain Research", Disciplines.getDisciplineById("8"), inch(5.63f),
 				inch(-1.23f));
-		renderCategoryLabel(state, "Medical Specialties", 1, 0, 0, inch(5.1f),
+		renderDisciplineLabel(state, "Medical Specialties", Disciplines.getDisciplineById("3"), inch(5.1f),
 				inch(-.88f));
-		renderCategoryLabel(state, "Chemical, Mechanical, & Civil Engineering",
-				.38f, 1, 1, inch(2.08f), inch(-1.1f));
-		renderCategoryLabel(state, "Chemistry", 0, 0, 1, inch(2.38f),
+		renderDisciplineLabel(state, "Chemical, Mechanical, & Civil Engineering",
+				Disciplines.getDisciplineById("4"), inch(2.08f), inch(-1.1f));
+		renderDisciplineLabel(state, "Chemistry", Disciplines.getDisciplineById("5"), inch(2.38f),
 				inch(-2.45f));
-		renderCategoryLabel(state, "Earth Sciences", .52f, .19f, .05f,
+		renderDisciplineLabel(state, "Earth Sciences", Disciplines.getDisciplineById("6"),
 				inch(2.65f), inch(-.4f));
-		renderCategoryLabel(state, "Health Professionals", .94f, .55f, .51f,
+		renderDisciplineLabel(state, "Health Professionals", Disciplines.getDisciplineById("12"),
 				inch(5.3f), inch(-2.55f));
-		renderCategoryLabel(state, "Humanities", 1, 1, .5f, inch(6.18f),
+		renderDisciplineLabel(state, "Humanities", Disciplines.getDisciplineById("9"), inch(6.18f),
 				inch(-.4f));
-		renderCategoryLabel(state, "Infectious Disease", .72f, 0, 0,
+		renderDisciplineLabel(state, "Infectious Disease", Disciplines.getDisciplineById("10"),
 				inch(4.41f), inch(-1.05f));
-		renderCategoryLabel(state, "Math & Physics", .64f, .078f, .98f,
+		renderDisciplineLabel(state, "Math & Physics", Disciplines.getDisciplineById("11"),
 				inch(1.15f), inch(-2.31f));
 
 		state.restore();
@@ -97,7 +121,6 @@ public class MapOfScienceRenderer {
 		state.restore();
 	}
 
-
 	private static void renderMapNodesAndEdges(GraphicsState state,
 			MapOfScience mapOfScience, float scalingFactor) {
 
@@ -112,16 +135,17 @@ public class MapOfScienceRenderer {
 		EdgeRenderer.renderEdges(state, edges);
 
 		for (Node node : nodes) {
-			if (!mapping.containsKey(node.getId())) {
+			if (!mapping.containsKey(Integer.valueOf(node.getId()))) {
 				NodeRenderer.renderEmpty(state, node);
 			}
 		}
 
 		for (Integer id : mapOfScience.getMappedIdsByWeight()) {
 
-			Node node = Nodes.getNodeByID(id);
+			Node node = Nodes.getNodeByID(id.intValue());
 
-			float weight = mapping.get(node.getId());
+			float weight = mapping.get(Integer.valueOf(node.getId()))
+					.floatValue();
 
 			NodeRenderer.render(state, node, weight, scalingFactor);
 		}

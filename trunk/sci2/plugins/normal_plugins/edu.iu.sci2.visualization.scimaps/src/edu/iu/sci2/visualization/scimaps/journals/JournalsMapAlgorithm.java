@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import oim.vivo.scimapcore.journal.Category;
+import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
@@ -40,8 +39,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.CategoryBreakdownDocumentRenderer;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.CategoryBreakdownDocumentRenderer.JournalBreakDownArea;
+import edu.iu.sci2.visualization.scimaps.rendering.print2012.DisciplineBreakdownDocumentRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.print2012.DisciplineBreakdownDocumentRenderer.JournalBreakDownArea;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
@@ -159,9 +158,9 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 	}
 
-	public static double calculateListFontSize(Collection<Category> categories,
+	public static double calculateListFontSize(Collection<Discipline> discipline,
 			int numOfJournals) {
-		return Math.min(8, 260 / (numOfJournals + categories.size() * 1.5 + 1));
+		return Math.min(8, 260 / (numOfJournals + discipline.size() * 1.5 + 1));
 	}
 
 	private Data[] datafy(MapOfScience mapOfScience,
@@ -228,59 +227,59 @@ public class JournalsMapAlgorithm implements Algorithm {
 		visualization.render(new GraphicsState(g2d),
 				visualization.getDimension());
 		if (this.webVersion == false) {
-			addCategoryBreakdownPages(visualization, mapOfScience, out, g2d);
+			addDisciplineBreakdownPages(visualization, mapOfScience, out, g2d);
 		}
 		g2d.finish();
 	}
 
-	private void addCategoryBreakdownPages(
+	private void addDisciplineBreakdownPages(
 			RenderableVisualization visualization, MapOfScience mapOfScience,
 			OutputStream out, PSDocumentGraphics2D g2d) throws IOException {
 		try {
-			List<CategoryBreakdownDocumentRenderer> categoryBreakdowns = getCategoryBreakdowns(mapOfScience);
-			for (CategoryBreakdownDocumentRenderer categoryBreakdown : categoryBreakdowns) {
+			List<DisciplineBreakdownDocumentRenderer> disciplineBreakdowns = getDisciplineBreakdowns(mapOfScience);
+			for (DisciplineBreakdownDocumentRenderer disciplineBreakdown : disciplineBreakdowns) {
 				g2d.nextPage();
 				g2d.setGraphicContext(new GraphicContext());
 				g2d.setupDocument(
 						out,
 						Double.valueOf(
-								categoryBreakdown.getDimension().getWidth())
+								disciplineBreakdown.getDimension().getWidth())
 								.intValue(),
 						Double.valueOf(
-								categoryBreakdown.getDimension()
+								disciplineBreakdown.getDimension()
 										.getHeight()).intValue());
 				g2d.setClip(
 						0,
 						0,
 						Double.valueOf(
-								categoryBreakdown.getDimension().getWidth())
+								disciplineBreakdown.getDimension().getWidth())
 								.intValue(),
 						Double.valueOf(
-								categoryBreakdown.getDimension()
+								disciplineBreakdown.getDimension()
 										.getHeight()).intValue());
-				categoryBreakdown.render(new GraphicsState(g2d),
+				disciplineBreakdown.render(new GraphicsState(g2d),
 						visualization.getDimension());
 			}
-		} catch (CategoryBreakdownCreationException e) {
+		} catch (DisciplineBreakdownCreationException e) {
 			this.logger
 					.log(LogService.LOG_ERROR,
-							"There was a problem creating the detailed summary of categories and their journals.  The output postscript file may have errors."
+							"There was a problem creating the detailed summary of disciplines and their journals.  The output postscript file may have errors."
 									+ System.getProperty("line.separator")
 									+ e.getMessage(), e);
 		}
 	}
 
-	public static class CategoryBreakdownCreationException extends Exception {
+	public static class DisciplineBreakdownCreationException extends Exception {
 		private static final long serialVersionUID = -8717066429217445908L;
 
-		public CategoryBreakdownCreationException(String message) {
+		public DisciplineBreakdownCreationException(String message) {
 			super(message);
 		}
 	}
 
-	private List<CategoryBreakdownDocumentRenderer> getCategoryBreakdowns(
+	private List<DisciplineBreakdownDocumentRenderer> getDisciplineBreakdowns(
 			MapOfScience mapOfScience)
-			throws CategoryBreakdownCreationException {
+			throws DisciplineBreakdownCreationException {
 		/*
 		 * HACK This algorithm should be refactored to more closely resemble TBG.
 		 * There should be a document with some idea of a 'page' like structure so 
@@ -290,49 +289,49 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 		int columnsPerPage = JournalBreakDownArea.columnsPerPage;
 		float columnHeight = JournalBreakDownArea.defaultColumnHeight;
-		int categoryTextSize = JournalBreakDownArea.defaultCategorySpace;
+		int disciplineTextSize = JournalBreakDownArea.defaultDisciplineSpace;
 		int journalTextSize = JournalBreakDownArea.defaultJournalSpace;
 
-		SortedMap<Category, SortedSet<Journal>> allCategoryJournal = mapOfScience
-				.getMappedJournalsByCategory();
+		SortedMap<Discipline, SortedSet<Journal>> allDisciplinesAndTheirJournal = mapOfScience
+				.getMappedJournalsByDiscipline();
 
-		allCategoryJournal.putAll(mapOfScience.getUnmappedJournalsByCategory());
+		allDisciplinesAndTheirJournal.putAll(mapOfScience.getUnmappedJournalsByDiscipline());
 
-		List<SortedMap<Category, SortedSet<Journal>>> pages = new ArrayList<SortedMap<Category, SortedSet<Journal>>>();
-		SortedMap<Category, SortedSet<Journal>> currentPage = new TreeMap<Category, SortedSet<Journal>>();
+		List<SortedMap<Discipline, SortedSet<Journal>>> pages = new ArrayList<SortedMap<Discipline, SortedSet<Journal>>>();
+		SortedMap<Discipline, SortedSet<Journal>> currentPage = new TreeMap<Discipline, SortedSet<Journal>>();
 
-		while (allCategoryJournal.size() > 0) {
+		while (allDisciplinesAndTheirJournal.size() > 0) {
 
 			float spaceRemaining = columnHeight * columnsPerPage;
 
-			if (spaceRemaining < categoryTextSize + journalTextSize) {
-				throw new CategoryBreakdownCreationException(
-						"There is not enough room for a category and a journal on a page.");
+			if (spaceRemaining < disciplineTextSize + journalTextSize) {
+				throw new DisciplineBreakdownCreationException(
+						"There is not enough room for a discipline and a journal on a page.");
 			}
 
 			// Done to avoid 'java.util.ConcurrentModificationException'
-			for (Category category : new TreeSet<Category>(allCategoryJournal.keySet())) {
-				SortedSet<Journal> journals = allCategoryJournal
-						.remove(category);
-				int categorySpace = categoryTextSize
+			for (Discipline discipline : new TreeSet<Discipline>(allDisciplinesAndTheirJournal.keySet())) {
+				SortedSet<Journal> journals = allDisciplinesAndTheirJournal
+						.remove(discipline);
+				int disciplineBreakdownSpace = disciplineTextSize
 						+ (journalTextSize * journals.size());
 
-				if (spaceRemaining < categoryTextSize + journalTextSize) {
+				if (spaceRemaining < disciplineTextSize + journalTextSize) {
 					if (currentPage.size() < 1) {
-						throw new CategoryBreakdownCreationException(
-								"There is not enough room on the empty page to fit even a single a category label and a journal label.");
+						throw new DisciplineBreakdownCreationException(
+								"There is not enough room on the empty page to fit even a single a discipline label and a journal label.");
 					}
 					pages.add(ImmutableSortedMap.copyOf(currentPage));
-					currentPage = new TreeMap<Category, SortedSet<Journal>>();
+					currentPage = new TreeMap<Discipline, SortedSet<Journal>>();
 
 					break;
-				} else if (spaceRemaining > categorySpace) {
-					spaceRemaining -= categorySpace;
-					currentPage.put(category, journals);
+				} else if (spaceRemaining > disciplineBreakdownSpace) {
+					spaceRemaining -= disciplineBreakdownSpace;
+					currentPage.put(discipline, journals);
 				} else {
 					SortedSet<Journal> journalsToInclude = new TreeSet<Journal>();
 					SortedSet<Journal> journalsNotToInclude = new TreeSet<Journal>();
-					spaceRemaining -= categoryTextSize;
+					spaceRemaining -= disciplineTextSize;
 					for (Journal journal : journals) {
 						if (spaceRemaining > journalTextSize) {
 							spaceRemaining -= journalTextSize;
@@ -344,21 +343,21 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 					if (journalsToInclude.size() < 1) {
 						// This should have been caught by the first branch.
-						throw new CategoryBreakdownCreationException(
+						throw new DisciplineBreakdownCreationException(
 								"There are no journals to include on the page.");
 					}
 
 					if (journalsNotToInclude.size() < 1) {
 						// This should have been caught by the second branch.
-						throw new CategoryBreakdownCreationException(
+						throw new DisciplineBreakdownCreationException(
 								"If there are no extra journals, the page should have been added already.");
 					}
 
-					currentPage.put(category, journalsToInclude);
-					allCategoryJournal.put(category, journalsNotToInclude);
+					currentPage.put(discipline, journalsToInclude);
+					allDisciplinesAndTheirJournal.put(discipline, journalsNotToInclude);
 					
 					pages.add(ImmutableSortedMap.copyOf(currentPage));
-					currentPage = new TreeMap<Category, SortedSet<Journal>>();
+					currentPage = new TreeMap<Discipline, SortedSet<Journal>>();
 
 					break;
 				}
@@ -369,8 +368,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 			pages.add(currentPage);
 		}
 
-		List<CategoryBreakdownDocumentRenderer> categoryBreakdowns = new ArrayList<CategoryBreakdownDocumentRenderer>();
-		for (SortedMap<Category, SortedSet<Journal>> page : pages) {
+		List<DisciplineBreakdownDocumentRenderer> disciplineBreakdowns = new ArrayList<DisciplineBreakdownDocumentRenderer>();
+		for (SortedMap<Discipline, SortedSet<Journal>> page : pages) {
 			/*
 			 * HACK obviously I shouldn't do this but this idea is so terrible
 			 * to begin with there is no point in trying to make it cleaner.
@@ -378,10 +377,10 @@ public class JournalsMapAlgorithm implements Algorithm {
 			 */
 			Dimension dimensions = new Dimension((int) inch(11f),
 					(int) inch(8.5f));
-			categoryBreakdowns.add(new CategoryBreakdownDocumentRenderer(page,
+			disciplineBreakdowns.add(new DisciplineBreakdownDocumentRenderer(page,
 					this.dataDisplayName, dimensions, mapOfScience));
 		}
-		return categoryBreakdowns;
+		return disciplineBreakdowns;
 	}
 
 	public static class DataCreationException extends Exception {

@@ -30,7 +30,7 @@ public class Header {
 						mapOfScience.prettyCountOfMappedPublications(),
 						mapOfScience.prettyCountOfPublications(),
 						mapOfScience.prettyCountOfMappedSubdiciplines(),
-						mapOfScience.prettyCountOfCategoriesUsed());
+						mapOfScience.prettyCountOfDisciplinesUsed());
 		DateTime dateTime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
 				.forPattern("MMMM dd, yyyy | KK:mm a zzz");

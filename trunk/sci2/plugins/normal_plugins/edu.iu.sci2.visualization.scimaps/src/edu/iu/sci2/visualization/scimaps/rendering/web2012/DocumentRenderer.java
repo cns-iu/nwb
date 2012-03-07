@@ -7,18 +7,19 @@ import java.awt.RenderingHints;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.HowToArea;
 import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
 public class DocumentRenderer implements RenderableVisualization {
 
 	private MapOfScience mapOfScience;
-	private Dimension size;
+	private Dimension dimensions;
 	private float scalingFactor;
 	
 	public DocumentRenderer(MapOfScience mapOfScience, Dimension size, float scalingFactor) {
 		this.mapOfScience = mapOfScience;
-		this.size = size;
+		this.dimensions = size;
 		this.scalingFactor = scalingFactor;
 	}
 
@@ -49,24 +50,30 @@ public class DocumentRenderer implements RenderableVisualization {
 		double mapOfScienceLeft = 50;
 		state.current.translate(mapOfScienceLeft, mapOfScienceBottom);
 		state.current.scale(2.0, 2.0);
-		MapOfScienceRenderer.render(state, mapOfScience, scalingFactor);
+		
+		try {
+			MapOfScienceRenderer.render(state, this.mapOfScience, this.scalingFactor);
+		} catch (MapOfScienceRenderingException e) {
+			// SOMEDAY reimplement the interface to allow an exception to be thrown.
+			e.printStackTrace();
+		}
 		state.restore();
 
 		CopyrightInfo copyrightInfo = new CopyrightInfo();
-		copyrightInfo.render(state, 550.0f, (float)getDimension().getWidth());
+		copyrightInfo.render(state, 550.0f, (float) getDimension().getWidth());
 		
 		Footer footer = new Footer();
 		footer.render(state, 400.0f, 910.0f);
 
 		String legendTitle = "Circle Area: Fractional Journal Count";
 		String legendSubtitle = "Unclasified: "
-				+ mapOfScience.prettyCountOfUnmappedPublications();
+				+ this.mapOfScience.prettyCountOfUnmappedPublications();
 
 		HowToArea howto = new HowToArea();
 		howto.render(state, 600.0f, 650.0f);
 		
 		CircleSizeLegend legend = new CircleSizeLegend(
-				mapOfScience.getMappedWeights(), scalingFactor, legendTitle,
+				this.mapOfScience.getMappedWeights(), this.scalingFactor, legendTitle,
 				legendSubtitle);
 		legend.render(state, 100.0f, 650.0f);
 
@@ -75,7 +82,7 @@ public class DocumentRenderer implements RenderableVisualization {
 
 	
 	public Dimension getDimension() {
-		return size;
+		return this.dimensions;
 	}
 
 }

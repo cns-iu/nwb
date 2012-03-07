@@ -10,24 +10,24 @@ import java.awt.geom.Rectangle2D;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import oim.vivo.scimapcore.journal.Category;
+import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
-public class CategoryBreakdownDocumentRenderer implements
+public class DisciplineBreakdownDocumentRenderer implements
 		RenderableVisualization {
 
 	private String generatedFrom;
 	private Dimension size;
-	private SortedMap<Category, SortedSet<Journal>> journalsByCategory;
+	private SortedMap<Discipline, SortedSet<Journal>> journalsByDiscipline;
 	private MapOfScience mapOfScience;
 
-	public CategoryBreakdownDocumentRenderer(
-			SortedMap<Category, SortedSet<Journal>> journalsByCategory,
+	public DisciplineBreakdownDocumentRenderer(
+			SortedMap<Discipline, SortedSet<Journal>> journalsByDiscipline,
 			String generatedFrom, Dimension size, MapOfScience mapOfScience) {
-		this.journalsByCategory = journalsByCategory;
+		this.journalsByDiscipline = journalsByDiscipline;
 		this.generatedFrom = generatedFrom;
 		this.size = size;
 		this.mapOfScience = mapOfScience;
@@ -57,7 +57,7 @@ public class CategoryBreakdownDocumentRenderer implements
 				this.mapOfScience);
 		header.render(state, inch(0.5f), inch(0.5f));
 
-		new JournalBreakDownArea(this.journalsByCategory).render(state,
+		new JournalBreakDownArea(this.journalsByDiscipline).render(state,
 				inch(10.0f), inch(6.0f));
 
 		Footer footer = new Footer((float) size.getWidth(), inch(8.0f));
@@ -71,24 +71,24 @@ public class CategoryBreakdownDocumentRenderer implements
 	public static class JournalBreakDownArea {
 		public static final float defaultColumnHeight = inch(6.0f);
 		/*
-		 * These valuse were calculated by printing out the font metrics for
-		 * arial bold at font size 12 and arial at font size 10.
+		 * These values were calculated by printing out the font metrics for
+		 * ArialBold at font size 12 and Arial at font size 10.
 		 */
-		public static final int defaultCategorySpace = 15;
+		public static final int defaultDisciplineSpace = 15;
 		public static final int defaultJournalSpace = 13;
-		public static final int categoryFontSize = 12;
+		public static final int disciplineFontSize = 12;
 		public static final int journalFontSize = 10;
-		public static final String categoryFont = "Arial Bold";
+		public static final String disciplineFont = "Arial Bold";
 		public static final String journalFont = "Arial";
 		public static final int textMargin = 12;
 		public static final int columnsPerPage = 2;
 		public static final float columnMargin = inch(0.5f);
 
-		private SortedMap<Category, SortedSet<Journal>> journalsByCategory;
+		private SortedMap<Discipline, SortedSet<Journal>> journalsByDiscipline;
 
 		public JournalBreakDownArea(
-				SortedMap<Category, SortedSet<Journal>> journalsByCategory) {
-			this.journalsByCategory = journalsByCategory;
+				SortedMap<Discipline, SortedSet<Journal>> journalsByDiscipline) {
+			this.journalsByDiscipline = journalsByDiscipline;
 		}
 
 		public void render(GraphicsState state, float width, float height) {
@@ -98,18 +98,15 @@ public class CategoryBreakdownDocumentRenderer implements
 			int currentColumn = (int) height;
 			float columnWidth = (width / columnsPerPage)
 					- (columnMargin * (columnsPerPage / 2)) - textMargin;
-			for (Category category : this.journalsByCategory.keySet()) {
-				// render category
+			for (Discipline discipline : this.journalsByDiscipline.keySet()) {
+				// render discipline
 				state.save();
 
-				state.setFont(categoryFont, categoryFontSize);
-				if (category != Category.MULTIPLE || category != Category.NONE) {
+				state.setFont(disciplineFont, disciplineFontSize);
+				if (discipline != Discipline.MULTIPLE || discipline != Discipline.NONE) {
 					state.save();
-					String[] rgb = category.getRGBColor().split(" ");
 					state.current
-							.setPaint(new Color(Float.parseFloat(rgb[0]), Float
-									.parseFloat(rgb[1]), Float
-									.parseFloat(rgb[2])));
+							.setPaint(discipline.getColor());
 					int textHeight = state.current.getFontMetrics().getAscent()
 							+ state.current.getFontMetrics().getDescent();
 					state.current.fillRect(0, 0, 0 - textHeight / 2,
@@ -119,25 +116,25 @@ public class CategoryBreakdownDocumentRenderer implements
 
 				state.save();
 				state.current.translate(textMargin, 0);
-				String categoryName = shortenIfNeeded(category.getName(),
+				String disciplineName = shortenIfNeeded(discipline.getName(),
 						state.current, columnWidth);
 
-				state.current.drawString(categoryName, 0, 0);
-				int yCategoryTranslationAmount = state.current.getFontMetrics()
+				state.current.drawString(disciplineName, 0, 0);
+				int yDisciplineTranslationAmount = state.current.getFontMetrics()
 						.getHeight();
 				state.restore();
 
 				state.restore();
-				if (currentColumn < yCategoryTranslationAmount) {
+				if (currentColumn < yDisciplineTranslationAmount) {
 					state.current.translate(columnMargin + columnWidth,
 							(int) (-1 * (height - currentColumn)));
 					currentColumn = (int) height;
 				} else {
-					currentColumn -= yCategoryTranslationAmount;
-					state.current.translate(0, yCategoryTranslationAmount);
+					currentColumn -= yDisciplineTranslationAmount;
+					state.current.translate(0, yDisciplineTranslationAmount);
 				}
 
-				for (Journal journal : this.journalsByCategory.get(category)) {
+				for (Journal journal : this.journalsByDiscipline.get(discipline)) {
 					// render journal
 					state.save();
 					state.current.translate(textMargin, 0);

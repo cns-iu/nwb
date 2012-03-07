@@ -13,7 +13,7 @@ public class NodeRenderer {
 
 	public static void renderEmpty(GraphicsState state, Node node) {
 		state.save();
-		state.setGray(.7);
+		state.current.setColor(Color.BLACK);
 
 		state.drawArc((int) node.getX(), (int) node.getY(),
 				(int) (Node.MINIMUM_SIZE / 5.0), 0, 360);
@@ -25,8 +25,7 @@ public class NodeRenderer {
 		float radius = Node.calculateRadius(total, scalingFactor);
 
 		state.save();
-		state.current.setColor(new Color(node.getRed(), node.getGreen(), node
-				.getBlue()));
+		state.current.setColor(node.getColor());
 		state.drawArc((int) node.getX(), (int) node.getY(), (int) radius, 0,
 				360);
 		state.restore();

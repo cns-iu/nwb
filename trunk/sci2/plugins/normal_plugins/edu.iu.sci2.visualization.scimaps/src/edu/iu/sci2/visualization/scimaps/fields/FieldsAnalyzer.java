@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import oim.vivo.scimapcore.journal.Category;
+import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
 import oim.vivo.scimapcore.journal.Nodes;
 
@@ -44,9 +44,9 @@ public class FieldsAnalyzer {
 		for (int nodeId : found.keySet()) {
 			String journalName = ucsdAreaLabels.get(nodeId);
 			int journalHitCount = Math.round(found.get(nodeId));
-			Category journalCategory = Nodes.getNodeByID(nodeId).getCategory();
+			Discipline journalDiscipline = Nodes.getNodeByID(nodeId).getDiscipline();
 			Journal journal = new Journal(journalName, journalHitCount,
-					journalCategory);
+					journalDiscipline);
 			mappedJournals.add(journal);
 		}
 		return mappedJournals;
@@ -56,9 +56,9 @@ public class FieldsAnalyzer {
 		Set<Journal> unmappedJournals = new HashSet<Journal>();
 		for (String journalName : unclassifiedLabelCounts.keySet()) {
 			int journalHitCount = Math.round(unclassifiedLabelCounts.get(journalName));
-			Category journalCategory = Category.NONE;
+			Discipline journalDiscipline = Discipline.NONE;
 			Journal journal = new Journal(journalName, journalHitCount,
-					journalCategory);
+					journalDiscipline);
 			unmappedJournals.add(journal);
 		}
 		return unmappedJournals;
@@ -87,9 +87,9 @@ public class FieldsAnalyzer {
 		return builder.toString().trim();
 	}
 
-	double calculateListFontSize(Collection<Category> categories) {
+	double calculateListFontSize(Collection<Discipline> disciplines) {
 		return Math.min(8, 260 / (found.size() + 0/* unfound.size() */
-				+ categories.size() * 1.5 + 1));
+				+ disciplines.size() * 1.5 + 1));
 	}
 
 }

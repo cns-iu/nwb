@@ -9,6 +9,7 @@ import java.util.Date;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
+import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
@@ -90,7 +91,7 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 				+ locatedSlug + " located.";
 		String longReport = "These " + mapOfScience.prettyCountOfMappedPublications()
 				+ " " + locatedSlug + " are associated with "
-				+ mapOfScience.prettyCountOfCategoriesUsed()
+				+ mapOfScience.prettyCountOfDisciplinesUsed()
 				+ " of 13 disciplines of science and "
 				+ mapOfScience.prettyCountOfMappedSubdiciplines()
 				+ " of 554 research specialties in"
@@ -106,7 +107,12 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 		.drawString(
 				"Copyright (c) 2008 The Regents of the University of California",
 				inch(4.8f), inch(.45f));
-		MapOfScienceRenderer.render(state, mapOfScience, scalingFactor);
+		try {
+			MapOfScienceRenderer.render(state, mapOfScience, scalingFactor);
+		} catch (MapOfScienceRenderingException e) {
+			// SOMEDAY reimplement the interface to allow an exception to be thrown.
+			e.printStackTrace();
+		}
 		
 		// Legend
 		CircleSizeLegend circleSizeLegend = new CircleSizeLegend(
@@ -119,8 +125,8 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 		state.setFontSize(Math.max(1.0, listFontSize));
 		double lineHeight = 1.5 * listFontSize;
 
-		CategoryRenderer
-				.renderMappedCategories(state, mapOfScience, lineHeight);
+		DisciplineRenderer
+				.renderMappedDisciplines(state, mapOfScience, lineHeight);
 
 		state.save();
 		state.scaleFont(1.5);
@@ -134,7 +140,7 @@ public class MapOfScienceDocumentRenderer implements RenderableVisualization {
 
 		state.setGray(.4);
 
-		CategoryRenderer.renderUnmappedCategories(state, mapOfScience,
+		DisciplineRenderer.renderUnmappedDisciplines(state, mapOfScience,
 				lineHeight);
 	}
 
