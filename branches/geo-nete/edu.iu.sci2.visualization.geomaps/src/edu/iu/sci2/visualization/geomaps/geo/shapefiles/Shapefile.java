@@ -11,6 +11,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.operation.transform.AffineTransform2D;
@@ -34,6 +35,8 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
@@ -123,7 +126,7 @@ public enum Shapefile {
 			return geometry;
 		}
 		
-		return insetForFeatureName.get(featureName).translate(geometry);
+		return insetForFeatureName.get(featureName).inset(geometry);
 	}
 	
 	public String extractFeatureName(SimpleFeature feature) {
@@ -180,17 +183,6 @@ public enum Shapefile {
 		System.out.println(bounds.getMaxY());
 		return bounds;
 	}
-	
-//	public static void main(String[] args) { // TODO
-//		try {
-//			Shapefile.WORLD.getBounds();
-//			System.out.println();
-//			Shapefile.UNITED_STATES.getBounds();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> viewOfFeatureCollection()
 			throws ShapefileFeatureRetrievalException {
@@ -201,24 +193,45 @@ public enum Shapefile {
 		}
 	}
 	
-//	public FeatureIterator<SimpleFeature> features() {
-//		try {
-//			return Iterators.transform(
-//					featureSource.getFeatures().features(),
-//					new Function<SimpleFeature, SimpleFeature>() {
-//						
-//					});
-//		} catch (IOException e) {
-//			throw new ShapefileFeatureRetrievalException("Error accessing shapefile: " + e.getMessage(), e);
-//		}
-//	}
-	
 	public static class Inset {
-		public static final Inset ALASKA = Inset.inset(
+		private static final Geometry EMPTY_GEOMETRY;
+		static {
+			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+			com.vividsolutions.jts.geom.Point pointAtZero = geometryFactory.createPoint(new Coordinate(0.0, 0.0));
+			com.vividsolutions.jts.geom.Point pointAtOne = geometryFactory.createPoint(new Coordinate(1.0, 0.0));
+			EMPTY_GEOMETRY = pointAtZero.intersection(pointAtOne);
+		}
+		
+		private static final Geometry WEST_OF_ZERO_LONGITUDE_POLYGON;
+		static {
+			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+			WEST_OF_ZERO_LONGITUDE_POLYGON = geometryFactory.createPolygon(
+					geometryFactory.createLinearRing(new Coordinate[] {
+							new Coordinate(179.999, 89.999),
+							new Coordinate(179.999, -89.999),
+							new Coordinate(90, -89.999),
+							new Coordinate(90, 89.999),
+							new Coordinate(179.999, 89.999)
+					}),
+					new LinearRing[]{});
+		}
+		
+		
+		/**
+		 * Does {@code geometry} intersect WEST_OF_ZERO_LONGITUDE_POLYGON?
+		 * 
+		 * TODO Will break easily and spectacularly..
+		 */
+		private static boolean containsLargePositiveLongitudes(Geometry geometry) {
+			return WEST_OF_ZERO_LONGITUDE_POLYGON.intersects(geometry);
+		}
+
+		
+		public static final Inset ALASKA = Inset.of(
 				"Alaska", 0.3, new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
-		public static final Inset HAWAII = Inset.inset(
+		public static final Inset HAWAII = Inset.of(
 				"Hawaii", 1, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
-		public static final Inset PUERTO_RICO = Inset.inset(
+		public static final Inset PUERTO_RICO = Inset.of(
 				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
 		
 		private final String featureName;
@@ -229,7 +242,7 @@ public enum Shapefile {
 			this.transform = transform;
 			
 		}
-		public static Inset inset(
+		public static Inset of(
 				String featureName, double scaling, Coordinate anchor, Coordinate dest) {
 			AffineTransform preScale = AffineTransform.getTranslateInstance(-anchor.x, -anchor.y);
 			AffineTransform scale = AffineTransform.getScaleInstance(scaling, scaling);
@@ -244,7 +257,11 @@ public enum Shapefile {
 			return featureName;
 		}
 		
-		public Geometry translate(Geometry geometry) throws MismatchedDimensionException, TransformException {
+		public Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
+			if (containsLargePositiveLongitudes(geometry)) { // TODO This is an awful hack :(
+				return EMPTY_GEOMETRY;
+			}
+			
 			return JTS.transform(geometry, transform);
 		}
 		
