@@ -14,6 +14,7 @@ import org.cishell.utilities.color.ColorRegistry;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.common.CategoryBreakdown;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
@@ -26,6 +27,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	private DoubleDimension size;
 	private String areaColumn;
 	private String categoryColumn;
+	private CategoryBreakdown categoryBreakdown;
 	
 	
 	public WebTemporalBarGraphPages(CSVWriter csvWriter, List<Record> records,
@@ -40,33 +42,59 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
+		this.categoryBreakdown = new CategoryBreakdown(records, colorRegistry, 4, 800, 20);
 	}
 
 	private Map<Integer, List<PageElement>> getPageElementsForSomePages() {
 		Map<Integer, List<PageElement>> pageElementsSomePages = new TreeMap<Integer, List<PageElement>>();
 		String visualizationDefinitions = this.visualizations.renderDefinitionsPostscript();
 		
-		for(int ii = 0; ii < numberOfPages(); ii++){
+		int nextPage = 0;
+		for(int ii = 0; ii < this.visualizations.numberOfVisualizations(); ii++){
 			String visualization = this.visualizations.renderVisualizationPostscript(ii);
 			PageElement visualizationElement = new PageElement("visualization", 100.0, 200.0, visualization, visualizationDefinitions);
 			
-			List<PageElement> pageElements = pageElementsSomePages.get(ii);			
-			if (!pageElementsSomePages.containsKey(ii)){
+			List<PageElement> pageElements = pageElementsSomePages.get(nextPage);			
+			if (!pageElementsSomePages.containsKey(nextPage)){
 				pageElements = new ArrayList<PageElement>();
 			}
 			
 			pageElements.add(visualizationElement);
+			pageElements.add(getLegendPageElement());
+			pageElements.add(getAreaLegendElement());
 			
-			pageElementsSomePages.put(ii, pageElements);
+			pageElementsSomePages.put(nextPage, pageElements);
+			nextPage++;
 		}
+		
+		String categoryBreakdownDefinitions = CategoryBreakdown.renderPostscriptDefinitions();
+		for (int ii = 0; ii < this.categoryBreakdown.numberOfPages(); ii++){
+			
+
+			List<PageElement> pageElements = pageElementsSomePages.get(nextPage);
+
+			if (!pageElementsSomePages.containsKey(nextPage)) {
+				pageElements = new ArrayList<PageElement>();
+			}
+
+			double categoryBreakdownLeft = 100.0;
+			double categoryBreakdownTop = 900;
+			String categoryBreakdownPostscript = this.categoryBreakdown.renderPostscript(ii);
+			
+			PageElement categoryBreakdownElement = new PageElement("categoryBreakdown",
+					categoryBreakdownLeft, categoryBreakdownTop, categoryBreakdownPostscript,
+					categoryBreakdownDefinitions);
+			pageElements.add(categoryBreakdownElement);
+			pageElementsSomePages.put(nextPage, pageElements);
+			nextPage++;
+		}
+
 		
 		return pageElementsSomePages;
 	}
 
 	private List<PageElement> getPageElementsForAllPages() {
 		List<PageElement> pageElements = new ArrayList<PageElement>();
-		pageElements.add(getLegendPageElement());
-		pageElements.add(getAreaLegendElement());
 		pageElements.add(getFooterPageElement());
 		return pageElements;
 	}
@@ -139,7 +167,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 
 	@Override
 	public int numberOfPages() {
-		return this.visualizations.numberOfVisualizations();
+		return this.visualizations.numberOfVisualizations() + this.categoryBreakdown.numberOfPages();
 	}
 
 	@Override
