@@ -131,7 +131,6 @@ public class MapOfScienceRenderer {
 	private static void renderMapNodesAndEdges(GraphicsState state,
 			MapOfScience mapOfScience, float scalingFactor) {
 
-		Set<Node> nodes = MapOfScience.getNodes();
 		Set<Edge> edges = MapOfScience.getEdges();
 		Map<Integer, Float> mapping = mapOfScience.getIdWeightMapping();
 		state.save();
@@ -140,12 +139,6 @@ public class MapOfScienceRenderer {
 		state.setGray(.7);
 
 		EdgeRenderer.renderEdges(state, edges);
-
-		for (Node node : nodes) {
-			if (!mapping.containsKey(Integer.valueOf(node.getId()))) {
-				NodeRenderer.renderEmpty(state, node);
-			}
-		}
 
 		for (Integer id : mapOfScience.getMappedIdsByWeight()) {
 
