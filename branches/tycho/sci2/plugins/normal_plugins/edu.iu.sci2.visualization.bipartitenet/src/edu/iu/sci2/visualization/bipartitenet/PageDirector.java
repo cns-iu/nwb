@@ -3,8 +3,9 @@ package edu.iu.sci2.visualization.bipartitenet;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
@@ -14,6 +15,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.bipartitenet.component.CircleRadiusLegend;
+import edu.iu.sci2.visualization.bipartitenet.component.ComplexLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.EdgeWeightLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
@@ -32,7 +34,7 @@ import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScal
 public class PageDirector implements Paintable {
 	public static enum Layout {
 		PRINT(792, 612,
-				new Point2D(792 / 2, 48), // title center of baseline
+				new Point2D(18, 18), // title top-left corner
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
 				12),
@@ -47,13 +49,13 @@ public class PageDirector implements Paintable {
 		private final LineSegment2D leftLine;
 		private final LineSegment2D rightLine;
 		private final int maxNodeRadius;
-		private final Point2D titlePosition;
+		private final Point2D headerPosition;
 
-		private Layout(int width, int height, Point2D titlePosition, 
+		private Layout(int width, int height, Point2D headerPosition, 
 				LineSegment2D leftLine, LineSegment2D rightLine, int maxNodeRadius) {
 			this.width = width;
 			this.height = height;
-			this.titlePosition = titlePosition;
+			this.headerPosition = headerPosition;
 			this.leftLine = leftLine;
 			this.rightLine = rightLine;
 			this.maxNodeRadius = maxNodeRadius;
@@ -83,8 +85,8 @@ public class PageDirector implements Paintable {
 			return rightLine.getFirstPoint().translate(- maxNodeRadius, -50);
 		}
 		
-		Point2D getTitlePosition() {
-			return titlePosition;
+		Point2D getHeaderPosition() {
+			return headerPosition;
 		}
 
 		Point2D getCircleLegendPosition() {
@@ -141,13 +143,16 @@ public class PageDirector implements Paintable {
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), nodeCoding, edgeCoding);
 		painter.add(renderer);
 		
-		// The main title
-		Point2D titleBaseline = layout.getTitlePosition();
+		// The main title, and headers
+		Point2D headerPosition = layout.getHeaderPosition();
 		// Position's null if there should be no title 
-		if (titleBaseline != null) {
+		if (headerPosition != null) {
 			painter.add(
-					new SimpleLabelPainter(titleBaseline, XAlignment.CENTER, YAlignment.BASELINE,
-							TITLE, TITLE_FONT, null));
+					new ComplexLabelPainter.Builder(headerPosition, BASIC_FONT, Color.BLACK)
+					.addLine(TITLE, TITLE_FONT)
+					.addLine("Generated from Cornell NSF Data")
+					.addLine(getTimeStamp())
+					.build());
 		}
 		
 		// The titles of the two columns
@@ -159,6 +164,11 @@ public class PageDirector implements Paintable {
 		// The footer
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
 				XAlignment.CENTER, YAlignment.BASELINE, footer, BASIC_FONT, Color.gray));
+	}
+
+	private String getTimeStamp() {
+		// MMMMMdyyyy, hmmaazzz!  And you?
+		return new SimpleDateFormat("MMMMMMMMMMMMMMMMM d, yyyy | h:mm aa zzz").format(new Date());
 	}
 
 	/**
@@ -173,8 +183,11 @@ public class PageDirector implements Paintable {
 		
 		Font thisFont = new Font(JAVA_FALLBACK_FONT, Font.PLAIN, 12);
 		for (String family : fontFamiliesToTry) {
+			System.out.println("Trying " + family);
 			thisFont = new Font(family, Font.PLAIN, size);
 			if (! thisFont.getFamily().equals(JAVA_FALLBACK_FONT)) {
+				System.out.println(String.format("Yes, deciding on %s (started with %s)", thisFont.getFamily(),
+						family));
 				// found one that the system has!
 				break;
 			}
