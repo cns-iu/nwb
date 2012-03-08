@@ -9,7 +9,7 @@ public class CopyrightInfo {
 	String copyrightText;
 			
 	public CopyrightInfo(){
-		copyrightText = "© 2008  The Regents of the University of California and SciTech Strategies.\nMap updated  by SciTech Strategies, OST, and CNS in 2011.";
+		this.copyrightText = "© 2008  The Regents of the University of California and SciTech Strategies.\nMap updated  by SciTech Strategies, OST, and CNS in 2011.";
 	}
 	
 	public void render(GraphicsState state, float topBound, float pageWidth){
@@ -20,7 +20,7 @@ public class CopyrightInfo {
 		double copyrightFontSize = 10;
 		state.current.setColor(copyrightColor);
 		state.setFontSize(copyrightFontSize);
-		String[] copyrightLines = copyrightText.split("\n");
+		String[] copyrightLines = this.copyrightText.split("\n");
 		for (String line : copyrightLines) {
 			
 			state.save();

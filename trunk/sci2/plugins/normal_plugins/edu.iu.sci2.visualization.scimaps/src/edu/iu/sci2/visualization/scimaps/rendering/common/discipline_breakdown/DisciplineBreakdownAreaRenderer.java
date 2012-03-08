@@ -2,7 +2,6 @@ package edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown;
 
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;

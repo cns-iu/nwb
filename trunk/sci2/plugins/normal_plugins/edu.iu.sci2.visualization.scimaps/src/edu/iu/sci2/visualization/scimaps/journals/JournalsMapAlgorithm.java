@@ -33,7 +33,6 @@ import com.google.common.collect.ImmutableSet;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages.DisciplineBreakdownCreationException;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
@@ -72,6 +71,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		Map<String, Integer> journalNameAndHitCount = getJournalNameAndHitCount(
 				this.table, this.journalColumnName, this.logger);
 		RenderableVisualization visualization = null;
+		DisciplineBreakdownPages disciplineBreakdownPages = null;
 
 		MapOfScience mapOfScience = new MapOfScience(journalNameAndHitCount);
 
@@ -88,6 +88,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 			Print2012 print2012 = new Print2012(mapOfScience,
 					this.dataDisplayName, dimensions, this.scalingFactor);
 			visualization = print2012.getVisualization();
+			disciplineBreakdownPages = new DisciplineBreakdownPages(2,
+					mapOfScience, this.dataDisplayName, dimensions);
 		}
 		if (this.showWindow) {
 			VisualizationRunner visualizationRunner = new VisualizationRunner(
@@ -97,7 +99,9 @@ public class JournalsMapAlgorithm implements Algorithm {
 			visualizationRunner.setUp();
 			visualizationRunner.run();
 		}
-		return datafy(mapOfScience, visualization, this.parentData, this.logger);
+
+		return datafy(mapOfScience, visualization, disciplineBreakdownPages,
+				this.parentData, this.logger);
 	}
 
 	private static Map<String, Integer> getJournalNameAndHitCount(
@@ -157,8 +161,9 @@ public class JournalsMapAlgorithm implements Algorithm {
 		return Math.min(8, 260 / (numOfJournals + discipline.size() * 1.5 + 1));
 	}
 
-	private Data[] datafy(MapOfScience mapOfScience,
-			RenderableVisualization visualization, Data parentData,
+	private static Data[] datafy(MapOfScience mapOfScience,
+			RenderableVisualization visualization,
+			DisciplineBreakdownPages disciplineBreakdownPages, Data parentData,
 			LogService logger) {
 
 		Set<Journal> foundJournals = mapOfScience.getMappedJournals();
@@ -172,8 +177,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 		Data unfoundData = datafy(unfoundTable, "Journals not located",
 				parentData);
 		try {
-			Data visualizationData = createData(visualization, mapOfScience,
-					parentData);
+			Data visualizationData = createData(visualization,
+					disciplineBreakdownPages, parentData);
 			return new Data[] { foundData, unfoundData, visualizationData };
 		} catch (DataCreationException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage());
@@ -182,13 +187,13 @@ public class JournalsMapAlgorithm implements Algorithm {
 		return new Data[] { foundData, unfoundData };
 	}
 
-	private Data createData(RenderableVisualization visualization,
-			MapOfScience mapOfScience, Data parentData)
+	private static Data createData(RenderableVisualization visualization,
+			DisciplineBreakdownPages disciplineBreakdownPages, Data parentData)
 			throws DataCreationException {
 		try {
 			File outFile = File.createTempFile("Visualization-", ".ps");
 			OutputStream out = new FileOutputStream(outFile);
-			writePostscript(visualization, mapOfScience, out);
+			writePostscript(visualization, disciplineBreakdownPages, out);
 			out.close();
 
 			Data outData = new BasicData(outFile, "file:text/ps");
@@ -204,8 +209,9 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 	}
 
-	private void writePostscript(RenderableVisualization visualization,
-			MapOfScience mapOfScience, OutputStream out) throws IOException {
+	private static void writePostscript(RenderableVisualization visualization,
+			DisciplineBreakdownPages disciplineBreakdownPages, OutputStream out)
+			throws IOException {
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
 		g2d.setupDocument(out,
@@ -220,19 +226,17 @@ public class JournalsMapAlgorithm implements Algorithm {
 						.intValue());
 		visualization.render(new GraphicsState(g2d),
 				visualization.getDimension());
-		if (this.webVersion == false) {
-			addDisciplineBreakdownPages(mapOfScience, out, g2d);
-		}
+
+		addDisciplineBreakdownPages(disciplineBreakdownPages, out, g2d);
 		g2d.finish();
 	}
 
-	private void addDisciplineBreakdownPages(MapOfScience mapOfScience,
+	private static void addDisciplineBreakdownPages(
+			DisciplineBreakdownPages disciplineBreakdownPages,
 			OutputStream out, PSDocumentGraphics2D g2d) throws IOException {
-		Dimension dimensions = new Dimension((int) inch(11f), (int) inch(8.5f));
-		DisciplineBreakdownPages disciplineBreakdownPages;
-
-		disciplineBreakdownPages = new DisciplineBreakdownPages(2,
-				mapOfScience, this.dataDisplayName, dimensions);
+		if (disciplineBreakdownPages == null) {
+			return;
+		}
 
 		for (int pageNumber = 0; pageNumber < disciplineBreakdownPages
 				.numberOfPages(); pageNumber++) {
@@ -262,9 +266,6 @@ public class JournalsMapAlgorithm implements Algorithm {
 	}
 
 	public static class DataCreationException extends Exception {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 3544771808601245002L;
 
 		public DataCreationException(String message) {
