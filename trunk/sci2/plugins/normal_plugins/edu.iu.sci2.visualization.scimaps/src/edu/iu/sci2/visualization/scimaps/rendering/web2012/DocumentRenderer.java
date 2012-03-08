@@ -8,7 +8,6 @@ import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.common.CircleSizeLegend;
 import edu.iu.sci2.visualization.scimaps.rendering.common.CopyrightInfo;
 import edu.iu.sci2.visualization.scimaps.rendering.common.Footer;
-import edu.iu.sci2.visualization.scimaps.rendering.common.HowToArea;
 import edu.iu.sci2.visualization.scimaps.rendering.common.PageLegend;
 import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer;
 import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer.MapOfScienceRenderingException;
@@ -63,8 +62,7 @@ public class DocumentRenderer implements RenderableVisualization {
 		}
 		state.restore();
 
-		CopyrightInfo copyrightInfo = new CopyrightInfo();
-		copyrightInfo.render(state, 550.0f, (float) getDimension().getWidth());
+		CopyrightInfo.renderAbout(state, 550.0f, (float) getDimension().getWidth() / 2);
 		
 		Footer.render(state, 400.0f, 940.0f);
 		

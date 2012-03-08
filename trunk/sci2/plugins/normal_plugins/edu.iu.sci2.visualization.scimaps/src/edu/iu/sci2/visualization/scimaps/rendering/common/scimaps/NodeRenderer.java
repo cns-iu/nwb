@@ -11,6 +11,14 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
  */
 public class NodeRenderer {
 
+	/*
+	 * FIXME XXX TODO This should be removed. It's only effect is drawing a
+	 * circle with no width or height sinc the (int) of 1 / 5 = 0;
+	 * 
+	 * It is used in only one place, but I don't want it's removal to be part of
+	 * my clean up commit.
+	 */
+	@Deprecated
 	public static void renderEmpty(GraphicsState state, Node node) {
 		state.save();
 		state.current.setColor(Color.BLACK);
@@ -20,9 +28,13 @@ public class NodeRenderer {
 		state.restore();
 	}
 
-	public static void render(GraphicsState state, Node node, float total,
+	/**
+	 * Draw a {@link Node} sized by the {@code scalingFactor} and {@code weight}
+	 * of the {@link GraphicsState}.
+	 */
+	public static void render(GraphicsState state, Node node, float weight,
 			float scalingFactor) {
-		float radius = Node.calculateRadius(total, scalingFactor);
+		float radius = Node.calculateRadius(weight, scalingFactor);
 
 		state.save();
 		state.current.setColor(node.getColor());
@@ -32,12 +44,9 @@ public class NodeRenderer {
 	}
 
 	/**
-	 * This supports only the old print2008, which only exists to support the USDA field rendering.
-	 *  TODO Update the USDA Field renderer.  I can't because I have no data to test it with.
-	 * @param state
-	 * @param x
-	 * @param y
-	 * @param radius
+	 * This supports only the old print2008, which only exists to support the
+	 * USDA field rendering. SOMEDAY Update the USDA Field renderer. I can't
+	 * because I have no data to test it with.
 	 */
 	@Deprecated
 	public static void render(GraphicsState state, double x, double y,

@@ -10,6 +10,11 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
  * 
  */
 public class EdgeRenderer {
+	/**
+	 * Render the given {@link Edge}s on the {@code state}
+	 * @param state
+	 * @param edges
+	 */
 	public static void renderEdges(GraphicsState state, Set<Edge> edges) {
 
 		for (Edge edge : edges) {

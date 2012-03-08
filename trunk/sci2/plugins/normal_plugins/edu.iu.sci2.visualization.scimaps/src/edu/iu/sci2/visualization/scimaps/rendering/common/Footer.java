@@ -14,6 +14,14 @@ public class Footer {
 
 	}
 
+	/**
+	 * Render the footer on the given {@code state} at the {@code leftBoundary} and
+	 * {@code} topBoundary}
+	 * 
+	 * @param state
+	 * @param leftBoundary
+	 * @param topBoundary
+	 */
 	public static void render(GraphicsState state, float leftBoundary, float topBoundary) {
 		state.save();
 
@@ -24,6 +32,12 @@ public class Footer {
 		state.restore();
 	}
 	
+	/**
+	 * This will render the footer text as centered on a point at {@code x},{@code y}.
+	 * @param state
+	 * @param x
+	 * @param y
+	 */
 	public static void  renderAbout(GraphicsState state, float x, float y) {
 		state.save();
 

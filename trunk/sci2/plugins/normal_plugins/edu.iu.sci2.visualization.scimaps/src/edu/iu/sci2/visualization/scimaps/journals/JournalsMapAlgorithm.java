@@ -7,18 +7,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
@@ -36,11 +30,10 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.DisciplineBreakdownDocumentRenderer;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.DisciplineBreakdownDocumentRenderer.JournalBreakDownArea;
+import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages;
+import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages.DisciplineBreakdownCreationException;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
@@ -130,7 +123,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 			if (row.canGetString(myJournalColumnName)) {
 				String journalName = row.getString(myJournalColumnName);
 				if (journalName == null) {
-					logger.log(LogService.LOG_WARNING, "A row representing journal names was null and was ignored.");
+					logger.log(LogService.LOG_WARNING,
+							"A row representing journal names was null and was ignored.");
 					continue;
 				}
 				incrementHitCount(journalCounts, journalName);
@@ -158,8 +152,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 	}
 
-	public static double calculateListFontSize(Collection<Discipline> discipline,
-			int numOfJournals) {
+	public static double calculateListFontSize(
+			Collection<Discipline> discipline, int numOfJournals) {
 		return Math.min(8, 260 / (numOfJournals + discipline.size() * 1.5 + 1));
 	}
 
@@ -227,160 +221,44 @@ public class JournalsMapAlgorithm implements Algorithm {
 		visualization.render(new GraphicsState(g2d),
 				visualization.getDimension());
 		if (this.webVersion == false) {
-			addDisciplineBreakdownPages(visualization, mapOfScience, out, g2d);
+			addDisciplineBreakdownPages(mapOfScience, out, g2d);
 		}
 		g2d.finish();
 	}
 
-	private void addDisciplineBreakdownPages(
-			RenderableVisualization visualization, MapOfScience mapOfScience,
+	private void addDisciplineBreakdownPages(MapOfScience mapOfScience,
 			OutputStream out, PSDocumentGraphics2D g2d) throws IOException {
-		try {
-			List<DisciplineBreakdownDocumentRenderer> disciplineBreakdowns = getDisciplineBreakdowns(mapOfScience);
-			for (DisciplineBreakdownDocumentRenderer disciplineBreakdown : disciplineBreakdowns) {
-				g2d.nextPage();
-				g2d.setGraphicContext(new GraphicContext());
-				g2d.setupDocument(
-						out,
-						Double.valueOf(
-								disciplineBreakdown.getDimension().getWidth())
-								.intValue(),
-						Double.valueOf(
-								disciplineBreakdown.getDimension()
-										.getHeight()).intValue());
-				g2d.setClip(
-						0,
-						0,
-						Double.valueOf(
-								disciplineBreakdown.getDimension().getWidth())
-								.intValue(),
-						Double.valueOf(
-								disciplineBreakdown.getDimension()
-										.getHeight()).intValue());
-				disciplineBreakdown.render(new GraphicsState(g2d),
-						visualization.getDimension());
-			}
-		} catch (DisciplineBreakdownCreationException e) {
-			this.logger
-					.log(LogService.LOG_ERROR,
-							"There was a problem creating the detailed summary of disciplines and their journals.  The output postscript file may have errors."
-									+ System.getProperty("line.separator")
-									+ e.getMessage(), e);
-		}
-	}
+		Dimension dimensions = new Dimension((int) inch(11f), (int) inch(8.5f));
+		DisciplineBreakdownPages disciplineBreakdownPages;
 
-	public static class DisciplineBreakdownCreationException extends Exception {
-		private static final long serialVersionUID = -8717066429217445908L;
+		disciplineBreakdownPages = new DisciplineBreakdownPages(2,
+				mapOfScience, this.dataDisplayName, dimensions);
 
-		public DisciplineBreakdownCreationException(String message) {
-			super(message);
-		}
-	}
+		for (int pageNumber = 0; pageNumber < disciplineBreakdownPages
+				.numberOfPages(); pageNumber++) {
 
-	private List<DisciplineBreakdownDocumentRenderer> getDisciplineBreakdowns(
-			MapOfScience mapOfScience)
-			throws DisciplineBreakdownCreationException {
-		/*
-		 * HACK This algorithm should be refactored to more closely resemble TBG.
-		 * There should be a document with some idea of a 'page' like structure so 
-		 * elements common to each 'page' could be shared.  The text being rendered as 
-		 * shapes here also makes the postscript file much larger than is needed.
-		 */
-
-		int columnsPerPage = JournalBreakDownArea.columnsPerPage;
-		float columnHeight = JournalBreakDownArea.defaultColumnHeight;
-		int disciplineTextSize = JournalBreakDownArea.defaultDisciplineSpace;
-		int journalTextSize = JournalBreakDownArea.defaultJournalSpace;
-
-		SortedMap<Discipline, SortedSet<Journal>> allDisciplinesAndTheirJournal = mapOfScience
-				.getMappedJournalsByDiscipline();
-
-		allDisciplinesAndTheirJournal.putAll(mapOfScience.getUnmappedJournalsByDiscipline());
-
-		List<SortedMap<Discipline, SortedSet<Journal>>> pages = new ArrayList<SortedMap<Discipline, SortedSet<Journal>>>();
-		SortedMap<Discipline, SortedSet<Journal>> currentPage = new TreeMap<Discipline, SortedSet<Journal>>();
-
-		while (allDisciplinesAndTheirJournal.size() > 0) {
-
-			float spaceRemaining = columnHeight * columnsPerPage;
-
-			if (spaceRemaining < disciplineTextSize + journalTextSize) {
-				throw new DisciplineBreakdownCreationException(
-						"There is not enough room for a discipline and a journal on a page.");
-			}
-
-			// Done to avoid 'java.util.ConcurrentModificationException'
-			for (Discipline discipline : new TreeSet<Discipline>(allDisciplinesAndTheirJournal.keySet())) {
-				SortedSet<Journal> journals = allDisciplinesAndTheirJournal
-						.remove(discipline);
-				int disciplineBreakdownSpace = disciplineTextSize
-						+ (journalTextSize * journals.size());
-
-				if (spaceRemaining < disciplineTextSize + journalTextSize) {
-					if (currentPage.size() < 1) {
-						throw new DisciplineBreakdownCreationException(
-								"There is not enough room on the empty page to fit even a single a discipline label and a journal label.");
-					}
-					pages.add(ImmutableSortedMap.copyOf(currentPage));
-					currentPage = new TreeMap<Discipline, SortedSet<Journal>>();
-
-					break;
-				} else if (spaceRemaining > disciplineBreakdownSpace) {
-					spaceRemaining -= disciplineBreakdownSpace;
-					currentPage.put(discipline, journals);
-				} else {
-					SortedSet<Journal> journalsToInclude = new TreeSet<Journal>();
-					SortedSet<Journal> journalsNotToInclude = new TreeSet<Journal>();
-					spaceRemaining -= disciplineTextSize;
-					for (Journal journal : journals) {
-						if (spaceRemaining > journalTextSize) {
-							spaceRemaining -= journalTextSize;
-							journalsToInclude.add(journal);
-						} else {
-							journalsNotToInclude.add(journal);
-						}
-					}
-
-					if (journalsToInclude.size() < 1) {
-						// This should have been caught by the first branch.
-						throw new DisciplineBreakdownCreationException(
-								"There are no journals to include on the page.");
-					}
-
-					if (journalsNotToInclude.size() < 1) {
-						// This should have been caught by the second branch.
-						throw new DisciplineBreakdownCreationException(
-								"If there are no extra journals, the page should have been added already.");
-					}
-
-					currentPage.put(discipline, journalsToInclude);
-					allDisciplinesAndTheirJournal.put(discipline, journalsNotToInclude);
-					
-					pages.add(ImmutableSortedMap.copyOf(currentPage));
-					currentPage = new TreeMap<Discipline, SortedSet<Journal>>();
-
-					break;
-				}
-			}
+			g2d.nextPage();
+			g2d.setGraphicContext(new GraphicContext());
+			g2d.setupDocument(
+					out,
+					Double.valueOf(
+							disciplineBreakdownPages.getDimension().getWidth())
+							.intValue(),
+					Double.valueOf(
+							disciplineBreakdownPages.getDimension().getHeight())
+							.intValue());
+			g2d.setClip(
+					0,
+					0,
+					Double.valueOf(
+							disciplineBreakdownPages.getDimension().getWidth())
+							.intValue(),
+					Double.valueOf(
+							disciplineBreakdownPages.getDimension().getHeight())
+							.intValue());
+			disciplineBreakdownPages.renderPage(pageNumber, g2d);
 		}
 
-		if (currentPage.size() > 0) {
-			pages.add(currentPage);
-		}
-
-		List<DisciplineBreakdownDocumentRenderer> disciplineBreakdowns = new ArrayList<DisciplineBreakdownDocumentRenderer>();
-		for (SortedMap<Discipline, SortedSet<Journal>> page : pages) {
-			/*
-			 * HACK obviously I shouldn't do this but this idea is so terrible
-			 * to begin with there is no point in trying to make it cleaner.
-			 * Once this hack is gone, everything can be made 'static' again.
-			 */
-			Dimension dimensions = new Dimension((int) inch(11f),
-					(int) inch(8.5f));
-			disciplineBreakdowns.add(new DisciplineBreakdownDocumentRenderer(page,
-					this.dataDisplayName, dimensions, mapOfScience));
-		}
-		return disciplineBreakdowns;
 	}
 
 	public static class DataCreationException extends Exception {

@@ -65,14 +65,12 @@ public class DocumentRenderer implements RenderableVisualization {
 		}
 		state.restore();
 		
-		CopyrightInfo copyrightInfo = new CopyrightInfo();
-		copyrightInfo.render(state, inch(5.5f), (float)size.getWidth());
+		CopyrightInfo.renderAbout(state, inch(5.5f), (float)size.getWidth() / 2);
 		
 		Header header = new Header(title(), this.generatedFrom, this.mapOfScience);
 		header.render(state, inch(0.5f), inch(0.5f));
 		
-		HowToArea howto = new HowToArea();
-		howto.render(state, inch(5.5f), inch(6.3f));
+		HowToArea.render(state, inch(5.5f), inch(6.3f));
 
 		Footer.renderAbout(state, (float) size.getWidth() / 2, inch(8.0f));
 		

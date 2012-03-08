@@ -27,7 +27,7 @@ public class Web2012 {
 	}
 	
 	public RenderableVisualization getVisualization() {
-		return visualization;
+		return this.visualization;
 	}
 
 }
