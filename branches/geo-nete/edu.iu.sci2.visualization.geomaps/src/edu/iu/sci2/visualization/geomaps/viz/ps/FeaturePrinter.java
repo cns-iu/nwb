@@ -225,11 +225,16 @@ public class FeaturePrinter {
 				Points.distanceEquivalenceWithTolerance(
 						INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD)); 
 		
-		out.write("\n" + "closepath" + "\n");
+		List<List<Point2D.Double>> pathsExceptLast = paths.subList(0, paths.size() - 1);
+		List<Point2D.Double> lastPath = paths.get(paths.size() - 1);
 		
-		for (List<Point2D.Double> path : paths) {
+		for (List<Point2D.Double> path : pathsExceptLast) {
 			out.write(PSUtility.path(path) + " stroke ");
 		}
+		
+		out.write(PSUtility.path(lastPath));
+
+		out.write("\n" + " closepath " + "\n");
 		
 		writeInkingCommands(out, featureColorMap, name);
 	}

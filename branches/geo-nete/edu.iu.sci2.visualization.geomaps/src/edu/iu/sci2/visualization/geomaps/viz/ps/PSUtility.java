@@ -53,14 +53,12 @@ public class PSUtility {
 	
 	public static String path(Point2D.Double first, Point2D.Double... rest) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("newpath ");
+		builder.append(" newpath ");
 		builder.append(String.format("%s moveto ", xy(first)));
 		
 		for (Point2D.Double point : rest) {
 			builder.append(String.format("%s lineto ", xy(point)));
 		}
-		
-		builder.append("closepath ");
 		
 		return builder.toString();		
 	}
