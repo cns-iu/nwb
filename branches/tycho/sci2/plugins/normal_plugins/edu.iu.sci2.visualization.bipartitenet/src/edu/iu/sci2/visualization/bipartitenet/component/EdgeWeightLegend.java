@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.bipartitenet.component;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
@@ -14,32 +15,32 @@ import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlig
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
 public class EdgeWeightLegend implements Paintable {
-	private final Point2D topCenter;
-	private final String title;
+	private final Point2D topLeft;
 	private final Scale<Double, Double> coding;
 	private final ImmutableList<Double> labeledValues;
-	private final SimpleLabelPainter titlePainter;
+	private final Paintable titlePainter;
 	
-	private static final int LEGEND_Y_OFFSET = 25; // from top of label to top of arrows
+	private static final int LEGEND_Y_OFFSET = 42; // from top of label to top of arrows
 	private static final double ARROW_LENGTH = 40;
 	private static final int BETWEEN_ARROW_Y_OFFSET = 10;
 	private static final int LABEL_X_OFFSET = 10;
 	
-	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD);
+	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD, 14);
 	private static final Font LEGEND_FONT = PageDirector.BASIC_FONT.deriveFont(Font.PLAIN, 10);
 	
 
-	public EdgeWeightLegend(Point2D topCenter, String title,
+	public EdgeWeightLegend(Point2D topLeft, ImmutableList<String> headers,
 			Scale<Double,Double> coding,
 			ImmutableList<Double> labeledValues) {
-		this.topCenter = topCenter;
-		this.title = title;
+		this.topLeft = topLeft;
 		this.coding = coding;
 		this.labeledValues = labeledValues;
 		
-		this.titlePainter = new SimpleLabelPainter(this.topCenter, 
-				XAlignment.CENTER, YAlignment.ASCENT, 
-				this.title, TITLE_FONT, null);
+		this.titlePainter = new ComplexLabelPainter.Builder(topLeft, LEGEND_FONT, Color.black)
+			.addLine(headers.get(0), TITLE_FONT)
+			.addLine(headers.get(1))
+			.addLine(headers.get(2), LEGEND_FONT, Color.gray)
+			.build();
 	}
 
 	@Override
@@ -50,8 +51,8 @@ public class EdgeWeightLegend implements Paintable {
 
 	private void paintArrows(Graphics2D gForLabels) {
 		Graphics2D g = (Graphics2D) gForLabels.create();
-		Point2D arrowsTopCenter = topCenter.translate(0, LEGEND_Y_OFFSET);
-		Point2D arrowStart = arrowsTopCenter.translate(-ARROW_LENGTH/2, 0);
+		Point2D arrowsTopLeft = topLeft.translate(0, LEGEND_Y_OFFSET);
+		Point2D arrowStart = arrowsTopLeft;
 		for (Double value : labeledValues.reverse()) {
 			// loop invariant: arrowStart is the start of the current arrow
 			Point2D arrowEnd = arrowStart.translate(ARROW_LENGTH, 0);

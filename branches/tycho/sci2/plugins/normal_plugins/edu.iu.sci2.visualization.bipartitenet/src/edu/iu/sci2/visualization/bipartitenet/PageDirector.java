@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
@@ -90,14 +91,6 @@ public class PageDirector implements Paintable {
 			return headerPosition;
 		}
 
-		Point2D getCircleLegendPosition() {
-			return leftLine.getLastPoint().translate(-50, 50);
-		}
-		
-		Point2D getEdgeLegendPosition() {
-			return rightLine.getLastPoint().translate(50, 50);
-		}
-		
 		Point2D getFooterPosition() {
 			Point2D thePoint = new Point2D(width / 2.0, height - 20);
 			return thePoint;
@@ -109,6 +102,37 @@ public class PageDirector implements Paintable {
 
 		public int getMaxEdgeThickness() {
 			return maxEdgeThickness;
+		}
+		
+		public Point2D getSortLegendPosition() {
+			return getLegendPositions(4).get(0);
+		}
+		
+		public Point2D getCircleLegendPosition() {
+			return getLegendPositions(4).get(1);
+		}
+		
+		public Point2D getEdgeLegendPosition() {
+			return getLegendPositions(4).get(2);
+		}
+		
+		public Point2D getHowToReadLegendPosition() {
+			return getLegendPositions(4).get(3);
+		}
+		
+		public ImmutableList<Point2D> getLegendPositions(int numLegends) {
+			List<Point2D> points = Lists.newArrayList();
+			double denominator = Math.max(1, numLegends - 1);
+			
+			LineSegment2D legendLine = new LineSegment2D(
+					18, height - 120,
+					width / 2.0, height - 120);
+			
+			for (int i = 0; i < numLegends; i++) {
+				points.add(legendLine.getPoint(i / denominator));
+			}
+			
+			return ImmutableList.copyOf(points);
 		}
 	}
 	
@@ -131,6 +155,9 @@ public class PageDirector implements Paintable {
 		this.layout = layout;
 		this.dataModel = dataModel;
 
+		
+		painter.add(makeSortingLegend());
+		
 		// Make codings for the nodes and edges (size and color)
 		// If the nodes/edges are not weighted, it makes a "constant" coding.
 		// Only put in a legend if the nodes/edges are weighted.
@@ -171,6 +198,21 @@ public class PageDirector implements Paintable {
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
 				XAlignment.CENTER, YAlignment.BASELINE, footer, BASIC_FONT.deriveFont(Font.ITALIC),
 				Color.gray));
+	}
+
+	private Paintable makeSortingLegend() {
+		String sort;
+		if (dataModel.hasWeightedNodes()) {
+			sort = dataModel.getNodeValueAttribute();
+		} else {
+			sort = "Label (alphabetically)";
+		}
+		
+		return new ComplexLabelPainter.Builder(layout.getSortLegendPosition(), BASIC_FONT, Color.black)
+			.addLine("Legend", TITLE_FONT)
+			.addLine("Sorted by")
+			.addLine(sort, BASIC_FONT, Color.gray)
+			.build();
 	}
 
 	private String getTimeStamp() {
@@ -240,8 +282,9 @@ public class PageDirector implements Paintable {
 		double halfway = (labels.get(0) + labels.get(1)) / 2.0;
 		labels.add(1, halfway);
 		CircleRadiusLegend legend = new CircleRadiusLegend(
-				layout.getCircleLegendPosition(), "Circle Area: "
-						+ dataModel.getNodeValueAttribute(), coding, ImmutableList.copyOf(labels));
+				layout.getCircleLegendPosition(), 
+				ImmutableList.of(" ", "Circle Area", dataModel.getNodeValueAttribute()), 
+				coding, ImmutableList.copyOf(labels));
 		return legend;
 	}
 
@@ -250,7 +293,7 @@ public class PageDirector implements Paintable {
 		double halfway = (labels.get(0) + labels.get(1)) / 2.0;
 		labels.add(1, halfway);
 		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
-				"Edge Weight: " + dataModel.getEdgeValueAttribute(),
+				ImmutableList.of(" ", "Edge Weight", dataModel.getEdgeValueAttribute()),
 				edgeCoding, ImmutableList.copyOf(labels));
 		return legend;
 	}
