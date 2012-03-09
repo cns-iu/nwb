@@ -11,10 +11,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import edu.iu.sci2.visualization.bipartitenet.component.EdgeView;
 import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
+import edu.iu.sci2.visualization.bipartitenet.component.ThicknessCodedEdgeView;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
@@ -31,12 +31,12 @@ public class BipartiteGraphRenderer implements Paintable {
 
 	private final LineSegment2D rightLine;
 	private final Scale<Double,Double> nodeRadiusCoding;
-	private final Scale<Double,Color> edgeCoding;
+	private final Scale<Double,Double> edgeCoding;
 	private final int maxNodeRadius;
 
 	public BipartiteGraphRenderer(BipartiteGraphDataModel skel,
 			LineSegment2D leftLine, LineSegment2D rightLine,
-			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, Scale<Double,Color> edgeCoding) {
+			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, Scale<Double,Double> edgeCoding) {
 		this.data = skel;
 		this.leftLine = leftLine;
 		this.rightLine = rightLine;
@@ -52,7 +52,7 @@ public class BipartiteGraphRenderer implements Paintable {
 
 	private void placeEdges() {
 		for (Edge e : data.getEdges()) {
-			EdgeView ev = new EdgeView(e, nodeToNodeView.get(e.getLeftNode()),
+			ThicknessCodedEdgeView ev = new ThicknessCodedEdgeView(e, nodeToNodeView.get(e.getLeftNode()),
 					nodeToNodeView.get(e.getRightNode()), edgeCoding);
 			
 			painter.add(ev);

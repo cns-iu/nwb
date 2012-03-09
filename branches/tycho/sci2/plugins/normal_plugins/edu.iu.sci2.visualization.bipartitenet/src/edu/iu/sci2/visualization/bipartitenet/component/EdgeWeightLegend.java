@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.bipartitenet.component;
 
-import java.awt.Color;
+import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
@@ -17,7 +17,7 @@ import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 public class EdgeWeightLegend implements Paintable {
 	private final Point2D topCenter;
 	private final String title;
-	private final Scale<Double, Color> coding;
+	private final Scale<Double, Double> coding;
 	private final ImmutableList<Double> labeledValues;
 	private final SimpleLabelPainter titlePainter;
 	
@@ -31,7 +31,7 @@ public class EdgeWeightLegend implements Paintable {
 	
 
 	public EdgeWeightLegend(Point2D topCenter, String title,
-			Scale<Double,Color> coding,
+			Scale<Double,Double> coding,
 			ImmutableList<Double> labeledValues) {
 		this.topCenter = topCenter;
 		this.title = title;
@@ -57,9 +57,8 @@ public class EdgeWeightLegend implements Paintable {
 			// loop invariant: arrowStart is the start of the current arrow
 			Point2D arrowEnd = arrowStart.translate(ARROW_LENGTH, 0);
 			LineSegment2D line = new LineSegment2D(arrowStart, arrowEnd);
-			g.setColor(coding.apply(value));
-			line.draw(g);
-			EdgeView.drawArrowHead(line, g);
+			float lineThickness = coding.apply(value).floatValue();
+			ThicknessCodedEdgeView.drawArrow(line, lineThickness, g);
 			
 			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, 0);
 			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT, value.toString(), LEGEND_FONT, null)

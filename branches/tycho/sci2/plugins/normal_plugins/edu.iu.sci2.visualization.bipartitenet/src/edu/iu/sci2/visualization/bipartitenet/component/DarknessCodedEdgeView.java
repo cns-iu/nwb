@@ -11,7 +11,7 @@ import math.geom2d.polygon.SimplePolygon2D;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
-public class EdgeView implements Paintable {
+public class DarknessCodedEdgeView implements Paintable {
 	
 	private static final double NODE_EDGE_SPACE = 4;
 	private static final double ARROW_HEAD_SIDE_LENGTH = 4;
@@ -20,7 +20,7 @@ public class EdgeView implements Paintable {
 	private final Scale<Double,Color> edgeCoding;
 	private final Edge e;
 
-	public EdgeView(Edge e, NodeView src, NodeView dest, Scale<Double,Color> edgeCoding) {
+	public DarknessCodedEdgeView(Edge e, NodeView src, NodeView dest, Scale<Double,Color> edgeCoding) {
 		this.e = e;
 		this.src = src;
 		this.dest = dest;

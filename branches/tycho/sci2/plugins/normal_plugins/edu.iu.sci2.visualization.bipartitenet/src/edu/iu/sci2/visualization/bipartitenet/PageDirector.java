@@ -25,8 +25,6 @@ import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlig
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
-import edu.iu.sci2.visualization.bipartitenet.scale.ColorIntensityScale;
-import edu.iu.sci2.visualization.bipartitenet.scale.ConstantColor;
 import edu.iu.sci2.visualization.bipartitenet.scale.ConstantValue;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScale;
@@ -37,12 +35,12 @@ public class PageDirector implements Paintable {
 				new Point2D(18, 18), // title top-left corner
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
-				12),
+				12, 3),
 		WEB(1280, 960,
 				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
-				20);
+				20, 5);
 		
 		private final int width;
 		private final int height;
@@ -50,15 +48,18 @@ public class PageDirector implements Paintable {
 		private final LineSegment2D rightLine;
 		private final int maxNodeRadius;
 		private final Point2D headerPosition;
+		private final int maxEdgeThickness;
 
 		private Layout(int width, int height, Point2D headerPosition, 
-				LineSegment2D leftLine, LineSegment2D rightLine, int maxNodeRadius) {
+				LineSegment2D leftLine, LineSegment2D rightLine,
+				int maxNodeRadius, int maxEdgeThickness) {
 			this.width = width;
 			this.height = height;
 			this.headerPosition = headerPosition;
 			this.leftLine = leftLine;
 			this.rightLine = rightLine;
 			this.maxNodeRadius = maxNodeRadius;
+			this.maxEdgeThickness = maxEdgeThickness;
 		}
 
 		public int getWidth() {
@@ -105,12 +106,16 @@ public class PageDirector implements Paintable {
 		public int getMaxNodeRadius() {
 			return maxNodeRadius;
 		}
+
+		public int getMaxEdgeThickness() {
+			return maxEdgeThickness;
+		}
 	}
 	
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	public static final Font BASIC_FONT = findBasicFont(12);
+	public static final Font BASIC_FONT = findBasicFont(10);
 	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
 	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
 	private static final String TITLE = "Bipartite Network Graph";
@@ -134,7 +139,7 @@ public class PageDirector implements Paintable {
 			painter.add(makeNodeLegend(nodeCoding));
 		}
 
-		Scale<Double,Color> edgeCoding = makeEdgeCoding();
+		Scale<Double,Double> edgeCoding = makeEdgeCoding();
 		if (dataModel.hasWeightedEdges()) {
 			painter.add(makeEdgeLegend(edgeCoding));
 		}
@@ -186,9 +191,9 @@ public class PageDirector implements Paintable {
 			System.out.println("Trying " + family);
 			thisFont = new Font(family, Font.PLAIN, size);
 			if (! thisFont.getFamily().equals(JAVA_FALLBACK_FONT)) {
+				// found one that the system has!
 				System.out.println(String.format("Yes, deciding on %s (started with %s)", thisFont.getFamily(),
 						family));
-				// found one that the system has!
 				break;
 			}
 		}
@@ -217,14 +222,14 @@ public class PageDirector implements Paintable {
 		}
 	}
 
-	private Scale<Double,Color> makeEdgeCoding() {
+	private Scale<Double,Double> makeEdgeCoding() {
 		if (dataModel.hasWeightedEdges()) {
-			Scale<Double,Color> colorScale = ColorIntensityScale.createWithDefaultColor();
-			colorScale.train(Iterables.transform(dataModel.getEdges(), Edge.WEIGHT_GETTER));
-			colorScale.doneTraining();
-			return colorScale;
+			Scale<Double,Double> thicknessScale = new ZeroAnchoredCircleRadiusScale(layout.getMaxEdgeThickness());
+			thicknessScale.train(Iterables.transform(dataModel.getEdges(), Edge.WEIGHT_GETTER));
+			thicknessScale.doneTraining();
+			return thicknessScale;
 		} else {
-			return new ConstantColor();
+			return new ConstantValue<Double,Double>(Double.valueOf(1));
 		}
 	}
 
@@ -238,13 +243,13 @@ public class PageDirector implements Paintable {
 		return legend;
 	}
 
-	private Paintable makeEdgeLegend(Scale<Double, Color> coding) {
-		ArrayList<Double> labels = Lists.newArrayList(coding.getExtrema());
+	private Paintable makeEdgeLegend(Scale<Double,Double> edgeCoding) {
+		ArrayList<Double> labels = Lists.newArrayList(edgeCoding.getExtrema());
 		double halfway = (labels.get(0) + labels.get(1)) / 2.0;
 		labels.add(1, halfway);
 		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
 				"Edge Weight: " + dataModel.getEdgeValueAttribute(),
-				coding, ImmutableList.copyOf(labels));
+				edgeCoding, ImmutableList.copyOf(labels));
 		return legend;
 	}
 
