@@ -14,7 +14,7 @@ import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlig
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 
 public enum NodeDestination {
-	LEFT {
+	LEFT(Color.decode("#3399FF")) {
 		/* TODO Extract bits that don't vary per node.. per side even? */
 		
 		@Override
@@ -30,14 +30,9 @@ public enum NodeDestination {
 			painter.paint(g);
 		}
 
-		@Override
-		public
-		Color getFillColor() {
-			return Color.pink;
-		}
 
 	},
-	RIGHT {
+	RIGHT(Color.decode("#FF9900")) {
 		@Override
 		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
 			SimpleLabelPainter painter =
@@ -51,18 +46,18 @@ public enum NodeDestination {
 			painter.paint(g);
 		}
 
-		@Override
-		public
-		Color getFillColor() {
-			return Color.orange;
-		}
 	};
 
 	private static final int SPACING_BETWEEN_LABELS = 2;
 	private static final int MINIMUM_FONT_SIZE = 2;
 	private static final Font LABEL_FONT = PageDirector.BASIC_FONT;
+	private final Color fillColor;
+	
+	private NodeDestination(Color fillColor) {
+		this.fillColor = fillColor;
+	}
+	
 	public abstract void paintLabel(NodeView nv, Graphics2D g, double maxHeight);
-	public abstract Color getFillColor();
 	
 	private static Font fitFontWithinHeight(FontRenderContext frc, double maxHeight) {
 		Font currentFont = LABEL_FONT;
@@ -78,5 +73,7 @@ public enum NodeDestination {
 		
 		return currentFont;
 	}
-	
+	public	Color getFillColor() {
+		return fillColor;
+	}
 }
