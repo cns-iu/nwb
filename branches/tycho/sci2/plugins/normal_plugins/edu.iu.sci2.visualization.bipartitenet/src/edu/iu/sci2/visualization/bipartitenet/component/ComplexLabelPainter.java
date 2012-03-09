@@ -19,14 +19,19 @@ public class ComplexLabelPainter implements Paintable {
 	private final List<String> lines;
 	private final List<Font> fonts;
 	private final List<Color> colors;
+	private final double lineSpacing;
 
 	public static class Builder {
-		private final List<String> lines = Lists.newArrayList();
-		private final List<Font> fonts = Lists.newArrayList();
-		private final List<Color> colors = Lists.newArrayList();
+		// Set in constructor
 		private final Point2D position;
 		private final Font defaultFont;
 		private final Color defaultColor;
+		
+		// Mutated by calls
+		private final List<String> lines = Lists.newArrayList();
+		private final List<Font> fonts = Lists.newArrayList();
+		private final List<Color> colors = Lists.newArrayList();
+		private double lineSpacing = 1;
 		
 		public Builder(Point2D topLeft, Font defaultFont, Color defaultColor) {
 			Preconditions.checkNotNull(topLeft);
@@ -64,16 +69,22 @@ public class ComplexLabelPainter implements Paintable {
 			return this;
 		}
 		
+		public Builder withLineSpacing(double lineSpacing) {
+			this.lineSpacing = lineSpacing;
+			return this;
+		}
+		
 		public ComplexLabelPainter build() {
-			return new ComplexLabelPainter(position, lines, 
+			return new ComplexLabelPainter(position, lineSpacing, lines, 
 					fonts, 
 					colors);
 		}
 	}
 
-	private ComplexLabelPainter(Point2D position, List<String> lines,
+	private ComplexLabelPainter(Point2D position, double lineSpacing, List<String> lines,
 			List<Font> fonts, List<Color> colors) {
 		this.position = position;
+		this.lineSpacing = lineSpacing;
 		this.lines = lines;
 		this.fonts = fonts;
 		this.colors = colors;
@@ -92,7 +103,7 @@ public class ComplexLabelPainter implements Paintable {
 					lines.get(i), thisFont, colors.get(i));
 			p.paint((Graphics2D) g.create());
 			
-			currentPosition = currentPosition.translate(0, thisFont.getSize2D());
+			currentPosition = currentPosition.translate(0, thisFont.getSize2D() * lineSpacing);
 		}
 	}
 

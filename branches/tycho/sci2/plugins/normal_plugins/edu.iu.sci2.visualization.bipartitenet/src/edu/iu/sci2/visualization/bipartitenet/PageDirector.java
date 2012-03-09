@@ -157,6 +157,7 @@ public class PageDirector implements Paintable {
 					.addLine(TITLE, TITLE_FONT)
 					.addLine("Generated from Cornell NSF Data")
 					.addLine(getTimeStamp())
+					.withLineSpacing(1.2)
 					.build());
 		}
 		
