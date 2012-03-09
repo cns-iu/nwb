@@ -11,7 +11,15 @@ public class Node {
 			return it.getWeight();
 		}
 	};
+	public static final Function<Node,String> LABEL_GETTER = new Function<Node,String>() {
+		@Override
+		public String apply(Node it) {
+			return it.getLabel();
+		}
+	};
 	public static final Ordering<Node> WEIGHT_ORDERING = Ordering.natural().onResultOf(WEIGHT_GETTER);
+	public static final Ordering<Node> LABEL_ORDERING = Ordering.natural().onResultOf(LABEL_GETTER);
+	
 	
 	private final String label;
 	private final double weight;
