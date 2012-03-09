@@ -169,7 +169,8 @@ public class PageDirector implements Paintable {
 		
 		// The footer
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
-				XAlignment.CENTER, YAlignment.BASELINE, footer, BASIC_FONT, Color.gray));
+				XAlignment.CENTER, YAlignment.BASELINE, footer, BASIC_FONT.deriveFont(Font.ITALIC),
+				Color.gray));
 	}
 
 	private String getTimeStamp() {

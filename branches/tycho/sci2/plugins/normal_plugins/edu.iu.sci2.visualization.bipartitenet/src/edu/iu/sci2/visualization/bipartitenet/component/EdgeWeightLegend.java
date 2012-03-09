@@ -1,6 +1,5 @@
 package edu.iu.sci2.visualization.bipartitenet.component;
 
-import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
