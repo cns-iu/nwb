@@ -6,18 +6,21 @@ import oim.vivo.scimapcore.journal.Journal;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
 /**
  * A PageLegend is the text on the bottom of the Map of Science that represents
  * the legend.
  * 
  */
-public class PageLegend {
+public class PageLegend implements PageElement{
 	private static final DecimalFormat formatter = new DecimalFormat("###,###");
 
 	private int numberOfUnclassified;
 	private double minimumValue;
 	private double maximumValue;
+	private double leftBoundary;
+	private double topBoundary;
 
 	/**
 	 * Construct a PageLegend
@@ -26,24 +29,18 @@ public class PageLegend {
 	 * @param maximumValue
 	 */
 	public PageLegend(int numberOfUnclassified, double minimumValue,
-			double maximumValue) {
+			double maximumValue, double leftBoundary, double topBoundary) {
 		this.numberOfUnclassified = numberOfUnclassified;
 		this.minimumValue = minimumValue;
 		this.maximumValue = maximumValue;
+		this.leftBoundary = leftBoundary;
+		this.topBoundary = topBoundary;
 	}
 
-	/**
-	 * Render the page legend on the given {@code state} at the
-	 * {@code leftBoundary} and {@code} topBoundary}
-	 * 
-	 * @param state
-	 * @param leftBoundary
-	 * @param topBoundary
-	 */
-	public void render(GraphicsState state, float leftBoundary,
-			float topBoundary) {
+
+	public void render(GraphicsState state) {
 		state.save();
-		state.current.translate(leftBoundary, topBoundary);
+		state.current.translate(this.leftBoundary, this.topBoundary);
 
 		String title = "Legend";
 		String area = "Circle Area: Fractional Journal Count";

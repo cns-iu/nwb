@@ -13,12 +13,12 @@ public class GraphicsState {
 	public Graphics2D current;
 
 	private Stack<Graphics2D> graphicsHistory = new Stack<Graphics2D>();
-
+	
 	public GraphicsState(Graphics2D graphics) {
 		this.current = graphics;
 		this.graphicsHistory = new Stack<Graphics2D>();
 	}
-
+	
 	public void save() {
 		this.graphicsHistory.push(this.current);
 		// TODO Carry over stroke? And restore?

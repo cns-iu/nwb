@@ -15,15 +15,31 @@ import oim.vivo.scimapcore.journal.Node;
 import oim.vivo.scimapcore.journal.Nodes;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
 /**
  * This is the class responsible for rendering a map of science. It includes the
  * nodes, edges, legends, category labels, etc.
  * 
  */
-public class MapOfScienceRenderer {
+public class MapOfScienceRenderer implements PageElement{
 
+	private MapOfScience mapOfScience;
+	private float nodeScalingFactor;
+	private double pageScalingFactor;
+	private double leftBoundary;
+	private double bottomBoundary;
+
+	public MapOfScienceRenderer(MapOfScience mapOfScience, float nodeScalingFactor, double pageScalingFactor, double leftBoundary, double bottomBoundary) {
+		this.mapOfScience = mapOfScience;
+		this.nodeScalingFactor = nodeScalingFactor;
+		this.pageScalingFactor = pageScalingFactor;
+		this.leftBoundary = leftBoundary;
+		this.bottomBoundary = bottomBoundary;
+	}
+	
 	/**
+	 * 
 	 * This will draw the {@link MapOfScience} to the given
 	 * {@link GraphicsState} using a scaling factor to increase the size of the
 	 * rendered nodes. If there is an issue rendering, a
@@ -181,4 +197,19 @@ public class MapOfScienceRenderer {
 			super(message);
 		}
 	}
+
+	public void render(GraphicsState state) throws PageElementRenderingException {
+		state.save();
+		state.current.translate(this.leftBoundary, this.bottomBoundary);
+		state.current.scale(this.pageScalingFactor, this.pageScalingFactor);
+		
+		try {
+			MapOfScienceRenderer.render(state, this.mapOfScience, this.nodeScalingFactor);
+		} catch (MapOfScienceRenderingException e) {
+			throw new PageElementRenderingException(e);
+		} finally {
+			state.restore();
+		}
+	}
+
 }

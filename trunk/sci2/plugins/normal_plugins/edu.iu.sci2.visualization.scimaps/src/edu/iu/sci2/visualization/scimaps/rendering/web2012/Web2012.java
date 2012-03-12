@@ -3,31 +3,23 @@ package edu.iu.sci2.visualization.scimaps.rendering.web2012;
 import java.awt.Dimension;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageManager;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
 public class Web2012 {
-	private RenderableVisualization visualization;
+	private DocumentRenderer document;
 
 
 	public Web2012(MapOfScience mapOfScience, Dimension size, float scalingFactor) {
-		this(createVisualization(mapOfScience,size, scalingFactor));
-	}
-	
-	/**
-	 * @param visualization
-	 */
-	private Web2012(RenderableVisualization visualization){
-		this.visualization = visualization;
-	}
-	
-	private static RenderableVisualization createVisualization(MapOfScience mapOfScience, Dimension size, float scalingFactor){
-		RenderableVisualization visualization = new DocumentRenderer(mapOfScience, size, scalingFactor);
-		
-		return visualization;
+		this.document = new DocumentRenderer(mapOfScience, size, scalingFactor);
 	}
 	
 	public RenderableVisualization getVisualization() {
-		return this.visualization;
+		return this.document;
+	}
+	
+	public PageManager getPageManager() {
+		return this.document;
 	}
 
 }

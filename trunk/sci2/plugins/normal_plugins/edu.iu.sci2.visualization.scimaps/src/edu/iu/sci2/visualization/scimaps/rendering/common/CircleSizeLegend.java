@@ -5,11 +5,12 @@ import java.text.DecimalFormat;
 
 import oim.vivo.scimapcore.journal.Node;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
 /**
  * This class represents a circle legend.
  */
-public class CircleSizeLegend {
+public class CircleSizeLegend implements PageElement {
 	private static final DecimalFormat formatter = new DecimalFormat(
 			"###,###.##");
 	private final float scalingFactor;
@@ -20,52 +21,42 @@ public class CircleSizeLegend {
 	private String minLabel;
 	private String midLabel;
 	private String maxLabel;
+	private double leftBoundary;
+	private double topBoundary;
 
 	/**
-	 * Construct a default CircleSizeLegend
-	 */
-	public CircleSizeLegend() {
-		this(1.0f);
-	}
-
-	/**
-	 * If you scaled your {@link Node}s, you can use this constructor which will take
-	 * that into account numerically, though not graphically.
+	 * If you scaled your {@link Node}s, you can use this constructor which will
+	 * take that into account numerically, though not graphically.
 	 * 
 	 * @param scalingFactor
 	 *            - The nodes were scaled by in the Map of Science
 	 */
-	public CircleSizeLegend(float scalingFactor) {
+	public CircleSizeLegend(float scalingFactor, double leftBoundary,
+			double topBoundary) {
+		this.scalingFactor = scalingFactor;
+		this.leftBoundary = leftBoundary;
+		this.topBoundary = topBoundary;
+
 		this.minArea = 5;
 		this.maxArea = 50;
 		this.midArea = Math.round((this.minArea + this.maxArea) / 2.0);
-		this.minLabel = formatter.format(this.minArea);
-		this.midLabel = formatter.format(this.midArea);
-		this.maxLabel = formatter.format(this.maxArea);
-		this.scalingFactor = scalingFactor;
+
+		// HACK I could calculate the radius using nodes.calculateRadius but the
+		// radius given isn't really the radius so I couldn't get the area back.
+		this.minLabel = formatter.format(this.minArea * this.scalingFactor);
+		this.midLabel = formatter.format(this.midArea * this.scalingFactor);
+		this.maxLabel = formatter.format(this.maxArea * this.scalingFactor);
 	}
 
-	/**
-	 * Render the legend on the given {@code state} at the {@code leftBoundary} and
-	 * {@code} topBoundary}
-	 * 
-	 * @param state
-	 * @param leftBoundary
-	 * @param topBoundary
-	 */
-	public void render(GraphicsState state, float leftBoundary,
-			float topBoundary) {
+	public void render(GraphicsState state) {
 		state.save();
 		state.setFont("Arial", 10);
 		state.current.setColor(Color.BLACK);
-		state.current.translate(leftBoundary, topBoundary);
+		state.current.translate(this.leftBoundary, this.topBoundary);
 
-		float minRadius = Node
-				.calculateRadius(this.minArea, this.scalingFactor);
-		float midRadius = Node
-				.calculateRadius(this.midArea, this.scalingFactor);
-		float maxRadius = Node
-				.calculateRadius(this.maxArea, this.scalingFactor);
+		float minRadius = Node.calculateRadius(this.minArea, 1.0f);
+		float midRadius = Node.calculateRadius(this.midArea, 1.0f);
+		float maxRadius = Node.calculateRadius(this.maxArea, 1.0f);
 
 		double circleX = maxRadius;
 
@@ -92,6 +83,7 @@ public class CircleSizeLegend {
 		state.current.drawString(this.maxLabel, labelX, maxLabelY);
 
 		state.restore();
+
 	}
 
 }

@@ -32,10 +32,11 @@ import prefuse.data.Tuple;
 import com.google.common.collect.ImmutableSet;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageManager;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageManager.PageManagerRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
 
@@ -71,7 +72,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		Map<String, Integer> journalNameAndHitCount = getJournalNameAndHitCount(
 				this.table, this.journalColumnName, this.logger);
 		RenderableVisualization visualization = null;
-		DisciplineBreakdownPages disciplineBreakdownPages = null;
+		PageManager pageManger = null;
 
 		MapOfScience mapOfScience = new MapOfScience(journalNameAndHitCount);
 
@@ -81,6 +82,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			Web2012 web2012 = new Web2012(mapOfScience, dimensions,
 					this.scalingFactor);
 			visualization = web2012.getVisualization();
+			pageManger = web2012.getPageManager();
 		} else {
 			// Printversion
 			Dimension dimensions = new Dimension((int) inch(11f),
@@ -88,8 +90,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			Print2012 print2012 = new Print2012(mapOfScience,
 					this.dataDisplayName, dimensions, this.scalingFactor);
 			visualization = print2012.getVisualization();
-			disciplineBreakdownPages = new DisciplineBreakdownPages(2,
-					mapOfScience, this.dataDisplayName, dimensions);
+			pageManger = print2012.getPageManger();
 		}
 		if (this.showWindow) {
 			VisualizationRunner visualizationRunner = new VisualizationRunner(
@@ -100,8 +101,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			visualizationRunner.run();
 		}
 
-		return datafy(mapOfScience, visualization, disciplineBreakdownPages,
-				this.parentData, this.logger);
+		return datafy(mapOfScience, pageManger, this.parentData, this.logger);
 	}
 
 	private static Map<String, Integer> getJournalNameAndHitCount(
@@ -162,9 +162,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 	}
 
 	private static Data[] datafy(MapOfScience mapOfScience,
-			RenderableVisualization visualization,
-			DisciplineBreakdownPages disciplineBreakdownPages, Data parentData,
-			LogService logger) {
+			PageManager pageManger, Data parentData, LogService logger) {
 
 		Set<Journal> foundJournals = mapOfScience.getMappedJournals();
 		Set<Journal> unfoundJournals = mapOfScience.getUnmappedJournals();
@@ -177,8 +175,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		Data unfoundData = datafy(unfoundTable, "Journals not located",
 				parentData);
 		try {
-			Data visualizationData = createData(visualization,
-					disciplineBreakdownPages, parentData);
+			Data visualizationData = createData(pageManger, parentData, logger);
 			return new Data[] { foundData, unfoundData, visualizationData };
 		} catch (DataCreationException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage());
@@ -187,13 +184,12 @@ public class JournalsMapAlgorithm implements Algorithm {
 		return new Data[] { foundData, unfoundData };
 	}
 
-	private static Data createData(RenderableVisualization visualization,
-			DisciplineBreakdownPages disciplineBreakdownPages, Data parentData)
-			throws DataCreationException {
+	private static Data createData(PageManager pageManger, Data parentData,
+			LogService logger) throws DataCreationException {
 		try {
 			File outFile = File.createTempFile("Visualization-", ".ps");
 			OutputStream out = new FileOutputStream(outFile);
-			writePostscript(visualization, disciplineBreakdownPages, out);
+			writePostscript(pageManger, out, logger);
 			out.close();
 
 			Data outData = new BasicData(outFile, "file:text/ps");
@@ -208,61 +204,30 @@ public class JournalsMapAlgorithm implements Algorithm {
 					"There was a problem creating the postscript file", e);
 		}
 	}
-
-	private static void writePostscript(RenderableVisualization visualization,
-			DisciplineBreakdownPages disciplineBreakdownPages, OutputStream out)
-			throws IOException {
+	
+	private static void writePostscript(PageManager pageManger,
+			OutputStream out, LogService logger) throws IOException {
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
-		g2d.setGraphicContext(new GraphicContext());
-		g2d.setupDocument(out,
-				Double.valueOf(visualization.getDimension().getWidth())
-						.intValue(),
-				Double.valueOf(visualization.getDimension().getHeight())
-						.intValue());
-		g2d.setClip(0, 0,
-				Double.valueOf(visualization.getDimension().getWidth())
-						.intValue(),
-				Double.valueOf(visualization.getDimension().getHeight())
-						.intValue());
-		visualization.render(new GraphicsState(g2d),
-				visualization.getDimension());
 
-		addDisciplineBreakdownPages(disciplineBreakdownPages, out, g2d);
-		g2d.finish();
-	}
-
-	private static void addDisciplineBreakdownPages(
-			DisciplineBreakdownPages disciplineBreakdownPages,
-			OutputStream out, PSDocumentGraphics2D g2d) throws IOException {
-		if (disciplineBreakdownPages == null) {
-			return;
-		}
-
-		for (int pageNumber = 0; pageNumber < disciplineBreakdownPages
-				.numberOfPages(); pageNumber++) {
-
-			g2d.nextPage();
+		for (int pageNumber = 0; pageNumber < pageManger.numberOfPages(); pageNumber++) {
+			if (pageNumber > 0) {
+				g2d.nextPage();
+			}
 			g2d.setGraphicContext(new GraphicContext());
-			g2d.setupDocument(
-					out,
-					Double.valueOf(
-							disciplineBreakdownPages.getDimension().getWidth())
-							.intValue(),
-					Double.valueOf(
-							disciplineBreakdownPages.getDimension().getHeight())
-							.intValue());
-			g2d.setClip(
-					0,
-					0,
-					Double.valueOf(
-							disciplineBreakdownPages.getDimension().getWidth())
-							.intValue(),
-					Double.valueOf(
-							disciplineBreakdownPages.getDimension().getHeight())
-							.intValue());
-			disciplineBreakdownPages.renderPage(pageNumber, g2d);
+			g2d.setupDocument(out,
+					(int) pageManger.pageDimensions().getWidth(),
+					(int) pageManger.pageDimensions().getHeight());
+			g2d.setClip(0, 0,
+					(int) pageManger.pageDimensions().getWidth(),
+					(int) pageManger.pageDimensions().getHeight());
+			try {
+				pageManger.render(pageNumber, new GraphicsState(g2d));
+			} catch (PageManagerRenderingException e) {
+				logger.log(LogService.LOG_ERROR, e.getMessage(), e);
+			}
 		}
 
+		g2d.finish();
 	}
 
 	public static class DataCreationException extends Exception {

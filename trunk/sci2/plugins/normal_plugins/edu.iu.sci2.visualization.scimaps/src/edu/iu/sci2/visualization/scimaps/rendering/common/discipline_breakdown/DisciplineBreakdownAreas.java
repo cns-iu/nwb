@@ -1,11 +1,7 @@
 package edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown;
 
-import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
-
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -20,94 +16,42 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.common.Footer;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.Header;
-import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 
 /**
  * DisciplineBreakDownPages can be thought of as a collection of pages, each of which has a breakdown area, a title, and other elements.
  * 
  * It will render a specific page to a graphic.
  */
-public class DisciplineBreakdownPages {
-	private static final int disciplineSpace = DisciplineBreakdownAreaRenderer.DISCIPLINE_SPACE;
-	private static final int journalSpace = DisciplineBreakdownAreaRenderer.JOURNAL_SPACE;
+public class DisciplineBreakdownAreas {
+	private static final int disciplineSpace = DisciplineBreakdownArea.DISCIPLINE_SPACE;
+	private static final int journalSpace = DisciplineBreakdownArea.JOURNAL_SPACE;
 
-	private int columnsPerPage;
-	private MapOfScience mapOfScience;
-	private String generatedFrom;
-	private Dimension dimensions;
-	private List<DisciplineBreakdownAreaRenderer> disciplineBreakdowns;
+	public static List<DisciplineBreakdownArea> getDisciplineBreakdownAreas(Dimension size, int columnsPerPage, MapOfScience mapOfScience, double leftBoundary, double topBoundary) {
+		List<DisciplineBreakdownArea> breakdownAreaRenderers = new ArrayList<DisciplineBreakdownArea>();
 
-	public DisciplineBreakdownPages(int columnsPerPage,
-			MapOfScience mapOfScience, String generatedFrom,
-			Dimension dimensions) {
-		this.columnsPerPage = columnsPerPage;
-		this.mapOfScience = mapOfScience;
-		this.generatedFrom = generatedFrom;
-		this.dimensions = dimensions;
-
-		this.disciplineBreakdowns = getDisciplineBreakdowns();
-	}
-
-	public int numberOfPages() {
-		return this.disciplineBreakdowns.size();
-	}
-
-	public Dimension getDimension() {
-		return this.dimensions;
-	}
-
-	public void renderPage(int pageNumber, Graphics2D graphics) {
-		if (pageNumber > this.disciplineBreakdowns.size()) {
-			throw new IllegalArgumentException("Page number '" + pageNumber
-					+ "' does not exist.");
-		}
-
-		GraphicsState state = new GraphicsState(graphics);
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		state.setFont("Arial", 10);
-		
-		new Header("Topic Analysis - Map of Science", this.generatedFrom,
-				this.mapOfScience).render(state, inch(0.5f), inch(0.5f));
-
-		this.disciplineBreakdowns.get(pageNumber).render(state, 35, 100);
-
-		Footer.renderAbout(state, (float) this.dimensions.getWidth() / 2,
-				inch(8.0f));
-	}
-
-	private List<DisciplineBreakdownAreaRenderer> getDisciplineBreakdowns() {
-		List<DisciplineBreakdownAreaRenderer> breakdownAreaRenderers = new ArrayList<DisciplineBreakdownAreaRenderer>();
-		Dimension breakdownAreaSize = new Dimension((int) inch(10.0f),
-				(int) inch(6.0f));
-
-		List<Page> pages = getPages(breakdownAreaSize);
+		List<Page> pages = getPages(size, columnsPerPage, mapOfScience);
 
 		for (Page page : pages) {
-			breakdownAreaRenderers.add(new DisciplineBreakdownAreaRenderer(page));
+			breakdownAreaRenderers.add(new DisciplineBreakdownArea(page, leftBoundary, topBoundary));
 		}
 
 		return breakdownAreaRenderers;
 	}
 
-	private List<Page> getPages(Dimension size) {
+	private static List<Page> getPages(Dimension size, int columnsPerPage, MapOfScience mapOfScience) {
 		SortedMap<Discipline, SortedSet<Journal>> journalsByDiscipline = new TreeMap<Discipline, SortedSet<Journal>>();
-		journalsByDiscipline.putAll(this.mapOfScience
+		journalsByDiscipline.putAll(mapOfScience
 				.getMappedJournalsByDiscipline());
-		journalsByDiscipline.putAll(this.mapOfScience
+		journalsByDiscipline.putAll(mapOfScience
 				.getUnmappedJournalsByDiscipline());
 
 		List<Page> pages = breakIntoPages(journalsByDiscipline, size,
-				this.columnsPerPage);
+				columnsPerPage);
 
 		return pages;
 	}
 
-	private List<Page> breakIntoPages(
+	private static List<Page> breakIntoPages(
 			SortedMap<Discipline, SortedSet<Journal>> givenJournalsByDiscipline,
 			Dimension size, int numberOfColumns) {
 
@@ -145,7 +89,7 @@ public class DisciplineBreakdownPages {
 		return pages;
 	}
 
-	private List<Column> breakIntoColumns(
+	private static List<Column> breakIntoColumns(
 			SortedMap<Discipline, SortedSet<Journal>> givenJournalsByDiscipline,
 			int columnSpace) {
 		List<Column> columns = new ArrayList<Column>();
@@ -212,9 +156,9 @@ public class DisciplineBreakdownPages {
 		}
 	}
 
-	public class Page {
+	public static class Page {
 		private final int numOfColumns;
-		private List<Column> columns = new ArrayList<DisciplineBreakdownPages.Column>(
+		private List<Column> columns = new ArrayList<DisciplineBreakdownAreas.Column>(
 				this.numOfColumns);
 		private Dimension size;
 
@@ -268,7 +212,7 @@ public class DisciplineBreakdownPages {
 		}
 	}
 
-	public class Column {
+	public static class Column {
 		private List<ColumnEntry> entries;
 		private int totalSpace;
 		private int spaceUsed;
@@ -339,7 +283,7 @@ public class DisciplineBreakdownPages {
 	 * A column entry has Discipline label and, optionally, some journals.
 	 *
 	 */
-	public class ColumnEntry {
+	public static class ColumnEntry {
 		Discipline discipline;
 		SortedSet<Journal> journals;
 
@@ -374,7 +318,7 @@ public class DisciplineBreakdownPages {
 			return spacedUsedBy(this.journals.size() + 1);
 		}
 
-		public int spacedUsedBy(int numberOfJournals) {
+		public static int spacedUsedBy(int numberOfJournals) {
 			return 1 * disciplineSpace + numberOfJournals * journalSpace;
 		}
 

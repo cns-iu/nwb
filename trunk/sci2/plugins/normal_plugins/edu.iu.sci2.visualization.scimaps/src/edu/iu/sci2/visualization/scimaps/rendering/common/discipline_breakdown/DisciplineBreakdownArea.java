@@ -10,16 +10,17 @@ import java.util.SortedSet;
 
 import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages.Column;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages.ColumnEntry;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownPages.Page;
+import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas.Column;
+import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas.ColumnEntry;
+import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas.Page;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
+import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
 /**
  * This class holds all the information required to draw the category to color
  * legend and render it.
  */
-public class DisciplineBreakdownAreaRenderer {
+public class DisciplineBreakdownArea implements PageElement{
 	/**
 	 * The amount of space that each discipline will take.
 	 */
@@ -38,20 +39,23 @@ public class DisciplineBreakdownAreaRenderer {
 	private double width;
 	private int columnsPerPage;
 	private Page page;
+	private double leftBoundary;
+	private double topBoundary;
 
-	public DisciplineBreakdownAreaRenderer(Page page) {
+	public DisciplineBreakdownArea(Page page, double leftBoundary, double topBoundary) {
 		this.page = page;
 		this.width = (int) page.getSize().getWidth();
+		this.leftBoundary = leftBoundary;
+		this.topBoundary = topBoundary;
 	}
 
-	public void render(GraphicsState state, double leftBoundary,
-			double topBoundary) {
+	public void render(GraphicsState state) {
 		final DecimalFormat formatter = new DecimalFormat("###,###");
 		boolean journalSizeSanityChecked = false;
 		boolean disciplineSizeSanityChecked = false;
 
 		state.save();
-		state.current.translate(leftBoundary, topBoundary);
+		state.current.translate(this.leftBoundary, this.topBoundary);
 
 		double columnWidth = (this.width / this.page.getNumberOfColumns())
 				- (columnMargin * (this.columnsPerPage - 1)) - textMargin;
