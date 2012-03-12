@@ -28,6 +28,7 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
@@ -72,6 +73,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 
 	private final Data[] data;
 	private final Dictionary<String, Object> parameters;
+	private final PageLayout pageLayout;
 	private final AnnotationMode<G, D> annotationMode;
 	private final String outputAlgorithmName;
 	// TODO reduce visibility
@@ -80,11 +82,13 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public GeoMapsAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
+			PageLayout pageLayout,
 			AnnotationMode<G, D> annotationMode,
 			String outputAlgorithmName,
 			LogService logService) {
 		this.data = data;
 		this.parameters = parameters;
+		this.pageLayout = pageLayout;
 		this.annotationMode = annotationMode;
 		this.outputAlgorithmName = outputAlgorithmName;
 		
@@ -101,7 +105,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
 			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters);
-			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap);
+			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout);
 			File geoMapFile = geoMapView.writeToPSFile(authorName, dataLabel);
 
 			Data[] outData = new Data[] {
@@ -148,8 +152,8 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			URL testFileURL = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
 			File inFile = new File(testFileURL.toURI());
 			AlgorithmFactory algorithmFactory;
-			algorithmFactory = prepareFactoryForCirclesTest(parameters);
 			algorithmFactory = prepareFactoryForRegionsTest(parameters);
+			algorithmFactory = prepareFactoryForCirclesTest(parameters);
 			
 			Data data = new BasicData(inFile, CSV_MIME_TYPE);
 			

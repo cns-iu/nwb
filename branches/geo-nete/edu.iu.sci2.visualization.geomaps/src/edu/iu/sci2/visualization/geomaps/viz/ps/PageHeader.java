@@ -19,15 +19,15 @@ public class PageHeader {
 	public static final double OTHER_DATA_FONT_SIZE = 10;
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	
-	public static final Point2D.Double LOWER_LEFT = Constants.HEADER_LOWER_LEFT;
-	
 	private final String title;
 	private final String subtitle;
+	private Point2D.Double lowerLeft;
 	private final Collection<String> extraInfo;
 	
-	public PageHeader(String title, String subtitle, String... extraInfo) {
+	public PageHeader(String title, String subtitle, Point2D.Double lowerLeft, String... extraInfo) {
 		this.title = title;
-		this.subtitle = subtitle;		
+		this.subtitle = subtitle;	
+		this.lowerLeft = lowerLeft;
 		this.extraInfo = Collections2.filter(
 				Arrays.asList(extraInfo),
 				Predicates.not(new Predicate<String>() {
@@ -39,14 +39,14 @@ public class PageHeader {
 	}
 	
 	
-	public String toPostScript() {
+	public String toPostScript() {		
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("% Page info" + "\n");
 		builder.append("gsave" + "\n");
 		
 		builder.append(INDENT + "% Show title and subtitle" + "\n");
-		builder.append(INDENT + LOWER_LEFT.x + " " + LOWER_LEFT.y + " moveto" + "\n");
+		builder.append(INDENT + lowerLeft.x + " " + lowerLeft.y + " moveto" + "\n");
 		
 		builder.append(PSUtility.findscalesetfont(FONT_NAME, TITLE_FONT_SIZE) + "\n");
 		builder.append(PSUtility.setgray(TITLE_FONT_BRIGHTNESS) + "\n");

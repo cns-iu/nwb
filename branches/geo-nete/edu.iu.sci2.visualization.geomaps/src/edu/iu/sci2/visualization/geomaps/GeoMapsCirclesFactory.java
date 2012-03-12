@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
 
@@ -39,9 +40,14 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 		return new GeoMapsAlgorithm<Coordinate, CircleDimension>(
 				data,
 				parameters,
+				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
 				"Geospatial Map (Proportional Circles)",
 				(LogService) ciShellContext.getService(LogService.class.getName()));
+	}
+	
+	PageLayout getPageLayout() {
+		return PageLayout.PRINT;
 	}
 
 	@Override

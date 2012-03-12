@@ -40,6 +40,7 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.AnchorPoint;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
@@ -106,7 +107,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					anchorPointsAsCircles,
 					ImmutableSet.<PostScriptable>of());
 			
-			postScriptWriter = new GeoMapViewPS(geoMap);
+			postScriptWriter = new GeoMapViewPS(geoMap, PageLayout.PRINT);
 			
 			File geoMapFile = postScriptWriter.writeToPSFile("", "");
 

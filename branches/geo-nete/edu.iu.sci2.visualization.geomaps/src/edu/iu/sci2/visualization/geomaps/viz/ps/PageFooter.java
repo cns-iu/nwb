@@ -6,6 +6,7 @@ import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 public class PageFooter {
 	public static final String INDENT = "    ";
@@ -20,7 +21,7 @@ public class PageFooter {
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
 	public static final Point2D.Double LOWER_LEFT =
-			new Point2D.Double(Constants.PAGE_MARGIN_IN_POINTS, Constants.PAGE_MARGIN_IN_POINTS);
+			new Point2D.Double(PageLayout.pageMargin(), PageLayout.pageMargin());
 
 	private static final String SEP = " | ";
 	

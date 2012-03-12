@@ -80,7 +80,7 @@ public enum CircleDimension implements VizDimension {
 										areaLegend,
 										new Point2D.Double(
 												CircleDimension.AREA_LEGEND_LOWER_LEFT_X,
-												Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY()));
+												PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getY()));
 								
 								return labeledCircleSizes;
 							} catch (ScalingException e) {
@@ -128,7 +128,7 @@ public enum CircleDimension implements VizDimension {
 						public Point2D.Double lowerLeft() {
 							return new Point2D.Double(
 									CircleDimension.OUTER_COLOR_LEGEND_LOWER_LEFT_X,
-									Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY());
+									PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getY());
 						}
 
 						@Override
@@ -176,7 +176,7 @@ public enum CircleDimension implements VizDimension {
 						public Point2D.Double lowerLeft() {
 							return new Point2D.Double(
 									CircleDimension.INNER_COLOR_LEGEND_LOWER_LEFT_X,
-									Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY());
+									PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getY());
 						}
 
 						@Override
@@ -191,14 +191,14 @@ public enum CircleDimension implements VizDimension {
 	
 	// TODO Can do better on these three..
 	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()
-			+ ((0.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+			PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getX()
+			+ ((0.0 * PageLayout.LEGEND_PAGE_AREA_DIMENSION.getWidth()) / EnumSet.allOf(CircleDimension.class).size());
 	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()
-			+ ((1.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+			PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getX()
+			+ ((1.0 * PageLayout.LEGEND_PAGE_AREA_DIMENSION.getWidth()) / EnumSet.allOf(CircleDimension.class).size());
 	public static final double AREA_LEGEND_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX()
-			+ ((2.0 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS) / EnumSet.allOf(CircleDimension.class).size());
+			PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getX()
+			+ ((2.0 * PageLayout.LEGEND_PAGE_AREA_DIMENSION.getWidth()) / EnumSet.allOf(CircleDimension.class).size());
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;

@@ -11,6 +11,7 @@ import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.ColorLegend;
@@ -33,7 +34,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
 				createColorLegend(numericFormatType), lowerLeft(),
-				Constants.COLOR_GRADIENT_DIMENSION);
+				PageLayout.COLOR_GRADIENT_DIMENSION);
 
 		return labeledReferenceGradient;
 	}

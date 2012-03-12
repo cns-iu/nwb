@@ -58,7 +58,7 @@ public enum FeatureDimension implements VizDimension {
 						public Point2D.Double lowerLeft() {
 							return new Point2D.Double(
 									FeatureDimension.COLOR_GRADIENT_LOWER_LEFT_X,
-									Constants.LEGEND_COMPOSITE_LOWER_LEFT.getY());
+									PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getY());
 						}
 
 						@Override
@@ -72,7 +72,7 @@ public enum FeatureDimension implements VizDimension {
 	};
 	
 	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
-			Constants.LEGEND_COMPOSITE_LOWER_LEFT.getX();
+			PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getX();
 	// TODO ?
 //			+ (0.5 * Constants.LEGEND_COMPOSITE_WIDTH_IN_POINTS)
 //			- (0.5 * Constants.COLOR_GRADIENT_DIMENSION.getWidth());

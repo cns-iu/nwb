@@ -27,6 +27,7 @@ import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
@@ -41,9 +42,14 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 		return new GeoMapsAlgorithm<String, FeatureDimension>(
 				data,
 				parameters,
+				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
 				"Geospatial Map (Proportional Coloring)",
 				(LogService) ciShellContext.getService(LogService.class.getName()));
+	}
+	
+	PageLayout getPageLayout() {
+		return PageLayout.PRINT;
 	}
 	
 	@Override

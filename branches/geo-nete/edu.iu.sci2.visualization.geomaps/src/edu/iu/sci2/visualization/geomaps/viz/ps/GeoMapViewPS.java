@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
@@ -35,12 +35,15 @@ public class GeoMapViewPS {
 	public static final String INDENT = "  ";
 	
 	private final GeoMap geoMap;
+	private final PageLayout pageLayout;
 	private final GeoMapViewPageArea geoMapViewPageArea;
 
-	public GeoMapViewPS(GeoMap geoMap) throws ShapefilePostScriptWriterException {
+
+	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout) throws ShapefilePostScriptWriterException {
 		try {
 			this.geoMap = geoMap;
-			this.geoMapViewPageArea = new GeoMapViewPageArea(calculateMapBoundingRectangle());
+			this.pageLayout = pageLayout;
+			this.geoMapViewPageArea = new GeoMapViewPageArea(calculateMapBoundingRectangle(), pageLayout);
 		} catch (TransformException e) {
 			throw new ShapefilePostScriptWriterException(e);
 		}
@@ -101,13 +104,15 @@ public class GeoMapViewPS {
 		out.write("\n");
 		
 		
-		PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(),
-				String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
-				String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
-				timestamp(),
-				authorName);
-		out.write(pageHeader.toPostScript());
-		out.write("\n");
+		if (pageLayout.headerLowerLeft().isPresent()) {
+			PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(), pageLayout.headerLowerLeft().get(),
+					String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
+					String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
+					timestamp(),
+					authorName);
+			out.write(pageHeader.toPostScript());
+			out.write("\n");
+		}
 		
 		out.write(geoMap.getLegendComposite().toPostScript());
 		out.write("\n");
@@ -194,7 +199,7 @@ public class GeoMapViewPS {
 			BufferedWriter out, String outputPSFileName) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-		out.write((new DSCProlog(outputPSFileName, Constants.PAGE_HEIGHT_IN_POINTS)).toPostScript());
+		out.write((new DSCProlog(outputPSFileName, PageLayout.pageHeight())).toPostScript());
 		
 //		/* TODO We're using setpagedevice to force page dimensions
 //		 * corresponding to US Letter landscape.  This command

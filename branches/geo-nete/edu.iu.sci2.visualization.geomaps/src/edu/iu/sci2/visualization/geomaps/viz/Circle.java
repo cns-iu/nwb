@@ -24,8 +24,8 @@ public class Circle {
 	private final EnumMap<CircleDimension, Strategy> strategies;
 	public static final Range<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
 			Range.between(
-					0.00135 * Constants.PAGE_WIDTH_IN_POINTS,
-					0.03 * Constants.PAGE_WIDTH_IN_POINTS);
+					0.00135 * PageLayout.pageWidth(),
+					0.03 * PageLayout.pageWidth());
 	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE =
 			Range.between(
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),

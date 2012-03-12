@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 /* DSC = Document Structuring Conventions, the standards that a piece of
  * PostScript code must obey to be valid Encapsulated PostScript.
@@ -81,7 +81,7 @@ public class DSCProlog {
 		String value = "0 0 " +
 						((int) pageHeightInPoints) +
 						" " +
-						((int) Constants.PAGE_WIDTH_IN_POINTS);
+						((int) PageLayout.pageWidth());
 		
 		return value;
 	}

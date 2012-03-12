@@ -39,7 +39,15 @@
 		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
 	</Designate>
 	
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsWebRegionsFactory">
+		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
+	</Designate>
+	
 	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory">
+		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
+	</Designate>
+	
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsWebCirclesFactory">
 		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
 	</Designate>
 	

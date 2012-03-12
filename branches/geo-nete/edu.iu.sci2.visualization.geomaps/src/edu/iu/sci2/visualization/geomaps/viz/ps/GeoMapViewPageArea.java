@@ -9,13 +9,13 @@ import com.vividsolutions.jts.geom.Coordinate;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Rectangles;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 public class GeoMapViewPageArea {
 	public static final boolean CLIP_TO_BOUNDING_BOX = true;
 	public static final boolean BACKGROUND_TRANSPARENT = true;
 	public static final Color BACKGROUND_COLOR = Color.CYAN;
-	public static final boolean DRAW_BOUNDING_BOX = false;
+	public static final boolean DRAW_BOUNDING_BOX = true;
 	public static final double BOUNDING_BOX_LINE_WIDTH = .2;
 
 	public static final String INDENT = "  ";
@@ -23,25 +23,31 @@ public class GeoMapViewPageArea {
 	private final Rectangle2D.Double dataRectangle;
 	private final Rectangle2D.Double displayRectangle;
 
-	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle) {
+	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle, PageLayout pageLayout) {
 		this.dataRectangle = dataRectangle;
 		
-		double xScale = Constants.MAP_PAGE_AREA_MAX_WIDTH_IN_POINTS / dataRectangle.getWidth();
-		double yScale = Constants.MAP_PAGE_AREA_MAX_HEIGHT_IN_POINTS / dataRectangle.getHeight();		
+		double xScale = pageLayout.mapPageAreaMaxDimensions().getWidth() / dataRectangle.getWidth();
+		double yScale = pageLayout.mapPageAreaMaxDimensions().getHeight() / dataRectangle.getHeight();		
 		double scale = Math.min(xScale, yScale);		
-//		double scale = (Constants.MAP_PAGE_AREA_MAX_HEIGHT_IN_POINTS / dataRectangle.getHeight());
 		
 		Dimension<Double> displayDimension =
 				Dimension.ofSize(
 						(scale * dataRectangle.getWidth()),
 						(scale * dataRectangle.getHeight()));
 		
+		double availableMapHeight =
+				PageLayout.pageHeight()
+				- (PageLayout.PAGE_FOOTER_HEIGHT_IN_POINTS
+						+ PageLayout.LEGEND_PAGE_AREA_DIMENSION.getHeight()
+						+ pageLayout.headerHeight());
+		
+		double mapCenterY =
+				PageLayout.PAGE_FOOTER_HEIGHT_IN_POINTS
+				+ PageLayout.LEGEND_PAGE_AREA_DIMENSION.getHeight()
+				+ availableMapHeight / 2;
+		
 		Point2D.Double displayCenter =
-				new Point2D.Double(
-						Constants.MAP_CENTER_X_IN_POINTS,
-						(Constants.PAGE_FOOTER_HEIGHT_IN_POINTS +
-						Constants.LEGEND_PAGE_AREA_DIMENSION.getHeight() +
-								(displayDimension.getHeight() / 2.0)));
+				new Point2D.Double(PageLayout.MAP_CENTER_X_IN_POINTS, mapCenterY);
 		
 		
 		this.displayRectangle = Rectangles.forCenterWithDimensions(displayCenter, displayDimension);
