@@ -43,7 +43,7 @@ includes the range.  You can see there is an option to center the title called
 */
 
 
-legendTitleTopDefinitions(areaColumn, minArea, maxArea, labelColumn, colorText1, colorText2) ::= <<
+legendTitleTopDefinitions(areaColumn, minArea, maxArea, labelColumn, colorText1, colorText2, titleFontSize, normalFontSize) ::= <<
 
 %%%%%%%%%%%%%%%
 % Legend Area
@@ -58,47 +58,48 @@ legendTitleTopDefinitions(areaColumn, minArea, maxArea, labelColumn, colorText1,
 /legendTitleTopColor1 { (<colorText1>) } def
 /legendTitleTopColor2 { (<colorText2>) } def
 
-/legendTitleTopNormalFontSize { 10 } def
-/legendTitleTopTitleFontSize { 14 } def
-/legendTitleTopNormalFont { /ArialMT legendTitleTopNormalFontSize selectfont } def
+/legendTitleTopTitleFontSize { <titleFontSize> } def
 /legendTitleTopTitleFont { /Arial-BoldMT legendTitleTopTitleFontSize selectfont } def
+
+/legendTitleTopNormalFontSize { <normalFontSize> } def
+/legendTitleTopNormalFont { /ArialMT legendTitleTopNormalFontSize selectfont } def
 
 
 /legendTitleTop { % (title) [min] [max] (category) => -
 	gsave
 	0 0 0 setrgbcolor
 	legendTitleTopLeft legendTitleTopTop translate
+	legendTitleTopTitleFontSize neg 0 exch translate
 	
 	0 0 moveto
 	legendTitleTopTitleFont 
 	legendTitleTopTitle show
-	legendTitleTopTitleFontSize 1 add neg 0 exch translate
+	legendTitleTopTitleFontSize neg 0 exch translate
 	
 	0 0 moveto
 	legendTitleTopNormalFont
 	legendTitleTopArea show
-	legendTitleTopNormalFontSize 2 add neg 0 exch translate
+	legendTitleTopNormalFontSize neg 0 exch translate
 	
 	0 0 moveto
 	legendTitleTopMin show
-	legendTitleTopNormalFontSize 2 add neg 0 exch translate
+	legendTitleTopNormalFontSize neg 0 exch translate
 	
 	0 0 moveto
 	legendTitleTopMax show
 	legendTitleTopNormalFontSize neg 0 exch translate
-	legendTitleTopNormalFontSize neg 0 exch translate
 	
 	0 0 moveto
 	legendTitleTopLabel show
-	legendTitleTopNormalFontSize 1 add neg 0 exch translate
+	legendTitleTopNormalFontSize neg 0 exch translate
 	
 	0 0 moveto 
 	legendTitleTopColor1 show
-	legendTitleTopNormalFontSize 1 add neg 0 exch translate
+	legendTitleTopNormalFontSize neg 0 exch translate
 	
 	0 0 moveto
 	legendTitleTopColor2 show
-	legendTitleTopNormalFontSize 1 add neg 0 exch translate
+	legendTitleTopNormalFontSize neg 0 exch translate
 	grestore
 } def
 	
@@ -220,14 +221,14 @@ This will draw a few boxes to describe area further.  NOTE!  The bottom specifie
 
 gapYearValue is the number of years, as a decimal rounded to one place that prepresents the distance between the year ticks. 
 */
-areaLegendDefinitions(barWidth, bigBarHeight, bigBarValue, medBarHeight, medBarValue, smallBarHeight, smallBarValue, yearValue) ::= <<
+areaLegendDefinitions(barWidth, fontSize, bigBarHeight, bigBarValue, medBarHeight, medBarValue, smallBarHeight, smallBarValue, yearValue) ::= <<
 
 %%%%%%%%%%%%%%%%
 %  AreaLegend  %
 %%%%%%%%%%%%%%%%
 /areaLegend {
 	/areaLegendTop { areaLegendBottom } def % HACK.  Sadly I chose the wrong dimentions to specify.  I should have done top and left.  Until I fix that, this is here.
-	/fontSize { 10 } def
+	/fontSize { <fontSize> } def
 	/barWidth { <barWidth> } def
 	/space { 6 } def
 	

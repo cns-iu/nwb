@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.temporalbargraph.common;
 
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
+
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,9 +44,9 @@ public abstract class AbstractPages {
 	}
 	
 	public String renderDefinitionsPostscript() {
-		if(!pageElementsAdded){
+		if(!this.pageElementsAdded){
 			addPageElements();
-			pageElementsAdded = true;
+			this.pageElementsAdded = true;
 		}
 		
 		Set<String> definitionsSet = new HashSet<String>();
@@ -85,9 +87,9 @@ public abstract class AbstractPages {
 	}
 	
 	public String renderPagesPostscript() {
-		if(!pageElementsAdded){
+		if(!this.pageElementsAdded){
 			addPageElements();
-			pageElementsAdded = true;
+			this.pageElementsAdded = true;
 		}
 		StringBuilder pagesPostScript = new StringBuilder();
 
@@ -125,19 +127,19 @@ public abstract class AbstractPages {
 	}
 
 	protected List<PageElement> getPageElementsSomePages(int pageNumber) {
-		return pageElementsSomePages.get(pageNumber);
+		return this.pageElementsSomePages.get(pageNumber);
 	}
 
 	protected Map<Integer, List<PageElement>> getPageElementsSomePages() {
-		return pageElementsSomePages;
+		return this.pageElementsSomePages;
 	}
 
 	protected List<PageElement> getPageElementsAllPages() {
-		return pageElementsAllPages;
+		return this.pageElementsAllPages;
 	}
 
 	protected List<PageElement> setElementsForPage(int pageNumber, List<PageElement> elements){
-		return pageElementsSomePages.put(pageNumber, elements);
+		return this.pageElementsSomePages.put(pageNumber, elements);
 	}
 	
 	protected void addElementsAllPages(List<PageElement> elements){
@@ -147,7 +149,7 @@ public abstract class AbstractPages {
 	}
 	
 	protected void addPageElementAllPages(PageElement element) {
-		pageElementsAllPages.add(element);
+		this.pageElementsAllPages.add(element);
 	}
 	
 	protected void addPageElementSomePages(PageElement element, List<Integer> pages){
@@ -178,4 +180,8 @@ public abstract class AbstractPages {
 	protected abstract int numberOfPages();
 	
 	public abstract void addPageElements();
+	
+	public static double inchToPoints(double number) {
+		return number * POINTS_PER_INCH;
+	}
 }

@@ -1,7 +1,5 @@
 package edu.iu.sci2.visualization.temporalbargraph.web;
 
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,16 +102,17 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	private PageElement getAreaLegendElement() {
 		double daysPerPoint = Math.pow(this.visualizations.getPointsPerDay(), -1);
 		double yPerPoint = Math.pow(this.visualizations.getPointsPerY(), -1);
-		double barWidth = 50;
+		double barWidth = inchToPoints(1.7);
 		double yearValue = barWidth * daysPerPoint / 365.0;
-		double bigBarHeight = 18;
+		double bigBarHeight = inchToPoints(0.50);
 		double bigBarValue = (daysPerPoint * barWidth) * (yPerPoint * bigBarHeight);
-		double medBarHeight = 6;
+		double medBarHeight = inchToPoints(0.30);
 		double medBarValue = (daysPerPoint * barWidth) * (yPerPoint * medBarHeight);
-		double smallBarHeight = 2;
+		double smallBarHeight = inchToPoints(0.10);
 		double smallBarValue = (daysPerPoint * barWidth) * (yPerPoint * smallBarHeight);
 		
 		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
+		areaDefinitionsTemplate.setAttribute("fontSize", 16);
 		areaDefinitionsTemplate.setAttribute("barWidth", String.valueOf(barWidth));
 		areaDefinitionsTemplate.setAttribute("bigBarHeight", bigBarHeight);
 		areaDefinitionsTemplate.setAttribute("medBarHeight", medBarHeight);
@@ -125,7 +124,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
 		
-		return new PageElement("areaLegend", 350, 150, areaTemplate, areaDefinitionsTemplate);
+		return new PageElement("areaLegend", inchToPoints(5.56), inchToPoints(13.33 - 11.13), areaTemplate, areaDefinitionsTemplate);
 	}
 	
 	private PageElement getLegendPageElement(){
@@ -150,9 +149,11 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 			legendDefinitionsTemplate.setAttribute("labelColumn", this.labelColumn);
 			legendDefinitionsTemplate.setAttribute("colorText1", colorText1);
 			legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
+			legendDefinitionsTemplate.setAttribute("titleFontSize", 20);
+			legendDefinitionsTemplate.setAttribute("normalFontSize", 16);
 
-			double leftBound = 1.0 * POINTS_PER_INCH;
-			double topBound = 150.0;
+			double leftBound = inchToPoints(0.25);
+			double topBound = inchToPoints(13.33 - 11);
 			return new PageElement("legendTitleTop", leftBound, topBound,
 					legendTemplate, legendDefinitionsTemplate);
 	}
@@ -165,7 +166,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 				.getInstanceOf("footerDefinitions");
 		footerDefinitionsTemplate.setAttribute("pageWidth", this.size.getWidth());
 		
-		return new PageElement("footer", 0, 25.0, footerTemplate, footerDefinitionsTemplate);
+		return new PageElement("footer", 0, inchToPoints(0.25), footerTemplate, footerDefinitionsTemplate);
 	}
 
 	@Override

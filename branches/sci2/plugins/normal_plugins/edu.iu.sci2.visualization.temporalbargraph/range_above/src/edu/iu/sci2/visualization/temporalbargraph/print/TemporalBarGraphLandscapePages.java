@@ -23,7 +23,8 @@ import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
 public class TemporalBarGraphLandscapePages extends AbstractPages {
-	public static DecimalFormat formatter = new DecimalFormat("###,###");
+	public static DecimalFormat commaFormatter = new DecimalFormat("###,###");
+	public static DecimalFormat twoDecimalFormatter = new DecimalFormat("###,###.##");
 	private Visualization visualizations;
 	private DoubleDimension size;
 	private String areaColumn;
@@ -32,10 +33,11 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	private String labelColumn;
 	private CategoryBreakdown categoryBreakdown;
 
-	public TemporalBarGraphLandscapePages(CSVWriter csvWriter, List<Record> records,
-			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String areaColumn, String categoryColumn, String labelColumn, String query)
-			throws PostScriptCreationException {
+	public TemporalBarGraphLandscapePages(CSVWriter csvWriter,
+			List<Record> records, boolean scaleToOnePage,
+			ColorRegistry<String> colorRegistry, DoubleDimension size,
+			String areaColumn, String categoryColumn, String labelColumn,
+			String query) throws PostScriptCreationException {
 
 		this.size = size;
 		DoubleDimension visualizationSize = new DoubleDimension(size.getWidth()
@@ -44,8 +46,9 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		this.visualizations = new Visualization(csvWriter, records,
 				visualizationSize, scaleToOnePage, colorRegistry);
-		
-		this.categoryBreakdown = new CategoryBreakdown(records, colorRegistry, 3, 400, 20);
+
+		this.categoryBreakdown = new CategoryBreakdown(records, colorRegistry,
+				3, 400, 20);
 		System.out.println(this.categoryBreakdown.numberOfPages());
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;
@@ -56,7 +59,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 	@Override
 	public int numberOfPages() {
-		return this.visualizations.numberOfVisualizations() + this.categoryBreakdown.numberOfPages();
+		return this.visualizations.numberOfVisualizations()
+				+ this.categoryBreakdown.numberOfPages();
 	}
 
 	@Override
@@ -80,7 +84,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 					visualizationLeft, visualizationBottom, visualization,
 					visualizationDefinitions);
 
-			List<PageElement> pageElements = pageElementsSomePages.get(nextPage);
+			List<PageElement> pageElements = pageElementsSomePages
+					.get(nextPage);
 
 			if (!pageElementsSomePages.containsKey(nextPage)) {
 				pageElements = new ArrayList<PageElement>();
@@ -90,16 +95,17 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 			pageElements.add(getLegendPageElement());
 			pageElements.add(getHowtoPageElement());
 			pageElements.add(getAreaLegendElement());
-			
+
 			pageElementsSomePages.put(nextPage, pageElements);
 			nextPage++;
 		}
-		
-		String categoryBreakdownDefinitions = this.categoryBreakdown.renderPostscriptDefinitions();
-		for (int ii = 0; ii < this.categoryBreakdown.numberOfPages(); ii++){
-			
 
-			List<PageElement> pageElements = pageElementsSomePages.get(nextPage);
+		String categoryBreakdownDefinitions = CategoryBreakdown
+				.renderPostscriptDefinitions();
+		for (int ii = 0; ii < this.categoryBreakdown.numberOfPages(); ii++) {
+
+			List<PageElement> pageElements = pageElementsSomePages
+					.get(nextPage);
 
 			if (!pageElementsSomePages.containsKey(nextPage)) {
 				pageElements = new ArrayList<PageElement>();
@@ -107,10 +113,12 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 			double categoryBreakdownLeft = 0.5 * POINTS_PER_INCH;
 			double categoryBreakdownTop = 525;
-			String categoryBreakdownPostscript = this.categoryBreakdown.renderPostscript(ii);
-			
-			PageElement categoryBreakdownElement = new PageElement("categoryBreakdown",
-					categoryBreakdownLeft, categoryBreakdownTop, categoryBreakdownPostscript,
+			String categoryBreakdownPostscript = this.categoryBreakdown
+					.renderPostscript(ii);
+
+			PageElement categoryBreakdownElement = new PageElement(
+					"categoryBreakdown", categoryBreakdownLeft,
+					categoryBreakdownTop, categoryBreakdownPostscript,
 					categoryBreakdownDefinitions);
 			pageElements.add(categoryBreakdownElement);
 			pageElementsSomePages.put(nextPage, pageElements);
@@ -128,57 +136,75 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	}
 
 	private PageElement getAreaLegendElement() {
-		double daysPerPoint = Math.pow(this.visualizations.getPointsPerDay(), -1);
+		double daysPerPoint = Math.pow(this.visualizations.getPointsPerDay(),
+				-1);
 		double yPerPoint = Math.pow(this.visualizations.getPointsPerY(), -1);
 		double barWidth = 50;
 		double yearValue = barWidth * daysPerPoint / 365.0;
 		double bigBarHeight = 18;
-		double bigBarValue = (daysPerPoint * barWidth) * (yPerPoint * bigBarHeight);
+		double bigBarValue = (daysPerPoint * barWidth)
+				* (yPerPoint * bigBarHeight);
 		double medBarHeight = 6;
-		double medBarValue = (daysPerPoint * barWidth) * (yPerPoint * medBarHeight);
+		double medBarValue = (daysPerPoint * barWidth)
+				* (yPerPoint * medBarHeight);
 		double smallBarHeight = 2;
-		double smallBarValue = (daysPerPoint * barWidth) * (yPerPoint * smallBarHeight);
-		
-		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
-		areaDefinitionsTemplate.setAttribute("barWidth", String.valueOf(barWidth));
+		double smallBarValue = (daysPerPoint * barWidth)
+				* (yPerPoint * smallBarHeight);
+
+		StringTemplate areaDefinitionsTemplate = pageElementsGroup
+				.getInstanceOf("areaLegendDefinitions");
+		areaDefinitionsTemplate.setAttribute("fontSize", 10);
+		areaDefinitionsTemplate.setAttribute("barWidth",
+				String.valueOf(barWidth));
 		areaDefinitionsTemplate.setAttribute("bigBarHeight", bigBarHeight);
 		areaDefinitionsTemplate.setAttribute("medBarHeight", medBarHeight);
 		areaDefinitionsTemplate.setAttribute("smallBarHeight", smallBarHeight);
-		areaDefinitionsTemplate.setAttribute("bigBarValue", formatter.format(bigBarValue));
-		areaDefinitionsTemplate.setAttribute("medBarValue", formatter.format(medBarValue));
-		areaDefinitionsTemplate.setAttribute("smallBarValue", formatter.format(smallBarValue));
-		areaDefinitionsTemplate.setAttribute("yearValue", formatter.format(yearValue));
-		
-		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
-		
-		return new PageElement("areaLegend", 250, 100, areaTemplate, areaDefinitionsTemplate);
+		areaDefinitionsTemplate.setAttribute("bigBarValue",
+				commaFormatter.format(bigBarValue));
+		areaDefinitionsTemplate.setAttribute("medBarValue",
+				commaFormatter.format(medBarValue));
+		areaDefinitionsTemplate.setAttribute("smallBarValue",
+				commaFormatter.format(smallBarValue));
+		areaDefinitionsTemplate.setAttribute("yearValue",
+				twoDecimalFormatter.format(yearValue));
+
+		StringTemplate areaTemplate = pageElementsGroup
+				.getInstanceOf("areaLegend");
+
+		return new PageElement("areaLegend", inchToPoints(3.6), inchToPoints(8.5 - 7), areaTemplate,
+				areaDefinitionsTemplate);
 	}
-	
+
 	private PageElement getLegendPageElement() {
 		StringTemplate legendTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTop");
-		
+
 		String colorText1, colorText2;
-		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE.equals(this.categoryColumn)) {
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
+				.equals(this.categoryColumn)) {
 			colorText1 = "";
 			colorText2 = "";
 		} else {
 			colorText1 = "Color: " + this.categoryColumn;
 			colorText2 = "See end of PDF for color legend.";
-			
+
 		}
-		
+
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
 		legendDefinitionsTemplate.setAttribute("areaColumn", this.areaColumn);
-		legendDefinitionsTemplate.setAttribute("minArea", formatter.format(this.visualizations.minRecordValue()));
-		legendDefinitionsTemplate.setAttribute("maxArea", formatter.format(this.visualizations.maxRecordValue()));
+		legendDefinitionsTemplate.setAttribute("minArea",
+				commaFormatter.format(this.visualizations.minRecordValue()));
+		legendDefinitionsTemplate.setAttribute("maxArea",
+				commaFormatter.format(this.visualizations.maxRecordValue()));
 		legendDefinitionsTemplate.setAttribute("labelColumn", this.labelColumn);
 		legendDefinitionsTemplate.setAttribute("colorText1", colorText1);
 		legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
+		legendDefinitionsTemplate.setAttribute("titleFontSize", 14);
+		legendDefinitionsTemplate.setAttribute("normalFontSize", 10);
 
-		double leftBound = 0.5 * POINTS_PER_INCH;
-		double topBound = 100 - 14;
+		double leftBound = inchToPoints(0.25);
+		double topBound = inchToPoints(8.5 - 7);
 		return new PageElement("legendTitleTop", leftBound, topBound,
 				legendTemplate, legendDefinitionsTemplate);
 	}
@@ -192,10 +218,11 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		StringTemplate footerDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("footerDefinitions");
-		footerDefinitionsTemplate.setAttribute("pageWidth", this.size.getWidth());
+		footerDefinitionsTemplate.setAttribute("pageWidth",
+				this.size.getWidth());
 
 		double leftBound = this.size.getWidth() / 2;
-		double bottomBound = 0;
+		double bottomBound = inchToPoints(0.25);
 		return new PageElement("footer", leftBound, bottomBound,
 				footerTemplate, footerDefinitionsTemplate);
 	}
@@ -203,17 +230,19 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	private PageElement getTitlePageElement() {
 		StringTemplate titleTemplate = pageElementsGroup
 				.getInstanceOf("pageHeading");
-		
-		
-		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("pageHeadingDefinitions");
-		titleDefinitionsTemplate.setAttribute("title", "Temporal Visualization");
+
+		StringTemplate titleDefinitionsTemplate = pageElementsGroup
+				.getInstanceOf("pageHeadingDefinitions");
+		titleDefinitionsTemplate
+				.setAttribute("title", "Temporal Visualization");
 		titleDefinitionsTemplate.setAttribute("query", this.query);
-		titleDefinitionsTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
-		
-		double leftBound = 0.5 * POINTS_PER_INCH;
-		double bottomBound = this.size.getHeight() - 0.25 * POINTS_PER_INCH;
-		return new PageElement("pageHeading", leftBound, bottomBound, titleTemplate,
-				titleDefinitionsTemplate);
+		titleDefinitionsTemplate.setAttribute("date",
+				new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
+
+		double leftBound = inchToPoints(0.25);
+		double topBound = inchToPoints(8.5 - 0.25);
+		return new PageElement("pageHeading", leftBound, topBound,
+				titleTemplate, titleDefinitionsTemplate);
 	}
 
 	private static PageElement getHowtoPageElement() {
@@ -224,10 +253,9 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 14);
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
-		double leftBound = 400.0;
-		double topBound = 100.0;
+		double leftBound = inchToPoints(5.85);
+		double topBound = inchToPoints(8.5 - 7);
 		return new PageElement("howto", leftBound, topBound, howtoTemplate,
 				howtoDefinitionsTemplate);
 	}
-
 }
