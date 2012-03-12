@@ -65,7 +65,6 @@ public class PageLegend implements PageElement{
 		state.drawStringAndTranslate(unclassified, 0, 0);
 		state.drawStringAndTranslate(minimum, 0, 0);
 		state.drawStringAndTranslate(maximum, 0, 0);
-		state.current.translate(0, state.current.getFontMetrics().getHeight());
 
 		for (String colorString : color.split(System
 				.getProperty("line.separator"))) {
