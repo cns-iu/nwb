@@ -7,7 +7,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
@@ -18,14 +17,14 @@ public enum NodeDestination {
 		/* TODO Extract bits that don't vary per node.. per side even? */
 		
 		@Override
-		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
+		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight, Font defaultFont) {
 			SimpleLabelPainter painter =
 					new SimpleLabelPainter(
 							nv.getNodeCenter().translate(- nv.getCenterToTextDistance(), 0),
 							XAlignment.RIGHT,
 							YAlignment.STRIKE_HEIGHT,
 							nv.getLabel(),
-							fitFontWithinHeight(g.getFontRenderContext(), maxHeight), null);
+							fitFontWithinHeight(g.getFontRenderContext(), maxHeight, defaultFont), null);
 			
 			painter.paint(g);
 		}
@@ -34,14 +33,14 @@ public enum NodeDestination {
 	},
 	RIGHT(Color.decode("#FF9900")) {
 		@Override
-		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
+		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight, Font defaultFont) {
 			SimpleLabelPainter painter =
 					new SimpleLabelPainter(
 							nv.getNodeCenter().translate(nv.getCenterToTextDistance(), 0),
 							XAlignment.LEFT,
 							YAlignment.STRIKE_HEIGHT,
 							nv.getLabel(),
-							fitFontWithinHeight(g.getFontRenderContext(), maxHeight), null);
+							fitFontWithinHeight(g.getFontRenderContext(), maxHeight, defaultFont), null);
 			
 			painter.paint(g);
 		}
@@ -50,19 +49,18 @@ public enum NodeDestination {
 
 	private static final int SPACING_BETWEEN_LABELS = 2;
 	private static final int MINIMUM_FONT_SIZE = 2;
-	private static final Font LABEL_FONT = PageDirector.BASIC_FONT;
 	private final Color fillColor;
 	
 	private NodeDestination(Color fillColor) {
 		this.fillColor = fillColor;
 	}
 	
-	public abstract void paintLabel(NodeView nv, Graphics2D g, double maxHeight);
+	public abstract void paintLabel(NodeView nv, Graphics2D g, double maxHeight, Font defaultFont);
 	
-	private static Font fitFontWithinHeight(FontRenderContext frc, double maxHeight) {
-		Font currentFont = LABEL_FONT;
-		for (int fontSize = LABEL_FONT.getSize() ; fontSize >= MINIMUM_FONT_SIZE; fontSize--) {
-			currentFont = LABEL_FONT.deriveFont(LABEL_FONT.getStyle(), fontSize);
+	private static Font fitFontWithinHeight(FontRenderContext frc, double maxHeight, Font defaultFont) {
+		Font currentFont = defaultFont;
+		for (int fontSize = defaultFont.getSize(); fontSize >= MINIMUM_FONT_SIZE; fontSize--) {
+			currentFont = defaultFont.deriveFont(defaultFont.getStyle(), fontSize);
 			TextLayout tl = new TextLayout("Alg", currentFont, frc); // "Alg" is a good height test with its risers and descenders
 			Rectangle2D textBounds = tl.getBounds();
 			// "+1" to leave a bit of a margin

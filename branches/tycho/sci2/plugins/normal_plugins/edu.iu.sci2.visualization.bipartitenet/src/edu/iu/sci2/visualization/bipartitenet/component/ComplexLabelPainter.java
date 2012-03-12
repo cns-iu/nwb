@@ -59,6 +59,15 @@ public class ComplexLabelPainter implements Paintable {
 			return this;
 		}
 		
+		public Builder addLine(String line, Color color) {
+			Preconditions.checkNotNull(line);
+			Preconditions.checkNotNull(color);
+			lines.add(line);
+			fonts.add(defaultFont);
+			colors.add(color);
+			return this;
+		}
+		
 		public Builder addLine(String line, Font font, Color color) {
 			Preconditions.checkNotNull(line);
 			Preconditions.checkNotNull(font);
@@ -90,6 +99,13 @@ public class ComplexLabelPainter implements Paintable {
 		this.colors = colors;
 	}
 
+	public float estimateHeight() {
+		float sum = 0;
+		for (Font f : fonts) {
+			sum += f.getSize2D() * lineSpacing;
+		}
+		return sum;
+	}
 
 	@Override
 	public void paint(Graphics2D g) {

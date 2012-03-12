@@ -31,17 +31,21 @@ import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScale;
 
 public class PageDirector implements Paintable {
+	public static final double LINE_SPACING = 1.2;
+
 	public static enum Layout {
 		PRINT(792, 612,
 				new Point2D(18, 18), // title top-left corner
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
-				12, 3),
+				12, 3,
+				new int[] { 14, 12, 10, 10 }),
 		WEB(1280, 960,
 				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
-				20, 5);
+				20, 5,
+				new int[] { 20, 16, 14, 10 });
 		
 		private final int width;
 		private final int height;
@@ -50,10 +54,12 @@ public class PageDirector implements Paintable {
 		private final int maxNodeRadius;
 		private final Point2D headerPosition;
 		private final int maxEdgeThickness;
+		private final int[] fontSizes;
 
 		private Layout(int width, int height, Point2D headerPosition, 
 				LineSegment2D leftLine, LineSegment2D rightLine,
-				int maxNodeRadius, int maxEdgeThickness) {
+				int maxNodeRadius, int maxEdgeThickness,
+				int[] fontSizes) {
 			this.width = width;
 			this.height = height;
 			this.headerPosition = headerPosition;
@@ -61,6 +67,8 @@ public class PageDirector implements Paintable {
 			this.rightLine = rightLine;
 			this.maxNodeRadius = maxNodeRadius;
 			this.maxEdgeThickness = maxEdgeThickness;
+			assert fontSizes.length == 4;
+			this.fontSizes = fontSizes;
 		}
 
 		public int getWidth() {
@@ -125,8 +133,8 @@ public class PageDirector implements Paintable {
 			double denominator = Math.max(1, numLegends - 1);
 			
 			LineSegment2D legendLine = new LineSegment2D(
-					18, height - 120,
-					width / 2.0, height - 120);
+					18, height - estimateLegendHeight(),
+					width / 2.0, height - estimateLegendHeight());
 			
 			for (int i = 0; i < numLegends; i++) {
 				points.add(legendLine.getPoint(i / denominator));
@@ -134,14 +142,32 @@ public class PageDirector implements Paintable {
 			
 			return ImmutableList.copyOf(points);
 		}
+		
+		private int estimateLegendHeight() {
+			return 72 + getMaxNodeRadius() + 3 * fontSizes[0];
+		}
+
+		public Font getTitleFont() {
+			return INTERNAL_BASE_FONT.deriveFont(Font.BOLD, fontSizes[0]);
+		}
+		public Font getDefaultNodeFont() {
+			return INTERNAL_BASE_FONT.deriveFont(Font.PLAIN, fontSizes[1]);
+		}
+		public Font getLegendFont() {
+			return INTERNAL_BASE_FONT.deriveFont(Font.PLAIN, fontSizes[2]);
+		}
+		public Font getFooterFont() {
+			return INTERNAL_BASE_FONT.deriveFont(Font.ITALIC, fontSizes[3]);
+		}
 	}
 	
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	public static final Font BASIC_FONT = findBasicFont(10);
-	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
-	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
+	private static final Font INTERNAL_BASE_FONT = findBasicFont(10);
+//	public static final Font BASIC_FONT = findBasicFont(10);
+//	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
+//	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
 	private static final String TITLE = "Bipartite Network Graph";
 
 	private final Layout layout;
@@ -172,7 +198,9 @@ public class PageDirector implements Paintable {
 		}
 		
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
-				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), nodeCoding, edgeCoding);
+				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), 
+				nodeCoding, edgeCoding,
+				layout.getDefaultNodeFont());
 		painter.add(renderer);
 		
 		// The main title, and headers
@@ -180,23 +208,23 @@ public class PageDirector implements Paintable {
 		// Position's null if there should be no title 
 		if (headerPosition != null) {
 			painter.add(
-					new ComplexLabelPainter.Builder(headerPosition, BASIC_FONT, Color.BLACK)
-					.addLine(TITLE, TITLE_FONT)
+					new ComplexLabelPainter.Builder(headerPosition, layout.getLegendFont(), Color.BLACK)
+					.addLine(TITLE, layout.getTitleFont())
 					.addLine("Generated from Cornell NSF Data")
 					.addLine(getTimeStamp())
-					.withLineSpacing(1.2)
+					.withLineSpacing(LINE_SPACING)
 					.build());
 		}
 		
 		// The titles of the two columns
 		painter.add(new SimpleLabelPainter(layout.getLeftTitlePosition(), 
-				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, SUB_TITLE_FONT, null));
+				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, layout.getTitleFont(), null));
 		painter.add(new SimpleLabelPainter(layout.getRightTitlePosition(), 
-				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, SUB_TITLE_FONT, null));
+				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, layout.getTitleFont(), null));
 		
 		// The footer
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
-				XAlignment.CENTER, YAlignment.BASELINE, footer, BASIC_FONT.deriveFont(Font.ITALIC),
+				XAlignment.CENTER, YAlignment.BASELINE, footer, layout.getFooterFont(),
 				Color.gray));
 	}
 
@@ -208,10 +236,11 @@ public class PageDirector implements Paintable {
 			sort = "Label (alphabetically)";
 		}
 		
-		return new ComplexLabelPainter.Builder(layout.getSortLegendPosition(), BASIC_FONT, Color.black)
-			.addLine("Legend", TITLE_FONT)
+		return new ComplexLabelPainter.Builder(layout.getSortLegendPosition(), layout.getLegendFont(), Color.black)
+			.withLineSpacing(LINE_SPACING)
+			.addLine("Legend", layout.getTitleFont())
 			.addLine("Sorted by")
-			.addLine(sort, BASIC_FONT, Color.gray)
+			.addLine(sort, Color.gray)
 			.build();
 	}
 
@@ -284,7 +313,8 @@ public class PageDirector implements Paintable {
 		CircleRadiusLegend legend = new CircleRadiusLegend(
 				layout.getCircleLegendPosition(), 
 				ImmutableList.of(" ", "Circle Area", dataModel.getNodeValueAttribute()), 
-				coding, ImmutableList.copyOf(labels));
+				coding, ImmutableList.copyOf(labels),
+				layout.getTitleFont(), layout.getLegendFont());
 		return legend;
 	}
 
@@ -294,7 +324,8 @@ public class PageDirector implements Paintable {
 		labels.add(1, halfway);
 		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
 				ImmutableList.of(" ", "Edge Weight", dataModel.getEdgeValueAttribute()),
-				edgeCoding, ImmutableList.copyOf(labels));
+				edgeCoding, ImmutableList.copyOf(labels),
+				layout.getTitleFont(), layout.getLegendFont());
 		return legend;
 	}
 

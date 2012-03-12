@@ -22,25 +22,24 @@ public class CircleRadiusLegend implements Paintable {
 	private final Scale<Double,Double> coding;
 	private final ImmutableList<Double> labeledValues;
 	private final Point2D topLeft;
-	private final Paintable titlePainter;
-	
-	private static final Font TITLE_FONT = PageDirector.BASIC_FONT.deriveFont(Font.BOLD, 14);
-	private static final Font LEGEND_FONT = PageDirector.BASIC_FONT.deriveFont(Font.PLAIN, 10);
+	private final ComplexLabelPainter titlePainter;
 	
 	private static final int LABEL_X_OFFSET = 5; // from outer edge of circles to the labels
-	private static final int LEGEND_Y_OFFSET = 42; // from top of title to top of circles
-	
+	private final Font labelFont;
 	
 	public CircleRadiusLegend(Point2D topLeft, ImmutableList<String> headerLines,
 			Scale<Double,Double> coding,
-			ImmutableList<Double> labeledValues) {
+			ImmutableList<Double> labeledValues,
+			Font titleFont, Font labelFont) {
 		this.topLeft = topLeft;
 		this.coding = coding;
 		this.labeledValues = labeledValues;
-		this.titlePainter = new ComplexLabelPainter.Builder(topLeft, LEGEND_FONT, Color.black)
-			.addLine(headerLines.get(0), TITLE_FONT)
+		this.labelFont = labelFont;
+		this.titlePainter = new ComplexLabelPainter.Builder(topLeft, labelFont, Color.black)
+			.withLineSpacing(PageDirector.LINE_SPACING)
+			.addLine(headerLines.get(0), titleFont)
 			.addLine(headerLines.get(1))
-			.addLine(headerLines.get(2), LEGEND_FONT, Color.gray)
+			.addLine(headerLines.get(2), labelFont, Color.gray)
 			.build();
 	}
 
@@ -48,17 +47,18 @@ public class CircleRadiusLegend implements Paintable {
 	@Override
 	public void paint(Graphics2D g) {
 		this.titlePainter.paint(g);
+		float yOffset = this.titlePainter.estimateHeight() + 8;
 
 		// avoid lop-sided circles
 		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-		LineSegment2D maxDiameter = paintCircles(g);
-		paintDataLabels(g, maxDiameter);
+		LineSegment2D maxDiameter = paintCircles(g, yOffset);
+		paintDataLabels(g, maxDiameter, yOffset);
 	}
 
-	private LineSegment2D paintCircles(Graphics2D g) {
+	private LineSegment2D paintCircles(Graphics2D g, float yOffset) {
 		double maxActualRadius = coding.apply(Ordering.natural().max(labeledValues));
-		Point2D circleTopCenter = topLeft.translate(maxActualRadius, LEGEND_Y_OFFSET);
+		Point2D circleTopCenter = topLeft.translate(maxActualRadius, yOffset);
 		Point2D circleBottomCenter = circleTopCenter.translate(0, 2 * maxActualRadius);
 		for (Double value : labeledValues) {
 			double radius = coding.apply(value);
@@ -69,8 +69,8 @@ public class CircleRadiusLegend implements Paintable {
 		return new LineSegment2D(circleTopCenter, circleBottomCenter);
 	}
 	
-	private void paintDataLabels(Graphics2D g, LineSegment2D maxDiameter) {
-		Point2D labelsTop = topLeft.translate(LABEL_X_OFFSET + maxDiameter.getLength(), LEGEND_Y_OFFSET);
+	private void paintDataLabels(Graphics2D g, LineSegment2D maxDiameter, float yOffset) {
+		Point2D labelsTop = topLeft.translate(LABEL_X_OFFSET + maxDiameter.getLength(), yOffset);
 		StraightLine2D labelLine = maxDiameter.getParallel(labelsTop);
 		
 		ImmutableList<Double> reversedValues = labeledValues.reverse();
@@ -81,7 +81,7 @@ public class CircleRadiusLegend implements Paintable {
 		for (int i = 0; i < numLabels; i++) {
 			Point2D labelPoint = labelLine.getPoint((i) / denominator);
 			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT,
-					reversedValues.get(i).toString(), LEGEND_FONT, null).paint(g);
+					reversedValues.get(i).toString(), labelFont, null).paint(g);
 		}		
 	}
 }

@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.bipartitenet.component;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
@@ -16,13 +17,16 @@ public class NodeView implements Paintable {
 	private final Point2D nodeCenter;
 	private final Scale<Double,Double> coding;
 	private final double maxHeight;
+	private final Font defaultFont;
 
-	public NodeView(Node node, Point2D nodeCenter, Scale<Double,Double> coding, double maxHeight) {
+	public NodeView(Node node, Point2D nodeCenter, Scale<Double,Double> coding, 
+			double maxHeight, Font defaultFont) {
 		super();
 		this.node = node;
 		this.nodeCenter = nodeCenter;
 		this.coding = coding;
 		this.maxHeight = maxHeight;
+		this.defaultFont = defaultFont;
 	}
 
 	public int getCenterToTextDistance() {
@@ -48,7 +52,7 @@ public class NodeView implements Paintable {
 		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
 		Circle2D circle = new Circle2D(nodeCenter.getX(), nodeCenter.getY(), getRadius());
-		node.getDestination().paintLabel(this, g, maxHeight);
+		node.getDestination().paintLabel(this, g, maxHeight, defaultFont);
 		g.setColor(node.getDestination().getFillColor());
 		circle.fill(g);
 		g.setColor(Color.black);

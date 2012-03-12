@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.bipartitenet;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.LinkedHashMap;
 
@@ -33,16 +34,20 @@ public class BipartiteGraphRenderer implements Paintable {
 	private final Scale<Double,Double> nodeRadiusCoding;
 	private final Scale<Double,Double> edgeCoding;
 	private final int maxNodeRadius;
+	private final Font defaultFont;
 
 	public BipartiteGraphRenderer(BipartiteGraphDataModel skel,
 			LineSegment2D leftLine, LineSegment2D rightLine,
-			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, Scale<Double,Double> edgeCoding) {
+			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, 
+			Scale<Double,Double> edgeCoding,
+			Font defaultFont) {
 		this.data = skel;
 		this.leftLine = leftLine;
 		this.rightLine = rightLine;
 		this.nodeRadiusCoding = nodeRadiusCoding;
 		this.maxNodeRadius = maxNodeRadius;
 		this.edgeCoding = edgeCoding;
+		this.defaultFont = defaultFont;
 
 		nodeToNodeView = ImmutableMap.copyOf(placeNodes());
 		placeEdges();
@@ -80,7 +85,8 @@ public class BipartiteGraphRenderer implements Paintable {
 		
 		for (int i = 0; i < numNodes; i++) {
 			Point2D centerPoint = centerLine.getPoint(i / denominator);
-			NodeView view = new NodeView(nodes.get(i), centerPoint, nodeRadiusCoding, maxHeight);
+			NodeView view = new NodeView(nodes.get(i), centerPoint, nodeRadiusCoding, 
+					maxHeight, defaultFont);
 			nodeViews.put(nodes.get(i), view);
 		}
 		return nodeViews;
