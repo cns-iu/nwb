@@ -11,7 +11,7 @@ import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Rectangles;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
-public class GeoMapViewPageArea {
+public class GeoMapViewPageArea implements PostScriptable {
 	public static final boolean CLIP_TO_BOUNDING_BOX = true;
 	public static final boolean BACKGROUND_TRANSPARENT = true;
 	public static final Color BACKGROUND_COLOR = Color.CYAN;

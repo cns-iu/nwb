@@ -191,7 +191,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("innerColorColumnName", "Population (Thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
 		parameters.put("innerColorRange", "Gray to Black");
-		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
+		AlgorithmFactory algorithmFactory = new GeoMapsWebCirclesFactory();
 		return algorithmFactory;
 	}
 

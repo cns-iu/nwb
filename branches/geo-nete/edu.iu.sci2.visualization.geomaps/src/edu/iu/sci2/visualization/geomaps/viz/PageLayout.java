@@ -18,6 +18,11 @@ public enum PageLayout {
 		public double headerHeight() {
 			return 0.0;
 		}
+
+		@Override
+		public Optional<Point2D.Double> howToReadLowerLeft() {
+			return Optional.absent();
+		}
 	},
 	PRINT {
 		@Override
@@ -28,6 +33,13 @@ public enum PageLayout {
 		@Override
 		public double headerHeight() {
 			return 1.5 * POINTS_PER_INCH;
+		}
+
+		@Override
+		public Optional<Point2D.Double> howToReadLowerLeft() {
+			return Optional.of(new Point2D.Double(
+					0.93 * LEGEND_PAGE_AREA_DIMENSION.getWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
+					LEGEND_PAGE_AREA_LOWER_LEFT.getY()));
 		}
 	};
 
@@ -44,9 +56,8 @@ public enum PageLayout {
 	public abstract Optional<Point2D.Double> headerLowerLeft();
 	public abstract double headerHeight();
 	
-//	public abstract Optional<Point2D.Double> howToReadLowerLeft();
-//
-//	public abstract Dimension<Double> mapMaxDimensions();
+	public abstract Optional<Point2D.Double> howToReadLowerLeft();
+	
 	
 	public Dimension<Double> mapPageAreaMaxDimensions() {
 		return Dimension.ofSize(

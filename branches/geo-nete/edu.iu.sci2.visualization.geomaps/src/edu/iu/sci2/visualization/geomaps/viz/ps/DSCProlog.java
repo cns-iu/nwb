@@ -8,7 +8,7 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
  * The DSC Prolog is a set of PostScript comments at the start of the file
  * that describe some aspects of the content.
  */
-public class DSCProlog {
+public class DSCProlog implements PostScriptable {
 	public static final String CREATOR_DSC_COMMENT_VALUE =
 		"Geo Maps plug-in for the Sci² Tool, a product of the Cyberinfrastructure " +
 		"for Network Science Center (http://cns.iu.edu) at Indiana University";

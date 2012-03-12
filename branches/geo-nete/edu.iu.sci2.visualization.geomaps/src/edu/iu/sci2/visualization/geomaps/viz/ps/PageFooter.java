@@ -8,7 +8,7 @@ import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
-public class PageFooter {
+public class PageFooter implements PostScriptable {
 	public static final String INDENT = "    ";
 	public static final String ATTRIBUTION_PREFIX =	"Created with ";
 	

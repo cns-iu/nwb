@@ -21,6 +21,10 @@ public class PSUtility {
 		
 		return String.format("%f %f %f setrgbcolor ", red, green, blue);
 	}
+	
+	public static String showAndNewLine(String text, double fontSize) {
+		return String.format("(%s) dup show stringwidth pop neg %f rmoveto \n", text, -fontSize);
+	}
 
 	/**
 	 * Replaces each backslash with two backslashes.

@@ -117,6 +117,10 @@ public class GeoMapViewPS {
 		out.write(geoMap.getLegendComposite().toPostScript());
 		out.write("\n");
 		
+		if (pageLayout.howToReadLowerLeft().isPresent()) {
+			out.write(new HowToRead(pageLayout.howToReadLowerLeft().get()).toPostScript());
+		}
+		
 		out.write("showpage" + "\n");
 
 		out.close();

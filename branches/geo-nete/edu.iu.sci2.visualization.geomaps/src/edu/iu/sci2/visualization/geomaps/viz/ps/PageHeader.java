@@ -11,7 +11,7 @@ import com.google.common.collect.Collections2;
 
 import edu.iu.sci2.visualization.geomaps.viz.Constants;
 
-public class PageHeader {
+public class PageHeader implements PostScriptable {
 	public static final String INDENT = "	";
 	public static final String FONT_NAME = Constants.FONT_NAME;
 	public static final double TITLE_FONT_SIZE = 12;
