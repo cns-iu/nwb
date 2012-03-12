@@ -22,6 +22,10 @@ public class PageLegend implements PageElement{
 	private double leftBoundary;
 	private double topBoundary;
 
+	private int titleFontSize;
+
+	private int normalFontSize;
+
 	/**
 	 * Construct a PageLegend
 	 * @param numberOfUnclassified the number of {@link Journal}s that were unmapped on the {@link MapOfScience}.
@@ -29,12 +33,14 @@ public class PageLegend implements PageElement{
 	 * @param maximumValue
 	 */
 	public PageLegend(int numberOfUnclassified, double minimumValue,
-			double maximumValue, double leftBoundary, double topBoundary) {
+			double maximumValue, double leftBoundary, double topBoundary, int titleFontSize, int normalFontSize) {
 		this.numberOfUnclassified = numberOfUnclassified;
 		this.minimumValue = minimumValue;
 		this.maximumValue = maximumValue;
 		this.leftBoundary = leftBoundary;
 		this.topBoundary = topBoundary;
+		this.titleFontSize = titleFontSize;
+		this.normalFontSize = normalFontSize;
 	}
 
 
@@ -51,12 +57,11 @@ public class PageLegend implements PageElement{
 				+ System.getProperty("line.separator")
 				+ "See end of PDF for color legend.";
 
-		state.setBoldFont("Arial", 14);
+		state.setBoldFont("Arial", this.titleFontSize);
 		state.drawStringAndTranslate(title, 0, 0);
 
-		state.setFont("Arial", 10);
+		state.setFont("Arial", this.normalFontSize);
 		state.drawStringAndTranslate(area, 0, 0);
-		state.drawStringAndTranslate(title, 0, 0);
 		state.drawStringAndTranslate(unclassified, 0, 0);
 		state.drawStringAndTranslate(minimum, 0, 0);
 		state.drawStringAndTranslate(maximum, 0, 0);

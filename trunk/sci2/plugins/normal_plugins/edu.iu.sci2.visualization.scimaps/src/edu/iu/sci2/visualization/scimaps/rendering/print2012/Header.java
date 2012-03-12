@@ -11,20 +11,20 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
 public class Header implements PageElement{
-	String titleSlug;
-	String generatedFromSlug;
-	String exploreSlug;
-	String dateSlug;
+	String title;
+	String generatedFrom;
+	String publicationMapping;
+	String date;
 	private double leftBoundary;
 	private double topBoundary;
 
 	public Header(String title, String generatedFrom,
 			MapOfScience mapOfScience, double leftBoundary, double topBoundary) {
 
-		this.titleSlug = title;
-		this.generatedFromSlug = "Generated from " + generatedFrom;
+		this.title = title;
+		this.generatedFrom = "Generated from " + generatedFrom;
 
-		this.exploreSlug = String
+		this.publicationMapping = String
 				.format("%s out of %s publications were mapped to %s subdiciplines and %s diciplines.",
 						mapOfScience.prettyCountOfMappedPublications(),
 						mapOfScience.prettyCountOfPublications(),
@@ -33,35 +33,31 @@ public class Header implements PageElement{
 		DateTime dateTime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
 				.forPattern("MMMM dd, yyyy | KK:mm a zzz");
-		this.dateSlug = formatter.print(dateTime);
+		this.date = formatter.print(dateTime);
 		this.leftBoundary = leftBoundary;
 		this.topBoundary = topBoundary;
 	}
 
 
 	public void render(GraphicsState state) {
+		int titleFontSize = 16;
+		int otherFontSize = 10;
+		
 		state.save();
-		double titleFontSize = 16;
-		Color titleColor = new Color(0, 0, 0);
-		double slugFontSize = 12;
-		Color slugColor = Color.black;
-		state.setFontSize(titleFontSize);
+		state.current.setColor(Color.BLACK);
 		state.current.translate(this.leftBoundary, this.topBoundary);
-
-		// Draw the title
-		state.current.setColor(titleColor);
-		state.current.drawString(this.titleSlug, 0, 0);
 		state.current.translate(0, titleFontSize);
 
-		// Draw the other slugs
-		state.setFontSize(slugFontSize);
-		state.current.setColor(slugColor);
-		state.current.drawString(this.generatedFromSlug, 0, 0);
-		state.current.translate(0, slugFontSize);
-		state.current.drawString(this.exploreSlug, 0, 0);
-		state.current.translate(0, slugFontSize);
-		state.current.drawString(this.dateSlug, 0, 0);
-		state.current.translate(0, slugFontSize);
+		// Draw the title
+		state.setBoldFont("Arial", titleFontSize);
+		state.drawStringAndTranslate(this.title, 0, 0);
+
+		// Draw the other
+		state.setFont("Arial", otherFontSize);
+		state.drawStringAndTranslate(this.generatedFrom, 0, 0);
+		state.drawStringAndTranslate(this.publicationMapping, 0, 0);
+		state.drawStringAndTranslate(this.date, 0, 0);
+
 		state.restore();
 		
 	}

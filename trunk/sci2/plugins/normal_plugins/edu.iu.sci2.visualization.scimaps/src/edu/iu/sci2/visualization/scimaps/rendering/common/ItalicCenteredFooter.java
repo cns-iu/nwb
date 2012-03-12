@@ -9,12 +9,12 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
 public class ItalicCenteredFooter implements PageElement {
 	private final String footerText;
-	private double centerY;
+	private double topY;
 	private double centerX;
 
-	public ItalicCenteredFooter(double centerX, double centerY) {
+	public ItalicCenteredFooter(double centerX, double topY) {
 		this.centerX = centerX;
-		this.centerY = centerY;
+		this.topY = topY;
 		this.footerText = "NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
 	}
 
@@ -31,7 +31,7 @@ public class ItalicCenteredFooter implements PageElement {
 
 		double leftBoundary = footerStartX;
 
-		state.current.translate(leftBoundary, this.centerY);
+		state.current.translate(leftBoundary, this.topY);
 
 		state.current.drawString(this.footerText, 0, 0);
 

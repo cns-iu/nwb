@@ -23,6 +23,7 @@ public class CircleSizeLegend implements PageElement {
 	private String maxLabel;
 	private double leftBoundary;
 	private double topBoundary;
+	private int fontSize;
 
 	/**
 	 * If you scaled your {@link Node}s, you can use this constructor which will
@@ -32,13 +33,14 @@ public class CircleSizeLegend implements PageElement {
 	 *            - The nodes were scaled by in the Map of Science
 	 */
 	public CircleSizeLegend(float scalingFactor, double leftBoundary,
-			double topBoundary) {
+			double topBoundary, int fontSize, float minArea, float maxArea) {
 		this.scalingFactor = scalingFactor;
 		this.leftBoundary = leftBoundary;
 		this.topBoundary = topBoundary;
+		this.fontSize = fontSize;
 
-		this.minArea = 5;
-		this.maxArea = 50;
+		this.minArea = minArea;
+		this.maxArea = maxArea;
 		this.midArea = Math.round((this.minArea + this.maxArea) / 2.0);
 
 		// HACK I could calculate the radius using nodes.calculateRadius but the
@@ -50,7 +52,7 @@ public class CircleSizeLegend implements PageElement {
 
 	public void render(GraphicsState state) {
 		state.save();
-		state.setFont("Arial", 10);
+		state.setFont("Arial", this.fontSize);
 		state.current.setColor(Color.BLACK);
 		state.current.translate(this.leftBoundary, this.topBoundary);
 

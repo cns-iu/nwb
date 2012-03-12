@@ -22,13 +22,14 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
  */
 public class DisciplineBreakdownArea implements PageElement{
 	/**
-	 * The amount of space that each discipline will take.
-	 */
-	public static final int DISCIPLINE_SPACE = 17;
-	/**
 	 * The amount of space that each journal will take.
 	 */
 	public static final int JOURNAL_SPACE = 13;
+	/**
+	 * The amount of space that each discipline will take.
+	 */
+	public static final int DISCIPLINE_SPACE = 17 + JOURNAL_SPACE;
+	
 	private static final int disciplineFontSize = 14;
 	private static final int journalFontSize = 10;
 	private static final String disciplineFont = "Arial";
@@ -80,7 +81,7 @@ public class DisciplineBreakdownArea implements PageElement{
 					state.current.setPaint(discipline.getColor());
 					int boxHeight = state.current.getFontMetrics().getAscent()
 							+ state.current.getFontMetrics().getDescent();
-					state.current.fillRect(0, 0, 0 - boxHeight / 2,
+					state.current.fillRect(0, 0, boxHeight / 2,
 							0 - boxHeight / 2);
 					state.restore();
 				}
@@ -95,7 +96,7 @@ public class DisciplineBreakdownArea implements PageElement{
 					disciplineSizeSanityChecked = true;
 					int disciplineSpace = state.current.getFontMetrics()
 							.getHeight();
-					if (DISCIPLINE_SPACE != disciplineSpace) {
+					if (DISCIPLINE_SPACE != disciplineSpace + JOURNAL_SPACE) {
 						System.err
 								.println("The size calculated for the Discipline is wrong.  Current ="
 										+ DISCIPLINE_SPACE
@@ -128,7 +129,7 @@ public class DisciplineBreakdownArea implements PageElement{
 					}
 				}
 
-				state.current.translate(-textMargin, 0);
+				state.current.translate(-textMargin, state.current.getFontMetrics().getHeight());
 
 			}
 			state.restore();

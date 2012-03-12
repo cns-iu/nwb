@@ -54,9 +54,9 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 
 	private void addPageIndependentElements() {
 		addToAllPages(new Header(title(), this.generatedFrom,
-				this.mapOfScience, inch(0.5f), inch(0.5f)));
+				this.mapOfScience, inch(0.25f), inch(0.25f)));
 		addToAllPages(new ItalicCenteredFooter(this.dimensions.getWidth() / 2,
-				inch(8.0f)));
+				inch(8.5f - 0.25f)));
 	}
 
 	private void addPageDependentElements() {
@@ -66,27 +66,30 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 		currentPage++;
 
 		Dimension breakdownAreaSize = new Dimension((int) inch(9.0f),
-				(int) inch(6.0f));
+				(int) inch(6.5f));
 		for (DisciplineBreakdownArea breakdownArea : DisciplineBreakdownAreas
 				.getDisciplineBreakdownAreas(breakdownAreaSize, 2,
-						this.mapOfScience, 35, 100)) {
+						this.mapOfScience, inch(0.25f), inch(1.5f))) {
 			addToPage(currentPage, breakdownArea);
 			currentPage++;
 		}
 	}
 
 	private void addMapOfSciencePage(int pageNumber) {
-		addToPage(pageNumber, new HowToArea(inch(5.5f), inch(6.3f)));
-		addToPage(pageNumber, new CenteredCopyrightInfo((float) this.dimensions.getWidth() / 2, inch(5.72f) , 10));
+		addToPage(pageNumber, new HowToArea(inch(5.5f), inch(7.0f)));
+		addToPage(
+				pageNumber,
+				new CenteredCopyrightInfo(
+						(float) this.dimensions.getWidth() / 2, inch(5.72f), 10));
 		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
-				inch(3.25f), inch(6.3f)));
+				inch(3.47f), inch(7.0f), 10, 5, 50));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
 						.countOfUnmappedPublications(), Collections
 						.min(this.mapOfScience.getMappedWeights()), Collections
-						.max(this.mapOfScience.getMappedWeights()), inch(0.5f),
-						inch(6.3f)));
+						.max(this.mapOfScience.getMappedWeights()), inch(0.25f),
+						inch(7.0f), 14, 10));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
 				this.scalingFactor, 1.3, inch(0.0f), inch(5.0f)));
 
