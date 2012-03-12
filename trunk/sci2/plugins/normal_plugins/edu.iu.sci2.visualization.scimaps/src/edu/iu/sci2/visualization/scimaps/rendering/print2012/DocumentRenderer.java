@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,11 +64,12 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 		int currentPage = 0;
 		addMapOfSciencePage(0);
 		currentPage++;
-		
+
 		Dimension breakdownAreaSize = new Dimension((int) inch(9.0f),
 				(int) inch(6.0f));
-		for (DisciplineBreakdownArea breakdownArea : DisciplineBreakdownAreas.getDisciplineBreakdownAreas(breakdownAreaSize,
-				2, this.mapOfScience, 35, 100)){
+		for (DisciplineBreakdownArea breakdownArea : DisciplineBreakdownAreas
+				.getDisciplineBreakdownAreas(breakdownAreaSize, 2,
+						this.mapOfScience, 35, 100)) {
 			addToPage(currentPage, breakdownArea);
 			currentPage++;
 		}
@@ -77,15 +79,17 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 		addToPage(pageNumber, new HowToArea(inch(5.5f), inch(6.3f)));
 		addToPage(pageNumber, new CenteredCopyrightInfo(inch(5.5f),
 				(float) this.dimensions.getWidth() / 2));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, inch(3.25f),
-				inch(6.3f)));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
+				inch(3.25f), inch(6.3f)));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
-						.countOfUnmappedPublications(), 0.0,
-						2838847273884834.0, inch(0.5f), inch(6.3f)));
+						.countOfUnmappedPublications(), Collections
+						.min(this.mapOfScience.getMappedWeights()), Collections
+						.max(this.mapOfScience.getMappedWeights()), inch(0.5f),
+						inch(6.3f)));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
-				this.scalingFactor,  1.3, inch(0.0f), inch(5.0f)));
+				this.scalingFactor, 1.3, inch(0.0f), inch(5.0f)));
 
 	}
 
@@ -135,9 +139,9 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 			throw new PageManagerRenderingException("Page number '"
 					+ pageNumber + "' does not exist");
 		}
-		
+
 		List<PageElementRenderingException> exceptions = new ArrayList<PageElementRenderingException>();
-		
+
 		for (PageElement element : this.pageIndependentElements) {
 			try {
 				element.render(state);
@@ -156,15 +160,16 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 
 		if (!exceptions.isEmpty()) {
 			String newline = System.getProperty("line.separator");
-			String message = "The following exceptions occured when rendering.  The cause of the first is also passed up." + newline;
-			
-			for(PageElementRenderingException e : exceptions) {
+			String message = "The following exceptions occured when rendering.  The cause of the first is also passed up."
+					+ newline;
+
+			for (PageElementRenderingException e : exceptions) {
 				message += e.getMessage() + newline;
 			}
-			
+
 			throw new PageManagerRenderingException(message, exceptions.get(0));
 		}
-		
+
 		return;
 	}
 

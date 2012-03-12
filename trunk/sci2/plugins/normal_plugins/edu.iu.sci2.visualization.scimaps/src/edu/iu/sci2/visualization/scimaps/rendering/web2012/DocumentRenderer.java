@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -31,12 +32,13 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 	private float scalingFactor;
 	private Multimap<Integer, PageElement> pageSpecificElements;
 	private HashSet<PageElement> pageIndependentElements;
-	
-	public DocumentRenderer(MapOfScience mapOfScience, Dimension size, float scalingFactor) {
+
+	public DocumentRenderer(MapOfScience mapOfScience, Dimension size,
+			float scalingFactor) {
 		this.mapOfScience = mapOfScience;
 		this.dimensions = size;
 		this.scalingFactor = scalingFactor;
-		
+
 		this.pageSpecificElements = HashMultimap.create();
 		this.pageIndependentElements = new HashSet<PageElement>();
 
@@ -48,30 +50,35 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 		int currentPage = 0;
 		addMapOfSciencePage(currentPage);
 		currentPage++;
-		
+
 		Dimension breakdownAreaSize = new Dimension(1100, 800);
-		for (DisciplineBreakdownArea breakdownArea : DisciplineBreakdownAreas.getDisciplineBreakdownAreas(breakdownAreaSize,
-				2, this.mapOfScience, 50.0f, 100.0f)){
+		for (DisciplineBreakdownArea breakdownArea : DisciplineBreakdownAreas
+				.getDisciplineBreakdownAreas(breakdownAreaSize, 2,
+						this.mapOfScience, 50.0f, 100.0f)) {
 			addToPage(currentPage, breakdownArea);
 			currentPage++;
 		}
-		
+
 	}
 
 	private void addMapOfSciencePage(int pageNumber) {
 		addToPage(pageNumber, new CenteredCopyrightInfo(550.0f, 500.0f));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, 275.0f, 770.0f));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, 275.0f,
+				770.0f));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
-						.countOfUnmappedPublications(), 0.0,
-						2838847273884834.0, 50.0f, 770.0f));
+						.countOfUnmappedPublications(), Collections
+						.min(this.mapOfScience.getMappedWeights()), Collections
+						.max(this.mapOfScience.getMappedWeights()), 50.0f,
+						770.0f));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
 				this.scalingFactor, 2.1, 25, 500));
 	}
 
 	private void addPageIndependentElements() {
-		addToAllPages(new ItalicCenteredFooter(this.dimensions.getWidth() / 2, 940.0f));		
+		addToAllPages(new ItalicCenteredFooter(this.dimensions.getWidth() / 2,
+				940.0f));
 	}
 
 	private void addToPage(int pageNumber, PageElement pageElement) {
@@ -81,7 +88,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 	private void addToAllPages(PageElement pageElement) {
 		this.pageIndependentElements.add(pageElement);
 	}
-	
+
 	public String title() {
 		String title = "Topic Analysis - Map of Science";
 		return title;
@@ -111,8 +118,6 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 
 	}
 
-
-	
 	public Dimension getDimension() {
 		return this.dimensions;
 	}
@@ -128,9 +133,9 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 			throw new PageManagerRenderingException("Page number '"
 					+ pageNumber + "' does not exist");
 		}
-		
+
 		List<PageElementRenderingException> exceptions = new ArrayList<PageElementRenderingException>();
-		
+
 		for (PageElement element : this.pageIndependentElements) {
 			try {
 				element.render(state);
@@ -149,17 +154,18 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 
 		if (!exceptions.isEmpty()) {
 			String newline = System.getProperty("line.separator");
-			String message = "The following exceptions occured when rendering.  The cause of the first is also passed up." + newline;
-			
-			for(PageElementRenderingException e : exceptions) {
+			String message = "The following exceptions occured when rendering.  The cause of the first is also passed up."
+					+ newline;
+
+			for (PageElementRenderingException e : exceptions) {
 				message += e.getMessage() + newline;
 			}
-			
+
 			throw new PageManagerRenderingException(message, exceptions.get(0));
 		}
-		
+
 		return;
-		
+
 	}
 
 	public int numberOfPages() {
