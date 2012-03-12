@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.bipartitenet.component;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -60,7 +61,14 @@ public class CircleRadiusLegend implements Paintable {
 		double maxActualRadius = coding.apply(Ordering.natural().max(labeledValues));
 		Point2D circleTopCenter = topLeft.translate(maxActualRadius, yOffset);
 		Point2D circleBottomCenter = circleTopCenter.translate(0, 2 * maxActualRadius);
-		for (Double value : labeledValues) {
+		boolean isFirst = true;
+		for (Double value : Ordering.natural().reverse().sortedCopy(labeledValues)) {
+			if (isFirst) {
+				g.setStroke(new BasicStroke(2));
+			} else {
+				g.setStroke(new BasicStroke(1));
+			}
+			isFirst = false;
 			double radius = coding.apply(value);
 			Point2D circleCenter = circleBottomCenter.translate(0, - radius);
 			new Circle2D(circleCenter, radius).draw(g);
