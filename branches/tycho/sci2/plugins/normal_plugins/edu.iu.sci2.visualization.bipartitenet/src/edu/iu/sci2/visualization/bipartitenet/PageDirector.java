@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import edu.iu.sci2.visualization.bipartitenet.component.CircleRadiusLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.ComplexLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.EdgeWeightLegend;
+import edu.iu.sci2.visualization.bipartitenet.component.HowToRead;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
@@ -39,13 +40,15 @@ public class PageDirector implements Paintable {
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
 				14, 3,
-				new int[] { 14, 12, 10, 10 }),
+				new int[] { 14, 12, 10, 10 },
+				true),
 		WEB(1280, 960,
 				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
 				24, 5,
-				new int[] { 20, 16, 14, 10 });
+				new int[] { 20, 16, 14, 10 },
+				false);
 		
 		private final int width;
 		private final int height;
@@ -55,11 +58,12 @@ public class PageDirector implements Paintable {
 		private final Point2D headerPosition;
 		private final int maxEdgeThickness;
 		private final int[] fontSizes;
+		private final boolean hasHowToRead;
 
 		private Layout(int width, int height, Point2D headerPosition, 
 				LineSegment2D leftLine, LineSegment2D rightLine,
 				int maxNodeRadius, int maxEdgeThickness,
-				int[] fontSizes) {
+				int[] fontSizes, boolean hasHowToRead) {
 			this.width = width;
 			this.height = height;
 			this.headerPosition = headerPosition;
@@ -67,6 +71,7 @@ public class PageDirector implements Paintable {
 			this.rightLine = rightLine;
 			this.maxNodeRadius = maxNodeRadius;
 			this.maxEdgeThickness = maxEdgeThickness;
+			this.hasHowToRead = hasHowToRead;
 			assert fontSizes.length == 4;
 			this.fontSizes = fontSizes;
 		}
@@ -159,6 +164,10 @@ public class PageDirector implements Paintable {
 		public Font getFooterFont() {
 			return INTERNAL_BASE_FONT.deriveFont(Font.ITALIC, fontSizes[3]);
 		}
+
+		public boolean hasHowToRead() {
+			return this.hasHowToRead;
+		}
 	}
 	
 	private PaintableContainer painter = new PaintableContainer();
@@ -195,6 +204,11 @@ public class PageDirector implements Paintable {
 		Scale<Double,Double> edgeCoding = makeEdgeCoding();
 		if (dataModel.hasWeightedEdges()) {
 			painter.add(makeEdgeLegend(edgeCoding));
+		}
+		
+		if (layout.hasHowToRead()) {
+			painter.add(new HowToRead(layout.getTitleFont(), layout.getLegendFont(), 
+					layout.getHowToReadLegendPosition()));
 		}
 		
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
