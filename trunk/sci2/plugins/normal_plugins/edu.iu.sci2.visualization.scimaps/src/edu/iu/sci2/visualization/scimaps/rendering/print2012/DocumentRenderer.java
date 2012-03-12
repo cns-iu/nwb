@@ -102,7 +102,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 	}
 
 	public String title() {
-		String title = "Topic Analysis - Map of Science";
+		String title = "Topical Visualization";
 		return title;
 	}
 
