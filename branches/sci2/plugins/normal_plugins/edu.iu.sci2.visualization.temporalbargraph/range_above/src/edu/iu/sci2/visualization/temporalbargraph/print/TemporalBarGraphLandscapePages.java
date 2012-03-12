@@ -203,7 +203,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		
 		
 		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("pageHeadingDefinitions");
-		titleDefinitionsTemplate.setAttribute("title", "Temporal Bar Graph");
+		titleDefinitionsTemplate.setAttribute("title", "Temporal Visualization");
 		titleDefinitionsTemplate.setAttribute("query", this.query);
 		titleDefinitionsTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
 		
