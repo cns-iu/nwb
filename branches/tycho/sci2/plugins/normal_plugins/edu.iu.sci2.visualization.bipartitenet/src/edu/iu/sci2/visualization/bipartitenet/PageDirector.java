@@ -38,13 +38,13 @@ public class PageDirector implements Paintable {
 				new Point2D(18, 18), // title top-left corner
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
-				12, 3,
+				14, 3,
 				new int[] { 14, 12, 10, 10 }),
 		WEB(1280, 960,
 				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
-				20, 5,
+				24, 5,
 				new int[] { 20, 16, 14, 10 });
 		
 		private final int width;
