@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
+import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.common.CenteredCopyrightInfo;
 import edu.iu.sci2.visualization.scimaps.rendering.common.CircleSizeLegend;
@@ -62,7 +62,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 	}
 
 	private void addMapOfSciencePage(int pageNumber) {
-		addToPage(pageNumber, new CenteredCopyrightInfo(550.0f, 500.0f));
+		addToPage(pageNumber, new CenteredCopyrightInfo((float) this.dimensions.getWidth() / 2, inch(8.66f), 16));
 		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, 275.0f,
 				770.0f));
 		addToPage(

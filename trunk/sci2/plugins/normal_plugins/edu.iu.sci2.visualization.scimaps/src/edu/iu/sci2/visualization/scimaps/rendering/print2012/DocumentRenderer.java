@@ -77,8 +77,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 
 	private void addMapOfSciencePage(int pageNumber) {
 		addToPage(pageNumber, new HowToArea(inch(5.5f), inch(6.3f)));
-		addToPage(pageNumber, new CenteredCopyrightInfo(inch(5.5f),
-				(float) this.dimensions.getWidth() / 2));
+		addToPage(pageNumber, new CenteredCopyrightInfo((float) this.dimensions.getWidth() / 2, inch(5.72f) , 10));
 		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
 				inch(3.25f), inch(6.3f)));
 		addToPage(
