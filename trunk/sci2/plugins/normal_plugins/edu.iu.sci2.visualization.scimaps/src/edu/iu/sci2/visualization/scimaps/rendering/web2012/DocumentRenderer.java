@@ -54,7 +54,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 		Dimension breakdownAreaSize = new Dimension(1100, 800);
 		for (DisciplineBreakdownArea breakdownArea : DisciplineBreakdownAreas
 				.getDisciplineBreakdownAreas(breakdownAreaSize, 2,
-						this.mapOfScience, 50.0f, 100.0f)) {
+						this.mapOfScience, inch(0.25f), 100.0f)) {
 			addToPage(currentPage, breakdownArea);
 			currentPage++;
 		}
