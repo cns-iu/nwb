@@ -183,15 +183,13 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 	0 howtoTitleFontSize howtoLineSpacing add neg rmoveto
 	
 	howtoTextFont
-	gsave (Temporal Bar Graph is a visualization of a dataset whose records have specific) show grestore
+	gsave (This ) show /Arial-ItalicMT howtoTextFontSize selectfont (temporal bar graph) show howtoTextFont ( visualization represents each record as a horizontal bar) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (beginnings and endings, are weighted, and may belong to a distinct category. Each) show grestore
+	gsave (with a specific start and end date and a text label on its left side. The area of each) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (of the records is shown on the timeline, which spans the total time of the dataset, is) show grestore
+	gsave (bar encodes a numerical attribute value, e.g., total amount of funding. Bars may be) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (given an area based on the relative weight within the dataset, and is colored) show grestore
-	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (according to the category (if one exists).) show grestore
+	gsave (colored to present categorical attribute values of records.) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
 	grestore
 	
