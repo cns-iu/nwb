@@ -27,6 +27,7 @@ public class WebTemporalBarGraphAlgorithm extends
 	private ColorRegistry<String> colorRegistry;
 	private List<Record> records;
 	private String categoryColumn;
+	private String labelColumn;
 
 	public WebTemporalBarGraphAlgorithm(Data inputData, Table inputTable,
 			LogService logger, String labelColumn, String startDateColumn,
@@ -36,6 +37,7 @@ public class WebTemporalBarGraphAlgorithm extends
 
 		this.logger = logger;
 		this.inputData = inputData;
+		this.labelColumn = labelColumn;
 
 		/*
 		 * SOMEDAY I don't want to pass the column label down all the way, but I
@@ -84,7 +86,7 @@ public class WebTemporalBarGraphAlgorithm extends
 			throws PostScriptCreationException {
 
 		PostscriptDocument postscriptDocument = new PostscriptDocument(csvWriter, this.records,
-				this.shouldScaleOutput, this.areaColumn, this.categoryColumn, this.colorRegistry);
+				this.shouldScaleOutput, this.areaColumn, this.categoryColumn, this.labelColumn, this.colorRegistry);
 
 		return postscriptDocument.renderPostscript();
 	}

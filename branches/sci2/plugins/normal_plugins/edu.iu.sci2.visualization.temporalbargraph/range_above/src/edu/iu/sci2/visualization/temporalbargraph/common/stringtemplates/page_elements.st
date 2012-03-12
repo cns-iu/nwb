@@ -43,7 +43,7 @@ includes the range.  You can see there is an option to center the title called
 */
 
 
-legendTitleTopDefinitions(areaColumn, minArea, maxArea, colorText1, colorText2) ::= <<
+legendTitleTopDefinitions(areaColumn, minArea, maxArea, labelColumn, colorText1, colorText2) ::= <<
 
 %%%%%%%%%%%%%%%
 % Legend Area
@@ -54,41 +54,51 @@ legendTitleTopDefinitions(areaColumn, minArea, maxArea, colorText1, colorText2) 
 /legendTitleTopArea { (Area size: <areaColumn>) } def
 /legendTitleTopMin { (Minimum = <minArea>) } def
 /legendTitleTopMax { (Maximum = <maxArea>) } def
+/legendTitleTopLabel { (Text label: <labelColumn>) } def
 /legendTitleTopColor1 { (<colorText1>) } def
 /legendTitleTopColor2 { (<colorText2>) } def
 
-/lineSpacing { 3.0 } def
-/legendTitlteTopNormalFont { /ArialMT 10 selectfont } def
-/legendTitlteTopTitleFont { /Arial-BoldMT 14 selectfont } def
+/legendTitleTopNormalFontSize { 10 } def
+/legendTitleTopTitleFontSize { 14 } def
+/legendTitleTopNormalFont { /ArialMT legendTitleTopNormalFontSize selectfont } def
+/legendTitleTopTitleFont { /Arial-BoldMT legendTitleTopTitleFontSize selectfont } def
 
 
 /legendTitleTop { % (title) [min] [max] (category) => -
 	gsave
 	0 0 0 setrgbcolor
 	legendTitleTopLeft legendTitleTopTop translate
-	0 0 moveto
-	legendTitlteTopTitleFont 
-	legendTitleTopTitle dup show
-	textheight 1 add neg 0 exch translate
-	0 0 moveto
-	legendTitlteTopNormalFont
-	legendTitleTopArea dup show
-	textheight 2 add neg 0 exch translate
-	0 0 moveto
-	legendTitleTopMin dup show
-	textheight 2 add neg 0 exch translate
-	0 0 moveto
-	legendTitleTopMax dup dup show
-	textheight neg 0 exch translate
-	textheight neg 0 exch translate
-	0 0 moveto
 	
-	legendTitleTopColor1 dup show
-	textheight 1 add neg 0 exch translate
 	0 0 moveto
-	legendTitleTopColor2 dup show
-	textheight 1 add neg 0 exch translate
-	0 0 moveto	
+	legendTitleTopTitleFont 
+	legendTitleTopTitle show
+	legendTitleTopTitleFontSize 1 add neg 0 exch translate
+	
+	0 0 moveto
+	legendTitleTopNormalFont
+	legendTitleTopArea show
+	legendTitleTopNormalFontSize 2 add neg 0 exch translate
+	
+	0 0 moveto
+	legendTitleTopMin show
+	legendTitleTopNormalFontSize 2 add neg 0 exch translate
+	
+	0 0 moveto
+	legendTitleTopMax show
+	legendTitleTopNormalFontSize neg 0 exch translate
+	legendTitleTopNormalFontSize neg 0 exch translate
+	
+	0 0 moveto
+	legendTitleTopLabel show
+	legendTitleTopNormalFontSize 1 add neg 0 exch translate
+	
+	0 0 moveto 
+	legendTitleTopColor1 show
+	legendTitleTopNormalFontSize 1 add neg 0 exch translate
+	
+	0 0 moveto
+	legendTitleTopColor2 show
+	legendTitleTopNormalFontSize 1 add neg 0 exch translate
 	grestore
 } def
 	

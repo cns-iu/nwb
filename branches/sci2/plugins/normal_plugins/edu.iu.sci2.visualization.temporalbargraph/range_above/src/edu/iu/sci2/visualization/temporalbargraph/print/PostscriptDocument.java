@@ -21,7 +21,7 @@ public class PostscriptDocument
 
 	public PostscriptDocument(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, String areaColumn,
-			String categoryColumn, ColorRegistry<String> colorRegistry, String query,
+			String categoryColumn, ColorRegistry<String> colorRegistry, String labelColumn, String query,
 			DoubleDimension pageSize) throws PostScriptCreationException {
 
 		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth()
@@ -30,7 +30,7 @@ public class PostscriptDocument
 		if (this.postscriptPageSize.getWidth() > this.postscriptPageSize.getHeight()){
 		this.temporalBarGraphPages = new TemporalBarGraphLandscapePages(csvWriter,
 				records, scaleToOnePage, colorRegistry, this.postscriptPageSize,
-				areaColumn, categoryColumn, query);
+				areaColumn, categoryColumn, labelColumn, query);
 		} else {
 			this.temporalBarGraphPages = new TemporalBarGraphPortraitPages(csvWriter,
 					records, scaleToOnePage, colorRegistry, this.postscriptPageSize,

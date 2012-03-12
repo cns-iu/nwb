@@ -28,15 +28,17 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	private String areaColumn;
 	private String categoryColumn;
 	private CategoryBreakdown categoryBreakdown;
+	private String labelColumn;
 	
 	
 	public WebTemporalBarGraphPages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String areaColumn, String categoryColumn)
+			DoubleDimension size, String areaColumn, String categoryColumn, String labelColumn)
 			throws PostScriptCreationException {
 		this.size = size;
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;
+		this.labelColumn = labelColumn;
 		
 		DoubleDimension visualizationSize = new DoubleDimension(1000.0, 725.0);
 		
@@ -145,6 +147,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 			legendDefinitionsTemplate.setAttribute("areaColumn", this.areaColumn);
 			legendDefinitionsTemplate.setAttribute("minArea", formatter.format(this.visualizations.minRecordValue()));
 			legendDefinitionsTemplate.setAttribute("maxArea", formatter.format(this.visualizations.maxRecordValue()));
+			legendDefinitionsTemplate.setAttribute("labelColumn", this.labelColumn);
 			legendDefinitionsTemplate.setAttribute("colorText1", colorText1);
 			legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
 

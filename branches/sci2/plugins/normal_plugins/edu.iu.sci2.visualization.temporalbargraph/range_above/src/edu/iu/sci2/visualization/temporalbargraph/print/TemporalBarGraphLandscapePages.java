@@ -29,11 +29,12 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 	private String areaColumn;
 	private String query;
 	private String categoryColumn;
+	private String labelColumn;
 	private CategoryBreakdown categoryBreakdown;
 
 	public TemporalBarGraphLandscapePages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String areaColumn, String categoryColumn, String query)
+			DoubleDimension size, String areaColumn, String categoryColumn, String labelColumn, String query)
 			throws PostScriptCreationException {
 
 		this.size = size;
@@ -48,6 +49,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		System.out.println(this.categoryBreakdown.numberOfPages());
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;
+		this.labelColumn = labelColumn;
 		this.query = query;
 
 	}
@@ -171,6 +173,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		legendDefinitionsTemplate.setAttribute("areaColumn", this.areaColumn);
 		legendDefinitionsTemplate.setAttribute("minArea", formatter.format(this.visualizations.minRecordValue()));
 		legendDefinitionsTemplate.setAttribute("maxArea", formatter.format(this.visualizations.maxRecordValue()));
+		legendDefinitionsTemplate.setAttribute("labelColumn", this.labelColumn);
 		legendDefinitionsTemplate.setAttribute("colorText1", colorText1);
 		legendDefinitionsTemplate.setAttribute("colorText2", colorText2);
 

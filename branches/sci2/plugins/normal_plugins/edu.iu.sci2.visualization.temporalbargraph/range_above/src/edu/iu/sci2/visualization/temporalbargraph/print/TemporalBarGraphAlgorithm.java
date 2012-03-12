@@ -83,7 +83,7 @@ public class TemporalBarGraphAlgorithm extends
 
 		PostscriptDocument postscriptDocument = new PostscriptDocument(
 				csvWriter, this.records, this.shouldScaleOutput, this.sizeByColumn, this.categoryColumn,
-				this.colorRegistry, this.query,
+				this.colorRegistry, this.labelColumn, this.query,
 				new DoubleDimension(this.pageWidth, this.pageHeight));
 
 		String documentPostScript = postscriptDocument.renderPostscript();
