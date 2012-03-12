@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
@@ -24,6 +25,9 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
+	public static final Font TITLE_FONT = new Font("UniverseExtended", Font.PLAIN, 16);
+	public static final Font CONTENT_FONT = new Font("Arial", Font.PLAIN, 12);
+
 	/* Percentage of the data range to add to each side of the map as a buffer.
 	 * Between 0 and 1.
 	 */
@@ -37,7 +41,6 @@ public class GeoMapViewPS {
 	private final GeoMap geoMap;
 	private final PageLayout pageLayout;
 	private final GeoMapViewPageArea geoMapViewPageArea;
-
 
 	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout) throws ShapefilePostScriptWriterException {
 		try {

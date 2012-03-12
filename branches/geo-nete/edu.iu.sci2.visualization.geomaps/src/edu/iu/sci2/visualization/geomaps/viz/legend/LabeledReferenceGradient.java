@@ -8,9 +8,9 @@ import org.antlr.stringtemplate.StringTemplate;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.utility.ColorTuples;
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 /* Create PostScript to draw a color gradient representing the extrema (minimum,
@@ -37,7 +37,6 @@ public class LabeledReferenceGradient implements PostScriptable {
 	public static final double SCALING_LABEL_BRIGHTNESS = 0.25;
 	public static final double KEY_LABEL_BRIGHTNESS = 0.5;
 	public static final double KEY_LABEL_FONT_SIZE = 8;
-	public static final String FONT_NAME = Constants.FONT_NAME;
 	
 	private final ColorLegend legend;
 	/* These "lower lefts" are the lower left corners of the key text,
@@ -123,7 +122,7 @@ public class LabeledReferenceGradient implements PostScriptable {
 		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("keyLabelFontSize", KEY_LABEL_FONT_SIZE);
 		
-		invocationTemplate.setAttribute("fontName", FONT_NAME);
+		invocationTemplate.setAttribute("fontName", GeoMapViewPS.CONTENT_FONT.getName());
 		
 		s += invocationTemplate.toString();
 

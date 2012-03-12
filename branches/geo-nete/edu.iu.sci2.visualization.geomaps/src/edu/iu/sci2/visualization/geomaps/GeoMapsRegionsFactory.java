@@ -25,10 +25,10 @@ import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
+import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
@@ -89,7 +89,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 		mutator.add(RegionAnnotationMode.COLOR_SCALING_ID,
 				Collections2.transform(EnumSet.allOf(Scaling.class), Functions.toStringFunction()));
 
-		mutator.add(RegionAnnotationMode.COLOR_RANGE_ID, Constants.COLOR_RANGES.keySet());
+		mutator.add(RegionAnnotationMode.COLOR_RANGE_ID, AbstractColorCoding.COLOR_RANGES.keySet());
 		
 		return mutator.mutate(oldOCD);
 	}

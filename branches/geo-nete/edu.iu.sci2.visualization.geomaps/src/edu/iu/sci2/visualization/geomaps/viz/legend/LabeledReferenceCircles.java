@@ -6,9 +6,9 @@ import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
+import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 /* Create PostScript to draw three Circles representing the extrema (minimum,
@@ -31,7 +31,6 @@ public class LabeledReferenceCircles implements PostScriptable {
 	public static final double SCALING_LABEL_BRIGHTNESS = 0.25;
 	public static final double KEY_LABEL_BRIGHTNESS = 0.5;
 	public static final double KEY_LABEL_FONT_SIZE = 8;
-	public static final String FONT_NAME = Constants.FONT_NAME;
 
 	private AreaLegend areaLegend;
 	private final Point2D.Double keyTextLowerLeft;
@@ -116,7 +115,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 		invocationTemplate.setAttribute(
 				"keyLabelFontSize", KEY_LABEL_FONT_SIZE);
 		
-		invocationTemplate.setAttribute("fontName", FONT_NAME);
+		invocationTemplate.setAttribute("fontName", GeoMapViewPS.CONTENT_FONT.getName());
 
 		s += invocationTemplate.toString();
 

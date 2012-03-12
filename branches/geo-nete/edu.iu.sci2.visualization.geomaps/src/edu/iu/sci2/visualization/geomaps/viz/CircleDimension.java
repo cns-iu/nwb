@@ -110,7 +110,7 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
 				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
-					Range<Color> outRange = Constants.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
+					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
 					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
@@ -158,7 +158,7 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
 				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
-					Range<Color> outRange = Constants.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
+					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
 					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
@@ -256,6 +256,6 @@ public enum CircleDimension implements VizDimension {
 	}
 
 	public static void addColorRangeParameter(DropdownMutator mutator, String parameterId) {
-		mutator.add(parameterId, Lists.newArrayList(Constants.COLOR_RANGES.keySet()));
+		mutator.add(parameterId, Lists.newArrayList(AbstractColorCoding.COLOR_RANGES.keySet()));
 	}
 }

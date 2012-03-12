@@ -1,11 +1,11 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import java.awt.Font;
 import java.awt.geom.Point2D;
 
 import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.viz.Constants;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 public class PageFooter implements PostScriptable {
@@ -16,8 +16,7 @@ public class PageFooter implements PostScriptable {
 	public static final String CNS =
 		"Cyberinfrastructure for Network Science Center";
 	
-	public static final String FONT_NAME = Constants.FONT_NAME;
-	public static final double FONT_SIZE = 6;
+	public static final Font FONT = GeoMapViewPS.CONTENT_FONT.deriveFont(6.0f);
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
 	public static final Point2D.Double LOWER_LEFT =
@@ -40,17 +39,17 @@ public class PageFooter implements PostScriptable {
 		}
 		
 		builder.append("gsave" + "\n");
-		
-		builder.append(PSUtility.findscalesetfont(FONT_NAME, FONT_SIZE) + "\n");
+
+		builder.append(PSUtility.findscalesetfont(FONT) + "\n");
 		builder.append(PSUtility.setgray(FONT_BRIGHTNESS) + "\n");
 		builder.append(INDENT + LOWER_LEFT.x + " " + LOWER_LEFT.y + " moveto" + "\n");
 		
 		builder.append(INDENT + "(" + ATTRIBUTION_PREFIX + ") show" + "\n");
 		
 		builder.append(INDENT + "currentpoint" + " ");
-		builder.append("{/" + FONT_NAME + " findfont}" + " ");
+		builder.append("{/" + FONT.getName() + " findfont}" + " ");
 		builder.append(FONT_BRIGHTNESS + " ");
-		builder.append(FONT_SIZE + " ");
+		builder.append(FONT.getSize() + " ");
 		builder.append("showToolName moveto" + "\n");
 		
 		builder.append(INDENT + "(" + SEP + CNS + " " + ")" + " show" + "\n");

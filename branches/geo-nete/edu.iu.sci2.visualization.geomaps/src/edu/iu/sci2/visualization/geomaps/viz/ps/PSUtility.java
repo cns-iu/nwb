@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.util.List;
 
@@ -33,8 +34,8 @@ public class PSUtility {
 		return string.replace("\\", "\\\\");
 	}
 
-	public static String findscalesetfont(String fontName, double fontSize) {
-		return String.format("/%s findfont %f scalefont setfont ", fontName, fontSize);
+	public static String findscalesetfont(Font font) {
+		return String.format("/%s findfont %d scalefont setfont ", font.getName(), font.getSize());
 	}
 
 	public static String setgray(double brightness) {
