@@ -39,7 +39,9 @@ public class NWBDataImporter {
 	}
 
 	private void log(int level, String message) {
-		if (log != null) {
+		if (log == null) { 
+			System.err.println(message);
+		} else {
 			log.log(level, message);
 		}
 	}
