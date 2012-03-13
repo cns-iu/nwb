@@ -46,6 +46,7 @@ public enum CircleDimension implements VizDimension {
 				@Override
 				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange) {
 					Range<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
+					// TODO Don't force data min = 0, instead use actual data min and draw actual corresponding circle
 					Range<Double> usableRangeFromZero = Range.between(0.0, usableRange.getPointB()); // TODO !?
 					Range<Double> dataRangeFromZero = Range.between(0.0, dataRange.getPointB()); // TODO !?
 					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, vizRange);
@@ -62,7 +63,7 @@ public enum CircleDimension implements VizDimension {
 						}
 						
 						@Override
-						public LabeledReference makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
+						public LabeledReference makeLabeledReference(PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException {
 							VizLegendModel<Double> generalLegend = makeVizLegend(numericFormatType);
 							
 							try {
@@ -79,8 +80,9 @@ public enum CircleDimension implements VizDimension {
 								return new LabeledReferenceCircles(
 										areaLegend,
 										new Point2D.Double(
-												CircleDimension.AREA_LEGEND_LOWER_LEFT_X,
-												PageLayout.LEGEND_LOWER_LEFT.getY()));
+												pageLayout.legendariumLowerLeft().getX()
+												+ ((2.0 * pageLayout.legendariumDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
+												pageLayout.legendLowerLeft().getY()));
 							} catch (ScalingException e) {
 								throw new LegendCreationException("TODO Problem formatting numbers for legend.", e);
 							}
@@ -123,10 +125,11 @@ public enum CircleDimension implements VizDimension {
 						}
 
 						@Override
-						public Point2D.Double lowerLeft() {
+						public Point2D.Double lowerLeft(PageLayout pageLayout) {
 							return new Point2D.Double(
-									CircleDimension.OUTER_COLOR_LEGEND_LOWER_LEFT_X,
-									PageLayout.LEGEND_LOWER_LEFT.getY());
+									pageLayout.legendariumLowerLeft().getX()
+									+ ((1.0 * pageLayout.legendariumDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
+									pageLayout.legendLowerLeft().getY());
 						}
 
 						@Override
@@ -171,10 +174,11 @@ public enum CircleDimension implements VizDimension {
 						}
 
 						@Override
-						public Point2D.Double lowerLeft() {
+						public Point2D.Double lowerLeft(PageLayout pageLayout) {
 							return new Point2D.Double(
-									CircleDimension.INNER_COLOR_LEGEND_LOWER_LEFT_X,
-									PageLayout.LEGEND_LOWER_LEFT.getY());
+									pageLayout.legendariumLowerLeft().getX()
+									+ ((0.0 * pageLayout.legendariumDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
+									pageLayout.legendLowerLeft().getY());
 						}
 
 						@Override
@@ -186,17 +190,6 @@ public enum CircleDimension implements VizDimension {
 			};
 		}
 	};
-	
-	// TODO Can do better on these three..
-	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
-			PageLayout.LEGENDARIUM_LOWER_LEFT.getX()
-			+ ((0.0 * PageLayout.LEGENDARIUM_DIMENSION.getWidth()) / EnumSet.allOf(CircleDimension.class).size());
-	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
-			PageLayout.LEGENDARIUM_LOWER_LEFT.getX()
-			+ ((1.0 * PageLayout.LEGENDARIUM_DIMENSION.getWidth()) / EnumSet.allOf(CircleDimension.class).size());
-	public static final double AREA_LEGEND_LOWER_LEFT_X =
-			PageLayout.LEGENDARIUM_LOWER_LEFT.getX()
-			+ ((2.0 * PageLayout.LEGENDARIUM_DIMENSION.getWidth()) / EnumSet.allOf(CircleDimension.class).size());
 	
 	private String columnNameParameterId;
 	private String columnNameParameterDisablingToken;

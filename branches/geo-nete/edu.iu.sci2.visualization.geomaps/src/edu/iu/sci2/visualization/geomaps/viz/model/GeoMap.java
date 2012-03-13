@@ -17,6 +17,7 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescrip
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.Legendarium;
 
@@ -39,14 +40,15 @@ public class GeoMap {
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor,
 			Collection<FeatureView> featureViews,
 			Collection<Circle> circles,
-			Collection<LabeledReference> legends) throws GeoMapException {
+			Collection<LabeledReference> legends,
+			PageLayout pageLayout) throws GeoMapException {
 		this.subtitle = subtitle;
 		this.shapefile = shapefile;
 		this.knownProjectedCRSDescriptor = knownProjectedCRSDescriptor;
 		this.featureViews = featureViews;
 		this.circles = circles;
 		
-		this.legendarium = Legendarium.containing(legends);
+		this.legendarium = Legendarium.containing(pageLayout.legendariumLowerLeft(), legends);
 		
 		this.geometryFactory = DEFAULT_GEOMETRY_FACTORY;
 		

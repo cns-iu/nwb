@@ -36,11 +36,13 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<G, D> scaledData,
 			Collection<? extends Coding<D>> codings,
-			Collection<LabeledReference> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
+			Collection<LabeledReference> legends,
+			PageLayout pageLayout) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
 
 	public GeoMap createGeoMap(
 			final Table table,
-			final Dictionary<String, Object> parameters)
+			final Dictionary<String, Object> parameters,
+			PageLayout pageLayout)
 				throws LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Shapefile shapefile = Shapefile.forNiceName(
 				(String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
@@ -72,12 +74,12 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED));
 			codings.add(coding);
 			
-			LabeledReference legend = coding.makeLabeledReference(numericFormatType);			
+			LabeledReference legend = coding.makeLabeledReference(pageLayout, numericFormatType);			
 			legends.add(legend);
 		}
 
 		return createGeoMap(
-				shapefile, knownProjectedCRSDescriptor, usableData, codings, legends);
+				shapefile, knownProjectedCRSDescriptor, usableData, codings, legends, pageLayout);
 	}
 	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {

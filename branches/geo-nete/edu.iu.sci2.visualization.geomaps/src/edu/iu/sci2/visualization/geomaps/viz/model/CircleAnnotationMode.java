@@ -27,6 +27,7 @@ import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
@@ -77,7 +78,8 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<Coordinate, CircleDimension> scaledData,
 			Collection<? extends Coding<CircleDimension>> codings,
-			Collection<LabeledReference> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
+			Collection<LabeledReference> legends,
+			PageLayout pageLayout) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(
@@ -86,7 +88,8 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 				projectedCrs,
 				ImmutableSet.<FeatureView>of(),
 				circles,
-				legends);
+				legends,
+				pageLayout);
 	}
 
 

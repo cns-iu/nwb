@@ -56,7 +56,6 @@ public class PSUtility {
 	}
 
 	public static String findscalesetfont(Font font) {
-		System.out.println(String.format("/%s findfont %d scalefont setfont ", psFontName(font), font.getSize())); // TODO
 		return String.format("/%s findfont %d scalefont setfont ", psFontName(font), font.getSize());
 	}
 

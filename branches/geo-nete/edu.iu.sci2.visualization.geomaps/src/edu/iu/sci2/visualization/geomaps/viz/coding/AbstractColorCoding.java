@@ -33,15 +33,15 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 		super(binding, usableRange, interpolator);
 	}
 
-	public abstract Point2D.Double lowerLeft();
+	public abstract Point2D.Double lowerLeft(PageLayout pageLayout);
 
 	public abstract Color defaultColor();
 
 	@Override
-	public LabeledReference makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
+	public LabeledReference makeLabeledReference(PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
-				createColorLegend(numericFormatType), lowerLeft(),
-				PageLayout.COLOR_GRADIENT_DIMENSION);
+				createColorLegend(numericFormatType), lowerLeft(pageLayout),
+				pageLayout.colorGradientDimensions());
 
 		return labeledReferenceGradient;
 	}

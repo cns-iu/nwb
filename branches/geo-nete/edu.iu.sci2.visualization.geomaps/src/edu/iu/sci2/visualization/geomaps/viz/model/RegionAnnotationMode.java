@@ -26,6 +26,7 @@ import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
@@ -71,7 +72,8 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
-			Collection<LabeledReference> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
+			Collection<LabeledReference> legends,
+			PageLayout pageLayout) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(
@@ -80,7 +82,8 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 				projectedCrs,
 				featureViews,
 				ImmutableSet.<Circle>of(),
-				legends);
+				legends,
+				pageLayout);
 	}
 	
 	public static Collection<FeatureView> asFeatureViews(Collection<? extends GeoDatum<String, FeatureDimension>> valuedFeatures, final Collection<? extends Coding<FeatureDimension>> codings) {

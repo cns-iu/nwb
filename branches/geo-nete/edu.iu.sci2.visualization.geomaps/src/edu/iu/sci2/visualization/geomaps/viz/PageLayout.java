@@ -28,7 +28,7 @@ public enum PageLayout {
 
 		@Override
 		public double headerHeight() {
-			return 0.0;
+			return pageMargin();
 		}
 
 		@Override
@@ -101,7 +101,7 @@ public enum PageLayout {
 	public Dimension<Double> legendariumDimensions() {
 		return Dimension.ofSize(
 				0.7 * pageWidth(),
-				0.18 * pageHeight());
+				1.75 * POINTS_PER_INCH);
 	}
 	public Point2D.Double legendariumLowerLeft() {
 		return new Point2D.Double(

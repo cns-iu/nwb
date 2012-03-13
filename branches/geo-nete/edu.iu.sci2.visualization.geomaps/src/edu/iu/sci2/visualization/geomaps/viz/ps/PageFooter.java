@@ -2,7 +2,6 @@ package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.Font;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
@@ -14,7 +13,7 @@ public class PageFooter implements PostScriptable {
 	
 	private final Point2D.Double lowerCenter;
 
-	public PageFooter(Double lowerCenter) {
+	public PageFooter(Point2D.Double lowerCenter) {
 		this.lowerCenter = lowerCenter;
 	}
 

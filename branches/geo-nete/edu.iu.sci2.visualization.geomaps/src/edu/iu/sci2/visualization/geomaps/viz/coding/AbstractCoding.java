@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.geomaps.viz.coding;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
@@ -26,7 +27,7 @@ public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implem
 	@Override
 	public abstract Strategy strategyForValue(double value);
 	@Override
-	public abstract LabeledReference makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException;
+	public abstract LabeledReference makeLabeledReference(PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException;
 
 	public abstract String legendDescription();
 	

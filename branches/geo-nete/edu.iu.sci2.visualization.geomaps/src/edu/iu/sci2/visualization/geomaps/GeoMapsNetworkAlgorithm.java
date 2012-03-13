@@ -84,6 +84,10 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			throw new AlgorithmCreationFailedException("Latitude and longitude attributes must be distinct");
 		}
 	}
+	
+	static PageLayout getPageLayout() {
+		return PageLayout.PRINT;
+	}
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
@@ -105,9 +109,10 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					knownProjectedCRSDescriptor,
 					ImmutableSet.<FeatureView>of(),
 					anchorPointsAsCircles,
-					ImmutableSet.<LabeledReference>of());
+					ImmutableSet.<LabeledReference>of(),
+					getPageLayout());
 			
-			postScriptWriter = new GeoMapViewPS(geoMap, PageLayout.PRINT);
+			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout());
 			
 			File geoMapFile = postScriptWriter.writeToPSFile("", "");
 
