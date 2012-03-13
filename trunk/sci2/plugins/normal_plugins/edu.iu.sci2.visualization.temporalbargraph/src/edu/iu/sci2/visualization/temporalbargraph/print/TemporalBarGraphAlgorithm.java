@@ -1,8 +1,7 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.print;
 import java.awt.Color;
 import java.util.List;
 
-import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.color.ColorRegistry;
 import org.osgi.service.log.LogService;
@@ -17,7 +16,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.TemporalBarGraphColorSchema;
 
 public class TemporalBarGraphAlgorithm extends
-		AbstractTemporalBarGraphAlgorithm implements Algorithm {
+		AbstractTemporalBarGraphAlgorithm {
 
 	private Data inputData;
 	private LogService logger;
@@ -58,13 +57,13 @@ public class TemporalBarGraphAlgorithm extends
 
 		if (this.categoryColumn
 				.equals(AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE)) {
-			colorRegistry = new ColorRegistry<String>(
+			this.colorRegistry = new ColorRegistry<String>(
 					new TemporalBarGraphColorSchema(
 							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
-							TemporalBarGraphColorSchema.DEFAULT_COLOR));
+							TemporalBarGraphColorSchema.DEFAULT_COLOR), false);
 		} else {
-			colorRegistry = new ColorRegistry<String>(
-					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
+			this.colorRegistry = new ColorRegistry<String>(
+					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA, false);
 
 		}
 
@@ -72,20 +71,19 @@ public class TemporalBarGraphAlgorithm extends
 				this.labelColumn, this.startDateColumn, this.endDateColumn,
 				this.sizeByColumn, this.startDateFormat, this.endDateFormat,
 				this.categoryColumn);
-		for (Record record : records) {
-			colorRegistry.getColorOf(record.getCategory());
+		for (Record record : this.records) {
+			this.colorRegistry.getColorOf(record.getCategory());
 		}
 	}
 
+	@Override
 	protected String createPostScriptCode(CSVWriter csvWriter)
 			throws PostScriptCreationException {
 
-		String legendText = "Area size equals \"" + this.sizeByColumn + "\"";
-
 		PostscriptDocument postscriptDocument = new PostscriptDocument(
-				csvWriter, this.records, shouldScaleOutput, legendText,
-				colorRegistry, query,
-				new DoubleDimension(pageWidth, pageHeight));
+				csvWriter, this.records, this.shouldScaleOutput, this.sizeByColumn, this.categoryColumn,
+				this.colorRegistry, this.labelColumn, this.query,
+				new DoubleDimension(this.pageWidth, this.pageHeight));
 
 		String documentPostScript = postscriptDocument.renderPostscript();
 

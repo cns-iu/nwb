@@ -31,6 +31,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 	public static final String EPS_FILE_SUFFIX = ".eps";
 	public static final String CSV_FILE_SUFFIX = ".csv";
 
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		LogService logger = getLogger();
 		Data inputData = getInputData();
@@ -102,7 +103,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 		Dictionary<String, Object> postScriptMetaData = postScriptData
 				.getMetadata();
 		postScriptMetaData.put(DataProperty.LABEL,
-				"visualized with Horizontal Line Graph");
+				"visualized with Temporal Bar Graph");
 		postScriptMetaData.put(DataProperty.PARENT, inputData);
 		postScriptMetaData.put(DataProperty.TYPE,
 				DataProperty.VECTOR_IMAGE_TYPE);
@@ -123,9 +124,9 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 
 		if (label != null) {
 			return String.format("data \"%s\"", label.toString());
-		} else {
-			return "input data";
 		}
+		
+		return "input data";
 	}
 
 	protected static List<Record> readRecordsFromTable(Table table,
@@ -146,7 +147,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 				workingRecordSet.add(newRecord);
 
 			} catch (InvalidRecordException e) {
-				logger.log(LogService.LOG_WARNING, e.getMessage(), e);
+				logger.log(LogService.LOG_WARNING, "An invalid record will be ignored." + System.getProperty("line.separator") + e.getMessage(), e);
 			}
 		}
 

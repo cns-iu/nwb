@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.color.ColorRegistry;
@@ -16,8 +15,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.Years;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -42,6 +39,7 @@ public abstract class AbstractVisualization {
 
 	public static final String STRING_TEMPLATE_FILE_PATH = "/edu/iu/sci2/visualization/temporalbargraph/common/stringtemplates/visualization.st";
 	public static final StringTemplateGroup group;	
+	
 	static {
 		group = new StringTemplateGroup(new InputStreamReader(
 				AbstractTemporalBarGraphAlgorithmFactory.class
@@ -50,6 +48,7 @@ public abstract class AbstractVisualization {
 	
 	protected static final Function<PostScriptBar, Double> AMOUNT_PER_DAY_GETTER =
 			new Function<PostScriptBar, Double>() {
+		@Override
 		public Double apply(PostScriptBar bar) {
 			return bar.amountPerDay();
 		}				
@@ -200,11 +199,12 @@ public abstract class AbstractVisualization {
 		
 		for(Record record : records){
 			int daysBetweenStartAndStop = Days.daysBetween(record.getStartDate(), record.getEndDate()).getDays();
-				
+			
 			if (daysBetweenStartAndStop == 0){
-				daysBetweenStartAndStop = new Period(Years.ONE).getDays();
+				daysBetweenStartAndStop = Days.daysBetween(record.getStartDate(), record.getStartDate().plusYears(1)).getDays();
+				assert daysBetweenStartAndStop > 0;
 			}
-
+			
 			double area = record.getAmount();
 
 			double amountPerDay = area / daysBetweenStartAndStop;
@@ -254,7 +254,9 @@ public abstract class AbstractVisualization {
 	
 	public abstract int numberOfVisualizations();
 	
-
+	public abstract double minRecordValue();
+	
+	public abstract double maxRecordValue();
 
 
 }

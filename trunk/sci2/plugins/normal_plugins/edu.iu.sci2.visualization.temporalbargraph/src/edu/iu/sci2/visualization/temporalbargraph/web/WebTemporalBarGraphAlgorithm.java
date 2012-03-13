@@ -21,41 +21,44 @@ public class WebTemporalBarGraphAlgorithm extends
 	private LogService logger;
 	private Data inputData;
 
-	private String legendText;
-
-	private Boolean shouldScaleOutput;
+	private String areaColumn;
+	
+	private boolean shouldScaleOutput;
 	private ColorRegistry<String> colorRegistry;
 	private List<Record> records;
 	private String categoryColumn;
+	private String labelColumn;
 
 	public WebTemporalBarGraphAlgorithm(Data inputData, Table inputTable,
 			LogService logger, String labelColumn, String startDateColumn,
 			String endDateColumn, String sizeByColumn, String startDateFormat,
-			String endDateFormat, Boolean shouldScaleOutput,
+			String endDateFormat, boolean shouldScaleOutput,
 			String categoryColumn) {
 
 		this.logger = logger;
 		this.inputData = inputData;
+		this.labelColumn = labelColumn;
 
 		/*
 		 * SOMEDAY I don't want to pass the column label down all the way, but I
-		 * really shouldn't care what the legend text is at this point.  If you 
-		 * find a good solution, please apply it to the colorRegistry too.
+		 * really shouldn't care what the legend text is at this point. If you
+		 * find a good solution, please apply it to the colorRegistry and
+		 * categoryText too.
 		 */
-		legendText = "Area size equals \"" + sizeByColumn + "\"";
+		this.areaColumn = sizeByColumn;
 
 		this.shouldScaleOutput = shouldScaleOutput;
 		this.categoryColumn = categoryColumn;
-
-		if (this.categoryColumn
-				.equals(AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE)) {
-			colorRegistry = new ColorRegistry<String>(
+		
+		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
+				.equals(this.categoryColumn)) {
+			this.colorRegistry = new ColorRegistry<String>(
 					new TemporalBarGraphColorSchema(
 							new Color[] { TemporalBarGraphColorSchema.DEFAULT_COLOR },
-							TemporalBarGraphColorSchema.DEFAULT_COLOR));
+							TemporalBarGraphColorSchema.DEFAULT_COLOR), false);
 		} else {
-			colorRegistry = new ColorRegistry<String>(
-					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA);
+			this.colorRegistry = new ColorRegistry<String>(
+					TemporalBarGraphColorSchema.DEFAULT_COLOR_SCHEMA, false);
 
 		}
 
@@ -63,8 +66,8 @@ public class WebTemporalBarGraphAlgorithm extends
 				startDateColumn, endDateColumn, sizeByColumn, startDateFormat,
 				endDateFormat, categoryColumn);
 
-		for (Record record : records) {
-			colorRegistry.getColorOf(record.getCategory());
+		for (Record record : this.records) {
+			this.colorRegistry.getColorOf(record.getCategory());
 		}
 	}
 
@@ -83,7 +86,7 @@ public class WebTemporalBarGraphAlgorithm extends
 			throws PostScriptCreationException {
 
 		PostscriptDocument postscriptDocument = new PostscriptDocument(csvWriter, this.records,
-				shouldScaleOutput, legendText, colorRegistry);
+				this.shouldScaleOutput, this.areaColumn, this.categoryColumn, this.labelColumn, this.colorRegistry);
 
 		return postscriptDocument.renderPostscript();
 	}

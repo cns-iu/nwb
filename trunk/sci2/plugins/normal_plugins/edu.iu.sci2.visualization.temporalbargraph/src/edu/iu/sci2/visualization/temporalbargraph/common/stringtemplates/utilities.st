@@ -33,7 +33,7 @@ pageUtilityDefinitions() ::= <<
 %%%%%%%%%%%
 % Utilities
 %%%%%%%%%%%
-
+% Taken from http://stackoverflow.com/questions/518837/how-can-you-get-the-height-metric-of-a-string-in-postscript
 /textheight { % (text) => [text_height]
     gsave                                  % save graphic context
     {                            
@@ -83,5 +83,10 @@ pageUtilityDefinitions() ::= <<
 	}
 	ifelse
 } def
+
+/centerTextLine { % x y string => - moves to where the text would be centered
+    textheight 0.5 mul neg
+    0 exch rmoveto
+} bind def
 
 >>

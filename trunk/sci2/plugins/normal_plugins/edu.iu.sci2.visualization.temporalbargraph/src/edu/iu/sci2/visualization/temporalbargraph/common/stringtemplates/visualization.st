@@ -1,12 +1,14 @@
 group visualization;
 
-visualizationAreaDefinitions(topVizPosition) ::= <<
+visualizationAreaDefinitions(topVizPosition, pointsPerDay, pointsPerY) ::= <<
 
 %%%%%%%%%%%
 % Viz Area 
 %%%%%%%%%%%
+/pointsPerDay { <pointsPerDay> } def % unused here but useful for legends
+/pointsPerY { <pointsPerY> } def % unused here but useful for legends
 /topVizPosition { <topVizPosition> } def
-/leftVizMargin { visualizationLeft } def
+/leftTextMargin { visualizationLeft } def
 
 /bar { % x1 y1 deltaX deltaY => -
 	dup 0.0 eq 
@@ -30,6 +32,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /labelbar { % (label) x1 y1 deltaX deltaY color => -
 	gsave
 	visualizationLeft visualizationBottom translate
+	leftTextMargin 0 translate
 	0 0 moveto
 	setrgbcolor
 	5 -1 roll % stack: x1 y1 deltaX deltaY label
@@ -41,11 +44,12 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 /labelbarSpacing { visualizationLabelBarFontSize } def
 /labelbarLabel { % (label) [x] [y] => -
 	gsave
+	0 0 0 setrgbcolor
 	exch  % [y] [x]
 	dup  % [y] [x] [x]
 	3 -1 roll % [x] [x] [y]
 	moveto
-	leftVizMargin labelbarSpacing sub add exch righttrim
+	leftTextMargin labelbarSpacing sub add exch righttrim
 	dup stringwidth pop neg labelbarSpacing sub % (label) x
 	exch dup textheight 2 div neg % x (label) y
 	3 -1 roll exch % (label) x y
@@ -55,10 +59,11 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 } def
 
 /datelineLineWidth { 1 } def
-/datelineDashSize { 15 } def
+/datelineDashSize { 2 } def
 /dateline { % (label) x => -
 	gsave
 	visualizationLeft visualizationBottom translate
+	leftTextMargin 0 translate
 	dup
 	0 moveto
 	0.75 0.75 0.75 setrgbcolor
@@ -71,7 +76,7 @@ visualizationAreaDefinitions(topVizPosition) ::= <<
 	grestore
 } def
 
-/datelineLabelFont { /Arial } def
+/datelineLabelFont { /ArialMT } def
 /datelineLabelFontSize { 12.0 } def
 /datelinelabel { % (label) x => -
 	datelineLabelFont datelineLabelFontSize selectfont

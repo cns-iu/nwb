@@ -1,14 +1,13 @@
-package edu.iu.sci2.visualization.temporalbargraph;
+package edu.iu.sci2.visualization.temporalbargraph.print;
 
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
 
 import java.util.List;
 
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.color.ColorRegistry;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPostscriptDocument;
+import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
@@ -18,24 +17,29 @@ public class PostscriptDocument
 		edu.iu.sci2.visualization.temporalbargraph.common.AbstractPostscriptDocument {
 
 	private DoubleDimension postscriptPageSize;
-	private TemporalBarGraphPages temporalBarGraphPages;
-
-	public static StringTemplateGroup documentGroup = AbstractPostscriptDocument.documentGroup;
+	private AbstractPages temporalBarGraphPages;
 
 	public PostscriptDocument(CSVWriter csvWriter, List<Record> records,
-			boolean scaleToOnePage, String legendText,
-			ColorRegistry<String> colorRegistry, String query,
+			boolean scaleToOnePage, String areaColumn,
+			String categoryColumn, ColorRegistry<String> colorRegistry, String labelColumn, String query,
 			DoubleDimension pageSize) throws PostScriptCreationException {
 
 		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth()
 				* POINTS_PER_INCH, pageSize.getHeight() * POINTS_PER_INCH);
-		this.temporalBarGraphPages = new TemporalBarGraphPages(csvWriter,
-				records, scaleToOnePage, colorRegistry, postscriptPageSize,
-				legendText, query);
+		
+		if (this.postscriptPageSize.getWidth() > this.postscriptPageSize.getHeight()){
+		this.temporalBarGraphPages = new TemporalBarGraphLandscapePages(csvWriter,
+				records, scaleToOnePage, colorRegistry, this.postscriptPageSize,
+				areaColumn, categoryColumn, labelColumn, query);
+		} else {
+			this.temporalBarGraphPages = new TemporalBarGraphPortraitPages(csvWriter,
+					records, scaleToOnePage, colorRegistry, this.postscriptPageSize,
+					areaColumn, categoryColumn, query);
+		}
 	}
 
 	@Override
-	protected TemporalBarGraphPages getPages() {
+	protected AbstractPages getPages() {
 		return this.temporalBarGraphPages;
 	}
 

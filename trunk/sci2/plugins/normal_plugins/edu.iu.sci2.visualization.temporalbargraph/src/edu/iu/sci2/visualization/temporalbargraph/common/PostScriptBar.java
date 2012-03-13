@@ -28,34 +28,34 @@ public class PostScriptBar {
 	}
 
 	public Color getColor() {
-		return color;
+		return this.color;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public double daysSinceEarliest() {
-		return daysSinceEarliest;
+		return this.daysSinceEarliest;
 	}
 
 	public double lengthInDays() {
-		return lengthInDays;
+		return this.lengthInDays;
 	}
 
 	public double amountPerDay() {
-		return amountPerDay;
+		return this.amountPerDay;
 	}
 
 	public double getArea() {
-		return lengthInDays * amountPerDay;
+		return this.lengthInDays * this.amountPerDay;
 	}
 
 	@Override
 	public String toString() {
-		return "PostScriptBar [name=" + name + ", daysSinceEarliest="
-				+ daysSinceEarliest + ", lengthInDays=" + lengthInDays
-				+ ", amountPerDay=" + amountPerDay + ", color=" + color + "]";
+		return "PostScriptBar [name=" + this.name + ", daysSinceEarliest="
+				+ this.daysSinceEarliest + ", lengthInDays=" + this.lengthInDays
+				+ ", amountPerDay=" + this.amountPerDay + ", color=" + this.color + "]";
 	}
 
 
