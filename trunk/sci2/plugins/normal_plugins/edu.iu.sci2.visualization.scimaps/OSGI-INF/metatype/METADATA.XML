@@ -8,6 +8,8 @@
 		<AD name="Value" id="nodeValueColumnName" type="String" description="Choose the column from your table that gives the value associated with a UCSD node." default="MUTATE_ME"/>
 		<AD name="Scaling factor" id="scalingFactor" type="Float" description="Scale the sizes of all circles by this constant." default="1.0"/>
 		<AD name="Dataset display name" id="datasetDisplayName" type="String" description="Name of the source dataset as it will appear on the visualization." default="MUTATE_ME"/>
+		<AD name="Simplified Layout?" id="webVersion" type="boolean" description="If selected, a graphic for use on the web will be produced.  If not selected, the graphic produced will be suitable for printing and include a title, date, howto, etc." default="true" />
+		<AD name="Show Export Window?" id="showWindow" type="boolean" description="If selected, a window with the visualization will be shown.  It has useful export features if the output file needs to be customized." default="false" />
 	</OCD>
 	<Designate pid="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm">
 		<Object ocdref="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm.OCD" />

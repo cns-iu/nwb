@@ -7,14 +7,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
@@ -90,7 +88,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			Print2012 print2012 = new Print2012(mapOfScience,
 					this.dataDisplayName, dimensions, this.scalingFactor);
 			visualization = print2012.getVisualization();
-			pageManger = print2012.getPageManger();
+			pageManger = print2012.getPageManager();
 		}
 		if (this.showWindow) {
 			VisualizationRunner visualizationRunner = new VisualizationRunner(
@@ -107,6 +105,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 	private static Map<String, Integer> getJournalNameAndHitCount(
 			Table myTable, String myJournalColumnName, LogService logger)
 			throws AlgorithmExecutionException {
+		
 		if (myTable == null) {
 			String message = "The table may not be null.";
 			throw new IllegalArgumentException(message);
@@ -121,7 +120,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 		Map<String, Integer> journalCounts = new HashMap<String, Integer>();
 
-		for (Iterator<Tuple> rows = myTable.tuples(); rows.hasNext();) {
+		for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
+		Iterator<Tuple> rows = myTable.tuples(); rows.hasNext();) {
 			Tuple row = rows.next();
 
 			if (row.canGetString(myJournalColumnName)) {
@@ -156,12 +156,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 	}
 
-	public static double calculateListFontSize(
-			Collection<Discipline> discipline, int numOfJournals) {
-		return Math.min(8, 260 / (numOfJournals + discipline.size() * 1.5 + 1));
-	}
-
-	private static Data[] datafy(MapOfScience mapOfScience,
+	public static Data[] datafy(MapOfScience mapOfScience,
 			PageManager pageManger, Data parentData, LogService logger) {
 
 		Set<Journal> foundJournals = mapOfScience.getMappedJournals();
@@ -242,7 +237,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 	}
 
-	public static Data datafy(Table table, String label, Data parentData) {
+	private static Data datafy(Table table, String label, Data parentData) {
 		Data tableData = new BasicData(table, table.getClass().getName());
 		tableData.getMetadata().put(DataProperty.LABEL, label);
 		tableData.getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);

@@ -23,12 +23,12 @@ public class TableReader {
 	private Map<Integer, String> ucsdAreaLabels = new HashMap<Integer, String>();
 	private Map<String, Float> unclassifiedLabelCounts = new HashMap<String, Float>();
 	
-	@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
 	public TableReader(Table table, String nodeValueColumnName, String nodeLabelColumnName, String nodeIDColumnName, LogService logger) {
 		int noValueCount = 0;
 		int badUCSDAreaCount = 0;
 		
-		for (Iterator<Tuple> rows = table.tuples(); rows.hasNext();) {
+		for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
+		Iterator<Tuple> rows = table.tuples(); rows.hasNext();) {
 			Tuple row = rows.next();
 			
 			int value = 0;
@@ -72,28 +72,31 @@ public class TableReader {
 				
 				float normalizedValue = value / ((float) ids.size());
 				
+				// SOMEDAY use Set for ids
+				// SOMEDAY use StringBuilder not appending
+				
 				for (int ucsdArea : ids) {					
 					if ((label == null) || (label.trim().length() == 0)) {
 						label = "Area " + String.valueOf(ucsdArea);
 					}
 					
 					String oldLabel = "";
-					if (ucsdAreaLabels.containsKey(ucsdArea)) {
-						oldLabel = ucsdAreaLabels.get(ucsdArea).trim() + "; ";
+					if (this.ucsdAreaLabels.containsKey(ucsdArea)) {
+						oldLabel = this.ucsdAreaLabels.get(ucsdArea).trim() + "; ";
 					}
 					if (!oldLabel.contains(label)) { // TODO Hack
-						ucsdAreaLabels.put(ucsdArea, oldLabel + label);
+						this.ucsdAreaLabels.put(ucsdArea, oldLabel + label);
 					}
 					
 					if (MIN_UCSD_AREA <= ucsdArea && ucsdArea <= MAX_UCSD_AREA) {
 						float oldValue = 0.0f;
-						if (ucsdAreaTotals.containsKey(ucsdArea)) {
-							oldValue = ucsdAreaTotals.get(ucsdArea);
+						if (this.ucsdAreaTotals.containsKey(ucsdArea)) {
+							oldValue = this.ucsdAreaTotals.get(ucsdArea);
 						}
 						
-						ucsdAreaTotals.put(ucsdArea, oldValue + normalizedValue);
+						this.ucsdAreaTotals.put(ucsdArea, oldValue + normalizedValue);
 	
-						goodRecordCount++;
+						this.goodRecordCount++;
 					} else {
 						badUCSDAreaCount++;
 					}
@@ -104,13 +107,13 @@ public class TableReader {
 				}
 				
 				float oldValue = 0;
-				if (ucsdAreaTotals.containsKey(label)) {
-					oldValue = unclassifiedLabelCounts.get(label);
+				if (this.ucsdAreaTotals.containsKey(label)) {
+					oldValue = this.unclassifiedLabelCounts.get(label);
 				}
 				
-				unclassifiedLabelCounts.put(label, oldValue + value);
+				this.unclassifiedLabelCounts.put(label, oldValue + value);
 				
-				unclassifiedRecordCount++;
+				this.unclassifiedRecordCount++;
 			}
 		}
 		
@@ -129,22 +132,22 @@ public class TableReader {
 	
 	
 	public int getGoodRecordCount() {
-		return goodRecordCount;
+		return this.goodRecordCount;
 	}
 
 	public int getUnclassifiedRecordCount() {
-		return unclassifiedRecordCount;
+		return this.unclassifiedRecordCount;
 	}
 
 	public Map<Integer, Float> getUcsdAreaTotals() {
-		return ucsdAreaTotals;
+		return this.ucsdAreaTotals;
 	}
 
 	public Map<Integer, String> getUcsdAreaLabels() {
-		return ucsdAreaLabels;
+		return this.ucsdAreaLabels;
 	}
 
 	public Map<String, Float> getUnclassifiedLabelCounts() {
-		return unclassifiedLabelCounts;
+		return this.unclassifiedLabelCounts;
 	}
 }

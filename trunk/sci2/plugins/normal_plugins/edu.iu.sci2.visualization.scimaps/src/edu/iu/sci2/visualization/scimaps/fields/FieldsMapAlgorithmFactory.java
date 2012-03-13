@@ -24,6 +24,8 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 	public static final String NO_VALUE_COLUMN_TOKEN = "[None -- All Equal]";
 	public static final String DATA_DISPLAY_NAME_ID = "datasetDisplayName";
 	public static final String SCALING_FACTOR_ID = "scalingFactor";
+	public static final String WEB_VERSION_ID = "webVersion";
+	public static final String SHOW_WINDOW_ID = "showWindow";
 	
 
 	public Algorithm createAlgorithm(
@@ -35,8 +37,9 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		String nodeValueColumnName = (String) parameters.get(NODE_VALUE_COLUMN_NAME_ID);
 		String dataDisplayName = (String) parameters.get(DATA_DISPLAY_NAME_ID);
 		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
-
-		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName, nodeValueColumnName, dataDisplayName, scalingFactor);
+		boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
+		boolean showWindow = (Boolean) parameters.get(SHOW_WINDOW_ID);
+		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName, nodeValueColumnName, dataDisplayName, scalingFactor, webVersion, showWindow);
 	}
 
 	/* Add a drop-down containing the String and Integer type column names
@@ -76,7 +79,7 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		return newParameters;
 	}
 
-	private ObjectClassDefinition addSourceDataFilenameParameter(
+	private static ObjectClassDefinition addSourceDataFilenameParameter(
 			ObjectClassDefinition newParameters, Data[] data) {
 		String guessedSourceDataFilename = AlgorithmUtilities.guessSourceDataFilename(data[0]);
 		

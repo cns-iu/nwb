@@ -22,7 +22,7 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-
+//SOMEDAY this and the FieldsMapAlgorithmFactory are very similar.  Combine them.
 public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		ParameterMutator {
 	public static final String JOURNAL_COLUMN_ID = "journalColumn";

@@ -19,7 +19,7 @@ public class Print2012 {
 		return this.document;
 	}
 
-	public PageManager getPageManger() {
+	public PageManager getPageManager() {
 		return this.document;
 	}
 
