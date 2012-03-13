@@ -147,7 +147,7 @@ public class CategoryBreakdown {
 		return columns;
 	}
 
-	private class Column {
+	private static class Column {
 		private List<Category> categories;
 		private int columnSize;
 		private final int categorySize;
@@ -179,7 +179,7 @@ public class CategoryBreakdown {
 		}
 	}
 
-	private class ColumnFullException extends Exception {
+	private static class ColumnFullException extends Exception {
 		private static final long serialVersionUID = -6704418458099991290L;
 
 		public ColumnFullException() {
@@ -187,7 +187,7 @@ public class CategoryBreakdown {
 		}
 	}
 
-	private class Category implements Comparable<Category> {
+	private static class Category implements Comparable<Category> {
 		private String name;
 		private Color color;
 		private List<Record> members;
@@ -211,10 +211,6 @@ public class CategoryBreakdown {
 
 		public Color getColor() {
 			return this.color;
-		}
-
-		public List<Record> getMembers() {
-			return this.members;
 		}
 
 		public void addMember(Record record) {
@@ -241,15 +237,17 @@ public class CategoryBreakdown {
 				return BEFORE;
 			return this.getName().compareTo(other.getName());
 		}
-		
-		
+
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
 			result = prime * result + ((this.color == null) ? 0 : this.color.hashCode());
+			result = prime * result
+					+ ((this.defaultColor == null) ? 0 : this.defaultColor.hashCode());
+			result = prime * result
+					+ ((this.members == null) ? 0 : this.members.hashCode());
 			result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
 			return result;
 		}
@@ -263,12 +261,20 @@ public class CategoryBreakdown {
 			if (getClass() != obj.getClass())
 				return false;
 			Category other = (Category) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
 			if (this.color == null) {
 				if (other.color != null)
 					return false;
 			} else if (!this.color.equals(other.color))
+				return false;
+			if (this.defaultColor == null) {
+				if (other.defaultColor != null)
+					return false;
+			} else if (!this.defaultColor.equals(other.defaultColor))
+				return false;
+			if (this.members == null) {
+				if (other.members != null)
+					return false;
+			} else if (!this.members.equals(other.members))
 				return false;
 			if (this.name == null) {
 				if (other.name != null)
@@ -284,9 +290,6 @@ public class CategoryBreakdown {
 					+ ", #members=" + this.members.size() + "]";
 		}
 
-		private CategoryBreakdown getOuterType() {
-			return CategoryBreakdown.this;
-		}
 
 	}
 }
