@@ -194,13 +194,13 @@ howtoDefinitions(howtoTitleFontSize, howtoTextFontSize) ::= <<
 	0 howtoTitleFontSize howtoLineSpacing add neg rmoveto
 	
 	howtoTextFont
-	gsave (This ) show /Arial-ItalicMT howtoTextFontSize selectfont (temporal bar graph) show howtoTextFont ( visualization represents each record as a horizontal bar) show grestore
+	gsave (This ) show /Arial-ItalicMT howtoTextFontSize selectfont (temporal bar graph) show howtoTextFont ( visualization represents each record as a horizontal) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (with a specific start and end date and a text label on its left side. The area of each) show grestore
+	gsave (bar with a specific start and end date and a text label on its left side. The area) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (bar encodes a numerical attribute value, e.g., total amount of funding. Bars may be) show grestore
+	gsave (of each bar encodes a numerical attribute value, e.g., total amount of funding.) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
-	gsave (colored to present categorical attribute values of records.) show grestore
+	gsave (Bars may be colored to present categorical attribute values of records.) show grestore
 	0 howtoTextFontSize howtoLineSpacing add neg rmoveto
 	grestore
 	
