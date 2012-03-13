@@ -38,7 +38,7 @@ public class HowToRead implements PostScriptable {
 		
 		howToRead += PSUtility.findscalesetfont(GeoMapViewPS.TITLE_FONT) + "\n";
 		howToRead += PSUtility.setgray(TITLE_FONT_GRAY) + "\n";
-		howToRead += "(How to Read This Map) show" + "\n";
+		howToRead += "(How to Read this Map) show" + "\n";
 		
 		howToRead += String.format("%f %f moveto", lowerLeft.x, lowerLeft.y - GeoMapViewPS.TITLE_FONT.getSize()) + "\n";
 		

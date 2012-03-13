@@ -38,8 +38,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 	private boolean hasPrintedDefinitions;
 
 
-	public LabeledReferenceCircles(
-			AreaLegend areaLegend, Point2D.Double keyTextLowerLeft) {
+	public LabeledReferenceCircles(AreaLegend areaLegend, Point2D.Double keyTextLowerLeft) {
 		this.areaLegend = areaLegend;
 		this.keyTextLowerLeft = keyTextLowerLeft;
 		
@@ -47,9 +46,7 @@ public class LabeledReferenceCircles implements PostScriptable {
 	}
 
 	
-	/* TODO? Draw circles using the line width set
-	 * in CirclePrinter.CIRCLE_LINE_WIDTH?
-	 */
+	/* TODO? Draw circles using the line width set in CirclePrinter.CIRCLE_LINE_WIDTH? */
 	@Override
 	public String toPostScript() {
 		String s = "";

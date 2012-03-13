@@ -5,9 +5,14 @@ import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.util.List;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 public class PSUtility {
+	public static final ImmutableMap<Integer, String> PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE = ImmutableMap.of(
+			Font.BOLD, "-Bold",
+			Font.ITALIC, "-Italic");
+	
 	private PSUtility() {}
 
 	/**
@@ -35,7 +40,13 @@ public class PSUtility {
 	}
 
 	public static String findscalesetfont(Font font) {
-		return String.format("/%s findfont %d scalefont setfont ", font.getName(), font.getSize());
+		String name = font.getName();
+		int style = font.getStyle();
+		if (PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.containsKey(style)) {
+			name += PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.get(style);
+		}
+			
+		return String.format("/%s findfont %d scalefont setfont ", name, font.getSize());
 	}
 
 	public static String setgray(double brightness) {

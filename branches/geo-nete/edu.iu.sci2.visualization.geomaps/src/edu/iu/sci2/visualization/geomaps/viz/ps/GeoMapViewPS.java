@@ -25,7 +25,7 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
-	public static final Font TITLE_FONT = new Font("UniverseExtended", Font.PLAIN, 16);
+	public static final Font TITLE_FONT = new Font("UniverseExtended", Font.BOLD, 16);
 	public static final Font CONTENT_FONT = new Font("Arial", Font.PLAIN, 12);
 
 	/* Percentage of the data range to add to each side of the map as a buffer.
