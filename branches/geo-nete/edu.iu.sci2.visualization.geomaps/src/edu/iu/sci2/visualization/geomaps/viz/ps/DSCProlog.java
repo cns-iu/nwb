@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
-import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
+import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 
 /* DSC = Document Structuring Conventions, the standards that a piece of
  * PostScript code must obey to be valid Encapsulated PostScript.
@@ -16,12 +16,12 @@ public class DSCProlog implements PostScriptable {
 	private static final String PAGE_ORDER_DSC_COMMENT_VALUE = "Ascend";
 	
 	private final String outputPSFileName;
-	private final double pageHeightInPoints;
+	private final Dimension<Double> pageDimensions;
 	
 	
-	public DSCProlog(String outputPSFileName, double pageHeightInPoints) {
+	public DSCProlog(String outputPSFileName, Dimension<Double> pageDimensions) {
 		this.outputPSFileName = outputPSFileName;
-		this.pageHeightInPoints = pageHeightInPoints;
+		this.pageDimensions = pageDimensions;
 	}
 	
 	
@@ -50,7 +50,7 @@ public class DSCProlog implements PostScriptable {
 		 * shapefile and the projection used.
 		 */
 		s += ("90 rotate" + "\n");
-		s += ("0" + " " + (-pageHeightInPoints) + " " + "translate" + "\n");
+		s += ("0" + " " + (-pageDimensions.getHeight()) + " " + "translate" + "\n");
 		
 		return s;
 	}
@@ -79,11 +79,8 @@ public class DSCProlog implements PostScriptable {
 		 * that the PostScript renderer will obey the %%Orientation comment in the DSC prolog.
 		 * In particular, this makes GhostScript work, and that's what we need now.
 		 */
-		String value = "0 0 " +
-						((int) pageHeightInPoints) +
-						" " +
-						((int) PageLayout.pageWidth());
-		
-		return value;
+		return String.format("0 0 %d %d",
+				pageDimensions.getHeight().intValue(),
+				pageDimensions.getWidth().intValue());
 	}
 }

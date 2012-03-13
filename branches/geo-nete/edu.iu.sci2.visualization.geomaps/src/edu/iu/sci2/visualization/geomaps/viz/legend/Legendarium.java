@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.legend;
 
+import java.awt.geom.Point2D;
 import java.util.Collection;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -9,15 +10,17 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
 
 public class Legendarium {
+	private final Point2D.Double lowerLeft;
 	private final Collection<LabeledReference> labeledReferences;
 	private boolean hasPrintedDefinitions;
 
-	private Legendarium(Collection<LabeledReference> labeledReferences) {
+	private Legendarium(Point2D.Double lowerLeft, Collection<LabeledReference> labeledReferences) {
+		this.lowerLeft = lowerLeft;
 		this.labeledReferences = labeledReferences;
 		this.hasPrintedDefinitions = false;		
 	}
-	public static Legendarium containing(Collection<LabeledReference> labeledReferences) {
-		return new Legendarium(labeledReferences);
+	public static Legendarium containing(Point2D.Double lowerLeft, Collection<LabeledReference> labeledReferences) {
+		return new Legendarium(lowerLeft, labeledReferences);
 	}
 	
 
@@ -34,7 +37,7 @@ public class Legendarium {
 		}
 		
 		s += "gsave" + "\n";
-		s += String.format("%f %f moveto" + "\n", PageLayout.LEGENDARIUM_LOWER_LEFT.x, PageLayout.LEGENDARIUM_LOWER_LEFT.y);
+		s += String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y);
 		
 		s += PSUtility.findscalesetfont(PageLayout.TITLE_FONT) + "\n";
 		s += PSUtility.setgray(0.0) + "\n"; // TODO

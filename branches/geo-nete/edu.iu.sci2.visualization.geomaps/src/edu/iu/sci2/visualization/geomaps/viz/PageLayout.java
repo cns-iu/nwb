@@ -12,6 +12,16 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceCircles;
 public enum PageLayout {
 	WEB {
 		@Override
+		public double pageWidth() {
+			return 17.78 * POINTS_PER_INCH;
+		}
+		
+		@Override
+		public double pageHeight() {
+			return 13.33 * POINTS_PER_INCH;
+		}
+		
+		@Override
 		public Optional<Point2D.Double> headerLowerLeft() {
 			return Optional.absent();
 		}
@@ -28,6 +38,15 @@ public enum PageLayout {
 	},
 	PRINT {
 		@Override
+		public double pageWidth() {
+			return 11.0 * POINTS_PER_INCH;
+		}
+		@Override
+		public double pageHeight() {
+			return 8.5 * POINTS_PER_INCH;
+		}
+		
+		@Override
 		public Optional<Point2D.Double> headerLowerLeft() {
 			return Optional.of(new Point2D.Double(pageMargin(), pageHeight() - pageMargin()));
 		}
@@ -40,17 +59,14 @@ public enum PageLayout {
 		@Override
 		public Optional<Point2D.Double> howToReadLowerLeft() {
 			return Optional.of(new Point2D.Double(
-					0.93 * LEGENDARIUM_DIMENSION.getWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
-					LEGENDARIUM_LOWER_LEFT.getY()));
+					0.93 * legendariumDimensions().getWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
+					legendariumLowerLeft().getY()));
 		}
 	};
 
-	public static double pageWidth() {
-		return 11.0 * POINTS_PER_INCH;
-	}
-	public static double pageHeight() {
-		return 8.5 * POINTS_PER_INCH;
-	}
+	public abstract double pageWidth();
+	public abstract double pageHeight();
+	
 	public static double pageMargin() {
 		return 0.5 * POINTS_PER_INCH;
 	}
@@ -70,28 +86,37 @@ public enum PageLayout {
 				pageWidth() - 2 * pageMargin(),
 				pageHeight() -
 						(headerHeight()
-						+ LEGENDARIUM_DIMENSION.getHeight()
+						+ legendariumDimensions().getHeight()
 						+ PAGE_FOOTER_HEIGHT_IN_POINTS));
 	}
 
 	public static final double POINTS_PER_INCH = 72.0;
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS = pageMargin() + (0.25 * POINTS_PER_INCH);
 	
-	public static final double MAP_CENTER_X_IN_POINTS = pageWidth() / 2.0;
+	public double mapCenterX() {
+		return pageWidth() / 2.0;
+	}
 	
 
-	public static final Dimension<Double> LEGENDARIUM_DIMENSION = Dimension.ofSize(
-			0.7 * pageWidth(),
-			0.18 * pageHeight());
-	public static final Point2D.Double LEGENDARIUM_LOWER_LEFT = new Point2D.Double(
-			pageMargin(),
-			PAGE_FOOTER_HEIGHT_IN_POINTS + (0.75 * LEGENDARIUM_DIMENSION.getHeight()));
-	public static final Point2D.Double LEGEND_LOWER_LEFT = new Point2D.Double(
-			LEGENDARIUM_LOWER_LEFT.x,
-			LEGENDARIUM_LOWER_LEFT.y - LabeledReferenceCircles.TYPE_LABEL_FONT_SIZE - 3); // TODO
+	public Dimension<Double> legendariumDimensions() {
+		return Dimension.ofSize(
+				0.7 * pageWidth(),
+				0.18 * pageHeight());
+	}
+	public Point2D.Double legendariumLowerLeft() {
+		return new Point2D.Double(
+				pageMargin(),
+				PAGE_FOOTER_HEIGHT_IN_POINTS + (0.75 * legendariumDimensions().getHeight()));
+	}
+	public Point2D.Double legendLowerLeft() {
+		return new Point2D.Double(
+				legendariumLowerLeft().x,
+				legendariumLowerLeft().y - LabeledReferenceCircles.TYPE_LABEL_FONT_SIZE - 3); // TODO
+	}
 	
-	public static final Dimension<Double> COLOR_GRADIENT_DIMENSION =
-			Dimension.ofSize(
-					0.8 * (LEGENDARIUM_DIMENSION.getWidth() / EnumSet.allOf(CircleDimension.class).size()),
-					10.0);
+	public Dimension<Double> colorGradientDimensions() {
+		return Dimension.ofSize(
+				0.8 * (legendariumDimensions().getWidth() / EnumSet.allOf(CircleDimension.class).size()),
+				10.0);
+	}
 }

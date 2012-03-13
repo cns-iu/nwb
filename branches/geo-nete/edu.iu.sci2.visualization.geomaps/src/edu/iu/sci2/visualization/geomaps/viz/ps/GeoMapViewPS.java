@@ -1,6 +1,5 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
-import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
@@ -16,11 +15,11 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
-import com.google.common.collect.ImmutableList;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
@@ -49,29 +48,7 @@ public class GeoMapViewPS {
 			throw new ShapefilePostScriptWriterException(e);
 		}
 	}
-	
-	
-	/**
-	 * Looks for a font that will work on this system.  It tries several that are likely to
-	 * be present on a Windows or Linux system, and falls back to Java's default font.
-	 * @return
-	 */
-	private static Font findBasicFont() { // TODO Copied from bipartitenet.  Instead expose and import.
-		final String JAVA_FALLBACK_FONT = "Dialog";
-		ImmutableList<String> fontFamiliesToTry =
-				ImmutableList.of("Arial", "Helvetica", "FreeSans", "Nimbus Sans");
-		
-		Font thisFont = new Font(JAVA_FALLBACK_FONT, Font.PLAIN, 12);
-		for (String family : fontFamiliesToTry) {
-			thisFont = new Font(family, Font.PLAIN, 12);
-			if (! thisFont.getFamily().equals(JAVA_FALLBACK_FONT)) {
-				// found one that the system has!
-				break;
-			}
-		}
-		
-		return thisFont;
-	}
+
 	
 	public File writeToPSFile(String authorName, String dataLabel)
 				throws IOException, TransformException {		
@@ -80,12 +57,14 @@ public class GeoMapViewPS {
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
-		writeCodeHeader(out, psFile.getName());
+		writeCodeHeader(out, psFile.getName(), pageLayout);
 		
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 		out.write("\n");
 		
-		out.write((new PageFooter()).toPostScript() + "\n");
+		out.write((new PageFooter(new Point2D.Double(
+				pageLayout.pageWidth() / 2.0,
+				PageLayout.pageMargin() - PageFooter.FONT.getSize()))).toPostScript() + "\n");
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
 		out.write("gsave" + "\n");
@@ -223,10 +202,11 @@ public class GeoMapViewPS {
 
 
 	private static void writeCodeHeader(
-			BufferedWriter out, String outputPSFileName) throws IOException {
+			BufferedWriter out, String outputPSFileName, PageLayout pageLayout) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-		out.write((new DSCProlog(outputPSFileName, PageLayout.pageHeight())).toPostScript());
+		// TODO Replace pageWidth and pageHeight with pageDimensions
+		out.write((new DSCProlog(outputPSFileName, Dimension.ofSize(pageLayout.pageWidth(), pageLayout.pageHeight())).toPostScript()));
 		
 //		/* TODO We're using setpagedevice to force page dimensions
 //		 * corresponding to US Letter landscape.  This command

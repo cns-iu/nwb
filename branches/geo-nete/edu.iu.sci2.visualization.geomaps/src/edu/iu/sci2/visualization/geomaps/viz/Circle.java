@@ -22,10 +22,14 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 public class Circle {
 	private final Coordinate coordinate;
 	private final EnumMap<CircleDimension, Strategy> strategies;
+	/* TODO These were previously proportional to the page width, but now that isn't a constant.
+	 * Replacing the proportions with the nearest absolute figure in points for a page 11 inches
+	 * or 17 inches wide.
+	 */
 	public static final Range<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
 			Range.between(
-					0.00135 * PageLayout.pageWidth(),
-					0.03 * PageLayout.pageWidth());
+					1.3,
+					32.0);
 	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE =
 			Range.between(
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),
