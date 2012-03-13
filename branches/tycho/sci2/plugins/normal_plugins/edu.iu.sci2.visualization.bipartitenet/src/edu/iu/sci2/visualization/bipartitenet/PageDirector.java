@@ -11,7 +11,10 @@ import java.util.List;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -34,20 +37,35 @@ import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScal
 public class PageDirector implements Paintable {
 	public static final double LINE_SPACING = 1.2;
 
+	private static final Font BASE_FONT = findBasicFont(10);
+	private static final ImmutableMap<TextType, Font> PRINT_FONTS = ImmutableMap.of(
+				TextType.TITLE,      BASE_FONT.deriveFont(Font.BOLD, 14),
+				TextType.NODE_LABEL, BASE_FONT.deriveFont(Font.PLAIN, 12),
+				TextType.LEGEND,     BASE_FONT.deriveFont(Font.PLAIN, 10),
+				TextType.FOOTER,     BASE_FONT.deriveFont(Font.ITALIC, 10),
+				TextType.HOW_TO_READ,BASE_FONT.deriveFont(Font.PLAIN, 10));
+	
+	private static final ImmutableMap<TextType, Font> WEB_FONTS	= ImmutableMap.of(
+			TextType.TITLE,      BASE_FONT.deriveFont(Font.BOLD, 20),
+			TextType.NODE_LABEL, BASE_FONT.deriveFont(Font.PLAIN, 16),
+			TextType.LEGEND,     BASE_FONT.deriveFont(Font.PLAIN, 14),
+			TextType.FOOTER,     BASE_FONT.deriveFont(Font.ITALIC, 10),
+			TextType.HOW_TO_READ,BASE_FONT.deriveFont(Font.PLAIN, 14));
+	
 	public static enum Layout {
 		PRINT(792, 612,
 				new Point2D(18, 18), // title top-left corner
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
 				14, 3,
-				new int[] { 14, 12, 10, 10 },
+				PRINT_FONTS,
 				true),
 		WEB(1280, 960,
 				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
 				24, 5,
-				new int[] { 20, 16, 14, 10 },
+				WEB_FONTS,
 				false);
 		
 		private final int width;
@@ -57,13 +75,13 @@ public class PageDirector implements Paintable {
 		private final int maxNodeRadius;
 		private final Point2D headerPosition;
 		private final int maxEdgeThickness;
-		private final int[] fontSizes;
 		private final boolean hasHowToRead;
+		private final ImmutableMap<TextType, Font> fontScheme;
 
 		private Layout(int width, int height, Point2D headerPosition, 
 				LineSegment2D leftLine, LineSegment2D rightLine,
 				int maxNodeRadius, int maxEdgeThickness,
-				int[] fontSizes, boolean hasHowToRead) {
+				ImmutableMap<TextType, Font> fontScheme, boolean hasHowToRead) {
 			this.width = width;
 			this.height = height;
 			this.headerPosition = headerPosition;
@@ -71,9 +89,10 @@ public class PageDirector implements Paintable {
 			this.rightLine = rightLine;
 			this.maxNodeRadius = maxNodeRadius;
 			this.maxEdgeThickness = maxEdgeThickness;
+			Preconditions.checkArgument(fontScheme.keySet()
+					.equals(ImmutableSet.copyOf(TextType.values())));
+			this.fontScheme = fontScheme;
 			this.hasHowToRead = hasHowToRead;
-			assert fontSizes.length == 4;
-			this.fontSizes = fontSizes;
 		}
 
 		public int getWidth() {
@@ -149,22 +168,13 @@ public class PageDirector implements Paintable {
 		}
 		
 		private int estimateLegendHeight() {
-			return 72 + getMaxNodeRadius() + 3 * fontSizes[0];
+			return 72 + getMaxNodeRadius() + 3 * getFont(TextType.TITLE).getSize();
 		}
 
-		public Font getTitleFont() {
-			return INTERNAL_BASE_FONT.deriveFont(Font.BOLD, fontSizes[0]);
+		public Font getFont(TextType type) {
+			return fontScheme.get(type);
 		}
-		public Font getDefaultNodeFont() {
-			return INTERNAL_BASE_FONT.deriveFont(Font.PLAIN, fontSizes[1]);
-		}
-		public Font getLegendFont() {
-			return INTERNAL_BASE_FONT.deriveFont(Font.PLAIN, fontSizes[2]);
-		}
-		public Font getFooterFont() {
-			return INTERNAL_BASE_FONT.deriveFont(Font.ITALIC, fontSizes[3]);
-		}
-
+		
 		public boolean hasHowToRead() {
 			return this.hasHowToRead;
 		}
@@ -173,7 +183,6 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	private static final Font INTERNAL_BASE_FONT = findBasicFont(10);
 //	public static final Font BASIC_FONT = findBasicFont(10);
 //	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
 //	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
@@ -207,14 +216,15 @@ public class PageDirector implements Paintable {
 		}
 		
 		if (layout.hasHowToRead()) {
-			painter.add(new HowToRead(layout.getTitleFont(), layout.getLegendFont(), 
+			painter.add(new HowToRead(layout.getFont(TextType.TITLE),
+					layout.getFont(TextType.HOW_TO_READ), 
 					layout.getHowToReadLegendPosition()));
 		}
 		
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), 
 				nodeCoding, edgeCoding,
-				layout.getDefaultNodeFont());
+				layout.getFont(TextType.NODE_LABEL));
 		painter.add(renderer);
 		
 		// The main title, and headers
@@ -222,8 +232,8 @@ public class PageDirector implements Paintable {
 		// Position's null if there should be no title 
 		if (headerPosition != null) {
 			painter.add(
-					new ComplexLabelPainter.Builder(headerPosition, layout.getLegendFont(), Color.BLACK)
-					.addLine(TITLE, layout.getTitleFont())
+					new ComplexLabelPainter.Builder(headerPosition, layout.getFont(TextType.LEGEND), Color.BLACK)
+					.addLine(TITLE, layout.getFont(TextType.TITLE))
 					.addLine("Generated from Cornell NSF Data")
 					.addLine(getTimeStamp())
 					.withLineSpacing(LINE_SPACING)
@@ -232,13 +242,13 @@ public class PageDirector implements Paintable {
 		
 		// The titles of the two columns
 		painter.add(new SimpleLabelPainter(layout.getLeftTitlePosition(), 
-				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, layout.getTitleFont(), null));
+				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, layout.getFont(TextType.TITLE), null));
 		painter.add(new SimpleLabelPainter(layout.getRightTitlePosition(), 
-				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, layout.getTitleFont(), null));
+				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, layout.getFont(TextType.TITLE), null));
 		
 		// The footer
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
-				XAlignment.CENTER, YAlignment.BASELINE, footer, layout.getFooterFont(),
+				XAlignment.CENTER, YAlignment.BASELINE, footer, layout.getFont(TextType.FOOTER),
 				Color.gray));
 	}
 
@@ -250,9 +260,9 @@ public class PageDirector implements Paintable {
 			sort = "Label (alphabetically)";
 		}
 		
-		return new ComplexLabelPainter.Builder(layout.getSortLegendPosition(), layout.getLegendFont(), Color.black)
+		return new ComplexLabelPainter.Builder(layout.getSortLegendPosition(), layout.getFont(TextType.LEGEND), Color.black)
 			.withLineSpacing(LINE_SPACING)
-			.addLine("Legend", layout.getTitleFont())
+			.addLine("Legend", layout.getFont(TextType.TITLE))
 			.addLine("Sorted by")
 			.addLine(sort, Color.gray)
 			.build();
@@ -325,7 +335,7 @@ public class PageDirector implements Paintable {
 				layout.getCircleLegendPosition(), 
 				ImmutableList.of(" ", "Circle Area", dataModel.getNodeValueAttribute()), 
 				coding, ImmutableList.copyOf(labels),
-				layout.getTitleFont(), layout.getLegendFont());
+				layout.getFont(TextType.TITLE), layout.getFont(TextType.LEGEND));
 		return legend;
 	}
 
@@ -336,7 +346,7 @@ public class PageDirector implements Paintable {
 		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
 				ImmutableList.of(" ", "Edge Weight", dataModel.getEdgeValueAttribute()),
 				edgeCoding, ImmutableList.copyOf(labels),
-				layout.getTitleFont(), layout.getLegendFont());
+				layout.getFont(TextType.TITLE), layout.getFont(TextType.LEGEND));
 		return legend;
 	}
 
