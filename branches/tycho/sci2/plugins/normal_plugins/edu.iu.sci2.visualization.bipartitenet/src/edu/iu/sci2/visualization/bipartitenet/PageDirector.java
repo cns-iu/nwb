@@ -275,12 +275,9 @@ public class PageDirector implements Paintable {
 		
 		Font thisFont = new Font(JAVA_FALLBACK_FONT, Font.PLAIN, 12);
 		for (String family : fontFamiliesToTry) {
-			System.out.println("Trying " + family);
 			thisFont = new Font(family, Font.PLAIN, size);
 			if (! thisFont.getFamily().equals(JAVA_FALLBACK_FONT)) {
 				// found one that the system has!
-				System.out.println(String.format("Yes, deciding on %s (started with %s)", thisFont.getFamily(),
-						family));
 				break;
 			}
 		}

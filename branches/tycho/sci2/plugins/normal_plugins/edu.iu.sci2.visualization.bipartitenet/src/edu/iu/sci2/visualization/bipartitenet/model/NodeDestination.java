@@ -63,7 +63,6 @@ public enum NodeDestination {
 			currentFont = defaultFont.deriveFont(defaultFont.getStyle(), fontSize);
 			TextLayout tl = new TextLayout("Alg", currentFont, frc); // "Alg" is a good height test with its risers and descenders
 			Rectangle2D textBounds = tl.getBounds();
-			// "+1" to leave a bit of a margin
 			if (textBounds.getHeight() + SPACING_BETWEEN_LABELS < maxHeight) {
 				break;
 			}
