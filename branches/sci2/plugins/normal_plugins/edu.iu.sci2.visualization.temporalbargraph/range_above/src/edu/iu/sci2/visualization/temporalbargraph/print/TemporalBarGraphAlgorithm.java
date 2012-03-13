@@ -2,7 +2,6 @@ package edu.iu.sci2.visualization.temporalbargraph.print;
 import java.awt.Color;
 import java.util.List;
 
-import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.color.ColorRegistry;
 import org.osgi.service.log.LogService;
@@ -17,7 +16,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.TemporalBarGraphColorSchema;
 
 public class TemporalBarGraphAlgorithm extends
-		AbstractTemporalBarGraphAlgorithm implements Algorithm {
+		AbstractTemporalBarGraphAlgorithm {
 
 	private Data inputData;
 	private LogService logger;

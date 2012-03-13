@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.color.ColorRegistry;
@@ -16,8 +15,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.Years;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -51,6 +48,7 @@ public abstract class AbstractVisualization {
 	
 	protected static final Function<PostScriptBar, Double> AMOUNT_PER_DAY_GETTER =
 			new Function<PostScriptBar, Double>() {
+		@Override
 		public Double apply(PostScriptBar bar) {
 			return bar.amountPerDay();
 		}				

@@ -32,7 +32,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 	 */
 	public enum PageOrientation {
 		LANDSCAPE(TemporalBarGraphAlgorithmFactory.PAGE_SHORT_DIMENTION,
-				TemporalBarGraphAlgorithmFactory.PAGE_LONG_DIMENTION), 
+				TemporalBarGraphAlgorithmFactory.PAGE_LONG_DIMENTION),
 		PORTRAIT(TemporalBarGraphAlgorithmFactory.PAGE_LONG_DIMENTION,
 				TemporalBarGraphAlgorithmFactory.PAGE_SHORT_DIMENTION);
 		private final double height;
@@ -60,11 +60,11 @@ public class TemporalBarGraphAlgorithmFactory extends
 		}
 
 		public double getHeight() {
-			return height;
+			return this.height;
 		}
 
 		public double getWidth() {
-			return width;
+			return this.width;
 		}
 	}
 
@@ -99,6 +99,9 @@ public class TemporalBarGraphAlgorithmFactory extends
 				shouldScaleOutput, categoryColumn);
 	}
 
+	@SuppressWarnings("unused")
+	// Removed the portrait version. See svn or mutateParameters for hints of
+	// how to enable it.
 	private static Collection<String> formOrientationLabels() {
 		Collection<String> orientationLabels = new ArrayList<String>(
 				PageOrientation.values().length);
@@ -108,6 +111,9 @@ public class TemporalBarGraphAlgorithmFactory extends
 		return orientationLabels;
 	}
 
+	@SuppressWarnings("unused")
+	// Removed the portrait version. See svn or mutateParameters for hints of
+	// how to enable it.
 	private static Collection<String> formOrientationValues() {
 		Collection<String> orientationValues = new ArrayList<String>(
 				PageOrientation.values().length);
@@ -149,16 +155,15 @@ public class TemporalBarGraphAlgorithmFactory extends
 			} else if (oldAttributeDefinitionID.equals(PAGE_ORIENTATION_ID)) {
 				/*
 				 * To enable the Portrait version again, look in svn. If you are
-				 * lazy, here is an overview... 
+				 * lazy, here is an overview...
 				 * 
-				 * put <AD name="Page Orientation" id="page_orientation" type="String" description="The orientation of the page." default="" />
-				 * into the metadata
+				 * put <AD name="Page Orientation" id="page_orientation"
+				 * type="String" description="The orientation of the page."
+				 * default="" /> into the metadata
 				 * 
-				 * add this
-				 * newAttributeDefinition =
-				 * MutateParameterUtilities .cloneToDropdownAttributeDefinition(
-				 * oldAttributeDefinition, formOrientationLabels(),
-				 * formOrientationValues());
+				 * add this newAttributeDefinition = MutateParameterUtilities
+				 * .cloneToDropdownAttributeDefinition( oldAttributeDefinition,
+				 * formOrientationLabels(), formOrientationValues());
 				 * 
 				 * here
 				 */
@@ -179,7 +184,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 				MutateParameterUtilities.mutateDefaultValue(oldParameters,
 						CATEGORY_FIELD_ID, DO_NOT_PROCESS_CATEGORY_VALUE);
 			}
-			
+
 			/*
 			 * This can take optional ADs and mutate them needlessly into
 			 * required ones, so be careful.

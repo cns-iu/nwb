@@ -111,17 +111,12 @@ public class Visualization extends AbstractVisualization {
 
 		// maybe the actual bars on the page will not require all the space. In
 		// this case, space out the bars using bar spacing.
-		double spaceUsedByBars = getTotalAmountPerDay(bars) * pointsPerY;
+		double spaceUsedByBars = getTotalAmountPerDay(bars) * this.pointsPerY;
 
-		if (spaceUsedByBars < usableYPoints) {
-			double extraSpace = usableYPoints - spaceUsedByBars;
-			double extraSpacePerBar = extraSpace / (bars.size() + 2); // allow
-																		// for
-																		// padding
-																		// at
-																		// top
-																		// and
-																		// bottom
+		if (spaceUsedByBars < this.usableYPoints) {
+			double extraSpace = this.usableYPoints - spaceUsedByBars;
+			// allow for padding at top and bottom
+			double extraSpacePerBar = extraSpace / (bars.size() + 2); 
 			barSpacing += extraSpacePerBar;
 		}
 
@@ -136,15 +131,15 @@ public class Visualization extends AbstractVisualization {
 		double previousEndY = 0;
 		for (PostScriptBar bar : bars) {
 			double startY = previousEndY + barSpacing;
-			double changeInY = bar.amountPerDay() * pointsPerY;
+			double changeInY = bar.amountPerDay() * this.pointsPerY;
 			StringTemplate visualizationLabelBar = group
 					.getInstanceOf("visualizationLabelBar");
 			visualizationLabelBar.setAttribute("label", bar.getName());
 			visualizationLabelBar.setAttribute("x1", bar.daysSinceEarliest()
-					* pointsPerDay);
+					* this.pointsPerDay);
 			visualizationLabelBar.setAttribute("y1", startY);
 			visualizationLabelBar.setAttribute("deltaX", bar.lengthInDays()
-					* pointsPerDay);
+					* this.pointsPerDay);
 			visualizationLabelBar.setAttribute("deltaY", changeInY);
 			visualizationLabelBar.setAttribute("color", getRGB(bar.getColor()));
 
@@ -169,7 +164,7 @@ public class Visualization extends AbstractVisualization {
 		for (DateTime newYear : newYearsDates) {
 
 			String label = Integer.toString(newYear.toLocalDate().getYear());
-			double x = Days.daysBetween(this.vizAreaStartDate, newYear).getDays() * pointsPerDay;
+			double x = Days.daysBetween(this.vizAreaStartDate, newYear).getDays() * this.pointsPerDay;
 			
 			StringTemplate datelineTemplate =
 					group.getInstanceOf("visualizationDateLine");

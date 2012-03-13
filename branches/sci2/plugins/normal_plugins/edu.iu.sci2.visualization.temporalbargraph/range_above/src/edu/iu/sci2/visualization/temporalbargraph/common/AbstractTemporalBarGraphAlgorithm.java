@@ -31,6 +31,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 	public static final String EPS_FILE_SUFFIX = ".eps";
 	public static final String CSV_FILE_SUFFIX = ".csv";
 
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		LogService logger = getLogger();
 		Data inputData = getInputData();

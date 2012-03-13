@@ -170,7 +170,7 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 				titleDefinitionsTemplate);
 	}
 
-	private PageElement getHowtoPageElement() {
+	private static PageElement getHowtoPageElement() {
 		StringTemplate howtoTemplate = pageElementsGroup.getInstanceOf("howto");
 
 		StringTemplate howtoDefinitionsTemplate = pageElementsGroup
