@@ -39,7 +39,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	private static final String RIGHT_COLUMN_TITLE_ID = "rightColumnTitle";
 	private static final String LAYOUT_TYPE_ID = "layoutType";
 	
-	private NWBFileExaminer examiner;
+	private BipartiteNWBFileExaminer examiner;
 	
 	@Override
 	public Algorithm createAlgorithm(Data[] data,
@@ -108,7 +108,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 		if (examiner != null) {
 			return;
 		}
-		examiner = new NWBFileExaminer();
+		examiner = new BipartiteNWBFileExaminer();
 		File nwbFile = getNWBFile(data);
 
 		try {

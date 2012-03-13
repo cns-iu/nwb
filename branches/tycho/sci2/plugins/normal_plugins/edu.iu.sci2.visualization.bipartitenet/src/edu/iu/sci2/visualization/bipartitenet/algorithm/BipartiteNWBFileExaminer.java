@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 import edu.iu.nwb.util.nwbfile.GetNWBFileMetadata;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
-class NWBFileExaminer extends GetNWBFileMetadata {
+class BipartiteNWBFileExaminer extends GetNWBFileMetadata {
 	private static final String TYPE_COLUMN = "bipartitetype";
 	private final Set<String> bipartiteTypes = Sets.newHashSet();
 
@@ -34,20 +34,24 @@ class NWBFileExaminer extends GetNWBFileMetadata {
 
 		if (!nodeSchema.containsKey(TYPE_COLUMN)) {
 			throw new AlgorithmCreationFailedException(
-					"Bipartite Graph algorithm requires output of the Extract Bipartite Graph algorithm:"
-							+ " 'bipartitetype' node attribute required.");
+					"Bipartite Graph algorithm requires the 'bipartitetype' node attribute.");
 		}
 
 		if (!NWBFileProperty.TYPE_STRING.equals(nodeSchema.get(TYPE_COLUMN))) {
 			throw new AlgorithmCreationFailedException(
-					"Bipartite Graph algorithm requires output of the Extract Bipartite Graph algorithm:"
-							+ " 'bipartitetype' node attribute must be of type 'string'.");
+					"Bipartite Graph algorithm requires that the 'bipartitetype' node" +
+					" attribute be of type '" + NWBFileProperty.TYPE_STRING + "'.");
 		}
 	}
 
 	@Override
 	public void addNode(int id, String label, Map<String, Object> attributes) {
 		super.addNode(id, label, attributes);
-		bipartiteTypes.add((String) attributes.get(TYPE_COLUMN));
+		String type = (String) attributes.get(TYPE_COLUMN);
+		if (type == null) {
+			throw new AlgorithmCreationFailedException(String.format(
+					"Node '%s' has null bipartitetype, but all nodes must have a type", label));
+		}
+		bipartiteTypes.add(type);
 	}
 }
