@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.util.List;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -12,6 +13,13 @@ public class PSUtility {
 	public static final ImmutableMap<Integer, String> PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE = ImmutableMap.of(
 			Font.BOLD, "-Bold",
 			Font.ITALIC, "-Italic");
+	
+	public static void main(String[] args) {
+		System.out.println(GeoMapViewPS.CONTENT_FONT);
+		System.out.println(GeoMapViewPS.CONTENT_FONT.getPSName());
+		System.out.println(GeoMapViewPS.CONTENT_FONT.deriveFont(Font.BOLD));
+		System.out.println(GeoMapViewPS.CONTENT_FONT.deriveFont(Font.BOLD).getPSName());
+	}
 	
 	private PSUtility() {}
 
@@ -28,6 +36,21 @@ public class PSUtility {
 		return String.format("%f %f %f setrgbcolor ", red, green, blue);
 	}
 	
+	public static String psFontName(Font font) {
+		String name = font.getName();
+		
+		int style = font.getStyle();
+		if (PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.containsKey(style)) {
+			name += PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.get(style);
+		}
+		
+		if (Objects.equal(font.getName(), "Arial")) {
+			name += "MT"; // TODO hack..
+		}
+		
+		return name;
+	}
+	
 	public static String showAndNewLine(String text, double fontSize) {
 		return String.format("(%s) dup show stringwidth pop neg %f rmoveto \n", text, -fontSize);
 	}
@@ -40,16 +63,8 @@ public class PSUtility {
 	}
 
 	public static String findscalesetfont(Font font) {
-		String name = font.getName();
-		
-		int style = font.getStyle();
-		if (PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.containsKey(style)) {
-			name += PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.get(style);
-		}
-		
-		System.out.println(String.format("/%s findfont %d scalefont setfont ", name, font.getSize()));
-			
-		return String.format("/%s findfont %d scalefont setfont ", name, font.getSize());
+		System.out.println(String.format("/%s findfont %d scalefont setfont ", psFontName(font), font.getSize())); // TODO
+		return String.format("/%s findfont %d scalefont setfont ", psFontName(font), font.getSize());
 	}
 
 	public static String setgray(double brightness) {

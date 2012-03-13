@@ -9,6 +9,7 @@ import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
 
 /* Create PostScript to draw three Circles representing the extrema (minimum,
  * midpoint, and maximum) of the interpolated range and label each with the
@@ -111,7 +112,7 @@ public class LabeledReferenceCircles implements LabeledReference {
 		invocationTemplate.setAttribute(
 				"keyLabelFontSize", KEY_LABEL_FONT_SIZE);
 		
-		invocationTemplate.setAttribute("fontName", GeoMapViewPS.CONTENT_FONT.getName());
+		invocationTemplate.setAttribute("fontName", PSUtility.psFontName(GeoMapViewPS.CONTENT_FONT));
 
 		s += invocationTemplate.toString();
 

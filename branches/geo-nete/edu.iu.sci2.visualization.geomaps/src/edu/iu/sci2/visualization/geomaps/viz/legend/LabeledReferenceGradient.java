@@ -11,6 +11,7 @@ import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
+import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
 
 /* Create PostScript to draw a color gradient representing the extrema (minimum,
  * midpoint, and maximum) of the interpolated range and label each end with the
@@ -121,7 +122,7 @@ public class LabeledReferenceGradient implements LabeledReference {
 		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("keyLabelFontSize", KEY_LABEL_FONT_SIZE);
 		
-		invocationTemplate.setAttribute("fontName", GeoMapViewPS.CONTENT_FONT.getName());
+		invocationTemplate.setAttribute("fontName", PSUtility.psFontName(GeoMapViewPS.CONTENT_FONT));
 		
 		s += invocationTemplate.toString();
 
