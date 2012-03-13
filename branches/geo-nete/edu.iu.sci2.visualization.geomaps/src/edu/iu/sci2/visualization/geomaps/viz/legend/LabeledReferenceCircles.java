@@ -9,7 +9,6 @@ import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 /* Create PostScript to draw three Circles representing the extrema (minimum,
  * midpoint, and maximum) of the interpolated range and label each with the
@@ -20,7 +19,7 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
  * - legendDescription would be like "Circle Area"
  * - columnName would be like "Number of papers published"
  */
-public class LabeledReferenceCircles implements PostScriptable {
+public class LabeledReferenceCircles implements LabeledReference {
 	// Brightness for PostScript's setgray command. 0 is black, 1 is white.
 	public static final double CIRCLE_BRIGHTNESS = 0.5;
 	

@@ -41,10 +41,13 @@ public class PSUtility {
 
 	public static String findscalesetfont(Font font) {
 		String name = font.getName();
+		
 		int style = font.getStyle();
 		if (PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.containsKey(style)) {
 			name += PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE.get(style);
 		}
+		
+		System.out.println(String.format("/%s findfont %d scalefont setfont ", name, font.getSize()));
 			
 		return String.format("/%s findfont %d scalefont setfont ", name, font.getSize());
 	}

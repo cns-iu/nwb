@@ -41,11 +41,11 @@ import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -105,7 +105,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					knownProjectedCRSDescriptor,
 					ImmutableSet.<FeatureView>of(),
 					anchorPointsAsCircles,
-					ImmutableSet.<PostScriptable>of());
+					ImmutableSet.<LabeledReference>of());
 			
 			postScriptWriter = new GeoMapViewPS(geoMap, PageLayout.PRINT);
 			

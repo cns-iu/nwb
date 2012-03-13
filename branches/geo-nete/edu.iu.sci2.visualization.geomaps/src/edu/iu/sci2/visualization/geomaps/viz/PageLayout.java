@@ -71,7 +71,7 @@ public enum PageLayout {
 	public static final double POINTS_PER_INCH = 72.0;
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS = pageMargin() + (0.25 * POINTS_PER_INCH);
 	
-	public static final double MAP_CENTER_X_IN_POINTS = (pageMargin() + pageWidth()) / 2.0;
+	public static final double MAP_CENTER_X_IN_POINTS = pageWidth() / 2.0;
 	
 	public static final Dimension<Double> LEGEND_PAGE_AREA_DIMENSION = Dimension.ofSize(
 			0.7 * pageWidth(),

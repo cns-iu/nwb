@@ -11,7 +11,6 @@ import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 /* Create PostScript to draw a color gradient representing the extrema (minimum,
  * midpoint, and maximum) of the interpolated range and label each end with the
@@ -22,7 +21,7 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
  * - legendDescription would be like "Blah RGB"
  * - dataColumnName would be like "Number of papers published"
  */
-public class LabeledReferenceGradient implements PostScriptable {
+public class LabeledReferenceGradient implements LabeledReference {
 	/* Width of each cell of the gradient in points.
 	 * A lesser positive integer means more fine, or less blocky.
 	 */

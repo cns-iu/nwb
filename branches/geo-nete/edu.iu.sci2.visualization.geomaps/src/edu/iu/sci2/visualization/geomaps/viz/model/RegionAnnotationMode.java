@@ -28,8 +28,8 @@ import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
@@ -71,7 +71,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
-			Collection<PostScriptable> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
+			Collection<LabeledReference> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(

@@ -16,6 +16,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
+import com.google.common.collect.ImmutableList;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -25,6 +26,7 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
+	// TODO Fonts seem to be missing/ignored?  Getting monospace fonts right now
 	public static final Font TITLE_FONT = new Font("UniverseExtended", Font.BOLD, 16);
 	public static final Font CONTENT_FONT = new Font("Arial", Font.PLAIN, 12);
 
@@ -51,7 +53,29 @@ public class GeoMapViewPS {
 			throw new ShapefilePostScriptWriterException(e);
 		}
 	}
-
+	
+	
+	/**
+	 * Looks for a font that will work on this system.  It tries several that are likely to
+	 * be present on a Windows or Linux system, and falls back to Java's default font.
+	 * @return
+	 */
+	private static Font findBasicFont() { // TODO Copied from bipartitenet.  Instead expose and import.
+		final String JAVA_FALLBACK_FONT = "Dialog";
+		ImmutableList<String> fontFamiliesToTry =
+				ImmutableList.of("Arial", "Helvetica", "FreeSans", "Nimbus Sans");
+		
+		Font thisFont = new Font(JAVA_FALLBACK_FONT, Font.PLAIN, 12);
+		for (String family : fontFamiliesToTry) {
+			thisFont = new Font(family, Font.PLAIN, 12);
+			if (! thisFont.getFamily().equals(JAVA_FALLBACK_FONT)) {
+				// found one that the system has!
+				break;
+			}
+		}
+		
+		return thisFont;
+	}
 	
 	public File writeToPSFile(String authorName, String dataLabel)
 				throws IOException, TransformException {		
@@ -117,7 +141,7 @@ public class GeoMapViewPS {
 			out.write("\n");
 		}
 		
-		out.write(geoMap.getLegendComposite().toPostScript());
+		out.write(geoMap.getLegendarium().toPostScript());
 		out.write("\n");
 		
 		if (pageLayout.howToReadLowerLeft().isPresent()) {

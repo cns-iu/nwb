@@ -17,8 +17,8 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescrip
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LegendComposite;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
+import edu.iu.sci2.visualization.geomaps.viz.legend.Legendarium;
 
 public class GeoMap {
 	private static final GeometryFactory DEFAULT_GEOMETRY_FACTORY = JTSFactoryFinder.getGeometryFactory(new Hints(Hints.CRS, DefaultGeographicCRS.WGS84));
@@ -29,7 +29,7 @@ public class GeoMap {
 	private final Collection<FeatureView> featureViews;
 	private final Collection<Circle> circles;
 	
-	private final LegendComposite legendComposite;
+	private final Legendarium legendarium;
 	private final GeometryFactory geometryFactory;
 	private final GeometryProjector geometryProjector;
 
@@ -39,15 +39,14 @@ public class GeoMap {
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor,
 			Collection<FeatureView> featureViews,
 			Collection<Circle> circles,
-			Collection<PostScriptable> legends) throws GeoMapException {
+			Collection<LabeledReference> legends) throws GeoMapException {
 		this.subtitle = subtitle;
 		this.shapefile = shapefile;
 		this.knownProjectedCRSDescriptor = knownProjectedCRSDescriptor;
 		this.featureViews = featureViews;
 		this.circles = circles;
 		
-		this.legendComposite = new LegendComposite();
-		this.legendComposite.addAll(legends);
+		this.legendarium = Legendarium.containing(legends);
 		
 		this.geometryFactory = DEFAULT_GEOMETRY_FACTORY;
 		
@@ -62,8 +61,8 @@ public class GeoMap {
 		return geometryProjector;
 	}
 
-	public LegendComposite getLegendComposite() {
-		return legendComposite;
+	public Legendarium getLegendarium() {
+		return legendarium;
 	}
 
 	public Shapefile getShapefile() {

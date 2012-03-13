@@ -21,12 +21,12 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescrip
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	protected abstract EnumSet<D> dimensions();
@@ -36,7 +36,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<G, D> scaledData,
 			Collection<? extends Coding<D>> codings,
-			Collection<PostScriptable> legends)	throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
+			Collection<LabeledReference> legends) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
 
 	public GeoMap createGeoMap(
 			final Table table,
@@ -57,7 +57,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 //		GeoDataset<G, D> scaledData = usableData.viewScaled();
 		
 		Collection<Coding<D>> codings = Sets.newHashSet();
-		Collection<PostScriptable> legends = Lists.newArrayList();
+		Collection<LabeledReference> legends = Lists.newArrayList();
 		for (Binding<D> binding : enabledBindings) {
 //			Range<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
 //			Range<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
@@ -72,7 +72,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED));
 			codings.add(coding);
 			
-			PostScriptable legend = coding.makeLabeledReference(numericFormatType);			
+			LabeledReference legend = coding.makeLabeledReference(numericFormatType);			
 			legends.add(legend);
 		}
 

@@ -23,11 +23,11 @@ import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.AreaLegend;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceCircles;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegendModel;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.FillColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -62,7 +62,7 @@ public enum CircleDimension implements VizDimension {
 						}
 						
 						@Override
-						public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
+						public LabeledReference makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
 							VizLegendModel<Double> generalLegend = makeVizLegend(numericFormatType);
 							
 							try {
@@ -76,13 +76,11 @@ public enum CircleDimension implements VizDimension {
 								AreaLegend areaLegend =
 										new AreaLegend(generalLegend, unscaledValueForMidrangeArea, midrangeArea);
 								
-								PostScriptable labeledCircleSizes = new LabeledReferenceCircles(
+								return new LabeledReferenceCircles(
 										areaLegend,
 										new Point2D.Double(
 												CircleDimension.AREA_LEGEND_LOWER_LEFT_X,
 												PageLayout.LEGEND_PAGE_AREA_LOWER_LEFT.getY()));
-								
-								return labeledCircleSizes;
 							} catch (ScalingException e) {
 								throw new LegendCreationException("TODO Problem formatting numbers for legend.", e);
 							}

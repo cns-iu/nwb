@@ -16,10 +16,10 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.ColorLegend;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceGradient;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 
 public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> extends AbstractCoding<D, Color> {
 	public static final ImmutableMap<String, Range<Color>> COLOR_RANGES = ImmutableMap.of(
@@ -38,7 +38,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	public abstract Color defaultColor();
 
 	@Override
-	public PostScriptable makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
+	public LabeledReference makeLabeledReference(NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
 				createColorLegend(numericFormatType), lowerLeft(),
 				PageLayout.COLOR_GRADIENT_DIMENSION);

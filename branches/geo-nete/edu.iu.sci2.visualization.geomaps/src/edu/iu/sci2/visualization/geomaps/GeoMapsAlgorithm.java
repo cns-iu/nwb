@@ -145,7 +145,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceName());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
 //			parameters.put("authorName", "Joseph Biberstine");
 
