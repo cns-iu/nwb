@@ -13,7 +13,7 @@ public class PageFooter implements PostScriptable {
 	
 	public static final Point2D.Double LOWER_CENTER =
 			new Point2D.Double(
-					PageLayout.pageMargin() + PageLayout.pageWidth() / 2.0,
+					PageLayout.pageWidth() / 2.0,
 					PageLayout.pageMargin() - FONT.getSize());
 
 	@Override
