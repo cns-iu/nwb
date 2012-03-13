@@ -1,4 +1,5 @@
 package edu.iu.sci2.visualization.temporalbargraph.web;
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.inchToPoint;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -102,13 +103,13 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	private PageElement getAreaLegendElement() {
 		double daysPerPoint = Math.pow(this.visualizations.getPointsPerDay(), -1);
 		double yPerPoint = Math.pow(this.visualizations.getPointsPerY(), -1);
-		double barWidth = inchToPoints(1.7);
+		double barWidth = inchToPoint(1.7);
 		double yearValue = barWidth * daysPerPoint / 365.0;
-		double bigBarHeight = inchToPoints(0.50);
+		double bigBarHeight = inchToPoint(0.50);
 		double bigBarValue = (daysPerPoint * barWidth) * (yPerPoint * bigBarHeight);
-		double medBarHeight = inchToPoints(0.30);
+		double medBarHeight = inchToPoint(0.30);
 		double medBarValue = (daysPerPoint * barWidth) * (yPerPoint * medBarHeight);
-		double smallBarHeight = inchToPoints(0.10);
+		double smallBarHeight = inchToPoint(0.10);
 		double smallBarValue = (daysPerPoint * barWidth) * (yPerPoint * smallBarHeight);
 		
 		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
@@ -124,7 +125,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		StringTemplate areaTemplate = pageElementsGroup.getInstanceOf("areaLegend");
 		
-		return new PageElement("areaLegend", inchToPoints(5.56), inchToPoints(13.33 - 11.13), areaTemplate, areaDefinitionsTemplate);
+		return new PageElement("areaLegend", inchToPoint(5.56), inchToPoint(13.33 - 11.13), areaTemplate, areaDefinitionsTemplate);
 	}
 	
 	private PageElement getLegendPageElement(){
@@ -152,8 +153,8 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 			legendDefinitionsTemplate.setAttribute("titleFontSize", 20);
 			legendDefinitionsTemplate.setAttribute("normalFontSize", 16);
 
-			double leftBound = inchToPoints(0.25);
-			double topBound = inchToPoints(13.33 - 11);
+			double leftBound = inchToPoint(0.25);
+			double topBound = inchToPoint(13.33 - 11);
 			return new PageElement("legendTitleTop", leftBound, topBound,
 					legendTemplate, legendDefinitionsTemplate);
 	}
@@ -166,7 +167,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 				.getInstanceOf("footerDefinitions");
 		footerDefinitionsTemplate.setAttribute("pageWidth", this.size.getWidth());
 		
-		return new PageElement("footer", 0, inchToPoints(0.25), footerTemplate, footerDefinitionsTemplate);
+		return new PageElement("footer", 0, inchToPoint(0.25), footerTemplate, footerDefinitionsTemplate);
 	}
 
 	@Override

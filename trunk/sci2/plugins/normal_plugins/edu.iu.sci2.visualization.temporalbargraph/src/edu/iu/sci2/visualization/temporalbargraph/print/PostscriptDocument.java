@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.temporalbargraph.print;
 
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.inchToPoint;
 
 import java.util.List;
 
@@ -24,8 +24,7 @@ public class PostscriptDocument
 			String categoryColumn, ColorRegistry<String> colorRegistry, String labelColumn, String query,
 			DoubleDimension pageSize) throws PostScriptCreationException {
 
-		this.postscriptPageSize = new DoubleDimension(pageSize.getWidth()
-				* POINTS_PER_INCH, pageSize.getHeight() * POINTS_PER_INCH);
+		this.postscriptPageSize = new DoubleDimension(inchToPoint(pageSize.getWidth()), inchToPoint(pageSize.getHeight()));
 		
 		if (this.postscriptPageSize.getWidth() > this.postscriptPageSize.getHeight()){
 		this.temporalBarGraphPages = new TemporalBarGraphLandscapePages(csvWriter,

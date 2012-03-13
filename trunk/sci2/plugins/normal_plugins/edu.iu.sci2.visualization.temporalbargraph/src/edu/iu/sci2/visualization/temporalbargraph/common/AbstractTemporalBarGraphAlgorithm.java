@@ -19,7 +19,6 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.google.common.io.Files;

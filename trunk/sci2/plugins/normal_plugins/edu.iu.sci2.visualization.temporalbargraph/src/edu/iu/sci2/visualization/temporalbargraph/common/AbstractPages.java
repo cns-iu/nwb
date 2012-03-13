@@ -1,7 +1,5 @@
 package edu.iu.sci2.visualization.temporalbargraph.common;
 
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
-
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -180,8 +178,5 @@ public abstract class AbstractPages {
 	protected abstract int numberOfPages();
 	
 	public abstract void addPageElements();
-	
-	public static double inchToPoints(double number) {
-		return number * POINTS_PER_INCH;
-	}
+
 }

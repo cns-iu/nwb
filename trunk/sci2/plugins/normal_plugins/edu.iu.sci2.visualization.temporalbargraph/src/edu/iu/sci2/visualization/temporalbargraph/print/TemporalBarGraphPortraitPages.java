@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.temporalbargraph.print;
 
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.inchToPoint;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -69,8 +69,8 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		for (int ii = 0; ii < numberOfPages(); ii++) {
 			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
-			double visualizationLeft = 1.0 * POINTS_PER_INCH;
-			double visualizationBottom = 1.75 * POINTS_PER_INCH;
+			double visualizationLeft = inchToPoint(1.0);
+			double visualizationBottom = inchToPoint(1.75);
 			PageElement visualizationElement = new PageElement("visualization",
 					visualizationLeft, visualizationBottom, visualization,
 					visualizationDefinitions);
@@ -111,8 +111,8 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		StringTemplate legendDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("legendTitleTopDefinitions");
 
-		double leftBound = 1.0 * POINTS_PER_INCH;
-		double bottomBound = 0.5 * POINTS_PER_INCH;
+		double leftBound = inchToPoint(1.0);
+		double bottomBound = inchToPoint(0.5);
 		return new PageElement("legendTitleTop", leftBound, bottomBound,
 				legendTemplate, legendDefinitionsTemplate);
 	}
@@ -164,8 +164,8 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		
 		StringTemplate titleDefinitionsTemplate = pageElementsGroup.getInstanceOf("leftAlignedTitleWithQueryAndInfoDefinitions", attributes);
 
-		double leftBound = 1.0 * POINTS_PER_INCH;
-		double bottomBound = this.size.getHeight() - 1.0 * POINTS_PER_INCH;
+		double leftBound = inchToPoint(1.0);
+		double bottomBound = inchToPoint(this.size.getHeight() - 1.0);
 		return new PageElement("leftAlignedTitleWithQueryAndInfo", leftBound, bottomBound, titleTemplate,
 				titleDefinitionsTemplate);
 	}
@@ -178,8 +178,8 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 10);
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
-		double leftBound = 4.3 * POINTS_PER_INCH;
-		double bottomBound = 0.4 * POINTS_PER_INCH;
+		double leftBound = inchToPoint(4.3);
+		double bottomBound = inchToPoint(0.4);
 		return new PageElement("howto", leftBound, bottomBound, howtoTemplate,
 				howtoDefinitionsTemplate);
 	}

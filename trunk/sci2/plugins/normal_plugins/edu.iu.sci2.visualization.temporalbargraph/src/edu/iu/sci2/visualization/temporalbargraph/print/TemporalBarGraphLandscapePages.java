@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.temporalbargraph.print;
 
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.POINTS_PER_INCH;
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.inchToPoint;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		this.size = size;
 		DoubleDimension visualizationSize = new DoubleDimension(size.getWidth()
-				- (3 * (0.5 * POINTS_PER_INCH)),
+				- (3 * inchToPoint(0.5)),
 				(size.getHeight() - (size.getHeight() * .35)));
 
 		this.visualizations = new Visualization(csvWriter, records,
@@ -78,8 +78,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		for (int ii = 0; ii < this.visualizations.numberOfVisualizations(); ii++) {
 			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
-			double visualizationLeft = 0.5 * POINTS_PER_INCH;
-			double visualizationBottom = 1.75 * POINTS_PER_INCH;
+			double visualizationLeft = inchToPoint(0.5);
+			double visualizationBottom = inchToPoint(1.75);
 			PageElement visualizationElement = new PageElement("visualization",
 					visualizationLeft, visualizationBottom, visualization,
 					visualizationDefinitions);
@@ -111,7 +111,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 				pageElements = new ArrayList<PageElement>();
 			}
 
-			double categoryBreakdownLeft = 0.5 * POINTS_PER_INCH;
+			double categoryBreakdownLeft = inchToPoint(0.5);
 			double categoryBreakdownTop = 525;
 			String categoryBreakdownPostscript = this.categoryBreakdown
 					.renderPostscript(ii);
@@ -171,7 +171,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		StringTemplate areaTemplate = pageElementsGroup
 				.getInstanceOf("areaLegend");
 
-		return new PageElement("areaLegend", inchToPoints(3.6), inchToPoints(8.5 - 7), areaTemplate,
+		return new PageElement("areaLegend", inchToPoint(3.6), inchToPoint(8.5 - 7), areaTemplate,
 				areaDefinitionsTemplate);
 	}
 
@@ -203,8 +203,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		legendDefinitionsTemplate.setAttribute("titleFontSize", 14);
 		legendDefinitionsTemplate.setAttribute("normalFontSize", 10);
 
-		double leftBound = inchToPoints(0.25);
-		double topBound = inchToPoints(8.5 - 7);
+		double leftBound = inchToPoint(0.25);
+		double topBound = inchToPoint(8.5 - 7);
 		return new PageElement("legendTitleTop", leftBound, topBound,
 				legendTemplate, legendDefinitionsTemplate);
 	}
@@ -222,7 +222,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 				this.size.getWidth());
 
 		double leftBound = this.size.getWidth() / 2;
-		double bottomBound = inchToPoints(0.25);
+		double bottomBound = inchToPoint(0.25);
 		return new PageElement("footer", leftBound, bottomBound,
 				footerTemplate, footerDefinitionsTemplate);
 	}
@@ -239,8 +239,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		titleDefinitionsTemplate.setAttribute("date",
 				new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
 
-		double leftBound = inchToPoints(0.25);
-		double topBound = inchToPoints(8.5 - 0.25);
+		double leftBound = inchToPoint(0.25);
+		double topBound = inchToPoint(8.5 - 0.25);
 		return new PageElement("pageHeading", leftBound, topBound,
 				titleTemplate, titleDefinitionsTemplate);
 	}
@@ -253,8 +253,8 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		howtoDefinitionsTemplate.setAttribute("howtoTitleFontSize", 14);
 		howtoDefinitionsTemplate.setAttribute("howtoTextFontSize", 10);
 
-		double leftBound = inchToPoints(5.85);
-		double topBound = inchToPoints(8.5 - 7);
+		double leftBound = inchToPoint(5.85);
+		double topBound = inchToPoint(8.5 - 7);
 		return new PageElement("howto", leftBound, topBound, howtoTemplate,
 				howtoDefinitionsTemplate);
 	}
