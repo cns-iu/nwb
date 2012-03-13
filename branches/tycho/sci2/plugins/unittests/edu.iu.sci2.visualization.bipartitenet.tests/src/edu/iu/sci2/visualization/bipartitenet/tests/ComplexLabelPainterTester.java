@@ -33,7 +33,7 @@ public class ComplexLabelPainterTester {
 		Font font = new Font(Font.DIALOG, Font.PLAIN, 14);
 		Font bigFont = font.deriveFont(16f);
 		cc.add(new ComplexLabelPainter.Builder(new Point2D(x, y), font, Color.black)
-			.addLine("Generated from my ass", bigFont)
+			.addLine("Generated from ponies", bigFont)
 			.addLine("With magic")
 			.addLine("At midnight")
 			.build());
