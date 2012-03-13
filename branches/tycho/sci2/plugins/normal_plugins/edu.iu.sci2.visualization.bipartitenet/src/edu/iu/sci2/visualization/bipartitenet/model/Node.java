@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.bipartitenet.model;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 public class Node {
@@ -27,9 +28,8 @@ public class Node {
 
 
 	public Node(String label, double weight, NodeDestination destination) {
-		if (label == null) {
-			throw new NullPointerException("Label must not be null");
-		}
+		Preconditions.checkNotNull(label);
+		Preconditions.checkNotNull(destination);
 		this.destination = destination;
 		this.label = label;
 		this.weight = weight;

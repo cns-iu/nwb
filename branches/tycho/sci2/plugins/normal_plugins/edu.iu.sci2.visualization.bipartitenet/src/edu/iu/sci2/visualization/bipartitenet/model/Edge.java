@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.bipartitenet.model;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public class Edge {
 	public static final Function<Edge,Double> WEIGHT_GETTER = new Function<Edge,Double>(){
@@ -15,7 +16,8 @@ public class Edge {
 	private final double weight;
 	
 	public Edge(Node leftNode, Node rightNode, double weight) {
-		super();
+		Preconditions.checkNotNull(leftNode);
+		Preconditions.checkNotNull(rightNode);
 		this.leftNode = leftNode;
 		this.rightNode = rightNode;
 		this.weight = weight;
