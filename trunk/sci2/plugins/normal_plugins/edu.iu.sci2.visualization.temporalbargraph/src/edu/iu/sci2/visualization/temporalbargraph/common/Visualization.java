@@ -221,8 +221,8 @@ public class Visualization extends AbstractVisualization {
 		StringTemplate definitionsTemplate = group
 				.getInstanceOf("visualizationAreaDefinitions");
 		definitionsTemplate.setAttribute("topVizPosition", this.size.getHeight());
-		definitionsTemplate.setAttribute("pointsPerDay", 10);
-		definitionsTemplate.setAttribute("pointsPerY", 10);
+		definitionsTemplate.setAttribute("pointsPerDay", this.pointsPerDay);
+		definitionsTemplate.setAttribute("pointsPerY", this.pointsPerY);
 		return definitionsTemplate.toString();
 	}
 
