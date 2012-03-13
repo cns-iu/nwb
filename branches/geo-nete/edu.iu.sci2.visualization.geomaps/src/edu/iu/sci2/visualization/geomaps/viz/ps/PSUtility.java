@@ -14,13 +14,6 @@ public class PSUtility {
 			Font.BOLD, "-Bold",
 			Font.ITALIC, "-Italic");
 	
-	public static void main(String[] args) {
-		System.out.println(GeoMapViewPS.CONTENT_FONT);
-		System.out.println(GeoMapViewPS.CONTENT_FONT.getPSName());
-		System.out.println(GeoMapViewPS.CONTENT_FONT.deriveFont(Font.BOLD));
-		System.out.println(GeoMapViewPS.CONTENT_FONT.deriveFont(Font.BOLD).getPSName());
-	}
-	
 	private PSUtility() {}
 
 	/**

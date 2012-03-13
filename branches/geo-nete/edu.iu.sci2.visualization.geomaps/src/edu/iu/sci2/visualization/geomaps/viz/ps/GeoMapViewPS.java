@@ -26,10 +26,6 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
-	// TODO Fonts seem to be missing/ignored?  Getting monospace fonts right now
-	public static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 14);
-	public static final Font CONTENT_FONT = new Font("Arial", Font.PLAIN, 10);
-
 	/* Percentage of the data range to add to each side of the map as a buffer.
 	 * Between 0 and 1.
 	 */

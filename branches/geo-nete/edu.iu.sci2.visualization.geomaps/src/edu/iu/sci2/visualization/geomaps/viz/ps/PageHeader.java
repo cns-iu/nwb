@@ -10,11 +10,13 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
+
 
 public class PageHeader implements PostScriptable {
 	public static final String INDENT = "	";
 	public static final double TITLE_FONT_BRIGHTNESS = 0.0;
-	public static final Font OTHER_DATA_FONT = GeoMapViewPS.CONTENT_FONT.deriveFont(10.0f);
+	public static final Font OTHER_DATA_FONT = PageLayout.CONTENT_FONT.deriveFont(10.0f);
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	
 	private final String title;
@@ -47,14 +49,14 @@ public class PageHeader implements PostScriptable {
 		builder.append(INDENT + "% Show title and subtitle" + "\n");
 		builder.append(INDENT + lowerLeft.x + " " + lowerLeft.y + " moveto" + "\n");
 		
-		builder.append(PSUtility.findscalesetfont(GeoMapViewPS.TITLE_FONT) + "\n");
+		builder.append(PSUtility.findscalesetfont(PageLayout.TITLE_FONT) + "\n");
 		builder.append(PSUtility.setgray(TITLE_FONT_BRIGHTNESS) + "\n");
 		builder.append(INDENT + "gsave" + "\n");
 		builder.append(INDENT + INDENT + "(" + title + ") show " + "( ) show " + "((" + subtitle + ")) show" +"\n");
 		builder.append(INDENT + "grestore" + "\n");
 		
 		builder.append(INDENT + "% Show the rest of the info" + "\n");
-		builder.append(INDENT + "0 " + (-(GeoMapViewPS.TITLE_FONT.getSize() + 5)) + " rmoveto");
+		builder.append(INDENT + "0 " + (-(PageLayout.TITLE_FONT.getSize() + 5)) + " rmoveto");
 		builder.append(PSUtility.findscalesetfont(OTHER_DATA_FONT) + "\n");
 		builder.append(PSUtility.setgray(OTHER_DATA_FONT_BRIGHTNESS) + "\n");
 		for (String infoBit : extraInfo) {

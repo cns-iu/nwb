@@ -1,5 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz;
 
+import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.util.EnumSet;
 
@@ -53,6 +54,10 @@ public enum PageLayout {
 	public static double pageMargin() {
 		return 0.5 * POINTS_PER_INCH;
 	}
+
+	// TODO Fonts seem to be missing/ignored?  Getting monospace fonts right now
+	public static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 14);
+	public static final Font CONTENT_FONT = new Font("Arial", Font.PLAIN, 10);
 	
 	public abstract Optional<Point2D.Double> headerLowerLeft();
 	public abstract double headerHeight();

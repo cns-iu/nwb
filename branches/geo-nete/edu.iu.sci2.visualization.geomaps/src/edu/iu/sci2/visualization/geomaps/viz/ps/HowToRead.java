@@ -5,6 +5,8 @@ import java.awt.geom.Point2D.Double;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
+
 
 public class HowToRead implements PostScriptable {
 	public static final double TITLE_FONT_GRAY = 0.0;
@@ -36,17 +38,17 @@ public class HowToRead implements PostScriptable {
 		
 		howToRead += String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y);
 		
-		howToRead += PSUtility.findscalesetfont(GeoMapViewPS.TITLE_FONT) + "\n";
+		howToRead += PSUtility.findscalesetfont(PageLayout.TITLE_FONT) + "\n";
 		howToRead += PSUtility.setgray(TITLE_FONT_GRAY) + "\n";
 		howToRead += "(How to Read this Map) show" + "\n";
 		
-		howToRead += String.format("%f %f moveto", lowerLeft.x, lowerLeft.y - GeoMapViewPS.TITLE_FONT.getSize()) + "\n";
+		howToRead += String.format("%f %f moveto", lowerLeft.x, lowerLeft.y - PageLayout.TITLE_FONT.getSize()) + "\n";
 		
-		howToRead += PSUtility.findscalesetfont(GeoMapViewPS.CONTENT_FONT) + "\n";
+		howToRead += PSUtility.findscalesetfont(PageLayout.CONTENT_FONT) + "\n";
 		howToRead += PSUtility.setgray(TEXT_FONT_GRAY) + "\n";
 		
 		for (String textLine : TEXT_LINES) {
-			howToRead += PSUtility.showAndNewLine(textLine, GeoMapViewPS.CONTENT_FONT.getSize());
+			howToRead += PSUtility.showAndNewLine(textLine, PageLayout.CONTENT_FONT.getSize());
 		}
 		
 		howToRead += "grestore" + "\n";
