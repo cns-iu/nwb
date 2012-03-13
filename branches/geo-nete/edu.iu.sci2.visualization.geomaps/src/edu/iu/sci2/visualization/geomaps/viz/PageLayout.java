@@ -34,7 +34,7 @@ public enum PageLayout {
 
 		@Override
 		public double headerHeight() {
-			return 1.5 * POINTS_PER_INCH;
+			return 0.18 * pageHeight();
 		}
 
 		@Override
@@ -82,7 +82,7 @@ public enum PageLayout {
 
 	public static final Dimension<Double> LEGENDARIUM_DIMENSION = Dimension.ofSize(
 			0.7 * pageWidth(),
-			1.5 * POINTS_PER_INCH);
+			0.18 * pageHeight());
 	public static final Point2D.Double LEGENDARIUM_LOWER_LEFT = new Point2D.Double(
 			pageMargin(),
 			PAGE_FOOTER_HEIGHT_IN_POINTS + (0.75 * LEGENDARIUM_DIMENSION.getHeight()));
