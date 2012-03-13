@@ -63,6 +63,7 @@ public class GeoMapViewPageArea implements PostScriptable {
 		return displayRectangle;
 	}
 
+	@Override
 	public String toPostScript() {
 		String s = "";
 

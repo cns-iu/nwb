@@ -16,6 +16,7 @@ public class PageFooter implements PostScriptable {
 					PageLayout.pageMargin() + PageLayout.pageWidth() / 2.0,
 					PageLayout.pageMargin() - FONT.getSize());
 
+	@Override
 	public String toPostScript() {
 		StringBuilder builder = new StringBuilder();
 
