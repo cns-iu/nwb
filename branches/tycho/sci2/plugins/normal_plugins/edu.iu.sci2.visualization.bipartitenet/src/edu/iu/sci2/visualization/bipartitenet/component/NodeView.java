@@ -17,16 +17,16 @@ public class NodeView implements Paintable {
 	private final Point2D nodeCenter;
 	private final Scale<Double,Double> coding;
 	private final double maxHeight;
-	private final Font defaultFont;
+	private final Font nodeFont;
 
 	public NodeView(Node node, Point2D nodeCenter, Scale<Double,Double> coding, 
-			double maxHeight, Font defaultFont) {
+			double maxHeight, Font nodeFont) {
 		super();
 		this.node = node;
 		this.nodeCenter = nodeCenter;
 		this.coding = coding;
 		this.maxHeight = maxHeight;
-		this.defaultFont = defaultFont;
+		this.nodeFont = nodeFont;
 	}
 
 	public int getCenterToTextDistance() {
@@ -52,7 +52,7 @@ public class NodeView implements Paintable {
 		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
 		Circle2D circle = new Circle2D(nodeCenter.getX(), nodeCenter.getY(), getRadius());
-		node.getDestination().paintLabel(this, g, maxHeight, defaultFont);
+		node.getDestination().paintLabel(this, g, nodeFont);
 		g.setColor(node.getDestination().getFillColor());
 		circle.fill(g);
 		g.setColor(Color.black);

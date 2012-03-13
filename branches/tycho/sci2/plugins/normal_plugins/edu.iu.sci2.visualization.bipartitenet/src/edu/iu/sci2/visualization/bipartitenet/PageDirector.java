@@ -187,7 +187,8 @@ public class PageDirector implements Paintable {
 //	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
 //	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
 	private static final String TITLE = "Bipartite Network Graph";
-
+	private static final int SPACING_BETWEEN_LABELS = 2;
+	
 	private final Layout layout;
 	
 	private final String footer = "NIH’s Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
@@ -224,7 +225,7 @@ public class PageDirector implements Paintable {
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), 
 				nodeCoding, edgeCoding,
-				layout.getFont(TextType.NODE_LABEL));
+				createNodeLabelFont());
 		painter.add(renderer);
 		
 		// The main title, and headers
@@ -250,6 +251,24 @@ public class PageDirector implements Paintable {
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
 				XAlignment.CENTER, YAlignment.BASELINE, footer, layout.getFont(TextType.FOOTER),
 				Color.gray));
+	}
+
+	private Font createNodeLabelFont() {
+		Font baseFont = layout.getFont(TextType.NODE_LABEL);
+		
+		double pageSize = layout.getLeftLine().getLength();
+		
+		int maxNodesOnOneSide = 
+				Math.max(
+					dataModel.getLeftNodes().size(), 
+					dataModel.getRightNodes().size());
+		
+		double scaledFontSize = (pageSize / maxNodesOnOneSide) - SPACING_BETWEEN_LABELS;
+		
+		if (scaledFontSize > baseFont.getSize2D()) {
+			return baseFont;
+		}
+		return baseFont.deriveFont((float) scaledFontSize);
 	}
 
 	private Paintable makeSortingLegend() {
@@ -303,7 +322,7 @@ public class PageDirector implements Paintable {
 					dataModel.getRightNodes().size());
 		return Math.min(layout.getMaxNodeRadius(), layout.getLeftLine().getLength() / maxNodesOnOneSide);
 	}
-
+	
 	private Scale<Double, Double> makeNodeCoding() {
 		if (dataModel.hasWeightedNodes()) {
 			Scale<Double, Double> nodeScale = new ZeroAnchoredCircleRadiusScale(calculateMaxNodeRadius());
