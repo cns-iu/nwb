@@ -1,9 +1,5 @@
 package edu.iu.sci2.visualization.bipartitenet.algorithm;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,10 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
-
-
-import org.apache.fop.render.ps.NativeTextHandler;
-import javax.imageio.ImageIO;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.ps.PSDocumentGraphics2D;
@@ -59,23 +51,32 @@ public class BipartiteNetAlgorithm implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
+		FileInputStream nwbStream = null;
 		try {
-			BipartiteGraphDataModel model = importer.constructModelFromFile(new FileInputStream(nwbFile));
+			nwbStream = new FileInputStream(nwbFile);
+			BipartiteGraphDataModel model = importer.constructModelFromFile(nwbStream);
 			if (!model.hasAnyNodes()) {
 				throw new AlgorithmExecutionException("Input graph has no nodes, can't make a meaningful graph.  Stopping.");
 			}
-			PageDirector r = new PageDirector(layout, model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
+			PageDirector pageDirector = new PageDirector(layout, model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
 			
-			Data pngData = drawToPNGFile(r);
-			Data psData = drawToPSFile(r);
+			Data psData = drawToPSFile(pageDirector);
 			
-			return new Data[] { pngData, psData }; 
+			return new Data[] { psData }; 
 		} catch (FileNotFoundException e) {
 			throw new AlgorithmExecutionException("Internal error: data file disappeared?", e);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e);
 		} catch (ParsingException e) {
 			throw new AlgorithmExecutionException(".nwb graph file parsing problem", e);
+		} finally {
+			if (nwbStream != null) {
+				try {
+					nwbStream.close();
+				} catch (IOException e) {
+					throw new AlgorithmExecutionException("Couldn't close NWB file", e);
+				}
+			}
 		}
 	}
 
@@ -84,7 +85,7 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		OutputStream out = new FileOutputStream(outFile);
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
-		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
+//		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
 		
 		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
 		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());
@@ -101,24 +102,24 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		return outData;
 	}
 
-	private Data drawToPNGFile(Paintable paintable) throws IOException {
-		BufferedImage img = new BufferedImage(layout.getWidth(), layout.getHeight(), BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = img.createGraphics();
-		g.setPaint(Color.white);
-		g.fillRect(0, 0, img.getWidth(), img.getHeight());
-		g.setPaint(Color.black);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		paintable.paint(g);
-		File outFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("BipartiteGraph", "png");
-		ImageIO.write(img, "PNG", outFile);
-		
-		Data outData = new BasicData(outFile, "file:image/png");
-		Dictionary<String, Object> metadata = (Dictionary<String, Object>) outData.getMetadata();
-		metadata.put(DataProperty.LABEL, "Bipartite Network Graph PNG");
-		metadata.put(DataProperty.TYPE, DataProperty.RASTER_IMAGE_TYPE);
-		metadata.put(DataProperty.PARENT, parentData);
-
-		return outData;
-	}
+//	private Data drawToPNGFile(Paintable paintable) throws IOException {
+//		BufferedImage img = new BufferedImage(layout.getWidth(), layout.getHeight(), BufferedImage.TYPE_INT_RGB);
+//		Graphics2D g = img.createGraphics();
+//		g.setPaint(Color.white);
+//		g.fillRect(0, 0, img.getWidth(), img.getHeight());
+//		g.setPaint(Color.black);
+//		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//		paintable.paint(g);
+//		File outFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("BipartiteGraph", "png");
+//		ImageIO.write(img, "PNG", outFile);
+//		
+//		Data outData = new BasicData(outFile, "file:image/png");
+//		Dictionary<String, Object> metadata = (Dictionary<String, Object>) outData.getMetadata();
+//		metadata.put(DataProperty.LABEL, "Bipartite Network Graph PNG");
+//		metadata.put(DataProperty.TYPE, DataProperty.RASTER_IMAGE_TYPE);
+//		metadata.put(DataProperty.PARENT, parentData);
+//
+//		return outData;
+//	}
 
 }
