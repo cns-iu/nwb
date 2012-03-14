@@ -39,6 +39,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	private static final String RIGHT_COLUMN_TITLE_ID = "rightColumnTitle";
 	private static final String LAYOUT_TYPE_ID = "layoutType";
 	
+	private File lastNWBFile;
 	private BipartiteNWBFileExaminer examiner;
 	
 	@Override
@@ -105,11 +106,13 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	}
 
 	private void examineInputFile(Data[] data) {
-		if (examiner != null) {
+		File nwbFile = getNWBFile(data);
+		
+		// yes, identity not "file" equality.  what if they use the same filename for multiple runs?
+		if (nwbFile == lastNWBFile && examiner != null) {
 			return;
 		}
 		examiner = new BipartiteNWBFileExaminer();
-		File nwbFile = getNWBFile(data);
 
 		try {
 			new NWBFileParser(nwbFile).parse(examiner);
