@@ -9,6 +9,7 @@ import java.util.Map;
 import org.cishell.utilities.NumberUtilities;
 import org.osgi.service.log.LogService;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -163,7 +164,7 @@ public class NWBDataImporter {
 		private void checkEdgeSchema(LinkedHashMap<String, String> schema) {
 			/* The edge weight column should come from a list of all edge columns put together in
 			 * mutateParameters. */
-			assert ((edgeWeightCol == null) || (schema.containsKey(edgeWeightCol)));
+			Preconditions.checkArgument((edgeWeightCol == null) || (schema.containsKey(edgeWeightCol)));
 		}
 
 		@Override
@@ -172,15 +173,16 @@ public class NWBDataImporter {
 	
 		@Override
 		public void setNodeSchema(LinkedHashMap<String, String> schema) {
+			
 			/* The node weight column should come from a list of all node columns put together in
 			 * mutateParameters. */
-			assert ((nodeWeightCol == null) || (schema.containsKey(nodeWeightCol)));
+			Preconditions.checkArgument((nodeWeightCol == null) || (schema.containsKey(nodeWeightCol)));
 			
 			/* 
 			 * The presence of this column should already have been checked during the 
 			 * mutateParameters process.
 			 */
-			assert (schema.containsKey(nodeTypeCol));
+			Preconditions.checkArgument(schema.containsKey(nodeTypeCol));
 		}
 	
 		public BipartiteGraphDataModel constructGraphDataModel() {
