@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.bipartitenet.algorithm;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,9 +53,9 @@ public class BipartiteNetAlgorithm implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
-		FileInputStream nwbStream = null;
+		BufferedInputStream nwbStream = null;
 		try {
-			nwbStream = new FileInputStream(nwbFile);
+			nwbStream = new BufferedInputStream(new FileInputStream(nwbFile));
 			BipartiteGraphDataModel model = importer.constructModelFromFile(nwbStream);
 			if (!model.hasAnyNodes()) {
 				throw new AlgorithmExecutionException("Input graph has no nodes, can't make a meaningful graph.  Stopping.");
@@ -82,7 +84,7 @@ public class BipartiteNetAlgorithm implements Algorithm {
 
 	private Data drawToPSFile(Paintable paintable) throws IOException {
 		File outFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("BipartiteGraph", "ps");
-		OutputStream out = new FileOutputStream(outFile);
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
 		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
 		g2d.setGraphicContext(new GraphicContext());
 //		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
