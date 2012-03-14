@@ -1,6 +1,5 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
-import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,18 +15,19 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 public class PageHeader implements PostScriptable {
 	public static final String INDENT = "	";
 	public static final double TITLE_FONT_BRIGHTNESS = 0.0;
-	public static final Font OTHER_DATA_FONT = PageLayout.CONTENT_FONT.deriveFont(10.0f);
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	
 	private final String title;
 	private final String subtitle;
-	private Point2D.Double lowerLeft;
+	private final Point2D.Double lowerLeft;
+	private final PageLayout pageLayout;
 	private final Collection<String> extraInfo;
 	
-	public PageHeader(String title, String subtitle, Point2D.Double lowerLeft, String... extraInfo) {
+	public PageHeader(String title, String subtitle, Point2D.Double lowerLeft, PageLayout pageLayout, String... extraInfo) {
 		this.title = title;
 		this.subtitle = subtitle;	
 		this.lowerLeft = lowerLeft;
+		this.pageLayout = pageLayout;
 		this.extraInfo = Collections2.filter(
 				Arrays.asList(extraInfo),
 				Predicates.not(new Predicate<String>() {
@@ -49,21 +49,21 @@ public class PageHeader implements PostScriptable {
 		builder.append(INDENT + "% Show title and subtitle" + "\n");
 		builder.append(INDENT + lowerLeft.x + " " + lowerLeft.y + " moveto" + "\n");
 		
-		builder.append(PSUtility.findscalesetfont(PageLayout.TITLE_FONT) + "\n");
+		builder.append(PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n");
 		builder.append(PSUtility.setgray(TITLE_FONT_BRIGHTNESS) + "\n");
 		builder.append(INDENT + "gsave" + "\n");
 		builder.append(INDENT + INDENT + "(" + title + ") show " + "( ) show " + "((" + subtitle + ")) show" +"\n");
 		builder.append(INDENT + "grestore" + "\n");
 		
 		builder.append(INDENT + "% Show the rest of the info" + "\n");
-		builder.append(INDENT + "0 " + (-(PageLayout.TITLE_FONT.getSize() + 5)) + " rmoveto");
-		builder.append(PSUtility.findscalesetfont(OTHER_DATA_FONT) + "\n");
+		builder.append(INDENT + "0 " + (-(pageLayout.titleFont().getSize() + 5)) + " rmoveto");
+		builder.append(PSUtility.findscalesetfont(pageLayout.contentFont()) + "\n");
 		builder.append(PSUtility.setgray(OTHER_DATA_FONT_BRIGHTNESS) + "\n");
 		for (String infoBit : extraInfo) {
 			builder.append(INDENT + "gsave" + "\n");
 			builder.append(INDENT + INDENT + "(" + infoBit + ")" + " show" + "\n");
 			builder.append(INDENT + "grestore" + "\n");
-			builder.append(INDENT + "0 " + (-(OTHER_DATA_FONT.getSize() + 5)) + " rmoveto" + "\n");
+			builder.append(INDENT + "0 " + (-(pageLayout.contentFont().getSize() + 5)) + " rmoveto" + "\n");
 		}
 		
 		builder.append("grestore" + "\n");

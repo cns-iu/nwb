@@ -15,7 +15,7 @@ public class GeoMapViewPageArea implements PostScriptable {
 	public static final boolean CLIP_TO_BOUNDING_BOX = true;
 	public static final boolean BACKGROUND_TRANSPARENT = true;
 	public static final Color BACKGROUND_COLOR = Color.CYAN;
-	public static final boolean DRAW_BOUNDING_BOX = true;
+	public static final boolean DRAW_BOUNDING_BOX = false;
 	public static final double BOUNDING_BOX_LINE_WIDTH = .2;
 
 	public static final String INDENT = "  ";

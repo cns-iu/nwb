@@ -48,7 +48,7 @@ public class GeoMap {
 		this.featureViews = featureViews;
 		this.circles = circles;
 		
-		this.legendarium = Legendarium.containing(pageLayout.legendariumLowerLeft(), legends);
+		this.legendarium = Legendarium.containing(pageLayout.legendariumLowerLeft(), pageLayout, legends);
 		
 		this.geometryFactory = DEFAULT_GEOMETRY_FACTORY;
 		

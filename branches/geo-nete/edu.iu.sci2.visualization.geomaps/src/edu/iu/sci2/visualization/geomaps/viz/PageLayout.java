@@ -7,7 +7,6 @@ import java.util.EnumSet;
 import com.google.common.base.Optional;
 
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceCircles;
 
 public enum PageLayout {
 	WEB {
@@ -34,6 +33,16 @@ public enum PageLayout {
 		@Override
 		public Optional<Point2D.Double> howToReadLowerLeft() {
 			return Optional.absent();
+		}
+
+		@Override
+		public Font titleFont() {
+			return new Font("Arial", Font.BOLD, 20);
+		}
+		
+		@Override
+		public Font contentFont() {
+			return new Font("Arial", Font.PLAIN, 16);
 		}
 	},
 	PRINT {
@@ -62,6 +71,16 @@ public enum PageLayout {
 					0.93 * legendariumDimensions().getWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
 					legendariumLowerLeft().getY()));
 		}
+
+		@Override
+		public Font titleFont() {
+			return new Font("Arial", Font.BOLD, 14);
+		}
+		
+		@Override
+		public Font contentFont() {
+			return new Font("Arial", Font.PLAIN, 10);
+		}
 	};
 
 	public abstract double pageWidth();
@@ -71,9 +90,8 @@ public enum PageLayout {
 		return 0.5 * POINTS_PER_INCH;
 	}
 
-	// TODO Fonts seem to be missing/ignored?  Getting monospace fonts right now
-	public static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 14);
-	public static final Font CONTENT_FONT = new Font("Arial", Font.PLAIN, 10);
+	public abstract Font titleFont();	
+	public abstract Font contentFont();
 	
 	public abstract Optional<Point2D.Double> headerLowerLeft();
 	public abstract double headerHeight();
@@ -101,17 +119,17 @@ public enum PageLayout {
 	public Dimension<Double> legendariumDimensions() {
 		return Dimension.ofSize(
 				0.7 * pageWidth(),
-				1.75 * POINTS_PER_INCH);
+				1.85 * POINTS_PER_INCH);
 	}
 	public Point2D.Double legendariumLowerLeft() {
 		return new Point2D.Double(
 				pageMargin(),
-				PAGE_FOOTER_HEIGHT_IN_POINTS + (0.75 * legendariumDimensions().getHeight()));
+				PAGE_FOOTER_HEIGHT_IN_POINTS + (0.85 * legendariumDimensions().getHeight()));
 	}
 	public Point2D.Double legendLowerLeft() {
 		return new Point2D.Double(
 				legendariumLowerLeft().x,
-				legendariumLowerLeft().y - LabeledReferenceCircles.TYPE_LABEL_FONT_SIZE - 3); // TODO
+				legendariumLowerLeft().y - 18); // TODO
 	}
 	
 	public Dimension<Double> colorGradientDimensions() {

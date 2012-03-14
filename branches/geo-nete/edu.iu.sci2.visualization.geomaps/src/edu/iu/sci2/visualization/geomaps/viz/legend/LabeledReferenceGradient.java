@@ -31,12 +31,9 @@ public class LabeledReferenceGradient implements LabeledReference {
 	 * 0 is black, 1 is white.
 	 */
 	public static final double EXTREMA_LABEL_BRIGHTNESS = 0.0;
-	public static final double EXTREMA_LABEL_FONT_SIZE = 8;
 	public static final double TYPE_LABEL_BRIGHTNESS = 0.0;
-	public static final double TYPE_LABEL_FONT_SIZE = 10;
 	public static final double SCALING_LABEL_BRIGHTNESS = 0.25;
 	public static final double KEY_LABEL_BRIGHTNESS = 0.5;
-	public static final double KEY_LABEL_FONT_SIZE = 8;
 	
 	private final ColorLegend legend;
 	/* These "lower lefts" are the lower left corners of the key text,
@@ -47,13 +44,16 @@ public class LabeledReferenceGradient implements LabeledReference {
 	 */
 	@Deprecated
 	private final Point2D.Double lowerLeft; // TODO Just say no to absolute positioning
-	private Dimension<Double> dimension;
+	private final PageLayout pageLayout;
+	private final Dimension<Double> dimension;
+	
 	private boolean hasPrintedDefinitions;
 
 	public LabeledReferenceGradient(ColorLegend legend, Point2D.Double lowerLeft,
-			Dimension<Double> dimension) {
+			PageLayout pageLayout, Dimension<Double> dimension) {
 		this.legend = legend;
 		this.lowerLeft = lowerLeft;
+		this.pageLayout = pageLayout;
 		this.dimension = dimension;
 		
 		this.hasPrintedDefinitions = false;
@@ -63,6 +63,10 @@ public class LabeledReferenceGradient implements LabeledReference {
 
 	@Override
 	public String toPostScript() {
+		double extremaLabelFontSize = 0.8 * pageLayout.contentFont().getSize();
+		double typeLabelFontSize = pageLayout.contentFont().getSize();
+		double keyLabelFontSize = 0.8 * pageLayout.contentFont().getSize();
+		
 		String s = "";
 		
 		if (!hasPrintedDefinitions) {
@@ -109,20 +113,20 @@ public class LabeledReferenceGradient implements LabeledReference {
 		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.getDataRange().getPointB()));
 		
 		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
-		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
+		invocationTemplate.setAttribute("extremaLabelFontSize", extremaLabelFontSize);
 		
 		invocationTemplate.setAttribute("typeLabel", legend.getLegendDescription());
 		invocationTemplate.setAttribute("typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
-		invocationTemplate.setAttribute("typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
+		invocationTemplate.setAttribute("typeLabelFontSize", typeLabelFontSize);
 		
 		invocationTemplate.setAttribute("scalingLabel", "(" + legend.getScalingLabel() + ")");
 		invocationTemplate.setAttribute("scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
 		
 		invocationTemplate.setAttribute("keyLabel", legend.getColumnName());
 		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
-		invocationTemplate.setAttribute("keyLabelFontSize", KEY_LABEL_FONT_SIZE);
+		invocationTemplate.setAttribute("keyLabelFontSize", keyLabelFontSize);
 		
-		invocationTemplate.setAttribute("fontName", PSUtility.psFontName(PageLayout.CONTENT_FONT));
+		invocationTemplate.setAttribute("fontName", PSUtility.psFontName(pageLayout.contentFont()));
 		
 		s += invocationTemplate.toString();
 

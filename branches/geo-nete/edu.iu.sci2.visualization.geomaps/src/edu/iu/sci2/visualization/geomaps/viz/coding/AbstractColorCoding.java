@@ -41,7 +41,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	public LabeledReference makeLabeledReference(PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
 				createColorLegend(numericFormatType), lowerLeft(pageLayout),
-				pageLayout.colorGradientDimensions());
+				pageLayout, pageLayout.colorGradientDimensions());
 
 		return labeledReferenceGradient;
 	}

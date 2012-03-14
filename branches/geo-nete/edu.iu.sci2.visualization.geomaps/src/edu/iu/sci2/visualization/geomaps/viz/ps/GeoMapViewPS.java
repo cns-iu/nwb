@@ -64,7 +64,8 @@ public class GeoMapViewPS {
 		
 		out.write((new PageFooter(new Point2D.Double(
 				pageLayout.pageWidth() / 2.0,
-				PageLayout.pageMargin() - 2 * PageFooter.FONT.getSize()))).toPostScript() + "\n");
+				PageLayout.pageMargin() /* TODO need a different fudge - 2 * PageFooter.FONT.getSize()*/),
+				pageLayout)).toPostScript() + "\n");
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
 		out.write("gsave" + "\n");
@@ -107,7 +108,7 @@ public class GeoMapViewPS {
 		
 		
 		if (pageLayout.headerLowerLeft().isPresent()) {
-			PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(), pageLayout.headerLowerLeft().get(),
+			PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(), pageLayout.headerLowerLeft().get(), pageLayout,
 					String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
 					String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
 					timestamp(),
@@ -120,7 +121,7 @@ public class GeoMapViewPS {
 		out.write("\n");
 		
 		if (pageLayout.howToReadLowerLeft().isPresent()) {
-			out.write(new HowToRead(pageLayout.howToReadLowerLeft().get()).toPostScript());
+			out.write(new HowToRead(pageLayout.howToReadLowerLeft().get(), pageLayout).toPostScript());
 		}
 		
 		out.write("showpage" + "\n");

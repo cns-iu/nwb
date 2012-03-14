@@ -1,7 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import com.google.common.collect.ImmutableList;
 
@@ -23,9 +22,11 @@ public class HowToRead implements PostScriptable {
 					"values are given in the legend.");
 	
 	private final Point2D.Double lowerLeft;
+	private final PageLayout pageLayout;
 
-	public HowToRead(Double lowerLeft) {
+	public HowToRead(Point2D.Double lowerLeft, PageLayout pageLayout) {
 		this.lowerLeft = lowerLeft;
+		this.pageLayout = pageLayout;
 	}
 
 	
@@ -38,25 +39,21 @@ public class HowToRead implements PostScriptable {
 		
 		howToRead += String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y);
 		
-		howToRead += PSUtility.findscalesetfont(PageLayout.TITLE_FONT) + "\n";
+		howToRead += PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n";
 		howToRead += PSUtility.setgray(TITLE_FONT_GRAY) + "\n";
 		howToRead += "(How to Read this Map) show" + "\n";
 		
-		howToRead += String.format("%f %f moveto", lowerLeft.x, lowerLeft.y - PageLayout.TITLE_FONT.getSize()) + "\n";
+		howToRead += String.format("%f %f moveto", lowerLeft.x, lowerLeft.y - pageLayout.titleFont().getSize()) + "\n";
 		
-		howToRead += PSUtility.findscalesetfont(PageLayout.CONTENT_FONT) + "\n";
+		howToRead += PSUtility.findscalesetfont(pageLayout.contentFont()) + "\n";
 		howToRead += PSUtility.setgray(TEXT_FONT_GRAY) + "\n";
 		
 		for (String textLine : TEXT_LINES) {
-			howToRead += PSUtility.showAndNewLine(textLine, PageLayout.CONTENT_FONT.getSize());
+			howToRead += PSUtility.showAndNewLine(textLine, pageLayout.contentFont().getSize());
 		}
 		
 		howToRead += "grestore" + "\n";
 		
 		return howToRead;
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(new HowToRead(new Point2D.Double(100.0, 200.0)).toPostScript());
 	}
 }

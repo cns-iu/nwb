@@ -11,16 +11,19 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
 
 public class Legendarium {
 	private final Point2D.Double lowerLeft;
+	private final PageLayout pageLayout;
 	private final Collection<LabeledReference> labeledReferences;
+	
 	private boolean hasPrintedDefinitions;
 
-	private Legendarium(Point2D.Double lowerLeft, Collection<LabeledReference> labeledReferences) {
+	private Legendarium(Point2D.Double lowerLeft, PageLayout pageLayout, Collection<LabeledReference> labeledReferences) {
 		this.lowerLeft = lowerLeft;
+		this.pageLayout = pageLayout;
 		this.labeledReferences = labeledReferences;
 		this.hasPrintedDefinitions = false;		
 	}
-	public static Legendarium containing(Point2D.Double lowerLeft, Collection<LabeledReference> labeledReferences) {
-		return new Legendarium(lowerLeft, labeledReferences);
+	public static Legendarium containing(Point2D.Double lowerLeft, PageLayout pageLayout, Collection<LabeledReference> labeledReferences) {
+		return new Legendarium(lowerLeft, pageLayout, labeledReferences);
 	}
 	
 
@@ -39,7 +42,7 @@ public class Legendarium {
 		s += "gsave" + "\n";
 		s += String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y);
 		
-		s += PSUtility.findscalesetfont(PageLayout.TITLE_FONT) + "\n";
+		s += PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n";
 		s += PSUtility.setgray(0.0) + "\n"; // TODO
 		s += "(Legend) show" + "\n";
 		s += "grestore" + "\n";

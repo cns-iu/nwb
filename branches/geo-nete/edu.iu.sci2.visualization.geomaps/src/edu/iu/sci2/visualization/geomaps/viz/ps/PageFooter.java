@@ -8,13 +8,14 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 public class PageFooter implements PostScriptable {
 	public static final String TEXT =
 			"NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
-	public static final Font FONT = PageLayout.CONTENT_FONT.deriveFont(8.0f).deriveFont(Font.ITALIC);
 	public static final double FONT_BRIGHTNESS = 0.45;
 	
 	private final Point2D.Double lowerCenter;
+	private final PageLayout pageLayout;
 
-	public PageFooter(Point2D.Double lowerCenter) {
+	public PageFooter(Point2D.Double lowerCenter, PageLayout pageLayout) {
 		this.lowerCenter = lowerCenter;
+		this.pageLayout = pageLayout;
 	}
 
 
@@ -24,7 +25,9 @@ public class PageFooter implements PostScriptable {
 
 		builder.append("gsave" + "\n");
 
-		builder.append(PSUtility.findscalesetfont(FONT) + "\n");
+		Font font = pageLayout.contentFont().deriveFont(Font.ITALIC);
+		
+		builder.append(PSUtility.findscalesetfont(font) + "\n");
 		builder.append(PSUtility.setgray(FONT_BRIGHTNESS) + "\n");
 
 		builder.append(String.format("%f %f (%s) centerShow\n", lowerCenter.x, lowerCenter.y, TEXT));

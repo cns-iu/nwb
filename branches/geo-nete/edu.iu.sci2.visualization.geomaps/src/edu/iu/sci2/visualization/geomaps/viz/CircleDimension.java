@@ -82,7 +82,8 @@ public enum CircleDimension implements VizDimension {
 										new Point2D.Double(
 												pageLayout.legendariumLowerLeft().getX()
 												+ ((2.0 * pageLayout.legendariumDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
-												pageLayout.legendLowerLeft().getY()));
+												pageLayout.legendLowerLeft().getY()),
+										pageLayout);
 							} catch (ScalingException e) {
 								throw new LegendCreationException("TODO Problem formatting numbers for legend.", e);
 							}

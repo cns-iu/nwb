@@ -25,22 +25,20 @@ public class LabeledReferenceCircles implements LabeledReference {
 	public static final double CIRCLE_BRIGHTNESS = 0.5;
 	
 	public static final double EXTREMA_LABEL_BRIGHTNESS = 0.0;
-	public static final double EXTREMA_LABEL_FONT_SIZE = 8;
 	public static final double TYPE_LABEL_BRIGHTNESS = 0.0;
-	public static final double TYPE_LABEL_FONT_SIZE = 10;
 	public static final double SCALING_LABEL_BRIGHTNESS = 0.25;
+	
 	public static final double KEY_LABEL_BRIGHTNESS = 0.5;
-	public static final double KEY_LABEL_FONT_SIZE = 8;
-
-	private AreaLegend areaLegend;
+	private final AreaLegend areaLegend;
 	private final Point2D.Double keyTextLowerLeft;
+	private final PageLayout pageLayout;
 	
 	private boolean hasPrintedDefinitions;
 
-
-	public LabeledReferenceCircles(AreaLegend areaLegend, Point2D.Double keyTextLowerLeft) {
+	public LabeledReferenceCircles(AreaLegend areaLegend, Point2D.Double keyTextLowerLeft, PageLayout pageLayout) {
 		this.areaLegend = areaLegend;
 		this.keyTextLowerLeft = keyTextLowerLeft;
+		this.pageLayout = pageLayout;
 		
 		this.hasPrintedDefinitions = false;
 	}
@@ -49,6 +47,10 @@ public class LabeledReferenceCircles implements LabeledReference {
 	/* TODO? Draw circles using the line width set in CirclePrinter.CIRCLE_LINE_WIDTH? */
 	@Override
 	public String toPostScript() {
+		double extremaLabelFontSize = 0.8 * pageLayout.contentFont().getSize();
+		double typeLabelFontSize = pageLayout.contentFont().getSize();
+		double keyLabelFontSize = 0.8 * pageLayout.contentFont().getSize();
+		
 		String s = "";
 		
 		if (!hasPrintedDefinitions) {
@@ -93,13 +95,13 @@ public class LabeledReferenceCircles implements LabeledReference {
 		invocationTemplate.setAttribute(
 				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(
-				"extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
+				"extremaLabelFontSize", extremaLabelFontSize);
 		
 		invocationTemplate.setAttribute("typeLabel", areaLegend.legendDescription());
 		invocationTemplate.setAttribute(
 				"typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(
-				"typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
+				"typeLabelFontSize", typeLabelFontSize);
 		
 		invocationTemplate.setAttribute(
 				"scalingLabel", "(" + areaLegend.scalingLabel() + ")");
@@ -110,9 +112,9 @@ public class LabeledReferenceCircles implements LabeledReference {
 		invocationTemplate.setAttribute(
 				"keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(
-				"keyLabelFontSize", KEY_LABEL_FONT_SIZE);
+				"keyLabelFontSize", keyLabelFontSize);
 		
-		invocationTemplate.setAttribute("fontName", PSUtility.psFontName(PageLayout.CONTENT_FONT));
+		invocationTemplate.setAttribute("fontName", PSUtility.psFontName(pageLayout.contentFont()));
 
 		s += invocationTemplate.toString();
 
