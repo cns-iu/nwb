@@ -64,7 +64,7 @@ public class GeoMapViewPS {
 		
 		out.write((new PageFooter(new Point2D.Double(
 				pageLayout.pageWidth() / 2.0,
-				PageLayout.pageMargin() /* TODO need a different fudge - 2 * PageFooter.FONT.getSize()*/),
+				0.75 * PageLayout.pageMargin()),
 				pageLayout)).toPostScript() + "\n");
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
