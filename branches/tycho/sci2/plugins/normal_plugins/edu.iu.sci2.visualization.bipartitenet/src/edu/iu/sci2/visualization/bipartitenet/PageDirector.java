@@ -208,15 +208,9 @@ public class PageDirector implements Paintable {
 		// Make codings for the nodes and edges (size and color)
 		// If the nodes/edges are not weighted, it makes a "constant" coding.
 		// Only put in a legend if the nodes/edges are weighted.
-		Scale<Double,Double> nodeCoding = makeNodeCoding();
-		if (dataModel.hasWeightedNodes()) {
-			painter.add(makeNodeLegend(nodeCoding));
-		}
-
-		Scale<Double,Double> edgeCoding = makeEdgeCoding();
-		if (dataModel.hasWeightedEdges()) {
-			painter.add(makeEdgeLegend(edgeCoding));
-		}
+		Scale<Double,Double> nodeCoding = makeNodeCodingAndLegend();
+		
+		Scale<Double,Double> edgeCoding = makeEdgeCodingAndLegend();
 		
 		if (layout.hasHowToRead()) {
 			painter.add(new HowToRead(layout.getFont(TextType.TITLE),
@@ -325,23 +319,29 @@ public class PageDirector implements Paintable {
 		return Math.min(layout.getMaxNodeRadius(), layout.getLeftLine().getLength() / maxNodesOnOneSide);
 	}
 	
-	private Scale<Double, Double> makeNodeCoding() {
+	private Scale<Double, Double> makeNodeCodingAndLegend() {
 		if (dataModel.hasWeightedNodes()) {
 			Scale<Double, Double> nodeScale = new ZeroAnchoredCircleRadiusScale(calculateMaxNodeRadius());
 			nodeScale.train(Iterables.transform(dataModel.getLeftNodes(), Node.WEIGHT_GETTER));
 			nodeScale.train(Iterables.transform(dataModel.getRightNodes(), Node.WEIGHT_GETTER));
 			nodeScale.doneTraining();
+			
+			painter.add(makeNodeLegend(nodeScale));
+
 			return nodeScale;
 		} else {
 			return new ConstantValue<Double, Double>(calculateMaxNodeRadius());
 		}
 	}
 
-	private Scale<Double,Double> makeEdgeCoding() {
+	private Scale<Double,Double> makeEdgeCodingAndLegend() {
 		if (dataModel.hasWeightedEdges()) {
 			Scale<Double,Double> thicknessScale = new ZeroAnchoredCircleRadiusScale(layout.getMaxEdgeThickness());
 			thicknessScale.train(Iterables.transform(dataModel.getEdges(), Edge.WEIGHT_GETTER));
 			thicknessScale.doneTraining();
+			
+			painter.add(makeEdgeLegend(thicknessScale));
+			
 			return thicknessScale;
 		} else {
 			return new ConstantValue<Double,Double>(Double.valueOf(1));
