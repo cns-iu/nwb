@@ -34,20 +34,20 @@ public class BipartiteGraphRenderer implements Paintable {
 	private final Scale<Double,Double> nodeRadiusCoding;
 	private final Scale<Double,Double> edgeCoding;
 	private final int maxNodeRadius;
-	private final Font nodeFont;
+	private final Font[] nodeFonts;
 
 	public BipartiteGraphRenderer(BipartiteGraphDataModel skel,
 			LineSegment2D leftLine, LineSegment2D rightLine,
 			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, 
 			Scale<Double,Double> edgeCoding,
-			Font nodeFont) {
+			Font[] nodeFonts) {
 		this.data = skel;
 		this.leftLine = leftLine;
 		this.rightLine = rightLine;
 		this.nodeRadiusCoding = nodeRadiusCoding;
 		this.maxNodeRadius = maxNodeRadius;
 		this.edgeCoding = edgeCoding;
-		this.nodeFont = nodeFont;
+		this.nodeFonts = nodeFonts;
 
 		nodeToNodeView = ImmutableMap.copyOf(placeNodes());
 		placeEdges();
@@ -66,8 +66,8 @@ public class BipartiteGraphRenderer implements Paintable {
 
 	private LinkedHashMap<Node, NodeView> placeNodes() {
 		LinkedHashMap<Node,NodeView> nodeViews = Maps.newLinkedHashMap();
-		nodeViews.putAll(placeNodesOnLine(data.getRightNodes(), getRightLine()));
-		nodeViews.putAll(placeNodesOnLine(data.getLeftNodes(), getLeftLine()));
+		nodeViews.putAll(placeNodesOnLine(data.getLeftNodes(), getLeftLine(), nodeFonts[0]));
+		nodeViews.putAll(placeNodesOnLine(data.getRightNodes(), getRightLine(), nodeFonts[1]));
 		
 		for (NodeView nv : nodeViews.values()) {
 			painter.add(nv);
@@ -77,7 +77,7 @@ public class BipartiteGraphRenderer implements Paintable {
 	}
 
 	private LinkedHashMap<Node, NodeView> placeNodesOnLine(ImmutableList<Node> nodes,
-			LineSegment2D centerLine) {
+			LineSegment2D centerLine, Font nodeFont) {
 		LinkedHashMap<Node,NodeView> nodeViews = Maps.newLinkedHashMap();
 		int numNodes = nodes.size();
 		double denominator = Math.max(1, numNodes - 1); // don't divide by 0!

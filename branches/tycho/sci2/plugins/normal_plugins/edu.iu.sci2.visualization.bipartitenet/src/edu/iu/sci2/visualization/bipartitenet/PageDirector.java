@@ -225,7 +225,7 @@ public class PageDirector implements Paintable {
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), 
 				nodeCoding, edgeCoding,
-				createNodeLabelFont());
+				createNodeLabelFonts());
 		painter.add(renderer);
 		
 		// The main title, and headers
@@ -253,22 +253,19 @@ public class PageDirector implements Paintable {
 				Color.gray));
 	}
 
-	private Font createNodeLabelFont() {
+	private Font[] createNodeLabelFonts() {
 		Font baseFont = layout.getFont(TextType.NODE_LABEL);
+		double baseFontSize = baseFont.getSize2D();
 		
 		double pageSize = layout.getLeftLine().getLength();
+
+		int nodesOnLeft  = dataModel.getLeftNodes().size(), 
+			nodesOnRight = dataModel.getRightNodes().size();
 		
-		int maxNodesOnOneSide = 
-				Math.max(
-					dataModel.getLeftNodes().size(), 
-					dataModel.getRightNodes().size());
+		double leftFontSize = Math.min((pageSize / nodesOnLeft) - SPACING_BETWEEN_LABELS, baseFontSize);
+		double rightFontSize = Math.min((pageSize / nodesOnRight) - SPACING_BETWEEN_LABELS, baseFontSize);
 		
-		double scaledFontSize = (pageSize / maxNodesOnOneSide) - SPACING_BETWEEN_LABELS;
-		
-		if (scaledFontSize > baseFont.getSize2D()) {
-			return baseFont;
-		}
-		return baseFont.deriveFont((float) scaledFontSize);
+		return new Font[] {baseFont.deriveFont((float) leftFontSize), baseFont.deriveFont((float) rightFontSize)};
 	}
 
 	private Paintable makeSortingLegend() {
