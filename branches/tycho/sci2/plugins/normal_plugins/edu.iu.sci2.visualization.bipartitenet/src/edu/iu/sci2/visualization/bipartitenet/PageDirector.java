@@ -184,15 +184,16 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-//	public static final Font BASIC_FONT = findBasicFont(10);
-//	private static final Font TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD, 14);
-//	private static final Font SUB_TITLE_FONT = BASIC_FONT.deriveFont(Font.BOLD);
 	private static final String TITLE = "Bipartite Network Graph";
-	private static final int SPACING_BETWEEN_LABELS = 2;
 	
 	private final Layout layout;
 	
 	private final String footer = "NIH’s Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
+
+	// This whitespace is distributed evenly among the spaces between all the node labels.
+	// Actually, the total whitespace decreases with increasing # of labels, so this is not linear.
+	// Argh! Just read the code.
+	private final double WHITESPACE_AMONG_LABELS = 30;
 
 	public PageDirector(final Layout layout, 
 			final BipartiteGraphDataModel dataModel, 
@@ -263,8 +264,11 @@ public class PageDirector implements Paintable {
 		int nodesOnLeft  = dataModel.getLeftNodes().size(), 
 			nodesOnRight = dataModel.getRightNodes().size();
 		
-		double leftFontSize = Math.min((pageSize / nodesOnLeft) - SPACING_BETWEEN_LABELS, baseFontSize);
-		double rightFontSize = Math.min((pageSize / nodesOnRight) - SPACING_BETWEEN_LABELS, baseFontSize);
+		double leftFontSize = Math.min((pageSize / nodesOnLeft) 
+				- (WHITESPACE_AMONG_LABELS / Math.pow(nodesOnLeft, 2)), baseFontSize);
+		double rightFontSize = Math.min((pageSize / nodesOnRight) 
+				- (WHITESPACE_AMONG_LABELS / Math.pow(nodesOnRight, 2)), baseFontSize);
+		System.out.println(String.format("Using font sizes %f and %f for left and right, respectively", leftFontSize, rightFontSize));
 		
 		return new Font[] {baseFont.deriveFont((float) leftFontSize), baseFont.deriveFont((float) rightFontSize)};
 	}
