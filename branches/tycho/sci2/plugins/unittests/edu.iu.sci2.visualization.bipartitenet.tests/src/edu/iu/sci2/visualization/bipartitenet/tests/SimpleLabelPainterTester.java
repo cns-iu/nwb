@@ -13,6 +13,7 @@ import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.Truncator;
 
 public class SimpleLabelPainterTester {
 
@@ -42,7 +43,7 @@ public class SimpleLabelPainterTester {
 						xAlign,
 						yAlign,
 						WordUtils.capitalize(String.format("X: %s, Y: %s", xAlign, yAlign).toLowerCase()),
-						null, null));
+						null, null, Truncator.none()));
 				
 				cc.add(new Paintable() {
 					@Override

@@ -6,9 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.font.LineMetrics;
 import java.awt.font.TextLayout;
 
-import com.google.common.base.Function;
-
 import math.geom2d.Point2D;
+
+import com.google.common.base.Function;
 
 public final class SimpleLabelPainter implements Paintable {
 	public static enum XAlignment implements Function<TextLayout, Double> {
@@ -74,34 +74,26 @@ public final class SimpleLabelPainter implements Paintable {
 		@Override
 		public abstract Double apply(LineMetrics lm);
 	}
-	
+		
 	private final Point2D position;
 	private final String text;
 	private final Font font;
 	private final XAlignment xAlign;
 	private final YAlignment yAlign;
 	private final Color color;
+	private final Truncator trunc;
 
 	public SimpleLabelPainter(Point2D position, XAlignment xAlign, YAlignment yAlign,
-			String text, Font font, Color color) {
+			String text, Font font, Color color, Truncator trunc) {
 		this.position = position;
 		this.xAlign = xAlign;
 		this.yAlign = yAlign;
 		this.text = text;
 		this.font = font;
 		this.color = color;
+		this.trunc = trunc;
 	}
 
-	public Paintable withColor(final Color textColor) {
-		return new Paintable() {
-			@Override
-			public void paint(Graphics2D g) {
-				g.setColor(textColor);
-				
-			}
-		};
-	}
-	
 	@Override
 	public void paint(Graphics2D g) {
 		Font theFont;
@@ -110,18 +102,21 @@ public final class SimpleLabelPainter implements Paintable {
 		} else {
 			theFont = this.font;
 		}
+		g.setFont(theFont);
+		
+		String truncatedLabel = trunc.truncate(text, g);
 
 		if (color != null) {
 			g.setColor(color);
 		}
 		
-		TextLayout tl = new TextLayout(text, theFont, g.getFontRenderContext());
+		TextLayout tl = new TextLayout(truncatedLabel, theFont, g.getFontRenderContext());
 		double xPos = position.getX() + xAlign.apply(tl);
 		
 		LineMetrics lm = theFont.getLineMetrics("Asdfj", g.getFontRenderContext());
 		double yPos = position.getY() + yAlign.apply(lm);
 		
-		g.setFont(theFont);
-		g.drawString(text, (float) xPos, (float) yPos);
+		g.drawString(truncatedLabel, (float) xPos, (float) yPos);
 	}
+	
 }

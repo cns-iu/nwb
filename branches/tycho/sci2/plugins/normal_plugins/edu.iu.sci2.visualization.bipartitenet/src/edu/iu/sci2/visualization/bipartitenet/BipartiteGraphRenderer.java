@@ -35,12 +35,13 @@ public class BipartiteGraphRenderer implements Paintable {
 	private final Scale<Double,Double> edgeCoding;
 	private final int maxNodeRadius;
 	private final Font[] nodeFonts;
+	private final double nodeToPageEdgeDistance;
 
 	public BipartiteGraphRenderer(BipartiteGraphDataModel skel,
 			LineSegment2D leftLine, LineSegment2D rightLine,
 			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, 
 			Scale<Double,Double> edgeCoding,
-			Font[] nodeFonts) {
+			Font[] nodeFonts, double nodeToPageEdgeDistance) {
 		this.data = skel;
 		this.leftLine = leftLine;
 		this.rightLine = rightLine;
@@ -48,6 +49,7 @@ public class BipartiteGraphRenderer implements Paintable {
 		this.maxNodeRadius = maxNodeRadius;
 		this.edgeCoding = edgeCoding;
 		this.nodeFonts = nodeFonts;
+		this.nodeToPageEdgeDistance = nodeToPageEdgeDistance;
 
 		nodeToNodeView = ImmutableMap.copyOf(placeNodes());
 		placeEdges();
@@ -86,7 +88,7 @@ public class BipartiteGraphRenderer implements Paintable {
 		for (int i = 0; i < numNodes; i++) {
 			Point2D centerPoint = centerLine.getPoint(i / denominator);
 			NodeView view = new NodeView(nodes.get(i), centerPoint, nodeRadiusCoding, 
-					maxHeight, nodeFont);
+					maxHeight, nodeFont, nodeToPageEdgeDistance);
 			nodeViews.put(nodes.get(i), view);
 		}
 		return nodeViews;

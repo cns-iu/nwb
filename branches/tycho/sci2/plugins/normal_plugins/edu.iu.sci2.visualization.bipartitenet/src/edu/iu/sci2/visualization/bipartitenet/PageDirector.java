@@ -27,6 +27,7 @@ import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.Truncator;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
@@ -225,7 +226,7 @@ public class PageDirector implements Paintable {
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), 
 				nodeCoding, edgeCoding,
-				createNodeLabelFonts());
+				createNodeLabelFonts(), layout.getWidth() - layout.getRightLine().getFirstPoint().getX());
 		painter.add(renderer);
 		
 		// The main title, and headers
@@ -243,14 +244,14 @@ public class PageDirector implements Paintable {
 		
 		// The titles of the two columns
 		painter.add(new SimpleLabelPainter(layout.getLeftTitlePosition(), 
-				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, layout.getFont(TextType.TITLE), null));
+				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, layout.getFont(TextType.TITLE), null, Truncator.none()));
 		painter.add(new SimpleLabelPainter(layout.getRightTitlePosition(), 
-				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, layout.getFont(TextType.TITLE), null));
+				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, layout.getFont(TextType.TITLE), null, Truncator.none()));
 		
 		// The footer
 		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
 				XAlignment.CENTER, YAlignment.BASELINE, footer, layout.getFont(TextType.FOOTER),
-				Color.gray));
+				Color.gray, Truncator.none()));
 	}
 
 	private Font[] createNodeLabelFonts() {

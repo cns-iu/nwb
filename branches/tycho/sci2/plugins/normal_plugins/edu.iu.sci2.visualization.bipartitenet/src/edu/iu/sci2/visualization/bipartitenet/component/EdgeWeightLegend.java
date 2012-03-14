@@ -61,7 +61,7 @@ public class EdgeWeightLegend implements Paintable {
 			ThicknessCodedEdgeView.drawArrow(line, lineThickness, g);
 			
 			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, 0);
-			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT, value.toString(), labelFont, null)
+			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT, value.toString(), labelFont, null, Truncator.none())
 				.paint(gForLabels);
 			
 			// preserve invariant
