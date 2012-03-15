@@ -50,7 +50,7 @@ public enum PageLayout {
 
 		@Override
 		public double pageMargin() {
-			return 0.8 * POINTS_PER_INCH;
+			return 0.25 * POINTS_PER_INCH;
 		}
 	},
 	PRINT {
@@ -65,7 +65,9 @@ public enum PageLayout {
 		
 		@Override
 		public Optional<Point2D.Double> headerLowerLeft() {
-			return Optional.of(new Point2D.Double(pageMargin(), pageHeight() - pageMargin()));
+			return Optional.of(new Point2D.Double(
+					pageMargin(),
+					pageHeight() - pageMargin() - titleFont().getSize()));
 		}
 
 		@Override
@@ -92,7 +94,7 @@ public enum PageLayout {
 
 		@Override
 		public double pageMargin() {
-			return 0.5 * POINTS_PER_INCH;
+			return 0.25 * POINTS_PER_INCH;
 		}
 	};
 
@@ -130,18 +132,21 @@ public enum PageLayout {
 	}
 	
 
-	/* TODO These dimensions do not currently dictate the actual sizing of the legendarium, but
-	 * we can want to reserve some rough space for it to better fit other components around it.
+	/* TODO These do not currently dictate the actual dimensions, they only reserve some
+	 * rough space to better fit other components around it.
 	 */
 	public Dimension<Double> legendariumReservedDimensions() {
 		return Dimension.ofSize(
 				0.6 * pageWidth(),
-				1.25 * POINTS_PER_INCH);
+				1.4 * (titleFont().getSize() + 2 * contentFont().getSize()) +
+				Math.max(
+						COLOR_GRADIENT_HEIGHT + 1.4 * contentFont().getSize(),
+						2 * Circle.DEFAULT_CIRCLE_RADIUS_RANGE.getPointB()));
 	}
 	public Point2D.Double legendariumLowerLeft() {
 		return new Point2D.Double(
 				pageMargin(),
-				pageFooterHeight() + (0.85 * legendariumReservedDimensions().getHeight()));
+				pageMargin() + legendariumReservedDimensions().getHeight());
 	}
 	public Point2D.Double legendLowerLeft() {
 		return new Point2D.Double(
@@ -149,9 +154,11 @@ public enum PageLayout {
 				legendariumLowerLeft().y - 18); // TODO
 	}
 	
+	private static final double COLOR_GRADIENT_HEIGHT = 10.0;
+	
 	public Dimension<Double> colorGradientDimensions() {
 		return Dimension.ofSize(
 				0.8 * (legendariumReservedDimensions().getWidth() / EnumSet.allOf(CircleDimension.class).size()),
-				10.0);
+				COLOR_GRADIENT_HEIGHT);
 	}
 }

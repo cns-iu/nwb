@@ -25,7 +25,7 @@ public class PageFooter implements PostScriptable {
 
 		builder.append("gsave" + "\n");
 
-		Font font = pageLayout.contentFont().deriveFont(Font.ITALIC);
+		Font font = pageLayout.contentFont().deriveFont(Font.ITALIC).deriveFont(10.0f);
 		
 		builder.append(PSUtility.findscalesetfont(font) + "\n");
 		builder.append(PSUtility.setgray(FONT_BRIGHTNESS) + "\n");

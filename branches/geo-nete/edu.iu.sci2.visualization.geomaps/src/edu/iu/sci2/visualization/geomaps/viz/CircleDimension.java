@@ -81,7 +81,7 @@ public enum CircleDimension implements VizDimension {
 										areaLegend,
 										new Point2D.Double(
 												pageLayout.legendariumLowerLeft().getX()
-												+ ((0.0 * pageLayout.legendariumReservedDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
+												+ ((2.0 * pageLayout.legendariumReservedDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
 												pageLayout.legendLowerLeft().getY()),
 										pageLayout);
 							} catch (ScalingException e) {
@@ -178,7 +178,7 @@ public enum CircleDimension implements VizDimension {
 						public Point2D.Double lowerLeft(PageLayout pageLayout) {
 							return new Point2D.Double(
 									pageLayout.legendariumLowerLeft().getX()
-									+ ((2.0 * pageLayout.legendariumReservedDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
+									+ ((0.0 * pageLayout.legendariumReservedDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
 									pageLayout.legendLowerLeft().getY());
 						}
 

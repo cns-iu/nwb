@@ -28,8 +28,8 @@ public class Circle {
 	 */
 	public static final Range<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
 			Range.between(
-					1.3,
-					32.0);
+					0.01 * PageLayout.POINTS_PER_INCH,
+					0.34 * PageLayout.POINTS_PER_INCH);
 	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE =
 			Range.between(
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),
