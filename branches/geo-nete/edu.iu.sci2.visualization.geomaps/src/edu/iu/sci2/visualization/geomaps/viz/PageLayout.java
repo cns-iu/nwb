@@ -70,7 +70,7 @@ public enum PageLayout {
 
 		@Override
 		public double headerHeight() {
-			return 0.18 * pageHeight();
+			return 0.15 * pageHeight();
 		}
 
 		@Override

@@ -46,7 +46,7 @@ public class GeoMapViewPS {
 	}
 
 	
-	public File writeToPSFile(String authorName, String dataLabel)
+	public File writeToPSFile(String dataLabel)
 				throws IOException, TransformException {		
 		File psFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
@@ -107,8 +107,7 @@ public class GeoMapViewPS {
 			PageHeader pageHeader = new PageHeader(geoMap.getTitle(), pageLayout.headerLowerLeft().get(), pageLayout,
 					String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
 					String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
-					timestamp(),
-					authorName);
+					timestamp());
 			out.write(pageHeader.toPostScript());
 			out.write("\n");
 		}

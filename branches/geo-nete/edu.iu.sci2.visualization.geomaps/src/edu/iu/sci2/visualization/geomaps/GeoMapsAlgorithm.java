@@ -64,7 +64,6 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	public static final String SHAPEFILE_ID = "shapefile";
 	public static final String PROJECTION_ID = "projection";
-	public static final String AUTHOR_NAME_ID = "authorName";
 
 	public static final boolean LET_USER_CHOOSE_PROJECTION = false;
 
@@ -101,11 +100,10 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Data inDatum = this.data[0];
 			Table inTable = (Table) inDatum.getData();
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
-			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
 			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, title);
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout);
-			File geoMapFile = geoMapView.writeToPSFile(authorName, dataLabel);
+			File geoMapFile = geoMapView.writeToPSFile(dataLabel);
 
 			Data[] outData = new Data[] {
 					DataFactory.forFile(
@@ -147,7 +145,6 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
 			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
-			parameters.put("authorName", "Your Name Here");
 
 			String testFileURLStem = "/edu/iu/sci2/visualization/geomaps/testing/";
 			URL testFileURL =

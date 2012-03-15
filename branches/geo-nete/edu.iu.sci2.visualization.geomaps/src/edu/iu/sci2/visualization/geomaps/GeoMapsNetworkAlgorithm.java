@@ -114,7 +114,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout());
 			
-			File geoMapFile = postScriptWriter.writeToPSFile("", "");
+			File geoMapFile = postScriptWriter.writeToPSFile("");
 
 			File outNetwork = processNetwork(anchorPoints, inFile);
 
