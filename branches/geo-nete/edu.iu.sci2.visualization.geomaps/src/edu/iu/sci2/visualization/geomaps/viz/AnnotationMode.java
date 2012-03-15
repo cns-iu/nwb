@@ -32,6 +32,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	protected abstract EnumSet<D> dimensions();
 	protected abstract GeoDataset<G, D> readTable(Table table, Collection<Binding<D>> bindings);
 	protected abstract GeoMap createGeoMap(
+			String title,
 			Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<G, D> scaledData,
@@ -42,7 +43,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	public GeoMap createGeoMap(
 			final Table table,
 			final Dictionary<String, Object> parameters,
-			PageLayout pageLayout)
+			PageLayout pageLayout,
+			String title)
 				throws LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
 		Shapefile shapefile = Shapefile.forNiceName(
 				(String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
@@ -79,7 +81,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		}
 
 		return createGeoMap(
-				shapefile, knownProjectedCRSDescriptor, usableData, codings, legends, pageLayout);
+				title, shapefile, knownProjectedCRSDescriptor, usableData, codings, legends, pageLayout);
 	}
 	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {

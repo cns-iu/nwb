@@ -24,7 +24,7 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.Legendarium;
 public class GeoMap {
 	private static final GeometryFactory DEFAULT_GEOMETRY_FACTORY = JTSFactoryFinder.getGeometryFactory(new Hints(Hints.CRS, DefaultGeographicCRS.WGS84));
 	
-	private final String subtitle;
+	private final String title;
 	private final Shapefile shapefile;
 	private final KnownProjectedCRSDescriptor knownProjectedCRSDescriptor;
 	private final Collection<FeatureView> featureViews;
@@ -35,14 +35,14 @@ public class GeoMap {
 	private final GeometryProjector geometryProjector;
 
 	public GeoMap(
-			String subtitle,
+			String title,
 			Shapefile shapefile,
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor,
 			Collection<FeatureView> featureViews,
 			Collection<Circle> circles,
 			Collection<LabeledReference> legends,
 			PageLayout pageLayout) throws GeoMapException {
-		this.subtitle = subtitle;
+		this.title = title;
 		this.shapefile = shapefile;
 		this.knownProjectedCRSDescriptor = knownProjectedCRSDescriptor;
 		this.featureViews = featureViews;
@@ -83,8 +83,8 @@ public class GeoMap {
 		return circles;
 	}
 
-	public String getSubtitle() {
-		return subtitle;
+	public String getTitle() {
+		return title;
 	}
 
 	public Coordinate project(Coordinate coordinate) {

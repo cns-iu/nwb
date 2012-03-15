@@ -29,10 +29,6 @@ public class GeoMapViewPS {
 	 * Between 0 and 1.
 	 */
 	public static final double MAP_BOUNDING_BOX_BUFFER_RATIO = 0.1;
-
-	public static final String OUTPUT_FILE_EXTENSION = "ps";
-	
-	public static final String TITLE = "Geospatial Map";
 	public static final String INDENT = "  ";
 	
 	private final GeoMap geoMap;
@@ -53,7 +49,7 @@ public class GeoMapViewPS {
 	public File writeToPSFile(String authorName, String dataLabel)
 				throws IOException, TransformException {		
 		File psFile =
-			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", OUTPUT_FILE_EXTENSION);
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
@@ -64,7 +60,7 @@ public class GeoMapViewPS {
 		
 		out.write((new PageFooter(new Point2D.Double(
 				pageLayout.pageWidth() / 2.0,
-				0.75 * PageLayout.pageMargin()),
+				0.75 * pageLayout.pageMargin()),
 				pageLayout)).toPostScript() + "\n");
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
@@ -108,7 +104,7 @@ public class GeoMapViewPS {
 		
 		
 		if (pageLayout.headerLowerLeft().isPresent()) {
-			PageHeader pageHeader = new PageHeader(TITLE, geoMap.getSubtitle(), pageLayout.headerLowerLeft().get(), pageLayout,
+			PageHeader pageHeader = new PageHeader(geoMap.getTitle(), pageLayout.headerLowerLeft().get(), pageLayout,
 					String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
 					String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
 					timestamp(),

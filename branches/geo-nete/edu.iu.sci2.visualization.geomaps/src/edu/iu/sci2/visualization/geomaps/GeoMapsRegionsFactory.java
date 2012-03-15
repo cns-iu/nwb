@@ -32,7 +32,7 @@ import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
-	public static final String SUBTITLE = "Proportional Coloring";
+	public static final String SUBTITLE = "Choropleth Map";
 	
 	@Override
 	public Algorithm createAlgorithm(
@@ -44,7 +44,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				parameters,
 				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
-				"Geospatial Map (Proportional Coloring)",
+				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	

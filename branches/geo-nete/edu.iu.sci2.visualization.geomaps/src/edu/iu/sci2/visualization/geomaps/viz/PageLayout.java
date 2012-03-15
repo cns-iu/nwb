@@ -8,6 +8,9 @@ import com.google.common.base.Optional;
 
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 
+/**
+ * All figures in points.  1 point = 1/72 inch.
+ */
 public enum PageLayout {
 	WEB {
 		@Override
@@ -44,6 +47,11 @@ public enum PageLayout {
 		public Font contentFont() {
 			return new Font("Arial", Font.PLAIN, 16);
 		}
+
+		@Override
+		public double pageMargin() {
+			return 0.8 * POINTS_PER_INCH;
+		}
 	},
 	PRINT {
 		@Override
@@ -68,7 +76,7 @@ public enum PageLayout {
 		@Override
 		public Optional<Point2D.Double> howToReadLowerLeft() {
 			return Optional.of(new Point2D.Double(
-					0.93 * legendariumDimensions().getWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
+					0.65 * pageWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
 					legendariumLowerLeft().getY()));
 		}
 
@@ -81,14 +89,17 @@ public enum PageLayout {
 		public Font contentFont() {
 			return new Font("Arial", Font.PLAIN, 10);
 		}
+
+		@Override
+		public double pageMargin() {
+			return 0.5 * POINTS_PER_INCH;
+		}
 	};
 
 	public abstract double pageWidth();
 	public abstract double pageHeight();
 	
-	public static double pageMargin() {
-		return 0.5 * POINTS_PER_INCH;
-	}
+	public abstract double pageMargin();
 
 	public abstract Font titleFont();	
 	public abstract Font contentFont();
@@ -104,27 +115,33 @@ public enum PageLayout {
 				pageWidth() - 2 * pageMargin(),
 				pageHeight() -
 						(headerHeight()
-						+ legendariumDimensions().getHeight()
-						+ PAGE_FOOTER_HEIGHT_IN_POINTS));
+						+ legendariumReservedDimensions().getHeight()
+						+ 2 * pageMargin()));
 	}
 
 	public static final double POINTS_PER_INCH = 72.0;
-	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS = pageMargin() + (0.25 * POINTS_PER_INCH);
+	
+	public double pageFooterHeight() {
+		return pageMargin() + (0.25 * POINTS_PER_INCH);
+	}
 	
 	public double mapCenterX() {
 		return pageWidth() / 2.0;
 	}
 	
 
-	public Dimension<Double> legendariumDimensions() {
+	/* TODO These dimensions do not currently dictate the actual sizing of the legendarium, but
+	 * we can want to reserve some rough space for it to better fit other components around it.
+	 */
+	public Dimension<Double> legendariumReservedDimensions() {
 		return Dimension.ofSize(
-				0.7 * pageWidth(),
-				1.85 * POINTS_PER_INCH);
+				0.6 * pageWidth(),
+				1.25 * POINTS_PER_INCH);
 	}
 	public Point2D.Double legendariumLowerLeft() {
 		return new Point2D.Double(
 				pageMargin(),
-				PAGE_FOOTER_HEIGHT_IN_POINTS + (0.85 * legendariumDimensions().getHeight()));
+				pageFooterHeight() + (0.85 * legendariumReservedDimensions().getHeight()));
 	}
 	public Point2D.Double legendLowerLeft() {
 		return new Point2D.Double(
@@ -134,7 +151,7 @@ public enum PageLayout {
 	
 	public Dimension<Double> colorGradientDimensions() {
 		return Dimension.ofSize(
-				0.8 * (legendariumDimensions().getWidth() / EnumSet.allOf(CircleDimension.class).size()),
+				0.8 * (legendariumReservedDimensions().getWidth() / EnumSet.allOf(CircleDimension.class).size()),
 				10.0);
 	}
 }

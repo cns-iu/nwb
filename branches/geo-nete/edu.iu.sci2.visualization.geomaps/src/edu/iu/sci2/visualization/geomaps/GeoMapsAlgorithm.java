@@ -66,16 +66,15 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static final String PROJECTION_ID = "projection";
 	public static final String AUTHOR_NAME_ID = "authorName";
 
-	public static final String TEST_DATUM_PATH =
-		"/edu/iu/sci2/visualization/geomaps/testing/25mostPopulousNationsWithGDPs.csv";
-
 	public static final boolean LET_USER_CHOOSE_PROJECTION = false;
 
 	private final Data[] data;
 	private final Dictionary<String, Object> parameters;
 	private final PageLayout pageLayout;
 	private final AnnotationMode<G, D> annotationMode;
-	private final String outputAlgorithmName;
+	private final String title;
+	public static final String OUTPUT_FILE_EXTENSION = "ps";
+	public static final String TITLE = "Geospatial Visualization";
 	// TODO reduce visibility
 	public static LogService logger = new StdErrLogService();
 	
@@ -84,13 +83,13 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters,
 			PageLayout pageLayout,
 			AnnotationMode<G, D> annotationMode,
-			String outputAlgorithmName,
+			String title,
 			LogService logService) {
 		this.data = data;
 		this.parameters = parameters;
 		this.pageLayout = pageLayout;
 		this.annotationMode = annotationMode;
-		this.outputAlgorithmName = outputAlgorithmName;
+		this.title = title;
 		
 		GeoMapsAlgorithm.logger = logService;
 	}
@@ -104,7 +103,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
-			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout);
+			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, title);
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout);
 			File geoMapFile = geoMapView.writeToPSFile(authorName, dataLabel);
 
@@ -114,7 +113,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 							POSTSCRIPT_MIME_TYPE,
 							DataProperty.VECTOR_IMAGE_TYPE,
 							inDatum,
-							outputAlgorithmName)
+							title)
 			};
 
 			return outData;
@@ -142,18 +141,22 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 					GeoMapsAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
 	}
 	
+		
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceName());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
-//			parameters.put("authorName", "Joseph Biberstine");
+			parameters.put("authorName", "Your Name Here");
 
-			URL testFileURL = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
+			String testFileURLStem = "/edu/iu/sci2/visualization/geomaps/testing/";
+			URL testFileURL =
+//					GeoMapsAlgorithm.class.getResource(testFileURLStem + "25mostPopulousNationsWithGDPs.csv");
+					GeoMapsAlgorithm.class.getResource(testFileURLStem + "us-state-populations.csv");
 			File inFile = new File(testFileURL.toURI());
 			AlgorithmFactory algorithmFactory;
-			algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			algorithmFactory = prepareFactoryForCirclesTest(parameters);
+			algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			
 			Data data = new BasicData(inFile, CSV_MIME_TYPE);
 			
@@ -183,7 +186,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters) {
 		parameters.put("latitude", "Latitude");
 		parameters.put("longitude", "Longitude");
-		parameters.put("circleAreaColumnName", "Population (Thousands)");
+		parameters.put("circleAreaColumnName", "GDP (billions USD)");
 		parameters.put("circleAreaScaling", Scaling.Linear.toString());
 		parameters.put("outerColorColumnName", "Population (Thousands)");//CircleAnnotationMode.OUTER_COLOR_DISABLING_TOKEN);//"GDP (billions USD)");
 		parameters.put("outerColorScaling", Scaling.Linear.toString());
@@ -198,9 +201,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 
 	private static AlgorithmFactory prepareFactoryForRegionsTest(
 			Dictionary<String, Object> parameters) {
-		parameters.put("featureName", "Country");
-		parameters.put("featureColorColumnName", "Population (Thousands)");
-		parameters.put("featureColorScaling", Scaling.Logarithmic.toString());
+		parameters.put("featureName", "State");
+		parameters.put("featureColorColumnName", "Population");
+		parameters.put("featureColorScaling", Scaling.Linear.toString());
 		parameters.put("featureColorRange", "Yellow to Blue");
 		AlgorithmFactory algorithmFactory =	new GeoMapsRegionsFactory();
 		return algorithmFactory;

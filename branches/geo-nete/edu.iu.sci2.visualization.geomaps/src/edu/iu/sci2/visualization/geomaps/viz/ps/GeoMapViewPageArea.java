@@ -38,13 +38,13 @@ public class GeoMapViewPageArea implements PostScriptable {
 		// TODO sync this calculations with PageLayout.mapPageAreaMaxDimensions()
 		double availableMapHeight =
 				pageLayout.pageHeight()
-				- (PageLayout.PAGE_FOOTER_HEIGHT_IN_POINTS
-						+ pageLayout.legendariumDimensions().getHeight()
+				- (pageLayout.pageFooterHeight()
+						+ pageLayout.legendariumReservedDimensions().getHeight()
 						+ pageLayout.headerHeight());
 		
 		double mapCenterY =
-				PageLayout.PAGE_FOOTER_HEIGHT_IN_POINTS
-				+ pageLayout.legendariumDimensions().getHeight()
+				pageLayout.pageFooterHeight()
+				+ pageLayout.legendariumReservedDimensions().getHeight()
 				+ availableMapHeight / 2;
 		
 		Point2D.Double displayCenter =

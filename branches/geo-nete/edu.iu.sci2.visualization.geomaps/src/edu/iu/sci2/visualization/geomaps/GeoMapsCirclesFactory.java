@@ -29,20 +29,22 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
 
 public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
-	public static final String SUBTITLE = "Proportional Circles";
+	public static final String SUBTITLE = "Proportional Symbol Map";
 
 	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciShellContext) {
-		String latitudeColumnName = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
-		String longitudeColumnName = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
+		String latitudeColumnName =
+				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
+		String longitudeColumnName =
+				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
 		
 		return new GeoMapsAlgorithm<Coordinate, CircleDimension>(
 				data,
 				parameters,
 				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
-				"Geospatial Map (Proportional Circles)",
+				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	

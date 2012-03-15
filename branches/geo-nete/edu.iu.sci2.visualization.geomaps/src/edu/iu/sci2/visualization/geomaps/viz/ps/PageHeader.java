@@ -18,14 +18,12 @@ public class PageHeader implements PostScriptable {
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	
 	private final String title;
-	private final String subtitle;
 	private final Point2D.Double lowerLeft;
 	private final PageLayout pageLayout;
 	private final Collection<String> extraInfo;
 	
-	public PageHeader(String title, String subtitle, Point2D.Double lowerLeft, PageLayout pageLayout, String... extraInfo) {
+	public PageHeader(String title, Point2D.Double lowerLeft, PageLayout pageLayout, String... extraInfo) {
 		this.title = title;
-		this.subtitle = subtitle;	
 		this.lowerLeft = lowerLeft;
 		this.pageLayout = pageLayout;
 		this.extraInfo = Collections2.filter(
@@ -52,7 +50,7 @@ public class PageHeader implements PostScriptable {
 		builder.append(PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n");
 		builder.append(PSUtility.setgray(TITLE_FONT_BRIGHTNESS) + "\n");
 		builder.append(INDENT + "gsave" + "\n");
-		builder.append(INDENT + INDENT + "(" + title + ") show " + "( ) show " + "((" + subtitle + ")) show" +"\n");
+		builder.append(INDENT + INDENT + "(" + title + ") show" + "\n");
 		builder.append(INDENT + "grestore" + "\n");
 		
 		builder.append(INDENT + "% Show the rest of the info" + "\n");

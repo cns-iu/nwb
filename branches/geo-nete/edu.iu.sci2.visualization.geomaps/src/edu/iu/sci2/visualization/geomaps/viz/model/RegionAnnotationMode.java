@@ -16,7 +16,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
@@ -35,12 +34,11 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
 	public static final String FEATURE_NAME_ID = "featureName";
+	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
 	public static final String COLOR_COLUMN_NAME_ID = "featureColorColumnName";
 	public static final String COLOR_SCALING_ID = "featureColorScaling";
 	public static final String COLOR_RANGE_ID = "featureColorRange";
-	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
 	
-	public static final String SUBTITLE = "Regions";
 	public static final Color DEFAULT_FEATURE_COLOR = null;
 	
 	private final String featureNameColumnName;
@@ -68,7 +66,9 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 	}
 	
 	@Override
-	protected GeoMap createGeoMap(Shapefile shapefile,
+	protected GeoMap createGeoMap(
+			String title,
+			Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
@@ -77,7 +77,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(
-				GeoMapsRegionsFactory.SUBTITLE,
+				title,
 				shapefile,
 				projectedCrs,
 				featureViews,

@@ -17,7 +17,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Coordinate;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
@@ -74,7 +73,9 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 	}
 	
 	@Override
-	protected GeoMap createGeoMap(Shapefile shapefile,
+	protected GeoMap createGeoMap(
+			String title,
+			Shapefile shapefile,
 			KnownProjectedCRSDescriptor projectedCrs,
 			GeoDataset<Coordinate, CircleDimension> scaledData,
 			Collection<? extends Coding<CircleDimension>> codings,
@@ -83,7 +84,7 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(
-				GeoMapsCirclesFactory.SUBTITLE,
+				title,
 				shapefile,
 				projectedCrs,
 				ImmutableSet.<FeatureView>of(),
