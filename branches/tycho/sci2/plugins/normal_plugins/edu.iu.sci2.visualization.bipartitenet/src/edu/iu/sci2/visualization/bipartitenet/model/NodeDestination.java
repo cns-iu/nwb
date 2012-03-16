@@ -21,7 +21,7 @@ public enum NodeDestination {
 	RIGHT(Color.decode("#FF9900"), XAlignment.LEFT) {
 		@Override
 		protected Point2D getAlignPoint(NodeView nv) {
-			return nv.getNodeCenter().translate(nv.getCenterToTextDistance(), 0);
+			return nv.getNodeCenter().translate(+ nv.getCenterToTextDistance(), 0);
 		}
 	};
 
@@ -43,7 +43,8 @@ public enum NodeDestination {
 						alignDirection,
 						YAlignment.STRIKE_HEIGHT,
 						nv.getLabel(),
-						defaultFont, null, 
+						defaultFont,
+						null, 
 						Truncator.atWidth(nodeCenterToPageEdge - nv.getCenterToTextDistance() - 10));
 		
 		painter.paint(g);
