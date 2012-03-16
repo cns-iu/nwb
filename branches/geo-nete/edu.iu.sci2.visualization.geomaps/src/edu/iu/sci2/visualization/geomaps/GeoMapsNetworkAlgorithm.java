@@ -78,7 +78,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 		
 		this.latitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		this.longitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
-		this.shapefile = Shapefile.forNiceName((String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
+		this.shapefile = Shapefile.forNiceNameInTitleCase((String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
 		
 		if (latitudeAttrib.equals(longitudeAttrib)) {
 			throw new AlgorithmCreationFailedException("Latitude and longitude attributes must be distinct");
@@ -97,7 +97,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
 			if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-				knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceName((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
+				knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceNameInTitleCase((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 			}
 
 			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.getAnchorPoints();
@@ -112,9 +112,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					ImmutableSet.<LabeledReference>of(),
 					getPageLayout());
 			
-			String howToReadText = String.format(
-					GeoMapsCirclesFactory.HOW_TO_READ_TEXT_FORMAT,
-					knownProjectedCRSDescriptor.getNiceName());
+			String howToReadText = String.format(""); // TODO How to read for Networks 
 			
 			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout(), howToReadText);
 			

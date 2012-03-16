@@ -10,6 +10,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.MathTransform;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableBiMap;
@@ -18,8 +19,8 @@ import com.google.common.collect.Maps;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 
 public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
-	ECKERT_IV("Eckert IV", new EPSGCode("EPSG:54012")),
-	WINKEL_TRIPEL("Winkel Tripel", // TODO findCentralMeridian is broken on Winkel
+	ECKERT_IV("Eckert IV", "Eckert IV", new EPSGCode("EPSG:54012")),
+	WINKEL_TRIPEL("Winkel Tripel", "Winkel Tripel", // TODO findCentralMeridian is broken on Winkel
 			new WKT("PROJCS[\"World_Winkel_Tripel_NGS\"," +
 					"GEOGCS[\"GCS_WGS_1984\"," +
 					"DATUM[\"D_WGS_1984\"," +
@@ -29,9 +30,9 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 					"PROJECTION[\"Winkel_Tripel\"]," +
 					"PARAMETER[\"standard_parallel_1\",40.0]," +
 					"UNIT[\"Meter\",1.0]]")),
-	MERCATOR("Mercator", new EPSGCode("EPSG:2965")),
-	ALBERS("Albers Equal-Area Conic", new EPSGCode("EPSG:3083")),
-	LAMBERT("Lambert Conformal Conic", new EPSGCode("EPSG:102004"));
+	MERCATOR("Mercator", "Mercator", new EPSGCode("EPSG:2965")),
+	ALBERS("Albers Equal-Area Conic", "Albers equal-area conic", new EPSGCode("EPSG:3083")),
+	LAMBERT("Lambert Conformal Conic", "Lambert conformal conic", new EPSGCode("EPSG:102004"));
 	
 	/* "if the math transform should be created even when there is no information available for a
 	 * datum shift."
@@ -40,34 +41,40 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 	 * distort drawing. */
 	public static final boolean REQUEST_LENIENT_TRANSFORM = true;
 	
-	private static final ImmutableBiMap<String, KnownProjectedCRSDescriptor> FOR_NICE_NAME =
+	private static final ImmutableBiMap<String, KnownProjectedCRSDescriptor> FOR_NICE_NAME_TITLE_CASE =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(KnownProjectedCRSDescriptor.class),
 						new Function<KnownProjectedCRSDescriptor, String>() {
 							@Override
 							public String apply(KnownProjectedCRSDescriptor shapefile) {
-								return shapefile.getNiceName();
+								return shapefile.getNiceNameTitleCase();
 							}
 						}));
-	public static Set<String> byNiceNames() {
-		return FOR_NICE_NAME.keySet();
+	public static Set<String> byNiceNamesInTitleCase() {
+		return FOR_NICE_NAME_TITLE_CASE.keySet();
 	}
-	public static KnownProjectedCRSDescriptor forNiceName(String niceName) {
+	public static KnownProjectedCRSDescriptor forNiceNameInTitleCase(String niceNameTitleCase) {
 		// TODO What to do about null?
-		return FOR_NICE_NAME.get(niceName);
+		return FOR_NICE_NAME_TITLE_CASE.get(niceNameTitleCase);
 	}
 
-	private final String niceName;
+	private final String niceNameTitleCase;
+	private final String niceNamePlain;
 	private final ProjectedCRSDescriptor projectedCrsDescriptor;
-	
-	private KnownProjectedCRSDescriptor(String niceName, ProjectedCRSDescriptor crsMaker) {
-		this.niceName = niceName;
+
+	private KnownProjectedCRSDescriptor(String niceNameTitleCase, String niceNamePlain, ProjectedCRSDescriptor crsMaker) {
+		this.niceNameTitleCase = niceNameTitleCase;
+		this.niceNamePlain = niceNamePlain;
 		this.projectedCrsDescriptor = crsMaker;
 	}
 	
 
-	public String getNiceName() {
-		return niceName;
+	public String getNiceNameTitleCase() {
+		return niceNameTitleCase;
+	}
+	
+	public String getNiceNamePlain() {
+		return niceNamePlain;
 	}
 
 	@Override

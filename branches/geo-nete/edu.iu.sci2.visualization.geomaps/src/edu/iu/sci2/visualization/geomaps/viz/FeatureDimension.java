@@ -52,7 +52,7 @@ public enum FeatureDimension implements VizDimension {
 
 						@Override
 						public String legendDescription() {
-							return String.format("%s Color", shapefile.getComponentDescription());
+							return String.format("%s Color", shapefile.getComponentDescriptionTitleCase());
 						}
 
 						@Override

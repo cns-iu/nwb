@@ -1,18 +1,27 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.geom.Point2D;
+import java.io.InputStreamReader;
 import java.util.List;
+
+import org.antlr.stringtemplate.StringTemplateGroup;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 
 public class HowToRead implements PostScriptable {
-	private static final int TARGETED_PHRASE_LENGTH_IN_CHARACTERS = 60;
+	public static final String STRING_TEMPLATE_FILE_PATH =
+			"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/howToRead.stg";
+	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplateGroup();
+	
+	public static final int TARGETED_LINE_LENGTH_IN_CHARACTERS = 60;
+	
 	public static final double TITLE_FONT_GRAY = 0.0;
 	public static final double TEXT_FONT_GRAY = 0.15;
 	
@@ -45,13 +54,19 @@ public class HowToRead implements PostScriptable {
 		howToRead += PSUtility.findscalesetfont(pageLayout.contentFont()) + "\n";
 		howToRead += PSUtility.setgray(TEXT_FONT_GRAY) + "\n";
 		
-		for (String textLine : SentenceSplitter.targetingPhraseLength(TARGETED_PHRASE_LENGTH_IN_CHARACTERS).split(text)) {
+		for (String textLine : SentenceSplitter.targetingPhraseLength(TARGETED_LINE_LENGTH_IN_CHARACTERS).split(text)) {
 			howToRead += PSUtility.showAndNewLine(textLine,	pageLayout.contentFont().getSize());
 		}
 		
 		howToRead += "grestore" + "\n";
 		
 		return howToRead;
+	}
+	
+	private static StringTemplateGroup loadTemplateGroup() {
+		return new StringTemplateGroup(
+				new InputStreamReader(
+					GeoMapsAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
 	}
 	
 	/** TODO Test */

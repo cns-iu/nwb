@@ -5,6 +5,7 @@ import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
@@ -27,13 +28,12 @@ import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
 public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Proportional Symbol Map";
-	public static final String HOW_TO_READ_TEXT_FORMAT =
-			"This proportional symbol map in %s projection shows each unique geolocation as a " +
-			"circle area- and color-coded by associated numerical values. Minimum and maximum " +
-			"values are given in the legend.";
+	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
+			HowToRead.TEMPLATE_GROUP.getInstanceOf("proportionalSymbols");
 
 	@Override
 	public Algorithm createAlgorithm(
@@ -49,7 +49,7 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
 				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
-				HOW_TO_READ_TEXT_FORMAT,
+				TEMPLATE_FOR_HOW_TO_READ,
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	

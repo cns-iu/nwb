@@ -45,7 +45,9 @@ public enum Shapefile {
 	UNITED_STATES(
 			Resources.getResource(Shapefile.class, "st99_d00.shp"),
 			"United States",
+			"United States",
 			"U.S. State",
+			"U.S. state",
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
 			ImmutableSet.of(Inset.ALASKA, Inset.HAWAII, Inset.PUERTO_RICO),
@@ -55,7 +57,9 @@ public enum Shapefile {
 	WORLD(
 			Resources.getResource(Shapefile.class, "countries.shp"),
 			"World",
+			"world",
 			"Country",
+			"country",
 			"NAME",
 			KnownProjectedCRSDescriptor.ECKERT_IV,
 			ImmutableSet.<Inset>of(),
@@ -64,24 +68,26 @@ public enum Shapefile {
 					AnchorPoint.NEAR_ANTARCTICA));
 
 	public static final DefaultGeographicCRS DEFAULT_SOURCE_CRS = DefaultGeographicCRS.WGS84;
-	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME =
+	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME_TITLE_CASE =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(Shapefile.class),
 					new Function<Shapefile, String>() {
 						@Override
 						public String apply(Shapefile shapefile) {
-							return shapefile.getNiceName(); }}));
+							return shapefile.getNiceNameTitleCase(); }}));
 	public static ImmutableSet<String> byNiceNames() {
-		return FOR_NICE_NAME.keySet();
+		return FOR_NICE_NAME_TITLE_CASE.keySet();
 	}
-	public static Shapefile forNiceName(String niceName) {
+	public static Shapefile forNiceNameInTitleCase(String niceNameTitleCase) {
 		// TODO Null?
-		return FOR_NICE_NAME.get(niceName);
+		return FOR_NICE_NAME_TITLE_CASE.get(niceNameTitleCase);
 	}
 
 
-	private final String niceName;
-	private final String componentDescription;
+	private final String niceNameTitleCase;
+	private final String niceNamePlain;
+	private final String componentDescriptionTitleCase;
+	private final String componentDescriptionPlain;
 	private final String featureAttributeName;
 	private final KnownProjectedCRSDescriptor defaultProjectedCrs;
 	private final SimpleFeatureSource featureSource;
@@ -90,14 +96,18 @@ public enum Shapefile {
 
 	private Shapefile(
 			URL url,
-			String niceName,
-			String componentDescription,
+			String niceNameTitleCase,
+			String niceNamePlain,
+			String componentDescriptionTitleCase,
+			String componentDescriptionPlain,
 			String featureAttributeName,
 			KnownProjectedCRSDescriptor defaultProjectedCrs,
 			Collection<Inset> insets,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
-		this.niceName = niceName;
-		this.componentDescription = componentDescription;
+		this.niceNameTitleCase = niceNameTitleCase;
+		this.niceNamePlain = niceNamePlain;
+		this.componentDescriptionTitleCase = componentDescriptionTitleCase;
+		this.componentDescriptionPlain = componentDescriptionPlain;
 		this.featureAttributeName = featureAttributeName;
 		this.defaultProjectedCrs = defaultProjectedCrs;
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
@@ -161,15 +171,26 @@ public enum Shapefile {
 
 	@Override
 	public String toString() {
-		return niceName;
+		return niceNameTitleCase;
 	}
 
-	public String getNiceName() {
-		return niceName;
+	public boolean hasInsets() {
+		return !insetForFeatureName.isEmpty();
+	}
+	public String getNiceNameTitleCase() {
+		return niceNameTitleCase;
 	}
 	
-	public String getComponentDescription() {
-		return componentDescription;
+	public String getNiceNamePlain() {
+		return niceNamePlain;
+	}
+	
+	public String getComponentDescriptionTitleCase() {
+		return componentDescriptionTitleCase;
+	}
+	
+	public String getComponentDescriptionPlain() {
+		return componentDescriptionPlain;
 	}
 
 	public String getFeatureAttributeName() {

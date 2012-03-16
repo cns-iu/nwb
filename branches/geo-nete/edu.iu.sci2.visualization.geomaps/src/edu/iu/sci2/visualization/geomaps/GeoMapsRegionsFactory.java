@@ -4,6 +4,7 @@ import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmCreationCanceledException;
@@ -30,13 +31,12 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Choropleth Map";
-	public static final String HOW_TO_READ_TEXT_FORMAT =
-			"This choropleth map in %s projection color codes each region named in the input " +
-			"table by its associated numerical value. Minimum and maximum values are given in " +
-			"the legend.";
+	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
+			HowToRead.TEMPLATE_GROUP.getInstanceOf("choropleth");
 	
 	@Override
 	public Algorithm createAlgorithm(
@@ -49,7 +49,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
 				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
-				HOW_TO_READ_TEXT_FORMAT,
+				TEMPLATE_FOR_HOW_TO_READ,
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	

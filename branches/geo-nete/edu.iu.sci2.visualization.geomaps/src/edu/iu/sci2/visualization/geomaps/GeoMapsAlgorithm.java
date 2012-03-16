@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -75,7 +76,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private final PageLayout pageLayout;
 	private final AnnotationMode<G, D> annotationMode;
 	private final String title;
-	private final String howToReadTextFormat;
+	private final StringTemplate templateForHowToRead;
 	
 	// TODO reduce visibility
 	public static LogService logger = new StdErrLogService();
@@ -86,14 +87,14 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			PageLayout pageLayout,
 			AnnotationMode<G, D> annotationMode,
 			String title,
-			String howToReadTextFormat,
+			StringTemplate templateForHowToRead,
 			LogService logService) {
 		this.data = data;
 		this.parameters = parameters;
 		this.pageLayout = pageLayout;
 		this.annotationMode = annotationMode;
 		this.title = title;
-		this.howToReadTextFormat = howToReadTextFormat;
+		this.templateForHowToRead = templateForHowToRead;
 		
 		GeoMapsAlgorithm.logger = logService;
 	}
@@ -108,8 +109,11 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			
 			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, title);
 			
-			String howToReadText = String.format(
-					howToReadTextFormat, geoMap.getKnownProjectedCRSDescriptor().getNiceName());
+			templateForHowToRead.setAttribute("baseMapName", geoMap.getShapefile().getNiceNamePlain());
+			templateForHowToRead.setAttribute("projectionName", geoMap.getKnownProjectedCRSDescriptor().getNiceNamePlain());
+			templateForHowToRead.setAttribute("hasInsets", geoMap.getShapefile().hasInsets());
+			templateForHowToRead.setAttribute("partType", geoMap.getShapefile().getComponentDescriptionPlain());
+			String howToReadText = templateForHowToRead.toString().trim();
 			
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout, howToReadText);
 			File geoMapFile = geoMapView.writeToPSFile(dataLabel);
@@ -152,17 +156,17 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceName());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceNameTitleCase());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
 
 			String testFileURLStem = "/edu/iu/sci2/visualization/geomaps/testing/";
 			URL testFileURL =
-//					GeoMapsAlgorithm.class.getResource(testFileURLStem + "25mostPopulousNationsWithGDPs.csv");
-					GeoMapsAlgorithm.class.getResource(testFileURLStem + "us-state-populations.csv");
+					GeoMapsAlgorithm.class.getResource(testFileURLStem + "25mostPopulousNationsWithGDPs.csv");
+//					GeoMapsAlgorithm.class.getResource(testFileURLStem + "us-state-populations.csv");
 			File inFile = new File(testFileURL.toURI());
 			AlgorithmFactory algorithmFactory;
-			algorithmFactory = prepareFactoryForCirclesTest(parameters);
 			algorithmFactory = prepareFactoryForRegionsTest(parameters);
+			algorithmFactory = prepareFactoryForCirclesTest(parameters);
 			
 			Data data = new BasicData(inFile, CSV_MIME_TYPE);
 			

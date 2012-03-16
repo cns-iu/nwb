@@ -1,0 +1,15 @@
+group howToRead;
+
+
+proportionalSymbols(baseMapName, projectionName, hasInsets, partType) ::= <<
+
+This proportional symbol map shows the <baseMapName> using a <projectionName> projection<if(hasInsets)> with Alaska, Hawaii, and Puerto Rico inset below<else><endif>. Each dataset record is represented by a circle centered at its geolocation. The area, interior color, and exterior color of each circle are proportional to optionally associated numeric data. Minimum and maximum data values are given in the legend.
+
+>>
+
+
+choropleth(baseMapName, projectionName, hasInsets, partType) ::= <<
+
+This choropleth map shows the <baseMapName> using a <projectionName> projection<if(hasInsets)> with Alaska, Hawaii, and Puerto Rico inset below<else><endif>. Each <partType> color is proportional to optionally associated numeric data. Minimum and maximum data values are given in the legend.
+
+>>
