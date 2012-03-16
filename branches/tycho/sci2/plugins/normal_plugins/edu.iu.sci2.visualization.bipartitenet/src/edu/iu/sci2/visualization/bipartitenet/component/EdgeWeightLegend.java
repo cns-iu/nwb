@@ -67,6 +67,7 @@ public class EdgeWeightLegend implements Paintable {
 			// preserve invariant
 			arrowStart = arrowStart.translate(0, 1.2 * labelFont.getSize());
 		}
+		g.dispose();
 		
 	}
 }
