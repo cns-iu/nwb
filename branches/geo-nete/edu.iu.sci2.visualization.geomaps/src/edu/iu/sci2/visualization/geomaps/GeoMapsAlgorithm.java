@@ -156,17 +156,17 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	public static void main(String[] args) {
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceNameTitleCase());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.UNITED_STATES.getNiceNameTitleCase());
 //			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
 
 			String testFileURLStem = "/edu/iu/sci2/visualization/geomaps/testing/";
 			URL testFileURL =
-					GeoMapsAlgorithm.class.getResource(testFileURLStem + "25mostPopulousNationsWithGDPs.csv");
-//					GeoMapsAlgorithm.class.getResource(testFileURLStem + "us-state-populations.csv");
+//					GeoMapsAlgorithm.class.getResource(testFileURLStem + "25mostPopulousNationsWithGDPs.csv");
+					GeoMapsAlgorithm.class.getResource(testFileURLStem + "us-state-populations.csv");
 			File inFile = new File(testFileURL.toURI());
 			AlgorithmFactory algorithmFactory;
-			algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			algorithmFactory = prepareFactoryForCirclesTest(parameters);
+			algorithmFactory = prepareFactoryForRegionsTest(parameters);
 			
 			Data data = new BasicData(inFile, CSV_MIME_TYPE);
 			
@@ -204,7 +204,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("innerColorColumnName", "Population (Thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
 		parameters.put("innerColorRange", "Gray to Black");
-		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
+		AlgorithmFactory algorithmFactory = new GeoMapsWebCirclesFactory();
 		return algorithmFactory;
 	}
 
@@ -215,7 +215,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("featureColorColumnName", "Population");
 		parameters.put("featureColorScaling", Scaling.Linear.toString());
 		parameters.put("featureColorRange", "Yellow to Blue");
-		AlgorithmFactory algorithmFactory =	new GeoMapsRegionsFactory();
+		AlgorithmFactory algorithmFactory =	new GeoMapsWebRegionsFactory();
 		return algorithmFactory;
 	}
 }
