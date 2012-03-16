@@ -17,6 +17,7 @@ import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractCoding;
@@ -44,7 +45,7 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
-				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange) {
+				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange, Shapefile shapefile) {
 					Range<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
 					// TODO Don't force data min = 0, instead use actual data min and draw actual corresponding circle
 					Range<Double> usableRangeFromZero = Range.between(0.0, usableRange.getPointB()); // TODO !?
@@ -110,7 +111,7 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
-				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
+				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, Shapefile shapefile) {
 					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
@@ -159,7 +160,7 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
-				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
+				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, Shapefile shapefile) {
 					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					

@@ -38,7 +38,8 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	public abstract Color defaultColor();
 
 	@Override
-	public LabeledReference makeLabeledReference(PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException {
+	public LabeledReference makeLabeledReference(
+			PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException {
 		LabeledReferenceGradient labeledReferenceGradient = new LabeledReferenceGradient(
 				createColorLegend(numericFormatType), lowerLeft(pageLayout),
 				pageLayout, pageLayout.colorGradientDimensions());

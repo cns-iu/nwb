@@ -45,6 +45,7 @@ public enum Shapefile {
 	UNITED_STATES(
 			Resources.getResource(Shapefile.class, "st99_d00.shp"),
 			"United States",
+			"U.S. State",
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
 			ImmutableSet.of(Inset.ALASKA, Inset.HAWAII, Inset.PUERTO_RICO),
@@ -54,6 +55,7 @@ public enum Shapefile {
 	WORLD(
 			Resources.getResource(Shapefile.class, "countries.shp"),
 			"World",
+			"Country",
 			"NAME",
 			KnownProjectedCRSDescriptor.ECKERT_IV,
 			ImmutableSet.<Inset>of(),
@@ -79,6 +81,7 @@ public enum Shapefile {
 
 
 	private final String niceName;
+	private final String componentDescription;
 	private final String featureAttributeName;
 	private final KnownProjectedCRSDescriptor defaultProjectedCrs;
 	private final SimpleFeatureSource featureSource;
@@ -88,11 +91,13 @@ public enum Shapefile {
 	private Shapefile(
 			URL url,
 			String niceName,
+			String componentDescription,
 			String featureAttributeName,
 			KnownProjectedCRSDescriptor defaultProjectedCrs,
 			Collection<Inset> insets,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
 		this.niceName = niceName;
+		this.componentDescription = componentDescription;
 		this.featureAttributeName = featureAttributeName;
 		this.defaultProjectedCrs = defaultProjectedCrs;
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
@@ -163,6 +168,10 @@ public enum Shapefile {
 		return niceName;
 	}
 	
+	public String getComponentDescription() {
+		return componentDescription;
+	}
+
 	public String getFeatureAttributeName() {
 		return featureAttributeName;
 	}

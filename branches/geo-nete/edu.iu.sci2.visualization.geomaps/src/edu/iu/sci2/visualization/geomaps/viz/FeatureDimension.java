@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.ColorInterpolator;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
@@ -39,7 +40,7 @@ public enum FeatureDimension implements VizDimension {
 		public Binding<FeatureDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<FeatureDimension>(this, parameters) {
 				@Override
-				public Coding<FeatureDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange) {
+				public Coding<FeatureDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, final Shapefile shapefile) {
 					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
@@ -51,7 +52,7 @@ public enum FeatureDimension implements VizDimension {
 
 						@Override
 						public String legendDescription() {
-							return "Region Color";
+							return String.format("%s Color", shapefile.getComponentDescription());
 						}
 
 						@Override

@@ -73,7 +73,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			
 			Coding<D> coding = binding.codingForDataRange(
 					usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE),
-					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED));
+					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED),
+					shapefile);
 			codings.add(coding);
 			
 			LabeledReference legend = coding.makeLabeledReference(pageLayout, numericFormatType);			
