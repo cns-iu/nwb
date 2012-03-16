@@ -113,12 +113,13 @@ public class ComplexLabelPainter implements Paintable {
 		
 		for (int i = 0; i < lines.size(); i++) {
 			Font thisFont = fonts.get(i);
-			
-			SimpleLabelPainter p = new SimpleLabelPainter(currentPosition, 
-					XAlignment.LEFT, YAlignment.ASCENT,
-					lines.get(i), thisFont, colors.get(i), Truncator.none());
 			Graphics2D newGraphics = (Graphics2D) g.create();
-			p.paint(newGraphics);
+			
+			SimpleLabelPainter p = SimpleLabelPainter.alignedBy(XAlignment.LEFT, YAlignment.ASCENT)
+					.withFont(thisFont)
+					.withColor(colors.get(i)).build();
+			p.paintLabel(currentPosition, lines.get(i), newGraphics);
+
 			newGraphics.dispose();
 			
 			currentPosition = currentPosition.translate(0, thisFont.getSize2D() * lineSpacing);

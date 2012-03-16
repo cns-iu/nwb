@@ -9,8 +9,9 @@ import java.awt.font.TextLayout;
 import math.geom2d.Point2D;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
-public final class SimpleLabelPainter implements Paintable {
+public class SimpleLabelPainter {
 	public static enum XAlignment implements Function<TextLayout, Double> {
 		LEFT {
 			@Override
@@ -74,49 +75,101 @@ public final class SimpleLabelPainter implements Paintable {
 		@Override
 		public abstract Double apply(LineMetrics lm);
 	}
-		
-	private final Point2D position;
-	private final String text;
-	private final Font font;
+
 	private final XAlignment xAlign;
 	private final YAlignment yAlign;
+	private final Font font;
 	private final Color color;
 	private final Truncator trunc;
 
-	public SimpleLabelPainter(Point2D position, XAlignment xAlign, YAlignment yAlign,
-			String text, Font font, Color color, Truncator trunc) {
-		this.position = position;
+	private SimpleLabelPainter(XAlignment xAlign, YAlignment yAlign, Font font, Color color, Truncator trunc) {
+		Preconditions.checkNotNull(xAlign);
+		Preconditions.checkNotNull(yAlign);
+		Preconditions.checkNotNull(trunc);
+		
 		this.xAlign = xAlign;
 		this.yAlign = yAlign;
-		this.text = text;
 		this.font = font;
 		this.color = color;
 		this.trunc = trunc;
 	}
 
-	@Override
-	public void paint(Graphics2D g) {
-		Font theFont;
-		if (font == null) {
-			theFont = g.getFont();
-		} else {
-			theFont = this.font;
-		}
-		g.setFont(theFont);
+	public Paintable getPaintable(final Point2D position, final String text) {
+		return new Paintable() {
+			@Override
+			public void paint(Graphics2D g) {
+				paintLabel(position, text, g);
+			}
+		};
+	}
+	
+	public void paintLabel(Point2D position, String text, Graphics2D g) {
+		setFontIfNeeded(g);
+		setColorIfNeeded(g);
 		
-		String truncatedLabel = trunc.truncate(text, g);
-
-		if (color != null) {
-			g.setColor(color);
-		}
+		Font theFont = g.getFont();
 		
-		TextLayout tl = new TextLayout(truncatedLabel, theFont, g.getFontRenderContext());
+		String truncated = trunc.truncate(text, g);
+		
+		TextLayout tl = new TextLayout(truncated, theFont, g.getFontRenderContext());
 		double xPos = position.getX() + xAlign.apply(tl);
 		
 		LineMetrics lm = theFont.getLineMetrics("Asdfj", g.getFontRenderContext());
 		double yPos = position.getY() + yAlign.apply(lm);
 		
-		g.drawString(truncatedLabel, (float) xPos, (float) yPos);
+		g.drawString(truncated, (float) xPos, (float) yPos);
+	}
+
+	private void setColorIfNeeded(Graphics2D g) {
+		if (this.color != null) {
+			g.setColor(this.color);
+		}		
+	}
+
+	private void setFontIfNeeded(Graphics2D g) {
+		if (this.font != null) {
+			g.setFont(this.font);
+		}
+	}
+
+	public static Builder alignedBy(XAlignment xAlign, YAlignment yAlign) {
+		return new Builder(xAlign, yAlign);
+	}
+	
+	public static class Builder {
+		private final XAlignment xAlign;
+		private final YAlignment yAlign;
+		private Font font;
+		private Color color;
+		private Truncator trunc = Truncator.none();
+		
+		public Builder(XAlignment xAlign, YAlignment yAlign) {
+			this.xAlign = xAlign;
+			this.yAlign = yAlign;
+		}
+		
+		public Builder withFont(Font f) {
+			this.font = f;
+			return this;
+		}
+		
+		public Builder withColor(Color c) {
+			this.color = c;
+			return this;
+		}
+		
+		public Builder truncatedTo(double width) {
+			trunc = Truncator.atWidth(width);
+			return this;
+		}
+		
+		public SimpleLabelPainter build() {
+			return new SimpleLabelPainter(xAlign, yAlign, font, color, trunc);
+		}
+		
+		public Paintable makeLabel(Point2D position, String text) {
+			return build().getPaintable(position, text);
+		}
 	}
 	
 }

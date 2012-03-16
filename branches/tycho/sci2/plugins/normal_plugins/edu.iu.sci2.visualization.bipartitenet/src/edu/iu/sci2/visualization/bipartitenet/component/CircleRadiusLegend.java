@@ -78,10 +78,14 @@ public class CircleRadiusLegend implements Paintable {
 		int numLabels = reversedValues.size();
 		double denominator = Math.max(1, numLabels - 1);
 	
+		SimpleLabelPainter labelPainter = SimpleLabelPainter
+				.alignedBy(XAlignment.LEFT, YAlignment.STRIKE_HEIGHT)
+				.withFont(labelFont)
+				.build();
+		
 		for (int i = 0; i < numLabels; i++) {
 			Point2D labelPoint = labelLine.getPoint((i) / denominator);
-			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT,
-					reversedValues.get(i).toString(), labelFont, null, Truncator.none()).paint(g);
+			labelPainter.paintLabel(labelPoint, reversedValues.get(i).toString(), g);
 		}		
 	}
 }

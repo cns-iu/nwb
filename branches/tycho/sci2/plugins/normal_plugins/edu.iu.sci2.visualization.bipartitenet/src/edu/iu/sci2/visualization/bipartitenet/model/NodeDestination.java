@@ -9,7 +9,6 @@ import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
-import edu.iu.sci2.visualization.bipartitenet.component.Truncator;
 
 public enum NodeDestination {
 	LEFT(Color.decode("#3399FF"), XAlignment.RIGHT) {
@@ -38,16 +37,12 @@ public enum NodeDestination {
 
 	public void paintLabel(NodeView nv, Graphics2D g, Font defaultFont, double nodeCenterToPageEdge) {
 		SimpleLabelPainter painter =
-				new SimpleLabelPainter(
-						getAlignPoint(nv),
-						alignDirection,
-						YAlignment.STRIKE_HEIGHT,
-						nv.getLabel(),
-						defaultFont,
-						null, 
-						Truncator.atWidth(nodeCenterToPageEdge - nv.getCenterToTextDistance() - 10));
+				SimpleLabelPainter.alignedBy(alignDirection, YAlignment.STRIKE_HEIGHT)
+				.withFont(defaultFont)
+				.truncatedTo(nodeCenterToPageEdge - nv.getCenterToTextDistance() - 10)
+				.build();
 		
-		painter.paint(g);
+		painter.paintLabel(getAlignPoint(nv), nv.getLabel(), g);
 	}
 	
 	public Color getFillColor() {

@@ -5,15 +5,15 @@ import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
+import math.geom2d.Point2D;
+
 import org.apache.commons.lang.WordUtils;
 
-import math.geom2d.Point2D;
 import edu.iu.sci2.visualization.bipartitenet.component.CanvasContainer;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
-import edu.iu.sci2.visualization.bipartitenet.component.Truncator;
 
 public class SimpleLabelPainterTester {
 
@@ -38,12 +38,9 @@ public class SimpleLabelPainterTester {
 		for (XAlignment xAlign : XAlignment.values()) {
 			for (YAlignment yAlign : YAlignment.values()) {
 				final Point2D position = new Point2D(x, y);
-				cc.add(new SimpleLabelPainter(
-						position,
-						xAlign,
-						yAlign,
-						WordUtils.capitalize(String.format("X: %s, Y: %s", xAlign, yAlign).toLowerCase()),
-						null, null, Truncator.none()));
+				cc.add(SimpleLabelPainter.alignedBy(xAlign, yAlign)
+						.makeLabel(position, WordUtils.capitalize(
+								String.format("X: %s, Y: %s", xAlign, yAlign).toLowerCase())));
 				
 				cc.add(new Paintable() {
 					@Override

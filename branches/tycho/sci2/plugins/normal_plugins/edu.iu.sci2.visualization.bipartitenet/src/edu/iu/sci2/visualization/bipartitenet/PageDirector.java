@@ -27,7 +27,6 @@ import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
-import edu.iu.sci2.visualization.bipartitenet.component.Truncator;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
@@ -238,15 +237,17 @@ public class PageDirector implements Paintable {
 		}
 		
 		// The titles of the two columns
-		painter.add(new SimpleLabelPainter(layout.getLeftTitlePosition(), 
-				XAlignment.RIGHT, YAlignment.BASELINE, leftSideTitle, layout.getFont(TextType.TITLE), null, Truncator.none()));
-		painter.add(new SimpleLabelPainter(layout.getRightTitlePosition(), 
-				XAlignment.LEFT, YAlignment.BASELINE, rightSideTitle, layout.getFont(TextType.TITLE), null, Truncator.none()));
+		painter.add(SimpleLabelPainter.alignedBy(XAlignment.RIGHT, YAlignment.BASELINE)
+				.withFont(layout.getFont(TextType.TITLE))
+				.makeLabel(layout.getLeftTitlePosition(), leftSideTitle));
+		painter.add(SimpleLabelPainter.alignedBy(XAlignment.LEFT,  YAlignment.BASELINE)
+				.withFont(layout.getFont(TextType.TITLE))
+				.makeLabel(layout.getRightTitlePosition(), rightSideTitle));
 		
 		// The footer
-		painter.add(new SimpleLabelPainter(layout.getFooterPosition(), 
-				XAlignment.CENTER, YAlignment.BASELINE, footer, layout.getFont(TextType.FOOTER),
-				Color.gray, Truncator.none()));
+		painter.add(SimpleLabelPainter.alignedBy(XAlignment.CENTER,  YAlignment.BASELINE)
+				.withFont(layout.getFont(TextType.FOOTER))
+				.makeLabel(layout.getFooterPosition(), footer));
 	}
 
 	private Font[] createNodeLabelFonts() {

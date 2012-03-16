@@ -53,6 +53,10 @@ public class EdgeWeightLegend implements Paintable {
 		Graphics2D g = (Graphics2D) gForLabels.create();
 		Point2D arrowsTopLeft = topLeft.translate(0, yOffset);
 		Point2D arrowStart = arrowsTopLeft;
+		SimpleLabelPainter labelPainter = SimpleLabelPainter
+				.alignedBy(XAlignment.LEFT, YAlignment.STRIKE_HEIGHT)
+				.withFont(labelFont)
+				.build();
 		for (Double value : labeledValues.reverse()) {
 			// loop invariant: arrowStart is the start of the current arrow
 			Point2D arrowEnd = arrowStart.translate(ARROW_LENGTH, 0);
@@ -61,8 +65,7 @@ public class EdgeWeightLegend implements Paintable {
 			ThicknessCodedEdgeView.drawArrow(line, lineThickness, g);
 			
 			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, 0);
-			new SimpleLabelPainter(labelPoint, XAlignment.LEFT, YAlignment.STRIKE_HEIGHT, value.toString(), labelFont, null, Truncator.none())
-				.paint(gForLabels);
+			labelPainter.paintLabel(labelPoint, value.toString(), gForLabels);
 			
 			// preserve invariant
 			arrowStart = arrowStart.translate(0, 1.2 * labelFont.getSize());
