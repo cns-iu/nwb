@@ -193,6 +193,7 @@ public enum Shapefile {
 		}
 	}
 	
+
 	public static class Inset {
 		private static final Geometry EMPTY_GEOMETRY;
 		static {

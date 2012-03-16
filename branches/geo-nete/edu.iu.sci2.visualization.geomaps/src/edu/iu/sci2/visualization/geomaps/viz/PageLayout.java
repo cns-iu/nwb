@@ -78,7 +78,7 @@ public enum PageLayout {
 		@Override
 		public Optional<Point2D.Double> howToReadLowerLeft() {
 			return Optional.of(new Point2D.Double(
-					0.65 * pageWidth(), // TODO Fudge factor.. area legend isn't as wide as the color legends
+					0.55 * pageWidth(),
 					legendariumLowerLeft().getY()));
 		}
 

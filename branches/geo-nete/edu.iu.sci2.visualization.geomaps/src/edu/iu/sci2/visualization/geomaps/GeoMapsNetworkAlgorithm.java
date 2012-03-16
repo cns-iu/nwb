@@ -112,7 +112,11 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					ImmutableSet.<LabeledReference>of(),
 					getPageLayout());
 			
-			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout());
+			String howToReadText = String.format(
+					GeoMapsCirclesFactory.HOW_TO_READ_TEXT_FORMAT,
+					knownProjectedCRSDescriptor.getNiceName());
+			
+			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout(), howToReadText);
 			
 			File geoMapFile = postScriptWriter.writeToPSFile("");
 

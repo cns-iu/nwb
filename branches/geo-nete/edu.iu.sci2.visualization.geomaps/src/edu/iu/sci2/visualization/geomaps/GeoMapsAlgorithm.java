@@ -55,8 +55,11 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScript
  * Need an executive call on this one.
  */
 public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Algorithm {
+	public static final String TITLE = "Geospatial Visualization";
+	
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
+	public static final String OUTPUT_FILE_EXTENSION = "ps";
 
 	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplates();
 	public static final String STRING_TEMPLATE_FILE_PATH =
@@ -72,8 +75,8 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private final PageLayout pageLayout;
 	private final AnnotationMode<G, D> annotationMode;
 	private final String title;
-	public static final String OUTPUT_FILE_EXTENSION = "ps";
-	public static final String TITLE = "Geospatial Visualization";
+	private final String howToReadTextFormat;
+	
 	// TODO reduce visibility
 	public static LogService logger = new StdErrLogService();
 	
@@ -83,12 +86,14 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			PageLayout pageLayout,
 			AnnotationMode<G, D> annotationMode,
 			String title,
+			String howToReadTextFormat,
 			LogService logService) {
 		this.data = data;
 		this.parameters = parameters;
 		this.pageLayout = pageLayout;
 		this.annotationMode = annotationMode;
 		this.title = title;
+		this.howToReadTextFormat = howToReadTextFormat;
 		
 		GeoMapsAlgorithm.logger = logService;
 	}
@@ -102,7 +107,11 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
 			
 			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, title);
-			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout);
+			
+			String howToReadText = String.format(
+					howToReadTextFormat, geoMap.getKnownProjectedCRSDescriptor().getNiceName());
+			
+			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout, howToReadText);
 			File geoMapFile = geoMapView.writeToPSFile(dataLabel);
 
 			Data[] outData = new Data[] {
@@ -191,7 +200,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		parameters.put("innerColorColumnName", "Population (Thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
 		parameters.put("innerColorRange", "Gray to Black");
-		AlgorithmFactory algorithmFactory = new GeoMapsWebCirclesFactory();
+		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
 		return algorithmFactory;
 	}
 

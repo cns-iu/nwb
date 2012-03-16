@@ -30,6 +30,10 @@ import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
 
 public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Proportional Symbol Map";
+	public static final String HOW_TO_READ_TEXT_FORMAT =
+			"This proportional symbol map in %s projection shows each unique geolocation as a " +
+			"circle area- and color-coded by associated numerical values. Minimum and maximum " +
+			"values are given in the legend.";
 
 	@Override
 	public Algorithm createAlgorithm(
@@ -45,6 +49,7 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
 				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
+				HOW_TO_READ_TEXT_FORMAT,
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	

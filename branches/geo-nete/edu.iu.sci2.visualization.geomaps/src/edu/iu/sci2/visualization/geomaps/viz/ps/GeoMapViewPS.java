@@ -33,12 +33,15 @@ public class GeoMapViewPS {
 	
 	private final GeoMap geoMap;
 	private final PageLayout pageLayout;
+	private final String howToReadText;
 	private final GeoMapViewPageArea geoMapViewPageArea;
 
-	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout) throws ShapefilePostScriptWriterException {
+	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout, String howToReadText) throws ShapefilePostScriptWriterException {
 		try {
 			this.geoMap = geoMap;
 			this.pageLayout = pageLayout;
+			this.howToReadText = howToReadText;
+			
 			this.geoMapViewPageArea = new GeoMapViewPageArea(calculateMapBoundingRectangle(), pageLayout);
 		} catch (TransformException e) {
 			throw new ShapefilePostScriptWriterException(e);
@@ -106,7 +109,6 @@ public class GeoMapViewPS {
 		if (pageLayout.headerLowerLeft().isPresent()) {
 			PageHeader pageHeader = new PageHeader(geoMap.getTitle(), pageLayout.headerLowerLeft().get(), pageLayout,
 					String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
-					String.format("%s Projection", geoMap.getKnownProjectedCRSDescriptor().getNiceName()),
 					timestamp());
 			out.write(pageHeader.toPostScript());
 			out.write("\n");
@@ -116,7 +118,11 @@ public class GeoMapViewPS {
 		out.write("\n");
 		
 		if (pageLayout.howToReadLowerLeft().isPresent()) {
-			out.write(new HowToRead(pageLayout.howToReadLowerLeft().get(), pageLayout).toPostScript());
+			out.write(new HowToRead(
+					pageLayout.howToReadLowerLeft().get(),
+					pageLayout,
+					howToReadText)
+			.toPostScript());
 		}
 		
 		out.write("showpage" + "\n");

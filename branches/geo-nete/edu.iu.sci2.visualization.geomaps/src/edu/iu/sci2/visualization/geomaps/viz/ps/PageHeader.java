@@ -38,7 +38,7 @@ public class PageHeader implements PostScriptable {
 	
 	
 	@Override
-	public String toPostScript() {		
+	public String toPostScript() {	
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("% Page info" + "\n");

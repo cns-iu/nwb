@@ -33,6 +33,10 @@ import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
 public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Choropleth Map";
+	public static final String HOW_TO_READ_TEXT_FORMAT =
+			"This choropleth map in %s projection color codes each region named in the input " +
+			"table by its associated numerical value. Minimum and maximum values are given in " +
+			"the legend.";
 	
 	@Override
 	public Algorithm createAlgorithm(
@@ -45,6 +49,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
 				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
+				HOW_TO_READ_TEXT_FORMAT,
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	
