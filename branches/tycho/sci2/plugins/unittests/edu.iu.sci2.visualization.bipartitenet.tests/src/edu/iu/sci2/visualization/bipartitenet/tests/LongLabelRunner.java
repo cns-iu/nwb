@@ -6,15 +6,14 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.freehep.util.UserProperties;
 
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
@@ -69,15 +68,19 @@ public class LongLabelRunner {
 	}
 
 	private static void renderToEps(BipartiteGraphDataModel model, Layout layout) throws IOException {
- 		OutputStream out = new FileOutputStream("BLAH.eps");
-		EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
-		g2d.setGraphicContext(new GraphicContext());
-		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
-		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());
-//		g2d.drawString("Gah, does this show up as a string?", 10, 10);
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
-		r.paint(g2d);
-		g2d.finish();
-		out.close();
+		UserProperties p = new UserProperties();
+		// p.setProperty(PSGraphics2D.PAGE_SIZE,PageConstants.INTERNATIONAL);
+		p.setProperty(PSGraphics2D.EMBED_FONTS, false);
+		p.setProperty(PSGraphics2D.TEXT_AS_SHAPES, false);
+		VectorGraphics g = new PSGraphics2D(new File("BLAH-freehep.ps"),
+				new Dimension(layout.getWidth(), layout.getHeight()));
+		g.setProperties(p);
+		g.startExport();
+		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+				"What", "What title");
+		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
+		r.paint(g);
+		g.endExport();
+		g.dispose();
 	}
 }

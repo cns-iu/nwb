@@ -9,5 +9,6 @@ Require-Bundle: org.junit;bundle-version="4.7"
 Import-Package: org.apache.commons.lang,
  org.apache.fop.render.ps,
  org.apache.log4j,
- org.apache.xmlgraphics.java2d,
- org.apache.xmlgraphics.java2d.ps
+ org.freehep.graphics2d,
+ org.freehep.graphicsio.ps,
+ org.freehep.util

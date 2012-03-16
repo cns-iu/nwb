@@ -1,25 +1,19 @@
 package edu.iu.sci2.visualization.bipartitenet.tests;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-import math.geom2d.line.LineSegment2D;
-
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.freehep.util.UserProperties;
 
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
@@ -48,7 +42,6 @@ public class WeightedEdgeRunner {
 			renderToPNG(model, layout);
 			renderToEps(model, layout);
 		}
-		doEpsTest();
 	}
 
 //	private static void doEpsTest() throws IOException {
@@ -63,23 +56,6 @@ public class WeightedEdgeRunner {
 //		out.close();		
 //	}
 
-	private static void doEpsTest() throws IOException {
-		OutputStream out = new FileOutputStream("mini-test.eps");
-		EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
-		g2d.setGraphicContext(new GraphicContext());
-		g2d.setupDocument(out, 200, 200);
-		
-		LineSegment2D seg = new LineSegment2D(50, 50, 150, 50);
-		g2d.setStroke(new BasicStroke(5));
-		g2d.setColor(Color.gray);
-		seg.draw(g2d);
-		g2d.setStroke(new BasicStroke(1));
-		g2d.setColor(Color.pink);
-		seg.draw(g2d);
-		
-		g2d.finish();
-		out.close();		
-	}
 	
 	private static void renderToPNG(BipartiteGraphDataModel model, Layout layout) throws IOException {
 		BufferedImage img = new BufferedImage(layout.getWidth(), layout.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -106,18 +82,19 @@ public class WeightedEdgeRunner {
 	}
 
 	private static void renderToEps(BipartiteGraphDataModel model, Layout layout) throws IOException {
-		BasicConfigurator.configure();
-		Logger l = Logger.getRootLogger();
-		l.info("hi");
- 		OutputStream out = new FileOutputStream(String.format("BLAH-%s.eps", layout.toString()));
-		EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
-// 		PSGraphics2DAdapter adapter = new PSGraphics2DAdapter(new PSRenderer());
-		g2d.setGraphicContext(new GraphicContext());
-//		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
-		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
-		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
-		r.paint(g2d);
-		g2d.finish();
-		out.close();
+		UserProperties p = new UserProperties();
+		// p.setProperty(PSGraphics2D.PAGE_SIZE,PageConstants.INTERNATIONAL);
+		p.setProperty(PSGraphics2D.EMBED_FONTS, false);
+		p.setProperty(PSGraphics2D.TEXT_AS_SHAPES, false);
+		VectorGraphics g = new PSGraphics2D(new File("BLAH-freehep.ps"),
+				new Dimension(layout.getWidth(), layout.getHeight()));
+		g.setProperties(p);
+		g.startExport();
+		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+				"What", "What title");
+		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
+		r.paint(g);
+		g.endExport();
+		g.dispose();
 	}
 }
