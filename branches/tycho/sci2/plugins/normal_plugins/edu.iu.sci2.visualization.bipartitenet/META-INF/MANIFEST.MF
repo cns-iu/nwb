@@ -8,22 +8,22 @@ X-AutoStart: true
 Import-Package: com.google.common.base;version="8.0.0",
  com.google.common.collect;version="8.0.0",
  edu.iu.nwb.util.nwbfile,
- javax.imageio,
  math.geom2d,
  math.geom2d.conic,
  math.geom2d.curve,
  math.geom2d.line,
  math.geom2d.point,
  math.geom2d.polygon,
- org.apache.xmlgraphics.java2d,
- org.apache.xmlgraphics.java2d.ps,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.utilities,
  org.cishell.utilities.mutateParameter.dropdown,
+ org.freehep.graphics2d,
+ org.freehep.graphicsio,
+ org.freehep.graphicsio.ps,
+ org.freehep.util,
  org.osgi.service.log,
- org.osgi.service.metatype;version="1.1.0",
- prefuse.data
+ org.osgi.service.metatype;version="1.1.0"
 Service-Component: OSGI-INF/component.xml
 Bundle-ClassPath: .

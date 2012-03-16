@@ -1,23 +1,21 @@
 package edu.iu.sci2.visualization.bipartitenet.algorithm;
 
+import java.awt.Dimension;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Dictionary;
 
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.apache.xmlgraphics.java2d.ps.PSDocumentGraphics2D;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.FileUtilities;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.freehep.util.UserProperties;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.util.nwbfile.ParsingException;
@@ -84,16 +82,18 @@ public class BipartiteNetAlgorithm implements Algorithm {
 
 	private Data drawToPSFile(Paintable paintable) throws IOException {
 		File outFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("BipartiteGraph", "ps");
-		OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
-		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
-		g2d.setGraphicContext(new GraphicContext());
-//		g2d.setCustomTextHandler(new NativeTextHandler(g2d, null));
 		
-		g2d.setupDocument(out, layout.getWidth(), layout.getHeight());
-		g2d.setClip(0, 0, layout.getWidth(), layout.getHeight());
-		paintable.paint(g2d);
-		g2d.finish();
-		out.close();
+		UserProperties p = new UserProperties();
+		// p.setProperty(PSGraphics2D.PAGE_SIZE,PageConstants.INTERNATIONAL);
+		p.setProperty(PSGraphics2D.EMBED_FONTS, false);
+		p.setProperty(PSGraphics2D.TEXT_AS_SHAPES, false);
+		PSGraphics2D g = new PSGraphics2D(outFile,
+				new Dimension(layout.getWidth(), layout.getHeight()));
+		g.setProperties(p);
+		g.startExport();
+		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
+		paintable.paint(g);
+		g.endExport(); // dispose, write trailer, close stream
 		
 		Data outData = new BasicData(outFile, "file:text/ps");
 		Dictionary<String, Object> metadata = (Dictionary<String, Object>)outData.getMetadata();
