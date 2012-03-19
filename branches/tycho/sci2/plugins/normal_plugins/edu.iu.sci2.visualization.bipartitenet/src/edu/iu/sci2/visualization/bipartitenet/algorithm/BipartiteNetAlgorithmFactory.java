@@ -31,6 +31,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	// These strings must match with the parameter *values* in METADATA.XML
 	private static final String NO_EDGE_WEIGHT_OPTION = "No edge weight";
 	private static final String NO_NODE_WEIGHT_OPTION = "No node weight";
+	
 	// These strings must match with the parameter *names* in METADATA.XML
 	private static final String LEFT_SIDE_TYPE_ID = "leftSideType";
 	private static final String NODE_SIZE_COLUMN_ID = "nodeSizeColumn";
@@ -39,16 +40,30 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	private static final String RIGHT_COLUMN_TITLE_ID = "rightColumnTitle";
 	private static final String LAYOUT_TYPE_ID = "layoutType";
 	
-	private File lastNWBFile;
-	private BipartiteNWBFileExaminer examiner;
+	private final CachedFunction<File, BipartiteNWBFileExaminer> examinerMaker =
+			new CachedFunction<File, BipartiteNWBFileExaminer>() {
+				@Override
+				public BipartiteNWBFileExaminer apply(File nwbFile) {
+					BipartiteNWBFileExaminer it 
+						= new BipartiteNWBFileExaminer();
+					try {
+						new NWBFileParser(nwbFile).parse(it);
+					} catch (ParsingException e) {
+						throw new AlgorithmCreationFailedException(e);
+					} catch (IOException e) {
+						throw new AlgorithmCreationFailedException(e);
+					}
+					return it;
+				}
+			};
 	
 	@Override
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
 		LogService log = (LogService) ciShellContext.getService(LogService.class.getName());
-		examineInputFile(data);
+		BipartiteNWBFileExaminer exam = examinerMaker.getAndInvalidate(getNWBFile(data));
 		
-		List<String> types = new ArrayList<String>(examiner.getBipartiteTypes());
+		List<String> types = new ArrayList<String>(exam.getBipartiteTypes());
 		String leftSideType = (String) parameters.get(LEFT_SIDE_TYPE_ID);
 		types.remove(leftSideType);
 		String rightSideType = types.get(0);
@@ -79,7 +94,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
-		examineInputFile(data);
+		BipartiteNWBFileExaminer examiner = examinerMaker.applyAndCache(getNWBFile(data));
 
 		LinkedHashMap<String, String> nodeSchema = examiner.getNodeSchema();
 		List<String> nodeNumericColumns = Lists.newArrayList(
@@ -103,24 +118,6 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 				Functions.toStringFunction()));
 		
 		return mutator.mutate(oldParameters);
-	}
-
-	private void examineInputFile(Data[] data) {
-		File nwbFile = getNWBFile(data);
-		
-		// yes, identity not "file" equality.  what if they use the same filename for multiple runs?
-		if (nwbFile == lastNWBFile && examiner != null) {
-			return;
-		}
-		examiner = new BipartiteNWBFileExaminer();
-
-		try {
-			new NWBFileParser(nwbFile).parse(examiner);
-		} catch (ParsingException e) {
-			throw new AlgorithmCreationFailedException(e);
-		} catch (IOException e) {
-			throw new AlgorithmCreationFailedException(e);
-		}
 	}
 
 	private File getNWBFile(Data[] data) {
