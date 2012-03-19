@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -22,7 +21,6 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.tuple.TableTuple;
 import prefuse.data.tuple.TupleManager;
-import prefuse.util.collections.IntIterator;
 import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 
@@ -181,6 +179,7 @@ public class RecordTests extends TestCase {
 	}
 
 	
+	@SuppressWarnings("deprecation") // I'm testing dates so it's ok that they've been deprecated.
 	@Test
 	public void testDateTable() {
 		assertEquals(2082 - 1900, new Date(2082 - 1900, 1, 1).getYear());
@@ -353,6 +352,7 @@ public class RecordTests extends TestCase {
 			Record r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
+			assertNotNull(r1);
 		} catch (InvalidRecordException e) {
 			thrown1 = true;
 		}
@@ -364,6 +364,7 @@ public class RecordTests extends TestCase {
 			Record r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
 					endDateKey, sizeByKey, startDateFormat, endDateFormat,
 					categoryKey);
+			assertNotNull(r2);
 		} catch (InvalidRecordException e) {
 			thrown2 = true;
 		}
@@ -501,7 +502,6 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 	
-	@SuppressWarnings({ "unused" })
 	@Test
 	public static void testNullStartDate(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
@@ -530,7 +530,6 @@ public class RecordTests extends TestCase {
 		assertTrue(exceptionCaught);
 	}
 	
-	@SuppressWarnings({ "unused" })
 	@Test
 	public static void testNullEndDate(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
