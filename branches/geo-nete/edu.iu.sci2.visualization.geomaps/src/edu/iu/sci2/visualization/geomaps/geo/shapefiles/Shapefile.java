@@ -60,7 +60,7 @@ public enum Shapefile {
 	WORLD(
 			Resources.getResource(Shapefile.class, "countries.shp"),
 			"World",
-			"%d countries of world",
+			"%d countries of the world",
 			"Country",
 			"country",
 			"NAME",
