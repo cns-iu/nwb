@@ -18,7 +18,6 @@ import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGrap
 import edu.iu.sci2.visualization.temporalbargraph.common.CategoryBreakdown;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
-import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
@@ -37,7 +36,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 			List<Record> records, boolean scaleToOnePage,
 			ColorRegistry<String> colorRegistry, DoubleDimension size,
 			String areaColumn, String categoryColumn, String labelColumn,
-			String query) throws PostScriptCreationException {
+			String query) {
 
 		this.size = size;
 		DoubleDimension visualizationSize = new DoubleDimension(size.getWidth()
@@ -49,7 +48,6 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		this.categoryBreakdown = new CategoryBreakdown(records, colorRegistry,
 				3, 400, 20);
-		System.out.println(this.categoryBreakdown.numberOfPages());
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;
 		this.labelColumn = labelColumn;

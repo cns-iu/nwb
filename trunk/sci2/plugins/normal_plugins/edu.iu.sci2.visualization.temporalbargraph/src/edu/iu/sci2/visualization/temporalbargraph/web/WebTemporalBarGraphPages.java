@@ -16,7 +16,6 @@ import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGrap
 import edu.iu.sci2.visualization.temporalbargraph.common.CategoryBreakdown;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
-import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
@@ -32,8 +31,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 	
 	public WebTemporalBarGraphPages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String areaColumn, String categoryColumn, String labelColumn)
-			throws PostScriptCreationException {
+			DoubleDimension size, String areaColumn, String categoryColumn, String labelColumn) {
 		this.size = size;
 		this.areaColumn = areaColumn;
 		this.categoryColumn = categoryColumn;

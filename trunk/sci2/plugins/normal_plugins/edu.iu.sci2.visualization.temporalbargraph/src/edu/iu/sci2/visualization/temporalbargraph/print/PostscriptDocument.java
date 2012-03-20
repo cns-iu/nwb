@@ -9,7 +9,6 @@ import org.cishell.utilities.color.ColorRegistry;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
-import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 
 public class PostscriptDocument
@@ -22,7 +21,7 @@ public class PostscriptDocument
 	public PostscriptDocument(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, String areaColumn,
 			String categoryColumn, ColorRegistry<String> colorRegistry, String labelColumn, String query,
-			DoubleDimension pageSize) throws PostScriptCreationException {
+			DoubleDimension pageSize) {
 
 		this.postscriptPageSize = new DoubleDimension(inchToPoint(pageSize.getWidth()), inchToPoint(pageSize.getHeight()));
 		

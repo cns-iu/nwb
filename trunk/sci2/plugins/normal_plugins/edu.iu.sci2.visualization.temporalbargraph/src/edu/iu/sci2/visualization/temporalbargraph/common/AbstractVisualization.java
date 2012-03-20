@@ -3,9 +3,6 @@ package edu.iu.sci2.visualization.temporalbargraph.common;
 import java.awt.Color;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,105 +52,45 @@ public abstract class AbstractVisualization {
 	};
 
 	/**
-	 * This calculates all the new years dates between two dates and returns them as a list
-	 * @param startDate The starting date.
-	 * @param endDate The ending date.
-	 * @return A list of Date objects representing all the new years between the dates.
+	 * This will return the years that should compose the labeled years for the
+	 * visualization area.
 	 */
-	protected static List<DateTime> getNewYearsDates(DateTime startDate, DateTime endDate) {
-		List<DateTime> newYearsDates = new LinkedList<DateTime>();
-		int startYear = startDate.toLocalDate().getYear();
-		int endYear = endDate.toLocalDate().getYear();
+	protected static List<DateTime> getYearTicks(DateTime startDate,
+			DateTime endDate, final int maxDates) {
+		Preconditions.checkArgument(startDate.compareTo(endDate) < 0,
+				"The start date must be before the end date!");
+		Preconditions.checkArgument(maxDates > 2,
+				"MAX_DATES must be greater than 2");
 
-		if (endYear - startYear < 1){
-			newYearsDates.add(new LocalDate(startYear, DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay());
-		}else{
-			for(int i = startYear; i <= endYear; i++){
-				newYearsDates.add(new LocalDate(i, DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay());
+		List<DateTime> yearTicks = new LinkedList<DateTime>();
+
+		int startYear = startDate.toLocalDate().getYear();
+		// Ensure that the last year always fits
+		int endYear = endDate.toLocalDate().getYear() + 1;
+		
+		int difference = (endYear - startYear);
+		double yearsPerStep = difference / maxDates;
+		if (yearsPerStep < 1) {
+			// All the dates will fit
+
+			for (int year = startYear; year <= endYear; year++) {
+				yearTicks.add(new LocalDate(year, DateTimeConstants.JANUARY, 1)
+						.toDateTimeAtStartOfDay());
+			}
+		} else {
+			// All the dates cannot fit
+			int step = (int) Math.ceil(yearsPerStep);
+			for (int i = 0; i <= maxDates; i++) {
+				int year = i * step + startYear;
+				yearTicks.add(new LocalDate(year, DateTimeConstants.JANUARY, 1)
+						.toDateTimeAtStartOfDay());
 			}
 		}
 		
-		return newYearsDates;
-	}
-
-	/**
-	 * Retain {@code maxNumberToRetain} (mostly) equally spaced elements from
-	 * {@code collection} after sorting using {@code comparator}.
-	 * @param maxNumberToRetain Must be >= 2 since we always retain the first and last elements from {@code collection}.
-	 */
-	public static <E> List<E> decimate(
-			Collection<? extends E> collection,
-			Comparator<? super E> comparator,
-			int maxNumberToRetain){
-		Preconditions.checkArgument(maxNumberToRetain >= 2, "maxNumberToRetain must be >= 2, it was %d", maxNumberToRetain);
-		Preconditions.checkArgument(collection.size() >= maxNumberToRetain, "collection must be >= maxNumberToRetain.  collection.size() was %d and maxNumberToRetain was %d", collection.size(), maxNumberToRetain);
-
-		List<? extends E> sortedList = Ordering.from(comparator).sortedCopy(collection);		
-		
-		/* Always keep the two extreme elements from the original collection. */
-		List<E> decimated = new ArrayList<E>(maxNumberToRetain);		
-		decimated.add(sortedList.get(0));
-		decimated.add(sortedList.get(sortedList.size() - 1));
-
-		if (maxNumberToRetain == 2) {
-			return Lists.newArrayList(decimated);
-		}
-		
-		/* How many of the interior elements do we have,
-		 * and how many do we want to retain?
-		 * Then figure the corresponding step size for the original collection. */
-		int numberOfInteriorElements = sortedList.size() - 2;
-		int numberOfPreservedInteriorElements = maxNumberToRetain - 2;
-		// Make sure to round the distance between retained interior elements, but never exceeds maxNumberToPreserve.
-		int stepSize = (int) Math.ceil((double) numberOfInteriorElements / (double) numberOfPreservedInteriorElements);
-		
-		assert(stepSize > 0);
-		
-		for (int ii = stepSize; ii < sortedList.size() - 1; ii += stepSize) {
-			decimated.add(sortedList.get(ii));
-		}
-		
-		Collections.sort(decimated, comparator);
-		return decimated;
-	}
-	
-	/**
-	 * Given a list of records, it will return a date object that represents Jan 1st of the year after the last year.
-	 * @param records
-	 * @return A date object that represents Jan 1st of the year after the last year.
-	 * @throws PostScriptCreationException
-	 */
-	protected static DateTime getFirstNewYearAfterLastEndDate(List<Record> records)
-			throws PostScriptCreationException {
-		if (records.size() <= 0) {
-			throw new PostScriptCreationException(
-					"You must provide some records for the PostScriptRecordManager to work");
-		}
-
-
-		DateTime endDate = Record.END_DATE_ORDERING.max(records).getEndDate();
-
-		DateTime lastYear = new LocalDate(endDate.toLocalDate().getYear() + 1, DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay();
-		return lastYear;
-	}
-
-	/**
-	 * Given a list of records, it will return a date object that represents jan 1 the earliest year.
-	 * @param records
-	 * @return A Date object that represents jan 1 the earliest year.
-	 * @throws PostScriptCreationException
-	 */
-	protected static DateTime getFirstNewYearBeforeStartDate(List<Record> records)
-			throws PostScriptCreationException {
-		if (records.size() <= 0) {
-			throw new PostScriptCreationException(
-					"You must provide some records for the PostScriptRecordManager to work");
-		}
-
-		DateTime startDate = Record.START_DATE_ORDERING.min(records).getStartDate();
-
-		DateTime firstYear = new LocalDate(startDate.toLocalDate().getYear(), DateTimeConstants.JANUARY, 1).toDateTimeAtStartOfDay();
-		return firstYear;
+		assert yearTicks.size() >= 2;
+		assert yearTicks.get(yearTicks.size() - 1).getYear() > endYear;
+		assert yearTicks.get(0).getYear() == startYear;
+		return yearTicks;
 	}
 
 	/**

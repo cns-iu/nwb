@@ -22,7 +22,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 	public static final double PAGE_LONG_DIMENTION = 11;
 	public static final double PAGE_SHORT_DIMENTION = 8.5;
 
-	private static final String QUERY_ID = "query";
+	public static final String QUERY_ID = "query";
 
 	/**
 	 * Pages can be landscapes or portrait. They are fixed at letter size for

@@ -10,10 +10,11 @@ import java.util.List;
 import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.utilities.color.ColorRegistry;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
 import org.joda.time.Days;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
+import com.google.common.base.Preconditions;
 
 /**
  * This is the Visualization Area of a the postscript document for the web. It
@@ -23,8 +24,8 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class Visualization extends AbstractVisualization {
 
-	private DateTime vizAreaStartDate;
-	private DateTime vizAreaEndDate;
+	private List<DateTime> yearMarkers;
+
 
 	private DoubleDimension size;
 	
@@ -49,23 +50,33 @@ public class Visualization extends AbstractVisualization {
 	
 	public Visualization(CSVWriter csvWriter, List<Record> records,
 			DoubleDimension size, boolean scaleToOnePage,
-			ColorRegistry<String> colorRegistry)
-			throws PostScriptCreationException {
+			ColorRegistry<String> colorRegistry) {
+		Preconditions.checkNotNull(csvWriter);
+		Preconditions.checkNotNull(records);
+		Preconditions.checkNotNull(size);
+		Preconditions.checkNotNull(scaleToOnePage);
+		Preconditions.checkNotNull(colorRegistry);
+		Preconditions.checkArgument(records.size() > 0, "You must have atleast one record to visualize!");
+		Preconditions
+				.checkArgument(
+						Days.daysBetween(
+								Collections.min(records,
+										Record.START_DATE_ORDERING)
+										.getStartDate(),
+								Collections.max(records,
+										Record.END_DATE_ORDERING).getEndDate())
+								.getDays() > 1,
+						"You must have atleast 1 day between start and end dates to visualize!");
 		
 		this.records = records;
-		this.vizAreaStartDate = getFirstNewYearBeforeStartDate(records);
-		this.vizAreaEndDate = getFirstNewYearAfterLastEndDate(records);
-
+		this.yearMarkers = getYearTicks(Collections.min(records, Record.START_DATE_ORDERING).getStartDate(), Collections.max(records, Record.END_DATE_ORDERING).getEndDate(), MAX_LINEDATES);
 		this.size = size;
 
 		Collections.sort(records, Record.START_DATE_ORDERING);
-		List<PostScriptBar> bars = createBars(records, csvWriter, this.vizAreaStartDate, colorRegistry);
+		List<PostScriptBar> bars = createBars(records, csvWriter, Collections.min(this.yearMarkers), colorRegistry);
 		
-		int totalDays = Days.daysBetween(this.vizAreaStartDate, this.vizAreaEndDate).getDays();
-		if (totalDays == 0){
-			throw new PostScriptCreationException("You must have atleast 1 day between start and end dates to visualize.");
-		}		
-		
+		int totalDays = Days.daysBetween(Collections.min(this.yearMarkers), Collections.max(this.yearMarkers)).getDays();
+
 		this.vizAreaTotalDays = totalDays;
 
 		/*
@@ -150,21 +161,15 @@ public class Visualization extends AbstractVisualization {
 
 		return barsArea.toString();
 	}
-		
-	@SuppressWarnings("unchecked") // Raw types from DateTimeComparator#getInstance()
+
 	protected String getDateLinesArea(){
 		StringBuilder datelineArea = new StringBuilder();
 		List<String> dateLines = new LinkedList<String>();
-		List<DateTime> newYearsDates = getNewYearsDates(this.vizAreaStartDate, this.vizAreaEndDate);
 		
-		if(newYearsDates.size() > MAX_LINEDATES){
-			newYearsDates = decimate(newYearsDates, DateTimeComparator.getInstance(), MAX_LINEDATES);
-		}
-
-		for (DateTime newYear : newYearsDates) {
+		for (DateTime newYear : this.yearMarkers) {
 
 			String label = Integer.toString(newYear.toLocalDate().getYear());
-			double x = Days.daysBetween(this.vizAreaStartDate, newYear).getDays() * this.pointsPerDay;
+			double x = Days.daysBetween(Collections.min(this.yearMarkers), newYear).getDays() * this.pointsPerDay;
 			
 			StringTemplate datelineTemplate =
 					group.getInstanceOf("visualizationDateLine");

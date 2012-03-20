@@ -1,7 +1,7 @@
 package edu.iu.sci2.visualization.temporalbargraph.web;
 
-import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.pixelToInch;
 import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.inchToPoint;
+import static edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities.pixelToInch;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import org.cishell.utilities.color.ColorRegistry;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
-import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 
 public class PostscriptDocument
@@ -25,8 +24,7 @@ public class PostscriptDocument
 
 	public PostscriptDocument(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, String areaColumn, String categoryColumn,
-			String labelColumn, ColorRegistry<String> colorRegistry)
-			throws PostScriptCreationException {
+			String labelColumn, ColorRegistry<String> colorRegistry) {
 
 		double pageWidth = inchToPoint(pixelToInch(WEB_WIDTH));
 		double pageHeight = inchToPoint(pixelToInch(WEB_HEIGHT));

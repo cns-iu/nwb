@@ -18,7 +18,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractPages;
 import edu.iu.sci2.visualization.temporalbargraph.common.DoubleDimension;
 import edu.iu.sci2.visualization.temporalbargraph.common.PageElement;
-import edu.iu.sci2.visualization.temporalbargraph.common.PostScriptCreationException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 import edu.iu.sci2.visualization.temporalbargraph.common.Visualization;
 
@@ -30,10 +29,10 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 	private String query;
 	private String category;
 
+	@Deprecated // Unsupported since the mockups no longer include this version.
 	public TemporalBarGraphPortraitPages(CSVWriter csvWriter, List<Record> records,
 			boolean scaleToOnePage, ColorRegistry<String> colorRegistry,
-			DoubleDimension size, String legendText, String category, String query)
-			throws PostScriptCreationException {
+			DoubleDimension size, String legendText, String category, String query) {
 
 		this.size = size;
 		DoubleDimension visualizationSize = new DoubleDimension(this.size.getWidth()
