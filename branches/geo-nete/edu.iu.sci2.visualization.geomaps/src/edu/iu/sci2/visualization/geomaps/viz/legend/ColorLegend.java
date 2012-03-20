@@ -2,7 +2,7 @@ package edu.iu.sci2.visualization.geomaps.viz.legend;
 
 import java.awt.Color;
 
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 
 
@@ -24,7 +24,7 @@ public class ColorLegend implements Legend<Double, Color> {
 
 	
 	@Override
-	public Range<Double> getDataRange() {
+	public Continuum<Double> getDataRange() {
 		return vizLegendModel.getDataRange();
 	}
 
@@ -33,7 +33,7 @@ public class ColorLegend implements Legend<Double, Color> {
 	}
 
 	@Override
-	public Range<Color> getVizRange() {
+	public Continuum<Color> getVizRange() {
 		return vizLegendModel.getVizRange();
 	}
 

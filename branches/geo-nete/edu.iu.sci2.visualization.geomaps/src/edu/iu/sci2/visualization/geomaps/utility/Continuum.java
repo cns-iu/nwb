@@ -6,10 +6,11 @@ import java.util.NoSuchElementException;
 import com.google.common.base.Objects;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Range;
 
 /* TODO We may wish to replace this with com.google.common.collect.Range.
  * To do so, we will need to only parameterize on Comparable types.
- * To do that, we will need to stop talking of a Range<Color> and instead use some Comparable
+ * To do that, we will need to stop talking of a Continuum<Color> and instead use some Comparable
  * proxy that is interpreted externally as a Color.
  */
 /**
@@ -17,27 +18,30 @@ import com.google.common.collect.Ordering;
  * 				is conceptually a continuum of intermediate values of the same type
  * 				(e.g. Double, Color).
  */
-public class Range<T> {
+public class Continuum<T> {
 	private final T pointA;
 	private final T pointB;
 
-	private Range(T pointA, T pointB) {
+	private Continuum(T pointA, T pointB) {
 		this.pointA = pointA;
 		this.pointB = pointB;
 	}
-	public static <T> Range<T> between(T pointA, T pointB) {
-		return new Range<T>(pointA, pointB);
+	public static <T> Continuum<T> between(T pointA, T pointB) {
+		return new Continuum<T>(pointA, pointB);
 	}
 	/**
 	 * @return	The min and max of values present in {@code iterable} according to its element
 	 * 			type's natural comparator.
 	 * @throw	{@link NoSuchElementException}	if {@code iterable} is empty
 	 */
-	public static <C extends Comparable<? super C>> Range<C> over(Iterable<? extends C> iterable) {
+	public static <C extends Comparable<? super C>> Continuum<C> over(Iterable<? extends C> iterable) {
 		return between(Ordering.natural().min(iterable), Ordering.natural().max(iterable));
 	}
-	public static <C extends Comparable<? super C>> Range<C> over(C first, C... rest) {
+	public static <C extends Comparable<? super C>> Continuum<C> over(C first, C... rest) {
 		return over(Arrays.asList(ObjectArrays.concat(first, rest)));
+	}
+	public static <C extends Comparable<? super C>> Continuum<C> fromRange(Range<C> range) {
+		return between(range.lowerEndpoint(), range.upperEndpoint());
 	}
 	
 	
@@ -55,10 +59,10 @@ public class Range<T> {
 
 	@Override
 	public boolean equals(Object thatObject) {
-		if (!(thatObject instanceof Range<?>)) {
+		if (!(thatObject instanceof Continuum<?>)) {
 			return false;
 		}		
-		Range<?> that = (Range<?>) thatObject;
+		Continuum<?> that = (Continuum<?>) thatObject;
 		
 		return Objects.equal(this.pointA, that.pointA) &&
 			   Objects.equal(this.pointB, that.pointB);

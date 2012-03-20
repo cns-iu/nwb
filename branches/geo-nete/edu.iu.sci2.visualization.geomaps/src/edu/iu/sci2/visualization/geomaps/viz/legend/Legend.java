@@ -1,8 +1,8 @@
 package edu.iu.sci2.visualization.geomaps.viz.legend;
 
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 
 public interface Legend<D, U> {
-	Range<D> getDataRange();
-	Range<U> getVizRange();
+	Continuum<D> getDataRange();
+	Continuum<U> getVizRange();
 }

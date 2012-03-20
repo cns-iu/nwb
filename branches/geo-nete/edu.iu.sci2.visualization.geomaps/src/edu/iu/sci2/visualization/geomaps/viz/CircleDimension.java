@@ -11,6 +11,8 @@ import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 
 import edu.iu.sci2.visualization.geomaps.data.interpolation.ColorInterpolator;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
@@ -19,7 +21,7 @@ import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
@@ -45,11 +47,11 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
-				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange, Shapefile shapefile) {
-					Range<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
+				public Coding<CircleDimension> codingForDataRange(final Continuum<Double> usableContinuum, final Range<Double> dataRange, Shapefile shapefile) {
+					Continuum<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
 					// TODO Don't force data min = 0, instead use actual data min and draw actual corresponding circle
-					Range<Double> usableRangeFromZero = Range.between(0.0, usableRange.getPointB()); // TODO !?
-					Range<Double> dataRangeFromZero = Range.between(0.0, dataRange.getPointB()); // TODO !?
+					Continuum<Double> usableRangeFromZero = Continuum.between(0.0, usableContinuum.getPointB()); // TODO !?
+					Range<Double> dataRangeFromZero = Ranges.closed(0.0, dataRange.upperEndpoint()); // TODO !?
 					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, vizRange);
 					
 					return new AbstractCoding<CircleDimension, Double>(this, usableRangeFromZero, interpolator) {
@@ -70,8 +72,8 @@ public enum CircleDimension implements VizDimension {
 							try {
 								double midpointOfScaledData =
 										Averages.meanOfDoubles(
-												interpolator.getInRange().getPointA(),
-												interpolator.getInRange().getPointB());
+												interpolator.getInRange().lowerEndpoint(),
+												interpolator.getInRange().upperEndpoint());
 								double unscaledValueForMidrangeArea = scaling().invert(midpointOfScaledData);
 								double midrangeArea = interpolator.apply(midpointOfScaledData);
 
@@ -111,11 +113,11 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
-				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, Shapefile shapefile) {
-					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
+				public Coding<CircleDimension> codingForDataRange(Continuum<Double> usableContinuum, Range<Double> dataRange, Shapefile shapefile) {
+					Continuum<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
-					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
+					return new AbstractColorCoding<CircleDimension>(this, usableContinuum, interpolator) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return StrokeColorStrategy.forColor(interpolator.apply(value));
@@ -160,11 +162,11 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
-				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, Shapefile shapefile) {
-					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
+				public Coding<CircleDimension> codingForDataRange(Continuum<Double> usableContinuum, Range<Double> dataRange, Shapefile shapefile) {
+					Continuum<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
-					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
+					return new AbstractColorCoding<CircleDimension>(this, usableContinuum, interpolator) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return FillColorStrategy.forColor(interpolator.apply(value));

@@ -3,9 +3,11 @@ package edu.iu.sci2.visualization.geomaps.utility;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
+
 public class Rectangles {
 	private Rectangles() {}
-
 	
 	public static Rectangle2D.Double forCenterWithDimensions(
 			Point2D.Double displayCenter, Dimension<Double> dimension) {		
@@ -18,13 +20,13 @@ public class Rectangles {
 		rectangle.setFrameFromCenter(displayCenter,	someCornerPoint);
 		
 		return rectangle;
-	}
+	}	
 
 	public static Range<Double> xRange(Rectangle2D.Double rectangle) {
-		return Range.between(rectangle.getMinX(), rectangle.getMaxX());
+		return Ranges.closed(rectangle.getMinX(), rectangle.getMaxX());
 	}
 
 	public static Range<Double> yRange(Rectangle2D.Double rectangle) {
-		return Range.between(rectangle.getMinY(), rectangle.getMaxY());
+		return Ranges.closed(rectangle.getMinY(), rectangle.getMaxY());
 	}	
 }

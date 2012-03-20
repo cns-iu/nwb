@@ -1,8 +1,10 @@
 package edu.iu.sci2.visualization.geomaps.data.interpolation;
 import java.awt.Color;
 
+import com.google.common.collect.Range;
+
 import edu.iu.sci2.visualization.geomaps.utility.ColorTuples;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 
 /**
  * Wrapper for a 3-dimensional InterpolatorND that interprets its 3-tuples as RGB coordinates
@@ -11,14 +13,14 @@ import edu.iu.sci2.visualization.geomaps.utility.Range;
 public class ColorInterpolator implements Interpolator<Color> {	
 	private final InterpolatorND interpolator3D;
 
-	private ColorInterpolator(Range<Double> inRange, Range<Color> outRange) {
+	private ColorInterpolator(Range<Double> inRange, Continuum<Color> outRange) {
 		final double[] outMinTuple = ColorTuples.asTuple(outRange.getPointA());
 		final double[] outMaxTuple = ColorTuples.asTuple(outRange.getPointB());
 		
 		this.interpolator3D = InterpolatorND.between(
-				inRange, Range.between(outMinTuple, outMaxTuple));
+				inRange, Continuum.between(outMinTuple, outMaxTuple));
 	}
-	public static ColorInterpolator between(Range<Double> inRange, Range<Color> outRange) {
+	public static ColorInterpolator between(Range<Double> inRange, Continuum<Color> outRange) {
 		return new ColorInterpolator(inRange, outRange);
 	}
 
@@ -34,9 +36,9 @@ public class ColorInterpolator implements Interpolator<Color> {
 	}
 
 	@Override
-	public Range<Color> getOutRange() {
-		return Range.between(
-				ColorTuples.asColor(interpolator3D.getOutRange().getPointA()),
-				ColorTuples.asColor(interpolator3D.getOutRange().getPointB()));
+	public Continuum<Color> getOutContinuum() {
+		return Continuum.between(
+				ColorTuples.asColor(interpolator3D.getOutContinuum().getPointA()),
+				ColorTuples.asColor(interpolator3D.getOutContinuum().getPointB()));
 	}
 }

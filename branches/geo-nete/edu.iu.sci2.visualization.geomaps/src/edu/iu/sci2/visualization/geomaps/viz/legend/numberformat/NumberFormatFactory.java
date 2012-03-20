@@ -9,9 +9,9 @@ import org.cishell.utilities.ToCaseFunction;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
-import edu.iu.sci2.visualization.geomaps.utility.Range;
 import edu.iu.sci2.visualization.geomaps.utility.RelativeDifferences;
 import edu.iu.sci2.visualization.geomaps.utility.StringPredicates;
 
@@ -20,8 +20,7 @@ public class NumberFormatFactory {
 		YEAR,
 		GENERAL;
 
-		public static NumericFormatType guessFor(
-				String columnName, Range<? extends Number> range) {
+		public static NumericFormatType guessFor(String columnName, Range<Double> range) {
 			// Default to something reasonable
 			if ((columnName == null) || (range == null)) {
 				return GENERAL;
@@ -34,9 +33,9 @@ public class NumberFormatFactory {
 			return GENERAL;
 		}
 
-		private static boolean rangeIsInThousands(Range<? extends Number> range) {
-			return (range.getPointA().doubleValue() >= 1000) &&
-				   (range.getPointB().doubleValue() < 10000);
+		private static boolean rangeIsInThousands(Range<Double> range) {
+			return (range.lowerEndpoint().doubleValue() >= 1000) &&
+				   (range.upperEndpoint().doubleValue() < 10000);
 		}
 
 		private static boolean mentionsSomethingLikeYear(final String string) {

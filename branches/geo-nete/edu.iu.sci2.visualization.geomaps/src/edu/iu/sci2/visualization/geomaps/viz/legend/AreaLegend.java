@@ -1,6 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.viz.legend;
 
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 
 
@@ -44,12 +44,12 @@ public class AreaLegend implements Legend<Double, Double> {
 	}
 
 	@Override
-	public Range<Double> getDataRange() {
+	public Continuum<Double> getDataRange() {
 		return vizLegendModel.getDataRange();
 	}
 
 	@Override
-	public Range<Double> getVizRange() {
+	public Continuum<Double> getVizRange() {
 		return vizLegendModel.getVizRange();
 	}	
 }

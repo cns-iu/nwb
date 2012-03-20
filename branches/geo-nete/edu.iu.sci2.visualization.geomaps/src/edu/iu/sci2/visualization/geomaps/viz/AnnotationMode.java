@@ -19,6 +19,7 @@ import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
@@ -63,8 +64,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		Collection<Coding<D>> codings = Sets.newHashSet();
 		Collection<LabeledReference> legends = Lists.newArrayList();
 		for (Binding<D> binding : enabledBindings) {
-//			Range<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
-//			Range<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
+//			Continuum<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
+//			Continuum<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
 			
 			NumericFormatType numericFormatType =
 					NumericFormatType.guessFor(
@@ -72,7 +73,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 							usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE));
 			
 			Coding<D> coding = binding.codingForDataRange(
-					usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE),
+					Continuum.fromRange(usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE)),
 					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED),
 					shapefile);
 			codings.add(coding);

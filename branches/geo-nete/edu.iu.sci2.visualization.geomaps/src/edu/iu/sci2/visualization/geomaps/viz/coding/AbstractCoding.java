@@ -2,7 +2,7 @@ package edu.iu.sci2.visualization.geomaps.viz.coding;
 
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
@@ -14,10 +14,10 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implements Coding<D> {
 	private final Binding<D> binding;
-	private Range<Double> usableRange;
+	private Continuum<Double> usableRange;
 	protected final Interpolator<V> interpolator;
 	
-	public AbstractCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<V> interpolator) {
+	public AbstractCoding(Binding<D> binding, Continuum<Double> usableRange, Interpolator<V> interpolator) {
 		this.binding = binding;
 		this.usableRange = usableRange;
 		this.interpolator = interpolator;
@@ -35,7 +35,7 @@ public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implem
 	public VizLegendModel<V> makeVizLegend(NumericFormatType numericFormatType) {
 		return new VizLegendModel<V>(
 				usableRange,
-				interpolator.getOutRange(),
+				interpolator.getOutContinuum(),
 				scaling().toString(),
 				legendDescription(),
 				columnName(),

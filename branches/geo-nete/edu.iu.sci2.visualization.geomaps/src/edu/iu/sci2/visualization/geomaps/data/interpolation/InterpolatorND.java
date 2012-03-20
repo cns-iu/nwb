@@ -1,30 +1,32 @@
 package edu.iu.sci2.visualization.geomaps.data.interpolation;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import com.google.common.collect.Range;
+
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 
 
 public class InterpolatorND implements Interpolator<double[]> {
 	private final Range<Double> inRange;
-	private final Range<double[]> outRange;
+	private final Continuum<double[]> outContinuum;
 	private final Interpolator1D[] interpolators;
 
-	private InterpolatorND(Range<Double> inRange, Range<double[]> outRange) {
+	private InterpolatorND(Range<Double> inRange, Continuum<double[]> outContinuum) {
 		this.inRange = inRange;
-		this.outRange = outRange;
+		this.outContinuum = outContinuum;
 		
-		assert (outRange.getPointA().length == outRange.getPointB().length); // TODO ?
+		assert (outContinuum.getPointA().length == outContinuum.getPointB().length); // TODO ?
 		
-		int dimensionality = outRange.getPointA().length;
+		int dimensionality = outContinuum.getPointA().length;
 		
 		interpolators = new Interpolator1D[dimensionality];		
 		for (int dd = 0; dd < dimensionality; dd++) {
 			interpolators[dd] = Interpolator1D.between(
 					inRange,
-					Range.between(
-							Double.valueOf(outRange.getPointA()[dd]),
-							Double.valueOf(outRange.getPointB()[dd])));
+					Continuum.between(
+							Double.valueOf(outContinuum.getPointA()[dd]),
+							Double.valueOf(outContinuum.getPointB()[dd])));
 		}
 	}
-	public static InterpolatorND between(Range<Double> inRange, Range<double[]> outRange) {
+	public static InterpolatorND between(Range<Double> inRange, Continuum<double[]> outRange) {
 		return new InterpolatorND(inRange, outRange);
 	}
 	
@@ -46,7 +48,7 @@ public class InterpolatorND implements Interpolator<double[]> {
 	}
 
 	@Override
-	public Range<double[]> getOutRange() {
-		return outRange;
+	public Continuum<double[]> getOutContinuum() {
+		return outContinuum;
 	}
 }

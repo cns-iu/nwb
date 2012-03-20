@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPageArea;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
@@ -26,12 +26,12 @@ public class Circle {
 	 * Replacing the proportions with the nearest absolute figure in points for a page 11 inches
 	 * or 17 inches wide.
 	 */
-	public static final Range<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
-			Range.between(
+	public static final Continuum<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
+			Continuum.between(
 					0.01 * PageLayout.POINTS_PER_INCH,
 					0.34 * PageLayout.POINTS_PER_INCH);
-	public static final Range<Double> DEFAULT_CIRCLE_AREA_RANGE =
-			Range.between(
+	public static final Continuum<Double> DEFAULT_CIRCLE_AREA_RANGE =
+			Continuum.between(
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointB()));
 	public static final double DEFAULT_CIRCLE_AREA = 0.005 * DEFAULT_CIRCLE_AREA_RANGE.getPointB();

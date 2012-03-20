@@ -1,34 +1,36 @@
 package edu.iu.sci2.visualization.geomaps.data.interpolation;
 
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import com.google.common.collect.Range;
+
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 
 public class Interpolator1D implements Interpolator<Double> {
 	private final Range<Double> inRange;
-	private final Range<Double> outRange;
+	private final Continuum<Double> outContinuum;
 
-	private Interpolator1D(Range<Double> inRange, Range<Double> outRange) {
-		assert (!outRange.isEmpty()); // TODO ?
+	private Interpolator1D(Range<Double> inRange, Continuum<Double> outContinuum) {
+		assert (!outContinuum.isEmpty()); // TODO ?
 		
 		this.inRange = inRange;
-		this.outRange = outRange;
+		this.outContinuum = outContinuum;
 	}
-	public static Interpolator1D between(Range<Double> inRange, Range<Double> outRange) {
-		return new Interpolator1D(inRange, outRange);
+	public static Interpolator1D between(Range<Double> inRange, Continuum<Double> outContinuum) {
+		return new Interpolator1D(inRange, outContinuum);
 	}
 	
 
 	@Override
 	public Double apply(Double value) {
-		return interpolate(value, inRange, outRange);
+		return interpolate(value, inRange, outContinuum);
 	}
 	
 	private static double interpolate(
-			double value, Range<Double> inRange, Range<Double> outRange) {
+			double value, Range<Double> inRange, Continuum<Double> outContinuum) {
 		return interpolate(value,
-						   inRange.getPointA().doubleValue(),
-						   inRange.getPointB().doubleValue(),
-						   outRange.getPointA().doubleValue(),
-						   outRange.getPointB().doubleValue());
+						   inRange.lowerEndpoint().doubleValue(),
+						   inRange.upperEndpoint().doubleValue(),
+						   outContinuum.getPointA().doubleValue(),
+						   outContinuum.getPointB().doubleValue());
 	}
 
 	private static double interpolate(
@@ -46,7 +48,7 @@ public class Interpolator1D implements Interpolator<Double> {
 	}
 	
 	@Override
-	public Range<Double> getOutRange() {
-		return outRange;
+	public Continuum<Double> getOutContinuum() {
+		return outContinuum;
 	}
 }

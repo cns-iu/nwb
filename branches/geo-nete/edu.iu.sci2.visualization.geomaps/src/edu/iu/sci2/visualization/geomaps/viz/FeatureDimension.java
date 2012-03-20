@@ -11,12 +11,13 @@ import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 
 import edu.iu.sci2.visualization.geomaps.data.interpolation.ColorInterpolator;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.FillColorStrategy;
@@ -40,8 +41,8 @@ public enum FeatureDimension implements VizDimension {
 		public Binding<FeatureDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<FeatureDimension>(this, parameters) {
 				@Override
-				public Coding<FeatureDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, final Shapefile shapefile) {
-					Range<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
+				public Coding<FeatureDimension> codingForDataRange(Continuum<Double> usableRange, Range<Double> dataRange, final Shapefile shapefile) {
+					Continuum<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
 					return new AbstractColorCoding<FeatureDimension>(this, usableRange, interpolator) {

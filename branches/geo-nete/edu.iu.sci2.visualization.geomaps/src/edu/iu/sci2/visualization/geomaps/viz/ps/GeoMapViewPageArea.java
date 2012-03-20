@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Rectangles;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
@@ -55,9 +56,16 @@ public class GeoMapViewPageArea implements PostScriptable {
 	}
 	
 	public Point2D.Double displayPointFor(Coordinate coordinate) {
+		Interpolator1D xInterpolator = Interpolator1D.between(
+				Rectangles.xRange(dataRectangle),
+				Continuum.fromRange(Rectangles.xRange(displayRectangle)));		
+		
+		Interpolator1D yInterpolator = Interpolator1D.between(
+				Rectangles.yRange(dataRectangle),
+				Continuum.fromRange(Rectangles.yRange(displayRectangle)));
+		
 		return new Point2D.Double(
-				Interpolator1D.between(Rectangles.xRange(dataRectangle), Rectangles.xRange(displayRectangle)).apply(coordinate.x),
-				Interpolator1D.between(Rectangles.yRange(dataRectangle), Rectangles.yRange(displayRectangle)).apply(coordinate.y));
+				xInterpolator.apply(coordinate.x), yInterpolator.apply(coordinate.y));
 	}
 	
 	public Rectangle2D.Double getDisplayRectangle() {

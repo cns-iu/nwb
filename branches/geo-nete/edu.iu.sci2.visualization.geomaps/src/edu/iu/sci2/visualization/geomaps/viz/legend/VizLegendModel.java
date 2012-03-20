@@ -1,11 +1,11 @@
 package edu.iu.sci2.visualization.geomaps.viz.legend;
 
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 
 public class VizLegendModel<U> {
-	private final Range<Double> dataRange;
-	private final Range<U> vizRange;
+	private final Continuum<Double> dataRange;
+	private final Continuum<U> vizRange;
 	private final String scalingLabel;
 	private final String legendDescription;
 	private final String dataColumnName;
@@ -19,7 +19,7 @@ public class VizLegendModel<U> {
 	 * @param dataColumnName
 	 * @param numericFormatType
 	 */
-	public VizLegendModel(Range<Double> dataRange, Range<U> vizRange, String scalingLabel,
+	public VizLegendModel(Continuum<Double> dataRange, Continuum<U> vizRange, String scalingLabel,
 			String legendDescription, String dataColumnName, NumericFormatType numericFormatType) {
 		this.dataRange = dataRange;
 		this.vizRange = vizRange;
@@ -29,11 +29,11 @@ public class VizLegendModel<U> {
 		this.numericFormatType = numericFormatType;
 	}
 
-	public Range<Double> getDataRange() {
+	public Continuum<Double> getDataRange() {
 		return dataRange;
 	}
 
-	public Range<U> getVizRange() {
+	public Continuum<U> getVizRange() {
 		return vizRange;
 	}
 
