@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Geo Maps
 Bundle-SymbolicName: edu.iu.sci2.visualization.geomaps
-Bundle-Version: 0.0.2
+Bundle-Version: 0.1.0
 Bundle-ClassPath: .
 Import-Package: com.google.common.base;version="8.0.0",
  com.google.common.collect;version="8.0.0",
