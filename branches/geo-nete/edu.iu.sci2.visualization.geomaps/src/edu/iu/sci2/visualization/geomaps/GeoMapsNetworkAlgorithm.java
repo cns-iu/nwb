@@ -80,7 +80,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 		
 		this.latitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		this.longitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
-		this.shapefile = Shapefile.forNiceNameInTitleCase((String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
+		this.shapefile = Shapefile.forNiceName((String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
 		
 		if (latitudeAttrib.equals(longitudeAttrib)) {
 			throw new AlgorithmCreationFailedException("Latitude and longitude attributes must be distinct");

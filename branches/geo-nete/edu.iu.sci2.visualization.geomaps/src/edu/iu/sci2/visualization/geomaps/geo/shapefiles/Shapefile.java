@@ -71,7 +71,7 @@ public enum Shapefile {
 					AnchorPoint.NEAR_ANTARCTICA));
 
 	public static final DefaultGeographicCRS FALLBACK_SOURCE_CRS = DefaultGeographicCRS.WGS84;
-	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME_TITLE_CASE =
+	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(Shapefile.class),
 					new Function<Shapefile, String>() {
@@ -79,15 +79,15 @@ public enum Shapefile {
 						public String apply(Shapefile shapefile) {
 							return shapefile.getNiceNameTitleCase(); }}));
 	public static ImmutableSet<String> byNiceNames() {
-		return FOR_NICE_NAME_TITLE_CASE.keySet();
+		return FOR_NICE_NAME.keySet();
 	}
-	public static Shapefile forNiceNameInTitleCase(String niceNameTitleCase) {
+	public static Shapefile forNiceName(String niceName) {
 		// TODO Null?
-		return FOR_NICE_NAME_TITLE_CASE.get(niceNameTitleCase);
+		return FOR_NICE_NAME.get(niceName);
 	}
 
 
-	private final String niceNameTitleCase;
+	private final String niceName;
 	private final String mapDescriptionFormat;
 	private final String componentDescriptionTitleCase;
 	private final String componentDescriptionPlain;
@@ -99,7 +99,7 @@ public enum Shapefile {
 
 	private Shapefile(
 			URL url,
-			String niceNameTitleCase,
+			String niceName,
 			String mapDescriptionFormat,
 			String componentDescriptionTitleCase,
 			String componentDescriptionPlain,
@@ -107,7 +107,7 @@ public enum Shapefile {
 			KnownProjectedCRSDescriptor defaultProjectedCrs,
 			Collection<Inset> insets,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
-		this.niceNameTitleCase = niceNameTitleCase;
+		this.niceName = niceName;
 		this.mapDescriptionFormat = mapDescriptionFormat;
 		this.componentDescriptionTitleCase = componentDescriptionTitleCase;
 		this.componentDescriptionPlain = componentDescriptionPlain;
@@ -174,14 +174,14 @@ public enum Shapefile {
 
 	@Override
 	public String toString() {
-		return niceNameTitleCase;
+		return niceName;
 	}
 
 	public boolean hasInsets() {
 		return !insetForFeatureName.isEmpty();
 	}
 	public String getNiceNameTitleCase() {
-		return niceNameTitleCase;
+		return niceName;
 	}
 	
 	public String makeMapDescription() {

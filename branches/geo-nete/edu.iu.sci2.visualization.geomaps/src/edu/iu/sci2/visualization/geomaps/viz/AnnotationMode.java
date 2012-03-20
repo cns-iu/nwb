@@ -46,7 +46,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			PageLayout pageLayout,
 			String title)
 				throws LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
-		Shapefile shapefile = Shapefile.forNiceNameInTitleCase(
+		Shapefile shapefile = Shapefile.forNiceName(
 				(String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
