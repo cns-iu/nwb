@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -32,6 +34,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -45,7 +48,7 @@ public enum Shapefile {
 	UNITED_STATES(
 			Resources.getResource(Shapefile.class, "st99_d00.shp"),
 			"United States",
-			"United States",
+			"%d U.S. states and other jurisdictions",
 			"U.S. State",
 			"U.S. state",
 			"NAME",
@@ -57,7 +60,7 @@ public enum Shapefile {
 	WORLD(
 			Resources.getResource(Shapefile.class, "countries.shp"),
 			"World",
-			"world",
+			"%d countries of world",
 			"Country",
 			"country",
 			"NAME",
@@ -67,7 +70,7 @@ public enum Shapefile {
 					AnchorPoint.NEAR_ALASKA,
 					AnchorPoint.NEAR_ANTARCTICA));
 
-	public static final DefaultGeographicCRS DEFAULT_SOURCE_CRS = DefaultGeographicCRS.WGS84;
+	public static final DefaultGeographicCRS FALLBACK_SOURCE_CRS = DefaultGeographicCRS.WGS84;
 	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME_TITLE_CASE =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(Shapefile.class),
@@ -85,7 +88,7 @@ public enum Shapefile {
 
 
 	private final String niceNameTitleCase;
-	private final String niceNamePlain;
+	private final String mapDescriptionFormat;
 	private final String componentDescriptionTitleCase;
 	private final String componentDescriptionPlain;
 	private final String featureAttributeName;
@@ -97,7 +100,7 @@ public enum Shapefile {
 	private Shapefile(
 			URL url,
 			String niceNameTitleCase,
-			String niceNamePlain,
+			String mapDescriptionFormat,
 			String componentDescriptionTitleCase,
 			String componentDescriptionPlain,
 			String featureAttributeName,
@@ -105,7 +108,7 @@ public enum Shapefile {
 			Collection<Inset> insets,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
 		this.niceNameTitleCase = niceNameTitleCase;
-		this.niceNamePlain = niceNamePlain;
+		this.mapDescriptionFormat = mapDescriptionFormat;
 		this.componentDescriptionTitleCase = componentDescriptionTitleCase;
 		this.componentDescriptionPlain = componentDescriptionPlain;
 		this.featureAttributeName = featureAttributeName;
@@ -131,7 +134,7 @@ public enum Shapefile {
 	public CoordinateReferenceSystem detectNativeCRS() {
 		return Objects.firstNonNull( // TODO ?
 				featureSource.getSchema().getCoordinateReferenceSystem(),
-				DEFAULT_SOURCE_CRS);
+				FALLBACK_SOURCE_CRS);
 	}
 	
 	public Geometry inset(String rawFeatureName, Geometry geometry) throws MismatchedDimensionException, TransformException {
@@ -146,7 +149,7 @@ public enum Shapefile {
 	
 	public String extractFeatureName(SimpleFeature feature) {
 		Object featureName = feature.getAttribute(featureAttributeName);
-		
+
 		if (featureName == null) {
 			String message =
 					String.format(
@@ -181,8 +184,16 @@ public enum Shapefile {
 		return niceNameTitleCase;
 	}
 	
-	public String getNiceNamePlain() {
-		return niceNamePlain;
+	public String makeMapDescription() {
+		Set<String> uniqueFeatureNames = Sets.newHashSet();
+		
+		FeatureIterator<SimpleFeature> it = viewOfFeatureCollection().features();
+		while (it.hasNext()) {
+			uniqueFeatureNames.add(extractFeatureName(it.next()));
+		}
+		it.close();
+		
+		return String.format(mapDescriptionFormat, uniqueFeatureNames.size());
 	}
 	
 	public String getComponentDescriptionTitleCase() {

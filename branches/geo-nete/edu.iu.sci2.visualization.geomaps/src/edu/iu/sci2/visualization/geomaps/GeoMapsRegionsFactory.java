@@ -48,7 +48,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				parameters,
 				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
-				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
+				SUBTITLE,
 				TEMPLATE_FOR_HOW_TO_READ,
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}

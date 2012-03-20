@@ -48,7 +48,7 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 				parameters,
 				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
-				String.format("%s (%s)", GeoMapsAlgorithm.TITLE, SUBTITLE),
+				SUBTITLE,
 				TEMPLATE_FOR_HOW_TO_READ,
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}

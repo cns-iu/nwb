@@ -34,7 +34,7 @@ public class Circle {
 			Range.between(
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),
 					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointB()));
-	public static final double DEFAULT_CIRCLE_AREA = 0.1 * DEFAULT_CIRCLE_AREA_RANGE.getPointB();
+	public static final double DEFAULT_CIRCLE_AREA = 0.005 * DEFAULT_CIRCLE_AREA_RANGE.getPointB();
 	public static final double DEFAULT_CIRCLE_LINE_WIDTH = 1.5;
 	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.8;
 	public static final Color DEFAULT_OUTLINE_COLOR = Color.BLACK;

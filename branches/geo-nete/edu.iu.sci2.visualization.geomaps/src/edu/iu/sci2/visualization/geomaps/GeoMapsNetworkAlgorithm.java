@@ -21,6 +21,7 @@ import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -46,6 +47,7 @@ import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
@@ -112,9 +114,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					ImmutableSet.<LabeledReference>of(),
 					getPageLayout());
 			
-			String howToReadText = String.format(""); // TODO How to read for Networks 
-			
-			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout(), howToReadText);
+			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout(), Optional.<HowToRead>absent()); // TODO How to read for Networks?
 			
 			File geoMapFile = postScriptWriter.writeToPSFile("");
 

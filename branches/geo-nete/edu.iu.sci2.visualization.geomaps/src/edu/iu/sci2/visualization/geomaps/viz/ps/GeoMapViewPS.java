@@ -15,6 +15,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
+import com.google.common.base.Optional;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -33,14 +34,14 @@ public class GeoMapViewPS {
 	
 	private final GeoMap geoMap;
 	private final PageLayout pageLayout;
-	private final String howToReadText;
+	private final Optional<HowToRead> howToRead;
 	private final GeoMapViewPageArea geoMapViewPageArea;
 
-	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout, String howToReadText) throws ShapefilePostScriptWriterException {
+	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout, Optional<HowToRead> howToRead) throws ShapefilePostScriptWriterException {
 		try {
 			this.geoMap = geoMap;
 			this.pageLayout = pageLayout;
-			this.howToReadText = howToReadText;
+			this.howToRead = howToRead;
 			
 			this.geoMapViewPageArea = new GeoMapViewPageArea(calculateMapBoundingRectangle(), pageLayout);
 		} catch (TransformException e) {
@@ -117,12 +118,8 @@ public class GeoMapViewPS {
 		out.write(geoMap.getLegendarium().toPostScript());
 		out.write("\n");
 		
-		if (pageLayout.howToReadLowerLeft().isPresent()) {
-			out.write(new HowToRead(
-					pageLayout.howToReadLowerLeft().get(),
-					pageLayout,
-					howToReadText)
-			.toPostScript());
+		if (howToRead.isPresent()) {
+			out.write(howToRead.get().toPostScript());
 		}
 		
 		out.write("showpage" + "\n");

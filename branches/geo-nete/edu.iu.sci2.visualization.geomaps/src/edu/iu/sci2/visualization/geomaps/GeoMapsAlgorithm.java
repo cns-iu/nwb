@@ -23,6 +23,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+
+import com.google.common.base.Optional;
+
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
@@ -36,6 +39,7 @@ import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
 /*
  * TODO:
@@ -56,7 +60,7 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScript
  * Need an executive call on this one.
  */
 public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Algorithm {
-	public static final String TITLE = "Geospatial Visualization";
+	public static final String BASE_TITLE = "Geospatial Visualization";
 	
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
@@ -75,7 +79,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private final Dictionary<String, Object> parameters;
 	private final PageLayout pageLayout;
 	private final AnnotationMode<G, D> annotationMode;
-	private final String title;
+	private final String subtitle;
 	private final StringTemplate templateForHowToRead;
 	
 	// TODO reduce visibility
@@ -86,14 +90,14 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters,
 			PageLayout pageLayout,
 			AnnotationMode<G, D> annotationMode,
-			String title,
+			String subtitle,
 			StringTemplate templateForHowToRead,
 			LogService logService) {
 		this.data = data;
 		this.parameters = parameters;
 		this.pageLayout = pageLayout;
 		this.annotationMode = annotationMode;
-		this.title = title;
+		this.subtitle = subtitle;
 		this.templateForHowToRead = templateForHowToRead;
 		
 		GeoMapsAlgorithm.logger = logService;
@@ -107,15 +111,23 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Table inTable = (Table) inDatum.getData();
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
 			
-			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, title);
+			String fullTitle = String.format("%s (%s)", BASE_TITLE, subtitle);
 			
-			templateForHowToRead.setAttribute("baseMapName", geoMap.getShapefile().getNiceNamePlain());
+			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, fullTitle);
+			
+			String mapKind = subtitle.toLowerCase();
+			templateForHowToRead.setAttribute("mapKind", mapKind);
+			templateForHowToRead.setAttribute("baseMapDescription", geoMap.getShapefile().makeMapDescription());
 			templateForHowToRead.setAttribute("projectionName", geoMap.getKnownProjectedCRSDescriptor().getNiceNamePlain());
 			templateForHowToRead.setAttribute("hasInsets", geoMap.getShapefile().hasInsets());
 			templateForHowToRead.setAttribute("partType", geoMap.getShapefile().getComponentDescriptionPlain());
 			String howToReadText = templateForHowToRead.toString().trim();
+			Optional<HowToRead> howToRead =
+					(pageLayout.howToReadLowerLeft().isPresent())
+					? (Optional.of(new HowToRead(pageLayout.howToReadLowerLeft().get(), pageLayout, howToReadText, mapKind)))
+					: (Optional.<HowToRead>absent());
 			
-			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout, howToReadText);
+			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout, howToRead);
 			File geoMapFile = geoMapView.writeToPSFile(dataLabel);
 
 			Data[] outData = new Data[] {
@@ -124,7 +136,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 							POSTSCRIPT_MIME_TYPE,
 							DataProperty.VECTOR_IMAGE_TYPE,
 							inDatum,
-							title)
+							fullTitle)
 			};
 
 			return outData;
@@ -196,12 +208,21 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			Dictionary<String, Object> parameters) {
 		parameters.put("latitude", "Latitude");
 		parameters.put("longitude", "Longitude");
-		parameters.put("circleAreaColumnName", "GDP (billions USD)");
+		parameters.put("circleAreaColumnName",
+//				CircleDimension.AREA.getColumnNameParameterDisablingToken()
+				"GDP (Billions USD)"
+				);
 		parameters.put("circleAreaScaling", Scaling.Linear.toString());
-		parameters.put("outerColorColumnName", "Population (Thousands)");//CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken());
+		parameters.put("outerColorColumnName",
+//				CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken()
+				"Population (Thousands)"
+				);
 		parameters.put("outerColorScaling", Scaling.Linear.toString());
 		parameters.put("outerColorRange", "Yellow to Red");
-		parameters.put("innerColorColumnName", "Population (Thousands)"); //CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()); //"Population (thousands)");
+		parameters.put("innerColorColumnName",
+//				CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
+				"Population (Thousands)"
+				);
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
 		parameters.put("innerColorRange", "Gray to Black");
 		AlgorithmFactory algorithmFactory = new GeoMapsWebCirclesFactory();

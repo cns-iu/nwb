@@ -28,6 +28,10 @@ public class Legendarium {
 	
 
 	public String toPostScript() {
+		if (labeledReferences.isEmpty()) {
+			return " ";
+		}
+		
 		String s = "";
 
 		if (!hasPrintedDefinitions) {

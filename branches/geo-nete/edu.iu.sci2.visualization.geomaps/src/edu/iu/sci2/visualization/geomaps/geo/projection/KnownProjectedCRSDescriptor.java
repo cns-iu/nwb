@@ -10,7 +10,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.MathTransform;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableBiMap;
@@ -84,7 +83,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 
 	public MathTransform getTransformFrom(CoordinateReferenceSystem sourceCrs) throws NoSuchAuthorityCodeException, FactoryException {
 		return CRS.findMathTransform(
-				Objects.firstNonNull(sourceCrs, Shapefile.DEFAULT_SOURCE_CRS), // TODO ?
+				Objects.firstNonNull(sourceCrs, Shapefile.FALLBACK_SOURCE_CRS), // TODO ?
 				asProjectedCRS(),
 				REQUEST_LENIENT_TRANSFORM);
 	}

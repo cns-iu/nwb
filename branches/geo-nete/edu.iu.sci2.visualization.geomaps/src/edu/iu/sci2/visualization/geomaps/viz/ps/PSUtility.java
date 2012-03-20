@@ -10,9 +10,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 public class PSUtility {
-	public static final ImmutableMap<Integer, String> PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE = ImmutableMap.of(
-			Font.BOLD, "-Bold",
-			Font.ITALIC, "-Italic");
+	public static final ImmutableMap<Integer, String> PS_FONT_NAME_SUFFIX_FOR_FONT_STYLE =
+			ImmutableMap.of(
+					Font.BOLD, "-Bold",
+					Font.ITALIC, "-Italic");
 	
 	private PSUtility() {}
 
@@ -46,6 +47,17 @@ public class PSUtility {
 	
 	public static String showAndNewLine(String text, double fontSize) {
 		return String.format("(%s) dup show stringwidth pop neg %f rmoveto \n", text, -fontSize);
+	}
+	
+	public static String showLines(List<String> lines, Point2D.Double point, double fontSize) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (int ii = 0; ii < lines.size(); ii++) {
+			builder.append(String.format("%f %f moveto ", point.x, point.y - (ii * fontSize)));
+			builder.append(String.format("(%s) show ", lines.get(ii)));
+		}
+		
+		return builder.toString();
 	}
 
 	/**
