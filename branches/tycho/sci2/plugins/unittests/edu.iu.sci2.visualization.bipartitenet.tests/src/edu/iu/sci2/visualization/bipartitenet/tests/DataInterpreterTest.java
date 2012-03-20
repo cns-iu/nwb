@@ -35,14 +35,14 @@ public class DataInterpreterTest {
 	@Test
 	public void testBadTypeColumn() throws IOException, ParsingException {
 		NWBDataImporter importer = new NWBDataImporter("wrongname", "Who", "Desirability", null);
-		exception.expect(AssertionError.class);
+		exception.expect(ParsingException.class);
 		importer.constructModelFromFile(getTestNetwork());
 	}
 	
 	@Test
 	public void testBadSizeColumn() throws IOException, ParsingException {
 		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "wrongname", null);
-		exception.expect(AssertionError.class);
+		exception.expect(ParsingException.class);
 		importer.constructModelFromFile(getTestNetwork());
 	}
 }
