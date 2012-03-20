@@ -12,6 +12,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.osgi.framework.BundleException;
 
 import edu.iu.sci2.testutilities.TestUtilities;
 
@@ -34,9 +35,7 @@ public class Utilities {
 		
 		try {
 			cishellContext = TestUtilities.createFakeCIShellContext();
-		} catch (Exception e) {
-			// TODO fix the createFakeCIShellContext so it doesn't throw
-			// exception!
+		} catch (BundleException e) {
 			throw new AlgorithmExecutionException(
 					"There was a problem creating the test CIShell Context: "
 							+ e.getLocalizedMessage());
