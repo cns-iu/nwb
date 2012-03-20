@@ -13,18 +13,35 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
+import edu.iu.sci2.testutilities.TestUtilities;
+
 public class Utilities {
 	/**
 	 * This run the TBG algorithm indicated by the {@code AlgorithmFactory}.
 	 * Additionally, it will open the files if the {@code openFiles} parameter
 	 * is {@code true}.
 	 * 
-	 * Warning!  All errors relating to opening the file are suppressed.
+	 * Warning! All errors relating to opening the file are suppressed.
+	 * 
+	 * @throws AlgorithmExecutionException
+	 * @throws Exception
 	 */
 	public static void testTBGAlgorithm(AlgorithmFactory algorithmFactory,
-			CIShellContext cishellContext,
-			Dictionary<String, Object> parameters, Data[] convertedData,
+
+	Dictionary<String, Object> parameters, Data[] convertedData,
 			boolean openFiles) throws AlgorithmExecutionException {
+		CIShellContext cishellContext;
+		
+		try {
+			cishellContext = TestUtilities.createFakeCIShellContext();
+		} catch (Exception e) {
+			// TODO fix the createFakeCIShellContext so it doesn't throw
+			// exception!
+			throw new AlgorithmExecutionException(
+					"There was a problem creating the test CIShell Context: "
+							+ e.getLocalizedMessage());
+		}
+		
 		Algorithm algorithm = algorithmFactory.createAlgorithm(convertedData,
 				parameters, cishellContext);
 

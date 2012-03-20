@@ -9,7 +9,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
@@ -21,7 +20,6 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableSortedMap;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
-import edu.iu.sci2.visualization.scimaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithmFactory;
@@ -84,9 +82,8 @@ public class WithCategory {
 						false);
 
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
+			testTBGAlgorithm(algorithmFactory, parameters,
 					WithCategory.convertedData, this.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
@@ -105,9 +102,8 @@ public class WithCategory {
 						true);
 
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
+			testTBGAlgorithm(algorithmFactory, parameters,
 					WithCategory.convertedData, this.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
@@ -124,9 +120,9 @@ public class WithCategory {
 						false);
 
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
+
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
+			testTBGAlgorithm(algorithmFactory, parameters,
 					WithCategory.convertedData, this.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
@@ -143,9 +139,9 @@ public class WithCategory {
 						true);
 
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
+
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
+			testTBGAlgorithm(algorithmFactory, parameters,
 					WithCategory.convertedData, this.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();

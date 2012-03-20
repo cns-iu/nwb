@@ -21,7 +21,6 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableSortedMap;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
-import edu.iu.sci2.visualization.scimaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithmFactory;
@@ -64,9 +63,9 @@ public class WithoutCategory {
 			parameters
 					.put(AbstractTemporalBarGraphAlgorithmFactory.DATE_FORMAT_FIELD_ID,
 							DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
-			parameters.put(
-					AbstractTemporalBarGraphAlgorithmFactory.CATEGORY_FIELD_ID,
-					AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE);
+			parameters
+					.put(AbstractTemporalBarGraphAlgorithmFactory.CATEGORY_FIELD_ID,
+							AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE);
 			commonParameters = ImmutableSortedMap.copyOf(parameters);
 		} catch (AlgorithmExecutionException e) {
 			assertTrue(false);
@@ -84,11 +83,9 @@ public class WithoutCategory {
 						false);
 
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
-					WithoutCategory.convertedData,
-					WithoutCategory.openFiles);
+			testTBGAlgorithm(algorithmFactory, parameters,
+					WithoutCategory.convertedData, WithoutCategory.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -106,11 +103,9 @@ public class WithoutCategory {
 						true);
 
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
-					WithoutCategory.convertedData,
-					WithoutCategory.openFiles);
+			testTBGAlgorithm(algorithmFactory, parameters,
+					WithoutCategory.convertedData, WithoutCategory.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -126,11 +121,9 @@ public class WithoutCategory {
 						false);
 
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
-					WithoutCategory.convertedData,
-					WithoutCategory.openFiles);
+			testTBGAlgorithm(algorithmFactory, parameters,
+					WithoutCategory.convertedData, WithoutCategory.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -146,11 +139,9 @@ public class WithoutCategory {
 						true);
 
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
-		CIShellContext cishellContext = new LogOnlyCIShellContext();
 		try {
-			testTBGAlgorithm(algorithmFactory, cishellContext, parameters,
-					WithoutCategory.convertedData,
-					WithoutCategory.openFiles);
+			testTBGAlgorithm(algorithmFactory, parameters,
+					WithoutCategory.convertedData, WithoutCategory.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
