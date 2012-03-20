@@ -14,13 +14,8 @@ import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 public enum PageLayout {
 	WEB {
 		@Override
-		public double pageWidth() {
-			return 17.78 * POINTS_PER_INCH;
-		}
-		
-		@Override
-		public double pageHeight() {
-			return 13.33 * POINTS_PER_INCH;
+		public Dimension<Double> pageDimensions() {
+			return Dimension.ofSize(17.78 * POINTS_PER_INCH, 13.33 * POINTS_PER_INCH);
 		}
 		
 		@Override
@@ -55,30 +50,26 @@ public enum PageLayout {
 	},
 	PRINT {
 		@Override
-		public double pageWidth() {
-			return 11.0 * POINTS_PER_INCH;
-		}
-		@Override
-		public double pageHeight() {
-			return 8.5 * POINTS_PER_INCH;
+		public Dimension<Double> pageDimensions() {
+			return Dimension.ofSize(11.0 * POINTS_PER_INCH, 8.5 * POINTS_PER_INCH);
 		}
 		
 		@Override
 		public Optional<Point2D.Double> headerLowerLeft() {
 			return Optional.of(new Point2D.Double(
 					pageMargin(),
-					pageHeight() - pageMargin() - titleFont().getSize()));
+					pageDimensions().getHeight() - pageMargin() - titleFont().getSize()));
 		}
 
 		@Override
 		public double headerHeight() {
-			return 0.15 * pageHeight();
+			return 0.15 * pageDimensions().getHeight();
 		}
 
 		@Override
 		public Optional<Point2D.Double> howToReadLowerLeft() {
 			return Optional.of(new Point2D.Double(
-					0.55 * pageWidth(),
+					0.55 * pageDimensions().getWidth(),
 					legendariumLowerLeft().getY()));
 		}
 
@@ -98,8 +89,7 @@ public enum PageLayout {
 		}
 	};
 
-	public abstract double pageWidth();
-	public abstract double pageHeight();
+	public abstract Dimension<Double> pageDimensions();
 	
 	public abstract double pageMargin();
 
@@ -114,8 +104,8 @@ public enum PageLayout {
 	
 	public Dimension<Double> mapPageAreaMaxDimensions() {
 		return Dimension.ofSize(
-				pageWidth() - 2 * pageMargin(),
-				pageHeight() -
+				pageDimensions().getWidth() - 2 * pageMargin(),
+				pageDimensions().getHeight() -
 						(headerHeight()
 						+ legendariumReservedDimensions().getHeight()
 						+ 2 * pageMargin()));
@@ -128,7 +118,7 @@ public enum PageLayout {
 	}
 	
 	public double mapCenterX() {
-		return pageWidth() / 2.0;
+		return pageDimensions().getWidth() / 2.0;
 	}
 	
 
@@ -137,7 +127,7 @@ public enum PageLayout {
 	 */
 	public Dimension<Double> legendariumReservedDimensions() {
 		return Dimension.ofSize(
-				0.6 * pageWidth(),
+				0.6 * pageDimensions().getWidth(),
 				1.4 * (titleFont().getSize() + 2 * contentFont().getSize()) +
 				Math.max(
 						COLOR_GRADIENT_HEIGHT + 1.4 * contentFont().getSize(),

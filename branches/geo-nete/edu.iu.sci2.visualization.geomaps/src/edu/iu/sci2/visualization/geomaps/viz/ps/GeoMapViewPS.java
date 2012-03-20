@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
@@ -63,7 +62,7 @@ public class GeoMapViewPS {
 		out.write("\n");
 		
 		out.write((new PageFooter(new Point2D.Double(
-				pageLayout.pageWidth() / 2.0,
+				pageLayout.pageDimensions().getWidth() / 2.0,
 				0.75 * pageLayout.pageMargin()),
 				pageLayout)).toPostScript() + "\n");
 		
@@ -204,8 +203,7 @@ public class GeoMapViewPS {
 			BufferedWriter out, String outputPSFileName, PageLayout pageLayout) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-		// TODO Replace pageWidth and pageHeight with pageDimensions
-		out.write((new DSCProlog(outputPSFileName, Dimension.ofSize(pageLayout.pageWidth(), pageLayout.pageHeight())).toPostScript()));
+		out.write((new DSCProlog(outputPSFileName, pageLayout.pageDimensions()).toPostScript()));
 		
 //		/* TODO We're using setpagedevice to force page dimensions
 //		 * corresponding to US Letter landscape.  This command
