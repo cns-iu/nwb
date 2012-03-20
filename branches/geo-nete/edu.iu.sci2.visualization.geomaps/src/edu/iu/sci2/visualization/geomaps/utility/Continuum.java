@@ -9,14 +9,14 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 
 /* TODO We may wish to replace this with com.google.common.collect.Range.
- * To do so, we will need to only parameterize on Comparable types.
+ * To do so, we will need to parameterize only on Comparable types.
  * To do that, we will need to stop talking of a Continuum<Color> and instead use some Comparable
  * proxy that is interpreted externally as a Color.
  */
 /**
  * @param <T>	Not necessarily a Comparable type, but one such that between any two values there
  * 				is conceptually a continuum of intermediate values of the same type
- * 				(e.g. Double, Color).
+ * 				(e.g. Double, Color).  If T is Comparable consider using {@link Range}.
  */
 public class Continuum<T> {
 	private final T pointA;
