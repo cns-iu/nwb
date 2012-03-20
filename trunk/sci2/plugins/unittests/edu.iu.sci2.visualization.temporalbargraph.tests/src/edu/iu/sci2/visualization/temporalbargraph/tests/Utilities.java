@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -28,11 +29,10 @@ public class Utilities {
 	 * @throws Exception
 	 */
 	public static void testTBGAlgorithm(AlgorithmFactory algorithmFactory,
-
-	Dictionary<String, Object> parameters, Data[] convertedData,
+			Dictionary<String, Object> parameters, Data[] convertedData,
 			boolean openFiles) throws AlgorithmExecutionException {
 		CIShellContext cishellContext;
-		
+
 		try {
 			cishellContext = TestUtilities.createFakeCIShellContext();
 		} catch (BundleException e) {
@@ -40,7 +40,7 @@ public class Utilities {
 					"There was a problem creating the test CIShell Context: "
 							+ e.getLocalizedMessage());
 		}
-		
+
 		Algorithm algorithm = algorithmFactory.createAlgorithm(convertedData,
 				parameters, cishellContext);
 
@@ -52,8 +52,15 @@ public class Utilities {
 		assertTrue(returnData[1].getData() instanceof File);
 
 		if (openFiles) {
-			openFile((File) returnData[0].getData());
-			openFile((File) returnData[1].getData());
+			try {
+				openFile((File) returnData[0].getData());
+				openFile((File) returnData[1].getData());
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new AlgorithmExecutionException(
+						"The files produced could not be opened!"
+								+ e.getLocalizedMessage());
+			}
 		}
 	}
 }
