@@ -40,6 +40,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 	 * distort drawing. */
 	public static final boolean REQUEST_LENIENT_TRANSFORM = true;
 	
+	// TODO Is there a better pattern for this?
 	private static final ImmutableBiMap<String, KnownProjectedCRSDescriptor> FOR_NICE_NAME_TITLE_CASE =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(KnownProjectedCRSDescriptor.class),
@@ -53,7 +54,6 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 		return FOR_NICE_NAME_TITLE_CASE.keySet();
 	}
 	public static KnownProjectedCRSDescriptor forNiceNameInTitleCase(String niceNameTitleCase) {
-		// TODO What to do about null?
 		return FOR_NICE_NAME_TITLE_CASE.get(niceNameTitleCase);
 	}
 
@@ -83,7 +83,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 
 	public MathTransform getTransformFrom(CoordinateReferenceSystem sourceCrs) throws NoSuchAuthorityCodeException, FactoryException {
 		return CRS.findMathTransform(
-				Objects.firstNonNull(sourceCrs, Shapefile.FALLBACK_SOURCE_CRS), // TODO ?
+				Objects.firstNonNull(sourceCrs, Shapefile.FALLBACK_SOURCE_CRS), // TODO Document
 				asProjectedCRS(),
 				REQUEST_LENIENT_TRANSFORM);
 	}

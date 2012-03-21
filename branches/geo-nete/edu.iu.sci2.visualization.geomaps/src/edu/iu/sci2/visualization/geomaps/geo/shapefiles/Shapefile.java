@@ -71,6 +71,8 @@ public enum Shapefile {
 					AnchorPoint.NEAR_ANTARCTICA));
 
 	public static final DefaultGeographicCRS FALLBACK_SOURCE_CRS = DefaultGeographicCRS.WGS84;
+	
+	// TODO Is there a better pattern for this?
 	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(Shapefile.class),
@@ -82,7 +84,6 @@ public enum Shapefile {
 		return FOR_NICE_NAME.keySet();
 	}
 	public static Shapefile forNiceName(String niceName) {
-		// TODO Null?
 		return FOR_NICE_NAME.get(niceName);
 	}
 

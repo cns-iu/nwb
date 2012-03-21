@@ -12,16 +12,7 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 	private final G geo;	
 	private final EnumMap<D, Double> values;		
 	
-	/**
-	 * TODO
-	 * @param values
-	 */
 	private GeoDatum(G geo, EnumMap<D, Double> values) {
-		// TODO bad assertions?
-		for (Double value : values.values()) { // TODO unfortunate names
-			assert (value != null);
-		}
-		
 		this.geo = geo;
 		this.values = Maps.newEnumMap(values);
 	}
