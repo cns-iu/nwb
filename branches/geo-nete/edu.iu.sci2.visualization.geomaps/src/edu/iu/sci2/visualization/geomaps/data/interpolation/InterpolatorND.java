@@ -1,4 +1,5 @@
 package edu.iu.sci2.visualization.geomaps.data.interpolation;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
@@ -10,10 +11,12 @@ public class InterpolatorND implements Interpolator<double[]> {
 	private final Interpolator1D[] interpolators;
 
 	private InterpolatorND(Range<Double> inRange, Continuum<double[]> outContinuum) {
+		Preconditions.checkArgument(
+				outContinuum.getPointA().length == outContinuum.getPointB().length,
+				"Endpoints of the output continuum must have the same dimensionality.");
+		
 		this.inRange = inRange;
 		this.outContinuum = outContinuum;
-		
-		assert (outContinuum.getPointA().length == outContinuum.getPointB().length); // TODO ?
 		
 		int dimensionality = outContinuum.getPointA().length;
 		

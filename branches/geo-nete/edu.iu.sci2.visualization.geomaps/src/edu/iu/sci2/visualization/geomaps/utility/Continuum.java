@@ -8,9 +8,9 @@ import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 
-/* TODO We may wish to replace this with com.google.common.collect.Range.
- * To do so, we will need to parameterize only on Comparable types.
- * To do that, we will need to stop talking of a Continuum<Color> and instead use some Comparable
+/* TODO Might like to replace this in favor of com.google.common.collect.Range.
+ * To do so we will need to parameterize only on Comparable types.
+ * To do that we will need to stop talking of a Continuum<Color> and instead use some Comparable
  * proxy that is interpreted externally as a Color.
  */
 /**

@@ -69,7 +69,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return new GeoDataset<G, D>(ImmutableSet.copyOf(geoData), ImmutableSet.copyOf(bindings));
 	}
 	
-	public enum Stage {
+	public enum Stage { // TODO I hate this
 		RAW {
 			@Override
 			protected <G, D extends Enum<D> & VizDimension> Collection<GeoDatum<G, D>> transform(

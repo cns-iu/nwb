@@ -1,7 +1,6 @@
 package edu.iu.sci2.visualization.geomaps.data.scaling;
 
 
-// Should be a monotonically increasing function! TODO why?
 public enum Scaling {
 	Linear {
 		@Override

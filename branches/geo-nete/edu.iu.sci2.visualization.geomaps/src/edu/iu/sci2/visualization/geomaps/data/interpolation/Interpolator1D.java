@@ -9,11 +9,14 @@ public class Interpolator1D implements Interpolator<Double> {
 	private final Continuum<Double> outContinuum;
 
 	private Interpolator1D(Range<Double> inRange, Continuum<Double> outContinuum) {
-		assert (!outContinuum.isEmpty()); // TODO ?
-		
 		this.inRange = inRange;
 		this.outContinuum = outContinuum;
 	}
+	/**
+	 * If {@code inRange} is empty according to {@link Range#isEmpty()} then the created
+	 * interpolator will return {@code outContinuum.}{@link Continuum#getPointA() getPointA()} for
+	 * all inputs.
+	 */
 	public static Interpolator1D between(Range<Double> inRange, Continuum<Double> outContinuum) {
 		return new Interpolator1D(inRange, outContinuum);
 	}
@@ -36,7 +39,7 @@ public class Interpolator1D implements Interpolator<Double> {
 	private static double interpolate(
 			double in, double inMin, double inMax, double outMin, double outMax) {
 		if ((inMax - inMin) == 0) {
-			return outMin; // TODO document this behavior
+			return outMin;
 		}
 		
 		return (outMin + (((in - inMin) * (outMax - outMin)) / (inMax - inMin)));
