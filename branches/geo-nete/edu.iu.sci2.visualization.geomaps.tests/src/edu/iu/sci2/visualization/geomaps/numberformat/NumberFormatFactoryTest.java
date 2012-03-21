@@ -1,7 +1,9 @@
 package edu.iu.sci2.visualization.geomaps.numberformat;
 
 import junit.framework.TestCase;
-import edu.iu.sci2.visualization.geomaps.utility.Range;
+
+import com.google.common.collect.Ranges;
+
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
@@ -51,12 +53,12 @@ public class NumberFormatFactoryTest extends TestCase {
 
 	public static void testGeneralNumberGuess() {
 		NumericFormatType general = NumericFormatType.GENERAL;
-		assertEquals(general, NumericFormatType.guessFor("Something", Range.between(30d, 500d)));
+		assertEquals(general, NumericFormatType.guessFor("Something", Ranges.closed(30d, 500d)));
 		
-		assertEquals(general, NumericFormatType.guessFor("Widgets Per Year", Range.between(30d, 500d)));
-		assertEquals(general, NumericFormatType.guessFor("Widgets", Range.between(2000d, 3005d)));
+		assertEquals(general, NumericFormatType.guessFor("Widgets Per Year", Ranges.closed(30d, 500d)));
+		assertEquals(general, NumericFormatType.guessFor("Widgets", Ranges.closed(2000d, 3005d)));
 		
-		assertEquals(general, NumericFormatType.guessFor(null, Range.between(2000.0, 3005.0)));
+		assertEquals(general, NumericFormatType.guessFor(null, Ranges.closed(2000.0, 3005.0)));
 		assertEquals(general, NumericFormatType.guessFor("Widgets", null));
 		assertEquals(general, NumericFormatType.guessFor(null, null));
 	}
@@ -64,17 +66,17 @@ public class NumberFormatFactoryTest extends TestCase {
 	public static void testYearGuess() {
 		NumericFormatType year = NumberFormatFactory.NumericFormatType.YEAR;
 		// This is what we want
-		assertEquals(year, NumericFormatType.guessFor("Publication Year", Range.between(1997d, 2005d)));
+		assertEquals(year, NumericFormatType.guessFor("Publication Year", Ranges.closed(1997d, 2005d)));
 		
 		// This is a bad thing about the current implementation:
 		//assertEquals(year, NumberFormatFactory.guessNumberFormat("Ants Per Year", new Range<Double>(1997d, 2005d)));
 		
 		// case insensitive
-		assertEquals(year, NumericFormatType.guessFor("Publication yEaR Other Stuff", Range.between(1997d, 2005d)));
+		assertEquals(year, NumericFormatType.guessFor("Publication yEaR Other Stuff", Ranges.closed(1997d, 2005d)));
 	}
 	
 	public static void testIntegrationGeneral() {
-		NumericFormatType formatName = NumericFormatType.guessFor("Eagles", Range.between(2d, 38.4));
+		NumericFormatType formatName = NumericFormatType.guessFor("Eagles", Ranges.closed(2d, 38.4));
 		UnsignedZeroFormat format = NumberFormatFactory.getNumberFormat(
 				formatName, 2, 18, 38.4);
 		assertEquals("18", format.format(18));
