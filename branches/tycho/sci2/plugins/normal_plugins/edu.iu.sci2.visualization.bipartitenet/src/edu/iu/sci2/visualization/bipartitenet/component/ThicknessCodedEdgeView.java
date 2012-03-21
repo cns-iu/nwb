@@ -43,11 +43,14 @@ public class ThicknessCodedEdgeView implements Paintable {
 	}
 
 	public static void drawArrow(AbstractLine2D grossLine, float edgeThickness, Graphics2D g) {
-		// Make the line actually start and end on the given points:
-		double startOffset = edgeThickness;
+		// Make the line actually end on the given point:
 		double endOffset = getArrowHeadLength(edgeThickness);
 		
-		double tStart = startOffset / grossLine.getLength(),
+		// tStart=0: 
+		// this resolves an inconsistency between the Java2D and PS rendering models by setting the
+		// right line length for the PS rendering model.  There might be a way to use the Stroke 
+		// to have a particular line end cap that will work in both rendering models.
+		double tStart = 0,
 				tEnd = 1 - (endOffset / grossLine.getLength());
 		AbstractLine2D fineLine = grossLine.getSubCurve(tStart, tEnd);
 		
