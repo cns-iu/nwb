@@ -1,8 +1,8 @@
 package edu.iu.sci2.visualization.geomaps.utility.numberformat;
 
-import junit.framework.TestCase;
-
 import com.google.common.collect.Ranges;
+
+import junit.framework.TestCase;
 
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;

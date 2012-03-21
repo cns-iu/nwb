@@ -4,10 +4,10 @@ Bundle-Name: Geo Maps
 Bundle-SymbolicName: edu.iu.sci2.visualization.geomaps
 Bundle-Version: 0.1.0
 Bundle-ClassPath: .
-Import-Package: com.google.common.base;version="8.0.0",
- com.google.common.collect;version="8.0.0",
- com.google.common.io;version="8.0.0",
- com.google.common.primitives;version="8.0.0",
+Import-Package: com.google.common.base;version="11.0.1",
+ com.google.common.collect;version="11.0.1",
+ com.google.common.io;version="11.0.1",
+ com.google.common.primitives;version="11.0.1",
  com.vividsolutions.jts.geom,
  edu.iu.nwb.converter.prefusecsv.reader;resolution:=optional,
  edu.iu.nwb.util.nwbfile,
