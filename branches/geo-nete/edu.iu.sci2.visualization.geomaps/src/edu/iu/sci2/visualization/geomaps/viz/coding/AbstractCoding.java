@@ -3,13 +3,13 @@ package edu.iu.sci2.visualization.geomaps.viz.coding;
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.legend.VizLegendModel;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implements Coding<D> {

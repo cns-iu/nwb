@@ -5,10 +5,10 @@ import java.awt.geom.Point2D;
 import org.antlr.stringtemplate.StringTemplate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
 
 /* Create PostScript to draw three Circles representing the extrema (minimum,

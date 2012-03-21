@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.viz.legend.numberformat;
+package edu.iu.sci2.visualization.geomaps.utility.numberformat;
 
 import java.text.Format;
 

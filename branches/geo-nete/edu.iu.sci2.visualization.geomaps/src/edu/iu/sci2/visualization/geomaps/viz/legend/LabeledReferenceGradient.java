@@ -8,9 +8,9 @@ import org.antlr.stringtemplate.StringTemplate;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.utility.ColorTuples;
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
 
 /* Create PostScript to draw a color gradient representing the extrema (minimum,

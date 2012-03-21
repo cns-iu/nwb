@@ -12,6 +12,7 @@ import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.utility.Averages;
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
@@ -19,7 +20,6 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.ColorLegend;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceGradient;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
 
 public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> extends AbstractCoding<D, Color> {
 	public static final ImmutableMap<String, Continuum<Color>> COLOR_RANGES = ImmutableMap.of(

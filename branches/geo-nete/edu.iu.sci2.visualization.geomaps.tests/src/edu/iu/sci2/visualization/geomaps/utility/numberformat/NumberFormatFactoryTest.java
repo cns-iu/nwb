@@ -1,12 +1,12 @@
-package edu.iu.sci2.visualization.geomaps.numberformat;
+package edu.iu.sci2.visualization.geomaps.utility.numberformat;
 
 import junit.framework.TestCase;
 
 import com.google.common.collect.Ranges;
 
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.UnsignedZeroFormat;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 
 
 

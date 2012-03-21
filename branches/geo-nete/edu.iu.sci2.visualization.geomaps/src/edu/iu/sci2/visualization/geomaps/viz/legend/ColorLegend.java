@@ -3,7 +3,7 @@ package edu.iu.sci2.visualization.geomaps.viz.legend;
 import java.awt.Color;
 
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
-import edu.iu.sci2.visualization.geomaps.viz.legend.numberformat.NumberFormatFactory.NumericFormatType;
+import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 
 
 public class ColorLegend implements Legend<Double, Color> {
