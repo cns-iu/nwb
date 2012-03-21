@@ -44,3 +44,4 @@ Import-Package: com.google.common.base;version="8.0.0",
 X-AutoStart: true
 Service-Component: OSGI-INF/Regions.xml, OSGI-INF/Circles.xml, OSGI-INF/Network.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: edu.iu.sci2.visualization.geomaps.numberformat
