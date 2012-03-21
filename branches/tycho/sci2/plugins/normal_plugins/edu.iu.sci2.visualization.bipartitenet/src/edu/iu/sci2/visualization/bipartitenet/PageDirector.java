@@ -183,7 +183,7 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	private static final String TITLE = "Bipartite Network Graph";
+	private static final String TITLE = "Network Visualization";
 	
 	private final Layout layout;
 	
@@ -317,7 +317,7 @@ public class PageDirector implements Paintable {
 				Math.max(
 					dataModel.getLeftNodes().size(), 
 					dataModel.getRightNodes().size());
-		return Math.min(layout.getMaxNodeRadius(), layout.getLeftLine().getLength() / maxNodesOnOneSide);
+		return Math.min(layout.getMaxNodeRadius(), layout.getLeftLine().getLength() / (maxNodesOnOneSide));
 	}
 	
 	private Scale<Double, Double> makeNodeCodingAndLegend() {
