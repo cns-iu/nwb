@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 
@@ -13,6 +15,8 @@ import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
+import edu.iu.sci2.visualization.geomaps.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.numberformat.UnsignedZeroDecimalFormat;
 
 public class EdgeWeightLegend implements Paintable {
 	private final Point2D topLeft;
@@ -53,10 +57,16 @@ public class EdgeWeightLegend implements Paintable {
 		Graphics2D g = (Graphics2D) gForLabels.create();
 		Point2D arrowsTopLeft = topLeft.translate(0, yOffset);
 		Point2D arrowStart = arrowsTopLeft;
+		
+		UnsignedZeroDecimalFormat formatter = NumberFormatFactory.getNumberFormat(
+				NumberFormatFactory.GENERAL_FORMAT, 
+				ArrayUtils.toPrimitive(labeledValues.toArray(new Double[]{})));
+		
 		SimpleLabelPainter labelPainter = SimpleLabelPainter
 				.alignedBy(XAlignment.LEFT, YAlignment.STRIKE_HEIGHT)
 				.withFont(labelFont)
 				.build();
+		
 		for (Double value : labeledValues.reverse()) {
 			// loop invariant: arrowStart is the start of the current arrow
 			Point2D arrowEnd = arrowStart.translate(ARROW_LENGTH, 0);
@@ -65,7 +75,7 @@ public class EdgeWeightLegend implements Paintable {
 			ThicknessCodedEdgeView.drawArrow(line, lineThickness, g);
 			
 			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, 0);
-			labelPainter.paintLabel(labelPoint, value.toString(), gForLabels);
+			labelPainter.paintLabel(labelPoint, formatter.format(value), gForLabels);
 			
 			// preserve invariant
 			arrowStart = arrowStart.translate(0, 1.2 * labelFont.getSize());
