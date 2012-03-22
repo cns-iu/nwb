@@ -95,7 +95,7 @@ public class DatToCsv {
 	private static List<String> processPopulationLine(String datLine) {
 		List<String> processedPopulations = Lists.newArrayList();
 		
-		Iterator<String> iterator = ImmutableList.of(datLine.split(" ")).iterator();
+		Iterator<String> iterator = ImmutableList.copyOf(datLine.split(" ")).iterator();
 		
 		int time = Integer.valueOf(iterator.next());		
 		processedPopulations.add(String.valueOf(time));
