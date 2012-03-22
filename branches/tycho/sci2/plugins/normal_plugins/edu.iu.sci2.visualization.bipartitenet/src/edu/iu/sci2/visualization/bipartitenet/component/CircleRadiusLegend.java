@@ -19,8 +19,8 @@ import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
-import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
-import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;
+import edu.iu.sci2.visualization.geomaps.numberformat.NumberFormatFactory;
+import edu.iu.sci2.visualization.geomaps.numberformat.UnsignedZeroDecimalFormat;
 
 public class CircleRadiusLegend implements Paintable {
 	private final Scale<Double,Double> coding;
@@ -82,10 +82,9 @@ public class CircleRadiusLegend implements Paintable {
 		int numLabels = reversedValues.size();
 		double denominator = Math.max(1, numLabels - 1);
 		
-		UnsignedZeroFormat formatter = NumberFormatFactory.getNumberFormat(
-				NumberFormatFactory.NumericFormatType.GENERAL, 
+		UnsignedZeroDecimalFormat formatter = NumberFormatFactory.getNumberFormat(
+				NumberFormatFactory.GENERAL_FORMAT, 
 				ArrayUtils.toPrimitive(labeledValues.toArray(new Double[]{})));
-		
 	
 		SimpleLabelPainter labelPainter = SimpleLabelPainter
 				.alignedBy(XAlignment.LEFT, YAlignment.STRIKE_HEIGHT)
