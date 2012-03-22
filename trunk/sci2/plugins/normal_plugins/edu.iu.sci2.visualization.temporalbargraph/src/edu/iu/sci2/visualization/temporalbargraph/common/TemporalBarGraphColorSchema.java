@@ -20,16 +20,16 @@ public class TemporalBarGraphColorSchema extends ColorSchema {
 	 * Some default colors as given by Michael.
 	 */
 	public static final Color[] COLOR_ARRAY = new Color[] {
-		new Color(0x3399ff),
-		new Color(0xff9900),
-		new Color(0x99cc00),
-		new Color(0x003366),
-		new Color(0xcc0000),
-		new Color(0xcc00cc),
-		new Color(0x009999),
-		new Color(0x7a7900),
-		new Color(0xff00b4),
-		new Color(0x520000)};
+		new Color(0x004949),
+		new Color(0x009292),
+		new Color(0xFF6DB6),
+		new Color(0xFEB6DB),
+		new Color(0x29548E),
+		new Color(0xB66DFF),
+		new Color(0x6FB6FF),
+		new Color(0xDC6D02),
+		new Color(0x620000),
+		new Color(0xFFFF6D)};
 
 	/**
 	 * A default color schema to use for TemporalBarGraph.
