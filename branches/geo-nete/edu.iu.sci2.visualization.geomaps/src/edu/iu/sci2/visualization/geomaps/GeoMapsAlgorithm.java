@@ -4,9 +4,11 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -25,6 +27,7 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
@@ -164,79 +167,135 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 					GeoMapsAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
 	}
 	
-		
+	
 	public static void main(String[] args) {
-		try {
-			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.WORLD.getNiceNameTitleCase());
-//			parameters.put("projection", KnownProjectedCRSDescriptor.ALBERS.displayName());
+		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+		Example.US_REGIONS.run(PageLayout.PRINT);
+		Example.US_REGIONS.run(PageLayout.WEB);
+	}
 
-			String testFileURLStem = "/edu/iu/sci2/visualization/geomaps/testing/";
-			URL testFileURL =
-					GeoMapsAlgorithm.class.getResource(testFileURLStem + "25mostPopulousNationsWithGDPs.csv");
-//					GeoMapsAlgorithm.class.getResource(testFileURLStem + "us-state-populations.csv");
-			File inFile = new File(testFileURL.toURI());
-			AlgorithmFactory algorithmFactory;
-			algorithmFactory = prepareFactoryForRegionsTest(parameters);
-			algorithmFactory = prepareFactoryForCirclesTest(parameters);
-			
-			Data data = new BasicData(inFile, CSV_MIME_TYPE);
-			
-			PrefuseCsvReader prefuseCSVReader =	new PrefuseCsvReader(new Data[]{ data });
-			Data[] convertedData = prefuseCSVReader.execute();
-			
-			CIShellContext ciContext = new LogOnlyCIShellContext();
-			Algorithm algorithm =
-				algorithmFactory.createAlgorithm(
-						convertedData, parameters, ciContext);
 
-			System.out.println("Executing.. ");
-			Data[] outData = algorithm.execute();
-			File outFile = (File) outData[0].getData();
-			System.out.println(outFile.getAbsolutePath());
-			System.out.println(".. Done.");
-			Desktop.getDesktop().open(outFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
+	private static final String EXAMPLE_FILE_URL_STEM = "/edu/iu/sci2/visualization/geomaps/testing/";
+	private enum Example {
+		WORLD_CIRCLES(
+				Shapefile.WORLD,
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "25mostPopulousNationsWithGDPs.csv"),
+				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
+						PageLayout.PRINT, GeoMapsCirclesFactory.class,
+						PageLayout.WEB, GeoMapsWebCirclesFactory.class),
+				ImmutableMap.<String, Object>builder()
+						.put("latitude", "Latitude")
+						.put("longitude", "Longitude")
+						
+						.put("circleAreaColumnName",
+								// CircleDimension.AREA.getColumnNameParameterDisablingToken()
+								"GDP (Billions USD)"
+								)
+						.put("circleAreaScaling", Scaling.Linear.toString())
+						
+						.put("outerColorColumnName",
+								// CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken()
+								"Population (Thousands)"
+								)
+						.put("outerColorScaling", Scaling.Linear.toString())
+						.put("outerColorRange", "Yellow to Red")
+						
+						.put("innerColorColumnName",
+								// CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
+								"Population (Thousands)"
+								)
+						.put("innerColorScaling", Scaling.Linear.toString())
+						.put("innerColorRange", "White to Black")
+						.build()
+				),
+		US_REGIONS(
+				Shapefile.UNITED_STATES,
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "us-state-populations.csv"),
+				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
+						PageLayout.PRINT, GeoMapsRegionsFactory.class,
+						PageLayout.WEB, GeoMapsWebRegionsFactory.class),
+				ImmutableMap.<String, Object>builder()
+						.put("featureName", "State")
+						.put("featureColorColumnName",
+//								FeatureDimension.REGION_COLOR.getColumnNameParameterDisablingToken()
+								"Population"
+								)
+						.put("featureColorScaling", Scaling.Linear.toString())
+						.put("featureColorRange", "Yellow to Blue")
+						.build()
+				);
+		
+		private final Shapefile shapefile;
+		private final URL csvFileURL;
+		private final ImmutableMap<PageLayout, Class<? extends AlgorithmFactory>> algorithmFactoryClassForPageLayout;
+		private final ImmutableMap<String, Object> baseParameters;
+
+		private Example(
+				Shapefile shapefile,
+				URL tableFileURL,
+				ImmutableMap<PageLayout, Class<? extends AlgorithmFactory>> algorithmFactoryClassForPageLayout,
+				ImmutableMap<String, Object> baseParameters) {
+			this.shapefile = shapefile;
+			this.csvFileURL = tableFileURL;
+			this.algorithmFactoryClassForPageLayout = algorithmFactoryClassForPageLayout;
+			this.baseParameters = baseParameters;
+		}
+		
+		private void run(PageLayout pageLayout) {
+			try {
+				Dictionary<String, Object> parameters =
+						assembleParameters(shapefile, this.baseParameters);	
+				Algorithm algorithm =
+						createAlgorithm(
+								algorithmFactoryClassForPageLayout.get(pageLayout),
+								csvFileURL,
+								parameters);
+	
+				System.out.println("Executing.. ");
+				Data[] outData = algorithm.execute();
+				File outFile = (File) outData[0].getData();
+				System.out.println(outFile.getAbsolutePath());
+				System.out.println(".. Done.");
+				Desktop.getDesktop().open(outFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
 		}
 
-		System.exit(0);
-	}
+		private static Dictionary<String, Object> assembleParameters(
+				Shapefile shapefile, ImmutableMap<String, Object> baseParameters) {
+			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, shapefile.getNiceNameTitleCase());
+			
+			for (Entry<String, Object> entry : baseParameters.entrySet()) {
+				parameters.put(entry.getKey(), entry.getValue());
+			}
+			
+			return parameters;
+		}
 
-	private static AlgorithmFactory prepareFactoryForCirclesTest(
-			Dictionary<String, Object> parameters) {
-		parameters.put("latitude", "Latitude");
-		parameters.put("longitude", "Longitude");
-		parameters.put("circleAreaColumnName",
-//				CircleDimension.AREA.getColumnNameParameterDisablingToken()
-				"GDP (Billions USD)"
-				);
-		parameters.put("circleAreaScaling", Scaling.Linear.toString());
-		parameters.put("outerColorColumnName",
-//				CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken()
-				"Population (Thousands)"
-				);
-		parameters.put("outerColorScaling", Scaling.Linear.toString());
-		parameters.put("outerColorRange", "Yellow to Blue");
-		parameters.put("innerColorColumnName",
-//				CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
-				"Population (Thousands)"
-				);
-		parameters.put("innerColorScaling", Scaling.Linear.toString());
-		parameters.put("innerColorRange", "White to Black");
-		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
-		return algorithmFactory;
-	}
+		private static Data[] convertToPrefuseTableData(URL csvFileURL) throws URISyntaxException,
+				AlgorithmExecutionException {
+			File inFile = new File(csvFileURL.toURI());
+			Data data = new BasicData(inFile, CSV_MIME_TYPE);				
+			PrefuseCsvReader prefuseCSVReader =	new PrefuseCsvReader(new Data[]{ data });
+			
+			return prefuseCSVReader.execute();
+		}
 
-
-	private static AlgorithmFactory prepareFactoryForRegionsTest(
-			Dictionary<String, Object> parameters) {
-		parameters.put("featureName", "State");
-		parameters.put("featureColorColumnName", "Population");
-		parameters.put("featureColorScaling", Scaling.Linear.toString());
-		parameters.put("featureColorRange", "Yellow to Blue");
-		AlgorithmFactory algorithmFactory =	new GeoMapsWebRegionsFactory();
-		return algorithmFactory;
+		private static Algorithm createAlgorithm(
+				Class<? extends AlgorithmFactory> algorithmFactoryClass,
+				URL csvFileURL,
+				Dictionary<String, Object> parameters)
+						throws InstantiationException, IllegalAccessException, URISyntaxException,
+								AlgorithmExecutionException {
+			AlgorithmFactory algorithmFactory = algorithmFactoryClass.newInstance();
+			Data[] prefuseTableData = convertToPrefuseTableData(csvFileURL);			
+			CIShellContext ciContext = new LogOnlyCIShellContext();
+			
+			return algorithmFactory.createAlgorithm(prefuseTableData, parameters, ciContext);
+		}
 	}
 }
