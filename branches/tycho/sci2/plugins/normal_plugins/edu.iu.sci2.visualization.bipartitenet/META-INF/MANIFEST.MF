@@ -8,7 +8,7 @@ X-AutoStart: true
 Import-Package: com.google.common.base;version="8.0.0",
  com.google.common.collect;version="8.0.0",
  edu.iu.nwb.util.nwbfile,
- edu.iu.sci2.visualization.geomaps.numberformat,
+ edu.iu.sci2.visualization.geomaps.utility.numberformat,
  math.geom2d,
  math.geom2d.conic,
  math.geom2d.curve,
