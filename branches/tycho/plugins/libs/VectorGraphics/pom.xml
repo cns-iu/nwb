@@ -7,8 +7,7 @@
     <groupId>edu.iu.nwb.libs</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>edu.iu.nwb.libs</groupId>
   <artifactId>FreeHEP_VectorGraphics</artifactId>
-  <version>1.0.0</version>
+  <version>2.1.1</version>
   <packaging>eclipse-plugin</packaging>
 </project>
