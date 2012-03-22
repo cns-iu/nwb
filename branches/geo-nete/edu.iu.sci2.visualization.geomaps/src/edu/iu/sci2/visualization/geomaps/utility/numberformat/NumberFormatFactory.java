@@ -41,7 +41,7 @@ public class NumberFormatFactory {
 		private static boolean mentionsSomethingLikeYear(final String string) {
 			return Iterables.any(
 					ImmutableSet.of("year", "yr", "date", "time"),
-					StringPredicates.isSubstringOf(string, ToCaseFunction.LOWER));
+					StringPredicates.substringOf(string, ToCaseFunction.LOWER));
 		}
 	}
 		
@@ -84,7 +84,7 @@ public class NumberFormatFactory {
 				try {
 					approximateValues[jj] = formatter.parse(formatter.format(values[jj])).doubleValue();
 				} catch (ParseException e) {
-					// TODO !!!!!!!!!
+					// TODO Best way to fail here?
 					throw new RuntimeException("TODO Failed to parse formatter result.", e);
 				}
 			}

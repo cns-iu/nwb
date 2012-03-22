@@ -7,6 +7,10 @@ import com.google.common.base.Equivalence;
 public class Points {
 	private Points() {}
 	
+	/**
+	 * The returned equivalence provides a trivial hash implementation and is <em>not</em> suitable
+	 * for most {@link Equivalence} purposes. TODO Are you *sure* UnsupportedOperationException wouldn't be preferable?
+	 */
 	public static Equivalence<Point2D.Double> distanceEquivalenceWithTolerance(
 			final double tolerance) {
 		return new Equivalence<Point2D.Double>() {
@@ -17,7 +21,7 @@ public class Points {
 
 			@Override
 			protected int doHash(Point2D.Double t) {
-				return 0; // TODO Document strongly or throw UnsupportedOperationException
+				return 0;
 			}			
 		};
 	}

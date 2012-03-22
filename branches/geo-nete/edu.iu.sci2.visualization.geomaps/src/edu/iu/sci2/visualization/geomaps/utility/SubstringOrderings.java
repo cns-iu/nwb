@@ -11,6 +11,13 @@ import com.google.common.collect.Ordering;
 public class SubstringOrderings {
 	private SubstringOrderings() {}
 
+	/**
+	 * Let the "rank" of a String offered to the returned {@link Ordering} mean the position of the
+	 * rightmost element in the List given to this method that is a substring of it.  All elements
+	 * having no such substring are assigned one special rank lesser than all others.  Then the
+	 * returned ordering judges first by rank and defers on equal ranks to the natural String
+	 * ordering.
+	 */
 	public static Ordering<String> explicit(
 			final List<? extends String> candidateSubstringsInOrder) {
 		return Ordering.natural().onResultOf(new Function<String, Integer>() {
@@ -21,11 +28,14 @@ public class SubstringOrderings {
 			public Integer apply(final String string) {
 				return Lists2.lastIndexOf(
 						candidateSubstringsInOrder,
-						StringPredicates.isSubstringOf(string, ToCaseFunction.LOWER));
+						StringPredicates.substringOf(string, ToCaseFunction.LOWER));
 			}			
-		});
+		}).compound(Ordering.<String>natural());
 	}
 
+	/**
+	 * @see #explicit(List)
+	 */
 	public static Ordering<String> explicit(
 			String leastCandidateSubstring,
 			String... remainingCandidateSubstringsInOrder) {

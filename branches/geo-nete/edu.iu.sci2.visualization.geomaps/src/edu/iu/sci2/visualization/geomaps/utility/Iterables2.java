@@ -26,9 +26,8 @@ public class Iterables2 {
 		};
 	}
 
-	public static <E> List<List<E>> split( /* TODO Test */
-			Iterable<? extends E> toSplit,
-			Equivalence<? super E> equivalence) {
+	public static <E> List<List<E>> split(
+			Iterable<? extends E> toSplit, Equivalence<? super E> equivalence) {
 		List<List<E>> split = Lists.newArrayList();
 	
 		if (Iterables.isEmpty(toSplit)) {

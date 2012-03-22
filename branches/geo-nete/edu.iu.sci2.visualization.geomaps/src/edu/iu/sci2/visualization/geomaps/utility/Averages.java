@@ -7,8 +7,12 @@ import com.google.common.primitives.Doubles;
 
 
 public class Averages {
+	public static final String FAIL_MESSAGE = "Cannot take the mean of zero numbers.";
+
+	private Averages() {}
+	
 	public static double meanOfDoubles(Collection<Double> values) {
-		Preconditions.checkArgument(!values.isEmpty(), "Cannot take the mean of zero numbers.");
+		Preconditions.checkArgument(!values.isEmpty(), FAIL_MESSAGE);
 		
 		double sum = 0.0;		
 		for (double value : values) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import org.geotools.data.DataStore;
@@ -14,7 +15,6 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
@@ -115,7 +115,7 @@ public enum Shapefile {
 		this.featureAttributeName = featureAttributeName;
 		this.defaultProjectedCrs = defaultProjectedCrs;
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
-		
+
 		this.insetForFeatureName = Maps.uniqueIndex(insets, new Function<Inset, String>() {
 			@Override
 			public String apply(Inset inset) {
@@ -128,12 +128,16 @@ public enum Shapefile {
 
 			this.featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
 		} catch (IOException e) {
-			throw new ShapefileException("TODO Error accessing shapefile.", e);
+			throw new ShapefileException("The shapefile data store could not be opened.", e);
 		}
 	}
 	
+	/**
+	 * If this feature source schema has no associated coordinate reference system,
+	 * {@link #FALLBACK_SOURCE_CRS} is used instead.
+	 */
 	public CoordinateReferenceSystem detectNativeCRS() {
-		return Objects.firstNonNull( // TODO ?
+		return Objects.firstNonNull(
 				featureSource.getSchema().getCoordinateReferenceSystem(),
 				FALLBACK_SOURCE_CRS);
 	}
@@ -151,26 +155,31 @@ public enum Shapefile {
 	public String extractFeatureName(SimpleFeature feature) {
 		Object featureName = feature.getAttribute(featureAttributeName);
 
-		if (featureName == null) {
-			String message =
-					String.format(
-							"Feature %s has no \"%s\" property.  " +
-							"Consider using one of these properties: " +
-							Joiner.on(",").join(Lists.transform(
-									viewOfFeatureCollection().getSchema().getAttributeDescriptors(),
-									new Function<AttributeDescriptor, String>() {
-										@Override
-										public String apply(AttributeDescriptor input) {
-											return input.getName().toString();
-										}									
-									}),
-							"\n",
-							feature,
-							featureAttributeName));
-			
-			throw new RuntimeException(message); // TODO !
+		if (featureName != null) {
+			return String.valueOf(featureName);
 		}
-		return String.valueOf(featureName);
+		
+		// Error
+		String message = String.format(
+				"Feature %s has no \"%s\" property.  ", feature, featureAttributeName);
+		
+		message += "Consider using one of these properties: ";		
+		List<String> attributeDescriptorNames = Lists.newArrayList();
+		for (AttributeDescriptor attributeDescriptor
+				: viewOfFeatureCollection().getSchema().getAttributeDescriptors()) {
+			attributeDescriptorNames.add(attributeDescriptor.getName().toString());
+		}		
+		message += Joiner.on(",").join(attributeDescriptorNames);
+		
+		throw new FeatureAttributeAbsentException(message);
+	}
+	
+	public static class FeatureAttributeAbsentException extends RuntimeException {
+		private static final long serialVersionUID = -6714673548077059632L;
+
+		public FeatureAttributeAbsentException(String message) {
+			super(message);
+		}		
 	}
 
 	@Override
@@ -217,15 +226,6 @@ public enum Shapefile {
 		return anchorPoints;
 	}
 	
-	public ReferencedEnvelope getBounds() throws IOException { // TODO
-		ReferencedEnvelope bounds = featureSource.getBounds();
-		System.out.println(bounds.getMinX());
-		System.out.println(bounds.getMinY());
-		System.out.println(bounds.getMaxX());
-		System.out.println(bounds.getMaxY());
-		return bounds;
-	}
-
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> viewOfFeatureCollection()
 			throws ShapefileFeatureRetrievalException {
 		try {
@@ -301,11 +301,16 @@ public enum Shapefile {
 		}
 		
 		public Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
-			if (containsLargePositiveLongitudes(geometry)) { // TODO This is an awful hack :(
+			// TODO This is an awful hack to suppress Alaska's tail
+			if (seemsToBePartOfAlaskasTail(geometry)) {
 				return EMPTY_GEOMETRY;
 			}
 			
 			return JTS.transform(geometry, transform);
+		}
+		
+		private static boolean seemsToBePartOfAlaskasTail(Geometry geometry) {
+			return containsLargePositiveLongitudes(geometry);
 		}
 		
 		private static AffineTransform preConcatenate(
@@ -380,7 +385,7 @@ public enum Shapefile {
 	}
 
 	
-	public static class ShapefileFeatureRetrievalException extends RuntimeException { // TODO Unchecked is ok?
+	public static class ShapefileFeatureRetrievalException extends RuntimeException {
 		private static final long serialVersionUID = -5812550122559595790L;
 
 		public ShapefileFeatureRetrievalException(String message, Throwable cause) {
@@ -389,7 +394,7 @@ public enum Shapefile {
 	}
 	
 	
-	public static class ShapefileException extends RuntimeException { // TODO Unchecked is ok?
+	public static class ShapefileException extends RuntimeException {
 		private static final long serialVersionUID = -9175935612884445370L;
 		
 		public ShapefileException(String message, Throwable cause) {

@@ -9,11 +9,11 @@ public class StringPredicates {
 
 	/**
 	 * @return	A Predicate for whether {@code string}.contains(a candidate substring).
-	 * @see {@link #isSubstringOf(String, Function)}
+	 * @see {@link #substringOf(String, Function)}
 	 * @see {@link Functions#identity()}
 	 */
-	public static Predicate<String> isContainedBy(String string) {
-		return isSubstringOf(string, Functions.<String>identity());
+	public static Predicate<String> substringOf(String string) {
+		return substringOf(string, Functions.<String>identity());
 	}
 	
 	/**
@@ -21,7 +21,7 @@ public class StringPredicates {
 	 * @return	A Predicate for whether {@code string}.contains(a candidate substring).
 	 * @see String#contains(CharSequence)
 	 */
-	public static Predicate<String> isSubstringOf(
+	public static Predicate<String> substringOf(
 			final String string,
 			final Function<? super String, ? extends String> normalizer) {
 		final String normalizedBaseString = normalizer.apply(string);

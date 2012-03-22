@@ -8,10 +8,9 @@ import com.google.common.collect.AbstractIterator;
 public class Iterators2 {
 	private Iterators2() {}
 
-	
-	/* TODO Test */
 	/**
-	 * An iterator that for a series of consecutive, equivalent elements yields only the first.
+	 * An iterator that for each subsequence of consecutive, equivalent elements yields only the
+	 * first.
 	 * 
 	 * <p>The source iterator is not currently advanced except as necessary,
 	 * but this behavior is not guaranteed.
@@ -23,8 +22,9 @@ public class Iterators2 {
 		 * advancing the source iterator earlier than necessary.
 		 */
 		return new AbstractIterator<E>() {
-			private boolean beforeYieldingFirstElement = true;
-			private E previousElement;		
+			// Some anonymous object that cannot be equivalent to the first from "source"
+			@SuppressWarnings("unchecked") // Used only to fail E.equals(this thing)
+			private E previousElement = (E) new Object();		
 			
 			@Override
 			protected E computeNext() {
@@ -32,9 +32,7 @@ public class Iterators2 {
 					E currentElement = source.next();
 					
 					// Skip consecutively subsequent equivalent elements
-					if (beforeYieldingFirstElement ||
-							!equivalence.equivalent(currentElement, previousElement)) {
-						beforeYieldingFirstElement = false;
+					if (!equivalence.equivalent(currentElement, previousElement)) {
 						previousElement = currentElement;
 						
 						return currentElement;

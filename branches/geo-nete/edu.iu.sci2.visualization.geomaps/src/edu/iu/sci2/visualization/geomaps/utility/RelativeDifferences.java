@@ -4,13 +4,17 @@ import com.google.common.base.Equivalence;
 
 public class RelativeDifferences {
 	public static final double DEFAULT_RELATIVE_DIFFERENCE_TOLERANCE = 0.01;
+	/** Warning: trivial hash implementation! */
 	public static final Equivalence<Double> DEFAULT_EQUIVALENCE =
-			equivalenceUsingTolerance(DEFAULT_RELATIVE_DIFFERENCE_TOLERANCE);
+			equivalenceUpToTolerance(DEFAULT_RELATIVE_DIFFERENCE_TOLERANCE);
 	
 	private RelativeDifferences() {}
 	
-	
-	public static Equivalence<Double> equivalenceUsingTolerance(final double tolerance) {
+	/**
+	 * The returned equivalence provides a trivial hash implementation and is <em>not</em> suitable
+	 * for most {@link Equivalence} purposes. TODO Are you *sure* UnsupportedOperationException wouldn't be preferable?
+	 */
+	public static Equivalence<Double> equivalenceUpToTolerance(final double tolerance) {
 		return new Equivalence<Double>() {
 			@Override
 			protected boolean doEquivalent(Double a, Double b) {
@@ -19,7 +23,7 @@ public class RelativeDifferences {
 
 			@Override
 			protected int doHash(Double t) {
-				return 0; // TODO document very strongly or else throw new UnsupportedOperationException()
+				return 0;
 			}
 		};
 	}

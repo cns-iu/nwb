@@ -32,7 +32,6 @@ public class Parameters {
 		mutator.add(parameterId, LONGITUDISHNESS.reverse().sortedCopy(columnNames));
 	}
 
-	// TODO This is only used by circles?  Use for regions and network too..
 	public static void addShapefileAndProjectionParameters(DropdownMutator mutator) {
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.byNiceNames());
 		

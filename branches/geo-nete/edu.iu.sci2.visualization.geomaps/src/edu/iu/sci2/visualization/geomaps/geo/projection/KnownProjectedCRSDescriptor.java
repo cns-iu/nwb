@@ -81,9 +81,12 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 		return projectedCrsDescriptor.asProjectedCRS();
 	}
 
+	/**
+	 * If {@code sourceCrs} is null, {@link #FALLBACK_SOURCE_CRS} is assumed.
+	 */
 	public MathTransform getTransformFrom(CoordinateReferenceSystem sourceCrs) throws NoSuchAuthorityCodeException, FactoryException {
 		return CRS.findMathTransform(
-				Objects.firstNonNull(sourceCrs, Shapefile.FALLBACK_SOURCE_CRS), // TODO Document
+				Objects.firstNonNull(sourceCrs, Shapefile.FALLBACK_SOURCE_CRS),
 				asProjectedCRS(),
 				REQUEST_LENIENT_TRANSFORM);
 	}
