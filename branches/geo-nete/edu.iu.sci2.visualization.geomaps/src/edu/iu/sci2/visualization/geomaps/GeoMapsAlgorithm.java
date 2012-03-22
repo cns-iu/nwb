@@ -218,13 +218,13 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				"Population (Thousands)"
 				);
 		parameters.put("outerColorScaling", Scaling.Linear.toString());
-		parameters.put("outerColorRange", "Gray to Black");
+		parameters.put("outerColorRange", "Yellow to Blue");
 		parameters.put("innerColorColumnName",
 //				CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
 				"Population (Thousands)"
 				);
 		parameters.put("innerColorScaling", Scaling.Linear.toString());
-		parameters.put("innerColorRange", "Yellow to Red");
+		parameters.put("innerColorRange", "White to Black");
 		AlgorithmFactory algorithmFactory = new GeoMapsCirclesFactory();
 		return algorithmFactory;
 	}

@@ -22,12 +22,15 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceGradient;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 
 public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> extends AbstractCoding<D, Color> {
-	public static final ImmutableMap<String, Continuum<Color>> COLOR_RANGES = ImmutableMap.of(
-			"Yellow to Blue", Continuum.between(new Color(255, 255, 158), new Color(37, 52, 148)),
-			"Yellow to Red", Continuum.between(new Color(254, 204, 92), new Color(177, 4, 39)),
-			"Green to Red", Continuum.between(new Color(98, 164, 44), new Color(123, 21, 21)),
-			"Blue to Red", Continuum.between(new Color(49, 243, 255), new Color(127, 4, 27)),
-			"Gray to Black", Continuum.between(new Color(214, 214, 214), new Color(0, 0, 0)));
+	public static final ImmutableMap<String, Continuum<Color>> COLOR_RANGES =
+			ImmutableMap.<String, Continuum<Color>>builder()
+			.put("White to Green", Continuum.between(new Color(237, 248, 251), new Color(1, 109, 44)))
+			.put("White to Purple", Continuum.between(new Color(237, 248, 251), new Color(129, 14, 124)))
+			.put("Yellow to Orange", Continuum.between(new Color(255, 255, 212), new Color(153, 52, 4)))
+			.put("Yellow to Red", Continuum.between(new Color(255, 255, 178), new Color(189, 0, 38)))
+			.put("Yellow to Blue", Continuum.between(new Color(255, 255, 204), new Color(38, 52, 148)))
+			.put("White to Black", Continuum.between(new Color(247, 247, 247), new Color(37, 37, 37)))
+			.build();
 
 	public AbstractColorCoding(Binding<D> binding, Continuum<Double> usableRange, Interpolator<Color> interpolator) {
 		super(binding, usableRange, interpolator);
