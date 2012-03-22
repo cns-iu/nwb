@@ -263,7 +263,6 @@ public class PageDirector implements Paintable {
 				- (WHITESPACE_AMONG_LABELS / Math.pow(nodesOnLeft, 2)), baseFontSize);
 		double rightFontSize = Math.min((pageSize / nodesOnRight) 
 				- (WHITESPACE_AMONG_LABELS / Math.pow(nodesOnRight, 2)), baseFontSize);
-		System.out.println(String.format("Using font sizes %f and %f for left and right, respectively", leftFontSize, rightFontSize));
 		
 		return new Font[] {baseFont.deriveFont((float) leftFontSize), baseFont.deriveFont((float) rightFontSize)};
 	}
