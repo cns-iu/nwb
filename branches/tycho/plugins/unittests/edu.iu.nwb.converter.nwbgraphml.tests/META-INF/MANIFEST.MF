@@ -5,12 +5,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.iu.nwb.converter.nwbgraphml.tests.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: edu.iu.nwb.util.nwbfile,
+Import-Package: com.google.common.collect;version="11.0.1",
+ edu.iu.nwb.util.nwbfile,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.service.conversion;version="1.0.0",
  org.osgi.framework;version="1.3.0"
 Require-Bundle: org.junit,
- google_guava;bundle-version="0.8.0",
  edu.iu.nwb.converter.nwbgraphml;bundle-version="1.0.0"
