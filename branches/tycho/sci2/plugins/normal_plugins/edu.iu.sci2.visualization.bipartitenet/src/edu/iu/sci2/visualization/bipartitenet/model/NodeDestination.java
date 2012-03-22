@@ -11,13 +11,13 @@ import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlig
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 
 public enum NodeDestination {
-	LEFT(Color.decode("#3399FF"), XAlignment.RIGHT) {
+	LEFT(new Color(31, 120, 180), XAlignment.RIGHT) {
 		@Override
 		protected Point2D getAlignPoint(NodeView nv) {
 			return nv.getNodeCenter().translate(- nv.getCenterToTextDistance(), 0);
 		}
 	},
-	RIGHT(Color.decode("#FF9900"), XAlignment.LEFT) {
+	RIGHT(new Color(178, 223, 138), XAlignment.LEFT) {
 		@Override
 		protected Point2D getAlignPoint(NodeView nv) {
 			return nv.getNodeCenter().translate(+ nv.getCenterToTextDistance(), 0);
