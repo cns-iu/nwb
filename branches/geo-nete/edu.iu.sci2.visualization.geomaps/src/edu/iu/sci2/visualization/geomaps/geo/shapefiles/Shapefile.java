@@ -64,7 +64,7 @@ public enum Shapefile {
 			"Country",
 			"country",
 			"NAME",
-			KnownProjectedCRSDescriptor.MERCATOR,
+			KnownProjectedCRSDescriptor.ECKERT_IV,
 			ImmutableSet.<Inset>of(),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALASKA,
@@ -79,7 +79,7 @@ public enum Shapefile {
 					new Function<Shapefile, String>() {
 						@Override
 						public String apply(Shapefile shapefile) {
-							return shapefile.getNiceNameTitleCase(); }}));
+							return shapefile.getNiceName(); }}));
 	public static ImmutableSet<String> byNiceNames() {
 		return FOR_NICE_NAME.keySet();
 	}
@@ -190,7 +190,8 @@ public enum Shapefile {
 	public boolean hasInsets() {
 		return !insetForFeatureName.isEmpty();
 	}
-	public String getNiceNameTitleCase() {
+	
+	public String getNiceName() {
 		return niceName;
 	}
 	

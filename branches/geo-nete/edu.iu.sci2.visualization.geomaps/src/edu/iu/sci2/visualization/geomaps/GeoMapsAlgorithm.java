@@ -267,7 +267,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		private static Dictionary<String, Object> assembleParameters(
 				Shapefile shapefile, ImmutableMap<String, Object> baseParameters) {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, shapefile.getNiceNameTitleCase());
+			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, shapefile.getNiceName());
 			
 			for (Entry<String, Object> entry : baseParameters.entrySet()) {
 				parameters.put(entry.getKey(), entry.getValue());
