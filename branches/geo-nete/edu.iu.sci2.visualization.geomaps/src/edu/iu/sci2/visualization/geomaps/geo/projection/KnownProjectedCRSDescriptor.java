@@ -40,16 +40,18 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 	 * distort drawing. */
 	public static final boolean REQUEST_LENIENT_TRANSFORM = true;
 	
+	
+
 	// TODO Is there a better pattern for this?
 	private static final ImmutableBiMap<String, KnownProjectedCRSDescriptor> FOR_NICE_NAME_TITLE_CASE =
 			ImmutableBiMap.copyOf(Maps.uniqueIndex(
 					EnumSet.allOf(KnownProjectedCRSDescriptor.class),
-						new Function<KnownProjectedCRSDescriptor, String>() {
-							@Override
-							public String apply(KnownProjectedCRSDescriptor shapefile) {
-								return shapefile.getNiceNameTitleCase();
-							}
-						}));
+					new Function<KnownProjectedCRSDescriptor, String>() {
+						@Override
+						public String apply(KnownProjectedCRSDescriptor shapefile) {
+							return shapefile.getNiceNameTitleCase();
+						}
+					}));
 	public static Set<String> byNiceNamesInTitleCase() {
 		return FOR_NICE_NAME_TITLE_CASE.keySet();
 	}

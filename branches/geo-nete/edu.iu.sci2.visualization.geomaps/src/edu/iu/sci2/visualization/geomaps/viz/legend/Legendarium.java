@@ -47,7 +47,7 @@ public class Legendarium {
 		s += String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y);
 		
 		s += PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n";
-		s += PSUtility.setgray(0.0) + "\n"; // TODO
+		s += PSUtility.setgray(0.0) + "\n";
 		s += "(Legend) show" + "\n";
 		s += "grestore" + "\n";
 		

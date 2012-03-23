@@ -62,7 +62,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 
 			return colorLegend;
 		} catch (ScalingException e) {
-			throw new LegendCreationException("TODO Problem formatting numbers for legend.", e);
+			throw new LegendCreationException("Problem formatting numbers for legend.", e);
 		}
 	}
 

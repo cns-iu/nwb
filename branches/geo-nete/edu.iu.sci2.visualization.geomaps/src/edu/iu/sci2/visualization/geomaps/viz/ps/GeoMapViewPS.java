@@ -139,16 +139,10 @@ public class GeoMapViewPS {
 	/**
 	 * Given a latitude and longitude in a {@link Coordinate} object, projects it onto the
 	 * current map as well as possible.
+	 * @throws TransformException 
 	 */
-	public Point2D.Double coordinateToPagePoint(Coordinate coordinate) { // TODO what the hell is up with the exception handling here
-		Coordinate intermediateCoord = geoMap.project(coordinate);
-		
-		if (intermediateCoord != null) {
-			return geoMapViewPageArea.displayPointFor(intermediateCoord);
-		} else {
-			// can happen if the point would not be displayed (so the Geometry becomes empty)
-			return null;
-		}
+	public Point2D.Double coordinateToPagePoint(Coordinate coordinate) throws TransformException {
+		return geoMapViewPageArea.displayPointFor(geoMap.project(coordinate));
 	}
 	
 	/**
@@ -189,38 +183,14 @@ public class GeoMapViewPS {
 		}
 		it.close();
 		
-		Rectangle2D.Double bufferedRectangle = addSmallBufferAround(rectangle);
-
-		return bufferedRectangle;
+		return rectangle;
 	}
-
-	private static Rectangle2D.Double addSmallBufferAround(Rectangle2D.Double rectangle) {
-		return rectangle; // TODO actually add the buffer ... or don't, the map looks pretty good without it
-	}
-
 
 	private static void writeCodeHeader(
 			BufferedWriter out, String outputPSFileName, PageLayout pageLayout) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
 		out.write((new DSCProlog(outputPSFileName, pageLayout.pageDimensions()).toPostScript()));
-		
-//		/* TODO We're using setpagedevice to force page dimensions
-//		 * corresponding to US Letter landscape.  This command
-//		 * is forbidden in Encapsulated PostScript, so if we
-//		 * wish to maintain that format, we'll need a different
-//		 * method to specify landscape-style dimensions (that popular
-//		 * PostScript-to-PDF renderers will all respect).
-//		 */
-//		out.write("/setpagedevice where" + "\n"
-//				+ "{ pop 1 dict" + "\n"
-//				+ "dup /PageSize [ "
-//					+ Constants.PAGE_WIDTH_IN_POINTS + " "
-//					+ pageHeightInPoints + " "
-//				+ "] put" + "\n"
-//				+ "setpagedevice" + "\n"
-//				+ "} if" + "\n");
-//		out.write("\n");
 	}
 
 	public static class ShapefilePostScriptWriterException extends Exception {

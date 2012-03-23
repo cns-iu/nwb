@@ -11,8 +11,6 @@ import com.google.common.collect.Lists;
 public class Iterables2 {
 	private Iterables2() {}
 	
-	
-	/* TODO Test */
 	/**
 	 * @see Iterators2#omitConsecutiveDuplicates(Iterator, Equivalence)
 	 */
@@ -26,6 +24,7 @@ public class Iterables2 {
 		};
 	}
 
+	/** TODO Javadoc */
 	public static <E> List<List<E>> split(
 			Iterable<? extends E> toSplit, Equivalence<? super E> equivalence) {
 		List<List<E>> split = Lists.newArrayList();

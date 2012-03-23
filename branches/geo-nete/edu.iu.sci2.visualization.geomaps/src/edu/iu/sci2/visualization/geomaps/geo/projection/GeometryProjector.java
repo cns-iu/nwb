@@ -51,9 +51,10 @@ public class GeometryProjector {
 	private final Set<Geometry> cropGeometries;
 
 	
-	public GeometryProjector(CoordinateReferenceSystem sourceCrs, KnownProjectedCRSDescriptor knownProjectedCRSDescriptor)
-				throws GeometryProjectorException {
-
+	public GeometryProjector(
+			CoordinateReferenceSystem sourceCrs,
+			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor)
+					throws GeometryProjectorException {
 		try {
 			coordinateTransformer.setMathTransform(
 					knownProjectedCRSDescriptor.getTransformFrom(sourceCrs));
@@ -77,7 +78,7 @@ public class GeometryProjector {
 			cropGeometries.add(
 					CropGeometryBuilder.createSouthPoleGeometry(SOUTH_POLE_CROP_HEIGHT_IN_DEGREES));
 		} catch (FactoryException e) {
-			throw new GeometryProjectorException(e);
+			throw new GeometryProjectorException("Failed to create projection", e);
 		}
 	}
 
@@ -119,7 +120,7 @@ public class GeometryProjector {
 		Projection projection = projectedCRS.getConversionFromBase();
 		ParameterValueGroup parameterValues = projection.getParameterValues();
 		ParameterValue<?> centralMeridianParameter =
-			parameterValues.parameter(CENTRAL_MERIDIAN_PARAMETER_KEY);
+				parameterValues.parameter(CENTRAL_MERIDIAN_PARAMETER_KEY);
 		
 		if (centralMeridianParameter == null) {
 			throw new GeometryProjectorException("No central meridian specified.");

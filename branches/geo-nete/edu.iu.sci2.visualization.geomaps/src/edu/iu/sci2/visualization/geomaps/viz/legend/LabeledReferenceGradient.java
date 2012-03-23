@@ -42,8 +42,7 @@ public class LabeledReferenceGradient implements LabeledReference {
 	 * vertically by their type and key text labels rather than by their
 	 * extrema labels (as it was before).
 	 */
-	@Deprecated
-	private final Point2D.Double lowerLeft; // TODO Just say no to absolute positioning
+	private final Point2D.Double lowerLeft;
 	private final PageLayout pageLayout;
 	private final Dimension<Double> dimension;
 	

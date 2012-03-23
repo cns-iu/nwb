@@ -44,7 +44,6 @@ public class LabeledReferenceCircles implements LabeledReference {
 	}
 
 	
-	/* TODO? Draw circles using the line width set in CirclePrinter.CIRCLE_LINE_WIDTH? */
 	@Override
 	public String toPostScript() {
 		double extremaLabelFontSize = 0.8 * pageLayout.contentFont().getSize();

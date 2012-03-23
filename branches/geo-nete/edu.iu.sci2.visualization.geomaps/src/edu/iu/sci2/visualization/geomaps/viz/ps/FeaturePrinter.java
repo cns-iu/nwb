@@ -40,7 +40,10 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class FeaturePrinter {
-	// TODO Comment.
+	/**
+	 * Point-to-point distances in a path exceeding this threshold are assumed to be projection
+	 * glitches.  We'll use this to split paths as necessary into subpaths with no big jumps.
+	 */
 	public static final double INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD = 150;
 	public static final double BORDER_BRIGHTNESS = 0.7;
 	public static final double BORDER_LINE_WIDTH = 0.4;
@@ -217,9 +220,14 @@ public class FeaturePrinter {
 					}					
 				});
 		
+		// PostScript would choke on consecutive duplicates in a path.
 		List<Point2D.Double> distinctDisplayPoints =
 				Lists2.omitConsecutiveDuplicates(displayPoints, Equivalences.equals());
 		
+		/* We assume that points especially far apart in a path are the result of projection
+		 * glitches.  Rather than draw these long lines we stop before the jump and start a new
+		 * path after.
+		 */
 		List<List<Point2D.Double>> paths = Iterables2.split(
 				distinctDisplayPoints,
 				Points.distanceEquivalenceWithTolerance(

@@ -15,6 +15,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -114,7 +115,10 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 									try {
 										scaled = GeoDatum.copyOf(scaled, binding.dimension(), binding.scale(geoDatum));
 									} catch (ScalingException e) {
-										throw new RuntimeException("TODO", e);
+										String message = String.format(
+												"The geo datum %s is not scalable by %s.",
+												geoDatum, binding);
+										throw new AssertionError(message);
 									}
 								}
 								

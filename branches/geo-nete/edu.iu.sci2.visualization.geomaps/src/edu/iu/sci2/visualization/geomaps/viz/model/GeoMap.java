@@ -48,14 +48,16 @@ public class GeoMap {
 		this.featureViews = featureViews;
 		this.circles = circles;
 		
-		this.legendarium = Legendarium.containing(pageLayout.legendariumLowerLeft(), pageLayout, legends);
+		this.legendarium = Legendarium.containing(pageLayout.legendariumLowerLeft(), pageLayout,
+				legends);
 		
 		this.geometryFactory = DEFAULT_GEOMETRY_FACTORY;
 		
 		try {
-			this.geometryProjector = new GeometryProjector(shapefile.detectNativeCRS(), knownProjectedCRSDescriptor);
+			this.geometryProjector =
+					new GeometryProjector(shapefile.detectNativeCRS(), knownProjectedCRSDescriptor);
 		} catch (GeometryProjectorException e) {
-			throw new GeoMapException("TODO", e);
+			throw new GeoMapException("Failed to create map projection.", e);
 		}
 	}
 
@@ -87,16 +89,10 @@ public class GeoMap {
 		return title;
 	}
 
-	public Coordinate project(Coordinate coordinate) {
+	public Coordinate project(Coordinate coordinate) throws TransformException {
 		Geometry coordinatePointGeometry = geometryFactory.createPoint(coordinate);
 		
-		try {
-			return project(coordinatePointGeometry).getCoordinate();
-		} catch (TransformException e) {
-			// I think this should only happen for particularly weird input coordinates
-			// http://docs.geotools.org/latest/javadocs/org/opengis/referencing/operation/TransformException.html
-			return null;
-		}
+		return project(coordinatePointGeometry).getCoordinate();
 	}
 
 	public Geometry project(Geometry geometry) throws TransformException {

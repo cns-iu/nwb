@@ -36,12 +36,7 @@ public class GeoMapViewPageArea implements PostScriptable {
 						(scale * dataRectangle.getWidth()),
 						(scale * dataRectangle.getHeight()));
 		
-		// TODO sync this calculations with PageLayout.mapPageAreaMaxDimensions()
-		double availableMapHeight =
-				pageLayout.pageDimensions().getHeight()
-				- (pageLayout.pageFooterHeight()
-						+ pageLayout.legendariumReservedDimensions().getHeight()
-						+ pageLayout.headerHeight());
+		double availableMapHeight =	pageLayout.mapPageAreaMaxDimensions().getHeight();
 		
 		double mapCenterY =
 				pageLayout.pageFooterHeight()

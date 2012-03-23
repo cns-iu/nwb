@@ -64,7 +64,7 @@ public enum Shapefile {
 			"Country",
 			"country",
 			"NAME",
-			KnownProjectedCRSDescriptor.ECKERT_IV,
+			KnownProjectedCRSDescriptor.MERCATOR,
 			ImmutableSet.<Inset>of(),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALASKA,

@@ -34,7 +34,6 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScript
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimension> {
-	// TODO This doesn't seem like a great way to handle the possible nullity?  Maybe it's good to keep defensively in any case, but this shouldn't be the only solution/band-aid.
 	public static final Ordering<GeoDatum<Coordinate, CircleDimension>> AREA_ORDERING =
 			Ordering.natural().nullsFirst().onResultOf(
 					new Function<GeoDatum<Coordinate, CircleDimension>, Double>() {

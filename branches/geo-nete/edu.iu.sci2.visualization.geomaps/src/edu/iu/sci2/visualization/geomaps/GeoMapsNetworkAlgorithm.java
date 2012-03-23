@@ -197,11 +197,12 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
-				Point2D.Double pagePoint = postScriptWriter.coordinateToPagePoint(longLat);
-				if (pagePoint == null) {
+				try {
+					Point2D.Double pagePoint = postScriptWriter.coordinateToPagePoint(longLat);
+					return pagePoint.x;
+				} catch (TransformException e) {
 					return null;
 				}
-				return pagePoint.x;
 			}
 		};
 		
@@ -218,15 +219,18 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			public Object compute(String field, Map<String, Object> attributes) {
 				Coordinate longLat = new Coordinate(getDoubleValue(attributes.get(longitudeAttrib)),
 						getDoubleValue(attributes.get(latitudeAttrib)));
-				Point2D.Double pagePoint = postScriptWriter.coordinateToPagePoint(longLat);
-				if (pagePoint == null) {
+				try {
+					Point2D.Double pagePoint = postScriptWriter.coordinateToPagePoint(longLat);
+					return pagePoint.y;
+				} catch (TransformException e) {
 					// This is only in one of the two X/Y methods because both methods are called on
 					// each incoming point, and everything gets computed twice.  :-(
 					// So we don't want to double-log the info.
-					logger.log(LogService.LOG_INFO, "Leaving out point at " + longLat.toString() + ": outside projection bounds");
+					logger.log(LogService.LOG_INFO,
+							"Leaving out point at " + longLat.toString() +
+							": outside projection bounds");
 					return null;
 				}
-				return pagePoint.y;
 			}
 		};
 	}

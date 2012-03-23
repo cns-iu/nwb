@@ -11,7 +11,6 @@ import com.google.common.collect.Lists;
 public class Lists2 {
 	private Lists2() {}
 
-	/* TODO Test */
 	/**
 	 * @see Iterables#indexOf(Iterable, Predicate)
 	 * @see List#lastIndexOf(Object)
