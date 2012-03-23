@@ -29,7 +29,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor {
 					"PROJECTION[\"Winkel_Tripel\"]," +
 					"PARAMETER[\"standard_parallel_1\",40.0]," +
 					"UNIT[\"Meter\",1.0]]")),
-	MERCATOR("Mercator", "Mercator", new EPSGCode("EPSG:2965")),
+	MERCATOR("Mercator", "Mercator", new EPSGCode("EPSG:3395")),
 	ALBERS("Albers Equal-Area Conic", "Albers equal-area conic", new EPSGCode("EPSG:3083")),
 	LAMBERT("Lambert Conformal Conic", "Lambert conformal conic", new EPSGCode("EPSG:102004"));
 	
