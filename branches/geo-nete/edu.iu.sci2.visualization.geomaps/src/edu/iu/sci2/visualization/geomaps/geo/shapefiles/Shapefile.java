@@ -4,7 +4,6 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +27,6 @@ import org.opengis.referencing.operation.TransformException;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -43,8 +41,9 @@ import com.vividsolutions.jts.geom.LinearRing;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
+import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
 
-public enum Shapefile {
+public enum Shapefile implements NicelyNamed {
 	UNITED_STATES(
 			Resources.getResource(Shapefile.class, "st99_d00.shp"),
 			"United States",
@@ -72,22 +71,6 @@ public enum Shapefile {
 
 	public static final DefaultGeographicCRS FALLBACK_SOURCE_CRS = DefaultGeographicCRS.WGS84;
 	
-	// TODO Is there a better pattern for this?
-	private static final ImmutableBiMap<String, Shapefile> FOR_NICE_NAME =
-			ImmutableBiMap.copyOf(Maps.uniqueIndex(
-					EnumSet.allOf(Shapefile.class),
-					new Function<Shapefile, String>() {
-						@Override
-						public String apply(Shapefile shapefile) {
-							return shapefile.getNiceName(); }}));
-	public static ImmutableSet<String> byNiceNames() {
-		return FOR_NICE_NAME.keySet();
-	}
-	public static Shapefile forNiceName(String niceName) {
-		return FOR_NICE_NAME.get(niceName);
-	}
-
-
 	private final String niceName;
 	private final String mapDescriptionFormat;
 	private final String componentDescriptionTitleCase;
@@ -191,6 +174,7 @@ public enum Shapefile {
 		return !insetForFeatureName.isEmpty();
 	}
 	
+	@Override
 	public String getNiceName() {
 		return niceName;
 	}

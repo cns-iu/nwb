@@ -20,6 +20,7 @@ import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
+import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
@@ -47,8 +48,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			PageLayout pageLayout,
 			String title)
 				throws LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
-		Shapefile shapefile = Shapefile.forNiceName(
-				(String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
+		Shapefile shapefile = NicelyNamedEnums.getConstantNamed(
+				Shapefile.class, (String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {

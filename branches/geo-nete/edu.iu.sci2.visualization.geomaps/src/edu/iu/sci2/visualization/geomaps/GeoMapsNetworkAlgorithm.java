@@ -38,6 +38,7 @@ import edu.iu.nwb.util.nwbfile.pipe.ParserStage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.AnchorPoint;
+import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
@@ -80,7 +81,9 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 		
 		this.latitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		this.longitudeAttrib = (String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
-		this.shapefile = Shapefile.forNiceName((String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
+		this.shapefile = NicelyNamedEnums.getConstantNamed(
+				Shapefile.class,
+				(String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
 		
 		if (latitudeAttrib.equals(longitudeAttrib)) {
 			throw new AlgorithmCreationFailedException("Latitude and longitude attributes must be distinct");

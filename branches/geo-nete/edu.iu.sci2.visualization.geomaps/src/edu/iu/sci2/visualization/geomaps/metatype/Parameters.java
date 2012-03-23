@@ -10,6 +10,7 @@ import com.google.common.collect.Ordering;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums;
 import edu.iu.sci2.visualization.geomaps.utility.SubstringOrderings;
 
 public class Parameters {
@@ -33,7 +34,7 @@ public class Parameters {
 	}
 
 	public static void addShapefileAndProjectionParameters(DropdownMutator mutator) {
-		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID, Shapefile.byNiceNames());
+		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID, NicelyNamedEnums.allNiceNamesOf(Shapefile.class));
 		
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
 			mutator.add(GeoMapsAlgorithm.PROJECTION_ID, KnownProjectedCRSDescriptor.byNiceNamesInTitleCase());
