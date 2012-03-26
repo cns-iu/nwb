@@ -53,7 +53,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-			knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceNameInTitleCase(
+			knownProjectedCRSDescriptor = NicelyNamedEnums.getConstantNamed(
+					KnownProjectedCRSDescriptor.class,
 					(String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 		}
 		

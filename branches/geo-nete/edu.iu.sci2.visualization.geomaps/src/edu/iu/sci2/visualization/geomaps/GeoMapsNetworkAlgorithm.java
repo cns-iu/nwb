@@ -102,7 +102,9 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
 			if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-				knownProjectedCRSDescriptor = KnownProjectedCRSDescriptor.forNiceNameInTitleCase((String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
+				knownProjectedCRSDescriptor = NicelyNamedEnums.getConstantNamed(
+						KnownProjectedCRSDescriptor.class,
+						(String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
 			}
 
 			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.getAnchorPoints();

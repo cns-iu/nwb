@@ -80,7 +80,7 @@ public class Iterables2Test extends TestCase {
 	
 	
 	private static <E> Iterable<E> deduplicateOnEquality(Iterable<? extends E> iterable) {
-		return Iterables2.omitConsecutiveDuplicates(iterable,	Equivalences.equals());
+		return Iterables2.omitConsecutiveDuplicates(iterable, Equivalences.equals());
 	}
 
 	private static <E> List<List<E>> splitOnInequality(Iterable<? extends E> iterable) {

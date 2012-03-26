@@ -35,7 +35,7 @@ public class NicelyNamedEnums {
 	 */
 	public static <T extends Enum<T> & NicelyNamed> ImmutableSet<String> allNiceNamesOf(
 			Class<T> enumClass) {
-		return makeMap(enumClass).keySet();
+		return mapNiceNamesToConstants(enumClass).keySet();
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class NicelyNamedEnums {
 	 */
 	public static <T extends Enum<T> & NicelyNamed> T getConstantNamed(
 			Class<T> clazz, String niceName) {
-		T enumConstant = makeMap(clazz).get(niceName); // Fails fast for *any* non-unique name
+		T enumConstant = mapNiceNamesToConstants(clazz).get(niceName); // Fails fast for *any* non-unique name
 		
 		if (enumConstant == null) {
 			throw new IllegalArgumentException(String.format(
@@ -59,7 +59,7 @@ public class NicelyNamedEnums {
 	/**
 	 * @throw IllegalArgumentException	When nice names are not unique.
 	 */
-	private static <T extends Enum<T> & NicelyNamed> ImmutableBiMap<String, T> makeMap(
+	private static <T extends Enum<T> & NicelyNamed> ImmutableBiMap<String, T> mapNiceNamesToConstants(
 			Class<T> enumClass) {
 		return ImmutableBiMap.copyOf(Maps.uniqueIndex(EnumSet.allOf(enumClass), NICE_NAME_GETTER));
 	}

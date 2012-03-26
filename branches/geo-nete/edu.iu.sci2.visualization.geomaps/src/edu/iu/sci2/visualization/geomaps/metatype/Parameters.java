@@ -37,7 +37,8 @@ public class Parameters {
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID, NicelyNamedEnums.allNiceNamesOf(Shapefile.class));
 		
 		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
-			mutator.add(GeoMapsAlgorithm.PROJECTION_ID, KnownProjectedCRSDescriptor.byNiceNamesInTitleCase());
+			mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
+					NicelyNamedEnums.allNiceNamesOf(KnownProjectedCRSDescriptor.class));
 		} else {
 			mutator.ignore(GeoMapsAlgorithm.PROJECTION_ID);
 		}
