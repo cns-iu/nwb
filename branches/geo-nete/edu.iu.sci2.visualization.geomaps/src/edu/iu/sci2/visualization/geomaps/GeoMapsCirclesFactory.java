@@ -66,6 +66,7 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 			numericColumnNames =
 					ImmutableList.copyOf(TableUtilities.getValidNumberColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
+			// Numeric columns are necessary.  Latitude and longitude are not optional.
 			String message =
 				"Table does not seem to have any purely numeric columns.  "
 				+ "If your table does not have columns for the latitudes and longitudes of records,"

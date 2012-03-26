@@ -141,7 +141,7 @@ public enum PageLayout {
 	public Point2D.Double legendLowerLeft() {
 		return new Point2D.Double(
 				legendariumLowerLeft().x,
-				legendariumLowerLeft().y - 18); // TODO
+				legendariumLowerLeft().y - titleFont().getSize());
 	}
 	
 	private static final double COLOR_GRADIENT_HEIGHT = 10.0;

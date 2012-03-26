@@ -50,8 +50,8 @@ public enum CircleDimension implements VizDimension {
 				public Coding<CircleDimension> codingForDataRange(final Continuum<Double> usableContinuum, final Range<Double> dataRange, Shapefile shapefile) {
 					Continuum<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
 					// TODO Don't force data min = 0, instead use actual data min and draw actual corresponding circle
-					Continuum<Double> usableRangeFromZero = Continuum.between(0.0, usableContinuum.getPointB()); // TODO !?
-					Range<Double> dataRangeFromZero = Ranges.closed(0.0, dataRange.upperEndpoint()); // TODO !?
+					Continuum<Double> usableRangeFromZero = Continuum.between(0.0, usableContinuum.getPointB());
+					Range<Double> dataRangeFromZero = Ranges.closed(0.0, dataRange.upperEndpoint());
 					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, vizRange);
 					
 					return new AbstractCoding<CircleDimension, Double>(this, usableRangeFromZero, interpolator) {
@@ -135,11 +135,6 @@ public enum CircleDimension implements VizDimension {
 									+ ((1.0 * pageLayout.legendariumReservedDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
 									pageLayout.legendLowerLeft().getY());
 						}
-
-						@Override
-						public Color defaultColor() {
-							return Circle.DEFAULT_OUTLINE_COLOR; // TODO explain
-						}
 					};
 				}
 			};
@@ -183,11 +178,6 @@ public enum CircleDimension implements VizDimension {
 									pageLayout.legendariumLowerLeft().getX()
 									+ ((0.0 * pageLayout.legendariumReservedDimensions().getWidth()) / EnumSet.allOf(CircleDimension.class).size()),
 									pageLayout.legendLowerLeft().getY());
-						}
-
-						@Override
-						public Color defaultColor() {
-							return null; // TODO Explain
 						}
 					};
 				}

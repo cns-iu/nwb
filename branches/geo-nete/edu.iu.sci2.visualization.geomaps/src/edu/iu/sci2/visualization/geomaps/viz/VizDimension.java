@@ -3,10 +3,7 @@ package edu.iu.sci2.visualization.geomaps.viz;
 import java.util.Dictionary;
 import java.util.List;
 
-import org.cishell.utilities.NumberUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
-
-import prefuse.data.Tuple;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Range;
@@ -59,10 +56,6 @@ public interface VizDimension {
 		
 		public boolean isEnabled() {
 			return (!Objects.equal(columnName, dimension.getColumnNameParameterDisablingToken()));
-		}
-		
-		public double readValueFromTuple(Tuple tuple) { // TODO maybe this is a bad fit
-			return NumberUtilities.interpretObjectAsDouble(tuple.get(columnName()));
 		}
 		
 		public <G> boolean isScalable(GeoDatum<G, D> geoDatum) {

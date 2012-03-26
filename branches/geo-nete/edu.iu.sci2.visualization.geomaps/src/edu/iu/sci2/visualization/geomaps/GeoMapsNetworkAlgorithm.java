@@ -38,6 +38,7 @@ import edu.iu.nwb.util.nwbfile.pipe.ParserStage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.AnchorPoint;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
@@ -54,22 +55,22 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.StrokeColorStrategy;
 
-/* TODO Ensure PID not broken from rename */
 public class GeoMapsNetworkAlgorithm implements Algorithm {
-
 	private static final int ANCHOR_CIRCLE_SIZE = 5;
+	private static final String outputAlgorithmName = "NetMap";
+	private static final String IS_ANCHOR_FIELD = "isAnchor";
+	private static final String X_POS_FIELD = "x";
+	private static final String Y_POS_FIELD = "y";
+	
 	private final Data[] data;
 	private final Dictionary<String, Object> parameters;
 	private final CIShellContext ciShellContext;
 	private final LogService logger;
 	private final String latitudeAttrib;
 	private final String longitudeAttrib;
-	private static final String outputAlgorithmName = "NetMap";
-	private static final String IS_ANCHOR_FIELD = "isAnchor";
-	private static final String X_POS_FIELD = "x";
-	private static final String Y_POS_FIELD = "y";
-	private GeoMapViewPS postScriptWriter;
 	private final Shapefile shapefile;
+	
+	private GeoMapViewPS postScriptWriter;
 
 	public GeoMapsNetworkAlgorithm(Data[] data, Dictionary<String, Object> parameters,
 			CIShellContext ciShellContext)  {
@@ -101,10 +102,10 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			File inFile = (File) inDatum.getData();
 			
 			KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
-			if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
+			if (Parameters.LET_USER_CHOOSE_PROJECTION) {
 				knownProjectedCRSDescriptor = NicelyNamedEnums.getConstantNamed(
 						KnownProjectedCRSDescriptor.class,
-						(String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
+						(String) parameters.get(Parameters.PROJECTION_ID));
 			}
 
 			ImmutableCollection<AnchorPoint> anchorPoints = shapefile.getAnchorPoints();
@@ -135,11 +136,11 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(
 					"Error creating PostScript file: " + e.getMessage(), e);
 		} catch (ShapefilePostScriptWriterException e) {
-			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+			throw new AlgorithmExecutionException("Error visualizing geo map: " + e.getMessage(), e);
 		} catch (FactoryRegistryException e) {
-			throw new AlgorithmExecutionException("TODO", e);
+			throw new AlgorithmExecutionException("Geography error: " + e.getMessage(), e);
 		} catch (GeoMapException e) {
-			throw new AlgorithmExecutionException("TODO", e);
+			throw new AlgorithmExecutionException("Error creating geo map: " + e.getMessage(), e);
 		}
 	}
 

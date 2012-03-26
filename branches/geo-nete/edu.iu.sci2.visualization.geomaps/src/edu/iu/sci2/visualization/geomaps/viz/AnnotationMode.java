@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.EnumSet;
 
-import org.geotools.factory.FactoryRegistryException;
-
 import prefuse.data.Table;
 
 import com.google.common.base.Function;
@@ -14,11 +12,11 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
@@ -28,7 +26,6 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 
 public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	protected abstract EnumSet<D> dimensions();
@@ -40,22 +37,22 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			GeoDataset<G, D> scaledData,
 			Collection<? extends Coding<D>> codings,
 			Collection<LabeledReference> legends,
-			PageLayout pageLayout) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException;
+			PageLayout pageLayout) throws GeoMapException;
 
 	public GeoMap createGeoMap(
 			final Table table,
 			final Dictionary<String, Object> parameters,
 			PageLayout pageLayout,
 			String title)
-				throws LegendCreationException, ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
+				throws LegendCreationException, GeoMapException {
 		Shapefile shapefile = NicelyNamedEnums.getConstantNamed(
-				Shapefile.class, (String) parameters.get(GeoMapsAlgorithm.SHAPEFILE_ID));
+				Shapefile.class, (String) parameters.get(Parameters.SHAPEFILE_ID));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
-		if (GeoMapsAlgorithm.LET_USER_CHOOSE_PROJECTION) {
+		if (Parameters.LET_USER_CHOOSE_PROJECTION) {
 			knownProjectedCRSDescriptor = NicelyNamedEnums.getConstantNamed(
 					KnownProjectedCRSDescriptor.class,
-					(String) parameters.get(GeoMapsAlgorithm.PROJECTION_ID));
+					(String) parameters.get(Parameters.PROJECTION_ID));
 		}
 		
 		Collection<Binding<D>> enabledBindings = bindTo(parameters);

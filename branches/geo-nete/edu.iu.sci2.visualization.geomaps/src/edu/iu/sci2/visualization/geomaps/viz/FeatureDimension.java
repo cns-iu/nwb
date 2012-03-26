@@ -59,12 +59,7 @@ public enum FeatureDimension implements VizDimension {
 						@Override
 						public Point2D.Double lowerLeft(PageLayout pageLayout) {
 							return pageLayout.legendLowerLeft();
-						}
-
-						@Override
-						public Color defaultColor() {
-							return null; // TODO Explain
-						}			
+						}		
 					};
 				}				
 			};

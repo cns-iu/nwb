@@ -22,10 +22,6 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 public class Circle {
 	private final Coordinate coordinate;
 	private final EnumMap<CircleDimension, Strategy> strategies;
-	/* TODO These were previously proportional to the page width, but now that isn't a constant.
-	 * Replacing the proportions with the nearest absolute figure in points for a page 11 inches
-	 * or 17 inches wide.
-	 */
 	public static final Continuum<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
 			Continuum.between(
 					0.01 * PageLayout.POINTS_PER_INCH,
@@ -48,8 +44,8 @@ public class Circle {
 	
 	
 	public String toPostScript(GeometryProjector geometryProjector, GeoMapViewPageArea geoMapViewPageArea) throws TransformException {
-		// TODO ugly cast
-		double radius = calculateRadiusFromArea(((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).getArea());
+		double radius = calculateRadiusFromArea(
+				((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).getArea());
 		Strategy innerColorStrategy = strategyFor(CircleDimension.INNER_COLOR);
 		Strategy outerColorStrategy = strategyFor(CircleDimension.OUTER_COLOR);
 

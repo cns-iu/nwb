@@ -6,7 +6,6 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 import org.cishell.utilities.StringUtilities;
-import org.geotools.factory.FactoryRegistryException;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
@@ -29,7 +28,6 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
-import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
@@ -73,7 +71,7 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings,
 			Collection<LabeledReference> legends,
-			PageLayout pageLayout) throws ShapefilePostScriptWriterException, FactoryRegistryException, GeoMapException {
+			PageLayout pageLayout) throws GeoMapException {
 		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
 		
 		return new GeoMap(

@@ -155,13 +155,21 @@ public class GeoMapViewPS {
 		FeatureIterator<SimpleFeature> it = geoMap.getShapefile().viewOfFeatureCollection().features();
 		while (it.hasNext()) {
 			SimpleFeature feature = it.next();
+			String featureName = geoMap.getShapefile().extractFeatureName(feature);
 			Geometry geometry;
 			try {				
-				geometry = geoMap.project(geoMap.getShapefile().inset(geoMap.getShapefile().extractFeatureName(feature), (Geometry) feature.getDefaultGeometry()));
+				geometry = geoMap.project(
+						geoMap.getShapefile().inset(
+								featureName,
+								(Geometry) feature.getDefaultGeometry()));
 			} catch (IllegalArgumentException e) {
-				// TODO !
-				System.err.println("IllegalArgumentException for feature " + geoMap.getShapefile().extractFeatureName(feature));
-				System.err.println(e.getMessage());
+				// TODO Is there a way to repair the geometry?  Can't even reliably reproduce the problem..
+				/* This seems to happen intermittently with version 2.7.4 of geolibs/Geotools for
+				 * one subgeometry of Minnesota in Shapefile.UNITED_STATES. */
+				System.err.println(String.format(
+						"Skipping a geometry of feature %s due to IllegalArgumentException during " +
+						"projection (%s).",
+						featureName, e.getMessage()));
 				continue;
 			}
 

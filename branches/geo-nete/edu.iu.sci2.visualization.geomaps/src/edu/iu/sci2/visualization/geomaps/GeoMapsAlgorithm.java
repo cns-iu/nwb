@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableMap;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
 import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
@@ -44,40 +45,20 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
-/*
- * TODO:
- *
- * File extension is "ps" even though the metadata says "eps".  We'd have to write
- * some (trivial) new code that takes the eps MIME type to file-ext eps.  Worth it?
- * Note: Joseph has written a prototype for this; ask him to commit.
- * 
- * The legend components currently will include data in its extrema even when that
- * piece of data isn't visible on the map.  For example, if the map is of the United
- * States, but the input data included figures for Egypt, then if the Egypt data
- * represents extremes in the data, then that will be reflected in the legend even
- * though you can't see Egypt on the output map.  Like if Egypt has a circle size
- * of 10000, and all the United States figures are less than 100, then the circle size
- * legend component will show the maximum as 10000 and show a circle of that size even
- * though no circle of that size is visible.  But is this generally wrong?  Perhaps
- * the user wants the Egyptian extreme to skew the US visualizations.
- * Need an executive call on this one.
+/* TODO The codings and legends are determined using all available data, not just data that is
+ * actually shown.  Is this bad?   
  */
 public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Algorithm {
 	public static final String BASE_TITLE = "Geospatial Visualization";
 	
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
-	public static final String OUTPUT_FILE_EXTENSION = "ps";
+	public static final String OUTPUT_FILE_EXTENSION = "ps"; // Though we generate EPS specifically
 
 	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplates();
 	public static final String STRING_TEMPLATE_FILE_PATH =
 		"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/geomap.stg";
 	
-	public static final String SHAPEFILE_ID = "shapefile";
-	public static final String PROJECTION_ID = "projection";
-
-	public static final boolean LET_USER_CHOOSE_PROJECTION = false;
-
 	private final Data[] data;
 	private final Dictionary<String, Object> parameters;
 	private final PageLayout pageLayout;
@@ -85,7 +66,6 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private final String subtitle;
 	private final StringTemplate templateForHowToRead;
 	
-	// TODO reduce visibility
 	public static LogService logger = new StdErrLogService();
 	
 	public GeoMapsAlgorithm(
@@ -152,11 +132,11 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		} catch (LegendCreationException e) {
 			throw new AlgorithmExecutionException("Error creating legend: " + e.getMessage(), e);
 		} catch (ShapefilePostScriptWriterException e) {
-			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+			throw new AlgorithmExecutionException("Error visualizing geo map: " + e.getMessage(), e);
 		} catch (FactoryRegistryException e) {
-			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+			throw new AlgorithmExecutionException("Geography error: " + e.getMessage(), e);
 		} catch (GeoMapException e) {
-			throw new AlgorithmExecutionException("TODO: " + e.getMessage(), e);
+			throw new AlgorithmExecutionException("Error creating geo map: " + e.getMessage(), e);
 		}
 	}
 
@@ -170,9 +150,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	public static void main(String[] args) {
 		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
-//		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-//		Example.US_REGIONS.run(PageLayout.PRINT);
-//		Example.US_REGIONS.run(PageLayout.WEB);
+		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+		Example.US_REGIONS.run(PageLayout.PRINT);
+		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
 
@@ -267,7 +247,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		private static Dictionary<String, Object> assembleParameters(
 				Shapefile shapefile, ImmutableMap<String, Object> baseParameters) {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-			parameters.put(GeoMapsAlgorithm.SHAPEFILE_ID, shapefile.getNiceName());
+			parameters.put(Parameters.SHAPEFILE_ID, shapefile.getNiceName());
 			
 			for (Entry<String, Object> entry : baseParameters.entrySet()) {
 				parameters.put(entry.getKey(), entry.getValue());

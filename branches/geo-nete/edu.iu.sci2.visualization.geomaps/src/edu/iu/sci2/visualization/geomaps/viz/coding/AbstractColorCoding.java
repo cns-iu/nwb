@@ -38,8 +38,6 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 
 	public abstract Point2D.Double lowerLeft(PageLayout pageLayout);
 
-	public abstract Color defaultColor();
-
 	@Override
 	public LabeledReference makeLabeledReference(
 			PageLayout pageLayout, NumericFormatType numericFormatType) throws LegendCreationException {

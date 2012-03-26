@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Iterator;
 
+import org.cishell.utilities.NumberUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -184,7 +185,8 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 					new Function<Binding<D>, Double>() {
 						@Override
 						public Double apply(Binding<D> binding) {
-							return binding.readValueFromTuple(tuple);
+							return NumberUtilities.interpretObjectAsDouble(
+									tuple.get(binding.columnName()));
 						}
 					}));
 	}

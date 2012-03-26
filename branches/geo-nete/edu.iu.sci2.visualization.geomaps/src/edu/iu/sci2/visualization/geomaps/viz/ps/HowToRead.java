@@ -11,7 +11,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.utility.NaiveSentenceLengthSplitter;
+import edu.iu.sci2.visualization.geomaps.utility.NaiveLineLengthSplitter;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 
@@ -71,7 +71,7 @@ public class HowToRead implements PostScriptable {
 			Point2D.Double lowerLeft, PageLayout pageLayout, String text, String mapKind) {
 		String content = "";
 		
-		List<String> lines = NaiveSentenceLengthSplitter.targetingPhraseLength(TARGETED_LINE_LENGTH_IN_CHARACTERS).split(text);
+		List<String> lines = NaiveLineLengthSplitter.targetingLineLength(TARGETED_LINE_LENGTH_IN_CHARACTERS).split(text);
 		List<String> restOfLines = lines.subList(1, lines.size());
 
 		Point2D.Double firstLineStartPoint =
@@ -88,7 +88,7 @@ public class HowToRead implements PostScriptable {
 		content += PSUtility.setgray(TEXT_FONT_GRAY) + "\n";
 		
 		
-		// TODO Hack to italicize the map name in the text
+		// Hack to italicize the map name in the text
 		String firstLine = lines.get(0);
 		Iterable<String> firstLineParts = Splitter.on(mapKind).split(firstLine);
 		String beforeMapKind = Iterables.get(firstLineParts, 0);

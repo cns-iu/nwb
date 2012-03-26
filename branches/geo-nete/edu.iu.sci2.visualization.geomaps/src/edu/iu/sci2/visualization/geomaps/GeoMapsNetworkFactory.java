@@ -58,7 +58,7 @@ public class GeoMapsNetworkFactory implements AlgorithmFactory, ParameterMutator
 	
 
 	public enum Parameter {
-		// IDs must match with the values in OSGI-INF/metatype/METADATA.XML
+		// IDs must match those in METADATA.XML
 		LATITUDE("latitude"), LONGITUDE("longitude"), SHAPEFILE_KEY("shapefile");
 		private final String id;
 	

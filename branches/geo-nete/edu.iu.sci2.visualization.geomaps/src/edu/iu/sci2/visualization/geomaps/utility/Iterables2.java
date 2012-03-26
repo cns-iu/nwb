@@ -24,34 +24,38 @@ public class Iterables2 {
 		};
 	}
 
-	/** TODO Javadoc */
+	/**
+	 * Split {@code toSplit} into a List of Lists of consecutively equivalent elements.
+	 * 
+	 * <p>For example, given {@link Equivalence#equals(Object)} this would split
+	 * {@code [1, 1, 2, 2, 2, 1, 3, 3]} into {@code [[1, 1], [2, 2, 2], [1], [3, 3]]}.
+	 */
 	public static <E> List<List<E>> split(
 			Iterable<? extends E> toSplit, Equivalence<? super E> equivalence) {
 		List<List<E>> split = Lists.newArrayList();
 	
 		if (Iterables.isEmpty(toSplit)) {
 			return split;
-		} else {
-			// Above check should prevent use of this null.
-			E firstElement = Iterables.getFirst(toSplit, null);
-			
-			List<E> currentPart = Lists.newArrayList(ImmutableList.of(firstElement));		
-			E previousElement = firstElement;
-			
-			for (E element : Iterables.skip(toSplit, 1)) {			
-				if (!equivalence.equivalent(element, previousElement)) {
-					split.add(currentPart);
-					currentPart = Lists.newArrayList();
-				}
-				
-				currentPart.add(element);
-				
-				previousElement = element;
+		} 		
+		// Above check should prevent use of this null.
+		E firstElement = Iterables.getFirst(toSplit, null);
+		
+		List<E> currentPart = Lists.newArrayList(ImmutableList.of(firstElement));		
+		E previousElement = firstElement;
+		
+		for (E element : Iterables.skip(toSplit, 1)) {			
+			if (!equivalence.equivalent(element, previousElement)) {
+				split.add(currentPart);
+				currentPart = Lists.newArrayList();
 			}
 			
-			split.add(currentPart);
+			currentPart.add(element);
 			
-			return split;
+			previousElement = element;
 		}
+		
+		split.add(currentPart);
+		
+		return split;
 	}
 }

@@ -66,8 +66,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 			numericColumnNames =
 					Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
-			// TODO Actually, now that we can disable region coloring, is this really a fail condition?
-			throw new AlgorithmCreationCanceledException("TODO No numeric columns.", e);
+			// No problem, the color coding is optional so no numeric columns are strictly necessary
 		}
 		
 		List<String> stringColumnNames = ImmutableList.of();
@@ -75,7 +74,9 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 			stringColumnNames =
 					Lists.newArrayList(TableUtilities.getValidStringColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
-			throw new AlgorithmCreationCanceledException("TODO No string columns.", e);
+			throw new AlgorithmCreationCanceledException(
+					"A text-valued column identifying US states or countries is required " +
+					"but no such column was detected.", e);
 		}
 		
 		
