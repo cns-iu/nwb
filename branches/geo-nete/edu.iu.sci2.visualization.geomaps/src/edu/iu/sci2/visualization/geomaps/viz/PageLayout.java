@@ -131,7 +131,7 @@ public enum PageLayout {
 				1.4 * (titleFont().getSize() + 2 * contentFont().getSize()) +
 				Math.max(
 						COLOR_GRADIENT_HEIGHT + 1.4 * contentFont().getSize(),
-						2 * Circle.DEFAULT_CIRCLE_RADIUS_RANGE.getPointB()));
+						2 * Circle.DEFAULT_CIRCLE_RADIUS_CONTINUUM.getPointB()));
 	}
 	public Point2D.Double legendariumLowerLeft() {
 		return new Point2D.Double(

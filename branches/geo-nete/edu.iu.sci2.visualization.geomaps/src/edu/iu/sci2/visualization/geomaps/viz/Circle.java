@@ -22,15 +22,15 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 public class Circle {
 	private final Coordinate coordinate;
 	private final EnumMap<CircleDimension, Strategy> strategies;
-	public static final Continuum<Double> DEFAULT_CIRCLE_RADIUS_RANGE =
+	public static final Continuum<Double> DEFAULT_CIRCLE_RADIUS_CONTINUUM =
 			Continuum.between(
 					0.01 * PageLayout.POINTS_PER_INCH,
 					0.34 * PageLayout.POINTS_PER_INCH);
-	public static final Continuum<Double> DEFAULT_CIRCLE_AREA_RANGE =
+	public static final Continuum<Double> DEFAULT_CIRCLE_AREA_CONTINUUM =
 			Continuum.between(
-					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointA()),
-					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_RANGE.getPointB()));
-	public static final double DEFAULT_CIRCLE_AREA = 0.005 * DEFAULT_CIRCLE_AREA_RANGE.getPointB();
+					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_CONTINUUM.getPointA()),
+					calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_CONTINUUM.getPointB()));
+	public static final double DEFAULT_CIRCLE_AREA = 0.005 * DEFAULT_CIRCLE_AREA_CONTINUUM.getPointB();
 	public static final double DEFAULT_CIRCLE_LINE_WIDTH = 1.5;
 	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.8;
 	public static final Color DEFAULT_OUTLINE_COLOR = Color.BLACK;

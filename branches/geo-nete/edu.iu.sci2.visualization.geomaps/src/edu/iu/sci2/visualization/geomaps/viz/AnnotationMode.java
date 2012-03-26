@@ -56,15 +56,11 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		
 		Collection<Binding<D>> enabledBindings = bindTo(parameters);
 
-		GeoDataset<G, D> usableData = readTable(table, enabledBindings);//.viewScalableOnly();
-//		GeoDataset<G, D> scaledData = usableData.viewScaled();
+		GeoDataset<G, D> usableData = readTable(table, enabledBindings);
 		
 		Collection<Coding<D>> codings = Sets.newHashSet();
 		Collection<LabeledReference> legends = Lists.newArrayList();
 		for (Binding<D> binding : enabledBindings) {
-//			Continuum<Double> dataRange   = usableData.calculateRangeOver(binding.dimension());
-//			Continuum<Double> scaledRange = scaledData.calculateRangeOver(binding.dimension());
-			
 			NumericFormatType numericFormatType =
 					NumericFormatType.guessFor(
 							binding.columnName(),

@@ -23,15 +23,15 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceGradient;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 
 public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> extends AbstractCoding<D, Color> {
-	public static final ImmutableMap<String, Continuum<Color>> COLOR_RANGES =
+	public static final ImmutableMap<String, Continuum<Color>> COLOR_CONTINUUMS =
 			ImmutableMap.<String, Continuum<Color>>builder()
-			.put("White to Green", Continuum.between(new Color(237, 248, 251), new Color(1, 109, 44)))
-			.put("White to Purple", Continuum.between(new Color(237, 248, 251), new Color(129, 14, 124)))
-			.put("Yellow to Orange", Continuum.between(new Color(255, 255, 212), new Color(153, 52, 4)))
-			.put("Yellow to Red", Continuum.between(new Color(255, 255, 178), new Color(189, 0, 38)))
-			.put("Yellow to Blue", Continuum.between(new Color(255, 255, 204), new Color(38, 52, 148)))
-			.put("White to Black", Continuum.between(new Color(247, 247, 247), new Color(37, 37, 37)))
-			.build();
+				.put("White to Green", Continuum.between(new Color(237, 248, 251), new Color(1, 109, 44)))
+				.put("White to Purple", Continuum.between(new Color(237, 248, 251), new Color(129, 14, 124)))
+				.put("Yellow to Orange", Continuum.between(new Color(255, 255, 212), new Color(153, 52, 4)))
+				.put("Yellow to Red", Continuum.between(new Color(255, 255, 178), new Color(189, 0, 38)))
+				.put("Yellow to Blue", Continuum.between(new Color(255, 255, 204), new Color(38, 52, 148)))
+				.put("White to Black", Continuum.between(new Color(247, 247, 247), new Color(37, 37, 37)))
+				.build();
 
 	public AbstractColorCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<Color> interpolator) {
 		super(binding, usableRange, interpolator);
@@ -66,6 +66,6 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	}
 
 	public static void addColorRangeParameter(DropdownMutator mutator, String rangeParameterId) {
-		mutator.add(rangeParameterId, new ArrayList<String>(AbstractColorCoding.COLOR_RANGES.keySet()));
+		mutator.add(rangeParameterId, new ArrayList<String>(AbstractColorCoding.COLOR_CONTINUUMS.keySet()));
 	}
 }

@@ -95,7 +95,7 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 		mutator.add(RegionAnnotationMode.COLOR_SCALING_ID,
 				Collections2.transform(EnumSet.allOf(Scaling.class), Functions.toStringFunction()));
 
-		mutator.add(RegionAnnotationMode.COLOR_RANGE_ID, AbstractColorCoding.COLOR_RANGES.keySet());
+		mutator.add(RegionAnnotationMode.COLOR_RANGE_ID, AbstractColorCoding.COLOR_CONTINUUMS.keySet());
 		
 		return mutator.mutate(oldOCD);
 	}

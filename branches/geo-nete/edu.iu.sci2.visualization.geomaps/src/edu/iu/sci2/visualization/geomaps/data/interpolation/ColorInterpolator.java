@@ -13,15 +13,16 @@ import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 public class ColorInterpolator implements Interpolator<Color> {	
 	private final InterpolatorND interpolator3D;
 
-	private ColorInterpolator(Range<Double> inRange, Continuum<Color> outRange) {
-		final double[] outMinTuple = ColorTuples.asTuple(outRange.getPointA());
-		final double[] outMaxTuple = ColorTuples.asTuple(outRange.getPointB());
+	private ColorInterpolator(Range<Double> inRange, Continuum<Color> colorContinuum) {
+		final double[] outMinTuple = ColorTuples.asTuple(colorContinuum.getPointA());
+		final double[] outMaxTuple = ColorTuples.asTuple(colorContinuum.getPointB());
 		
 		this.interpolator3D = InterpolatorND.between(
 				inRange, Continuum.between(outMinTuple, outMaxTuple));
 	}
-	public static ColorInterpolator between(Range<Double> inRange, Continuum<Color> outRange) {
-		return new ColorInterpolator(inRange, outRange);
+	public static ColorInterpolator between(
+			Range<Double> inRange, Continuum<Color> colorContinuum) {
+		return new ColorInterpolator(inRange, colorContinuum);
 	}
 
 	

@@ -29,8 +29,8 @@ public class InterpolatorND implements Interpolator<double[]> {
 							Double.valueOf(outContinuum.getPointB()[dd])));
 		}
 	}
-	public static InterpolatorND between(Range<Double> inRange, Continuum<double[]> outRange) {
-		return new InterpolatorND(inRange, outRange);
+	public static InterpolatorND between(Range<Double> inRange, Continuum<double[]> outContinuum) {
+		return new InterpolatorND(inRange, outContinuum);
 	}
 	
 

@@ -48,11 +48,11 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
 				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange, Shapefile shapefile) {
-					Continuum<Double> vizRange = Circle.DEFAULT_CIRCLE_AREA_RANGE;
+					Continuum<Double> sizeContinuum = Circle.DEFAULT_CIRCLE_AREA_CONTINUUM;
 					// TODO Don't force data min = 0, instead use actual data min and draw actual corresponding circle
 					Range<Double> usableRangeFromZero = Ranges.closed(0.0, usableRange.upperEndpoint());
 					Range<Double> dataRangeFromZero = Ranges.closed(0.0, dataRange.upperEndpoint());
-					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, vizRange);
+					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, sizeContinuum);
 					
 					return new AbstractCoding<CircleDimension, Double>(this, usableRangeFromZero, interpolator) {
 						@Override
@@ -114,8 +114,8 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
 				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, Shapefile shapefile) {
-					Continuum<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
-					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
+					Continuum<Color> colorContinuum = AbstractColorCoding.COLOR_CONTINUUMS.get(parameters.get(getRangeParameterId()));			
+					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, colorContinuum);
 					
 					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
 						@Override
@@ -158,8 +158,8 @@ public enum CircleDimension implements VizDimension {
 			return new Binding<CircleDimension>(this, parameters) {
 				@Override
 				public Coding<CircleDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, Shapefile shapefile) {
-					Continuum<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
-					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
+					Continuum<Color> colorContinuum = AbstractColorCoding.COLOR_CONTINUUMS.get(parameters.get(getRangeParameterId()));			
+					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, colorContinuum);
 					
 					return new AbstractColorCoding<CircleDimension>(this, usableRange, interpolator) {
 						@Override
@@ -241,6 +241,6 @@ public enum CircleDimension implements VizDimension {
 	}
 
 	public static void addColorRangeParameter(DropdownMutator mutator, String parameterId) {
-		mutator.add(parameterId, Lists.newArrayList(AbstractColorCoding.COLOR_RANGES.keySet()));
+		mutator.add(parameterId, Lists.newArrayList(AbstractColorCoding.COLOR_CONTINUUMS.keySet()));
 	}
 }
