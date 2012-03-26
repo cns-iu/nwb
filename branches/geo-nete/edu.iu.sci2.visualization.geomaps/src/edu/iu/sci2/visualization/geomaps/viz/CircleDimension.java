@@ -47,14 +47,18 @@ public enum CircleDimension implements VizDimension {
 		public Binding<CircleDimension> bindingFor(Dictionary<String, Object> parameters) {
 			return new Binding<CircleDimension>(this, parameters) {				
 				@Override
-				public Coding<CircleDimension> codingForDataRange(final Range<Double> usableRange, final Range<Double> dataRange, Shapefile shapefile) {
+				public Coding<CircleDimension> codingForDataRange(
+						final Range<Double> scalableRange,
+						final Range<Double> scaledRange,
+						Shapefile shapefile) {
 					Continuum<Double> sizeContinuum = Circle.DEFAULT_CIRCLE_AREA_CONTINUUM;
-					// TODO Don't force data min = 0, instead use actual data min and draw actual corresponding circle
-					Range<Double> usableRangeFromZero = Ranges.closed(0.0, usableRange.upperEndpoint());
-					Range<Double> dataRangeFromZero = Ranges.closed(0.0, dataRange.upperEndpoint());
-					final Interpolator<Double> interpolator = Interpolator1D.between(dataRangeFromZero, sizeContinuum);
+					Range<Double> scaledRangeFromZero = Ranges.closed(0.0, scaledRange.upperEndpoint());
+					final Interpolator<Double> interpolator = Interpolator1D.between(scaledRangeFromZero, sizeContinuum);
 					
-					return new AbstractCoding<CircleDimension, Double>(this, usableRangeFromZero, interpolator) {
+					double minDataCircleSize = interpolator.apply(scaledRange.lowerEndpoint());
+					Continuum<Double> legendContinuum = Continuum.between(minDataCircleSize, sizeContinuum.getPointB());
+					
+					return new AbstractCoding<CircleDimension, Double>(this, scalableRange, legendContinuum) {
 						@Override
 						public Strategy strategyForValue(double value) {
 							return CircleAreaStrategy.forArea(interpolator.apply(value));
@@ -72,8 +76,8 @@ public enum CircleDimension implements VizDimension {
 							try {
 								double midpointOfScaledData =
 										Averages.meanOfDoubles(
-												interpolator.getInRange().lowerEndpoint(),
-												interpolator.getInRange().upperEndpoint());
+												scaledRange.lowerEndpoint(),
+												scaledRange.upperEndpoint());
 								double unscaledValueForMidrangeArea = scaling().invert(midpointOfScaledData);
 								double midrangeArea = interpolator.apply(midpointOfScaledData);
 

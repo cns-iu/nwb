@@ -32,9 +32,15 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 				.put("Yellow to Blue", Continuum.between(new Color(255, 255, 204), new Color(38, 52, 148)))
 				.put("White to Black", Continuum.between(new Color(247, 247, 247), new Color(37, 37, 37)))
 				.build();
+	
+	private final Interpolator<Color> interpolator;
 
-	public AbstractColorCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<Color> interpolator) {
-		super(binding, usableRange, interpolator);
+	public AbstractColorCoding(
+			Binding<D> binding,
+			Range<Double> usableRange,
+			Interpolator<Color> interpolator) {
+		super(binding, usableRange, interpolator.getOutContinuum());
+		this.interpolator = interpolator;
 	}
 
 	public abstract Point2D.Double lowerLeft(PageLayout pageLayout);
