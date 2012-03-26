@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Range;
 
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
@@ -32,7 +33,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 			.put("White to Black", Continuum.between(new Color(247, 247, 247), new Color(37, 37, 37)))
 			.build();
 
-	public AbstractColorCoding(Binding<D> binding, Continuum<Double> usableRange, Interpolator<Color> interpolator) {
+	public AbstractColorCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<Color> interpolator) {
 		super(binding, usableRange, interpolator);
 	}
 

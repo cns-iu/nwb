@@ -17,7 +17,6 @@ import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
-import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
@@ -72,7 +71,7 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 							usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE));
 			
 			Coding<D> coding = binding.codingForDataRange(
-					Continuum.fromRange(usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE)),
+					usableData.calculateRangeOver(binding.dimension(), Stage.SCALABLE),
 					usableData.calculateRangeOver(binding.dimension(), Stage.SCALED),
 					shapefile);
 			codings.add(coding);

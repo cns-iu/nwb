@@ -89,13 +89,13 @@ public class LabeledReferenceGradient implements LabeledReference {
 		
 		invocationTemplate.setAttribute("gradientResolution", GRADIENT_RESOLUTION);
 		
-		Color minColor = legend.getVizRange().getPointA();
+		Color minColor = legend.getVizContinuum().getPointA();
 		double[] minColorTuple = ColorTuples.asTuple(minColor);		
 		invocationTemplate.setAttribute("minColorRed", minColorTuple[0]);
 		invocationTemplate.setAttribute("minColorGreen", minColorTuple[1]);
 		invocationTemplate.setAttribute("minColorBlue", minColorTuple[2]);
 		
-		Color maxColor = legend.getVizRange().getPointB();
+		Color maxColor = legend.getVizContinuum().getPointB();
 		double[] maxColorTuple = ColorTuples.asTuple(maxColor);	
 		invocationTemplate.setAttribute("maxColorRed", maxColorTuple[0]);
 		invocationTemplate.setAttribute("maxColorGreen", maxColorTuple[1]);
@@ -104,12 +104,12 @@ public class LabeledReferenceGradient implements LabeledReference {
 		UnsignedZeroFormat doubleFormatter =
 			NumberFormatFactory.getNumberFormat(
 					legend.getNumericFormatType(),
-					legend.getDataRange().getPointA(),
+					legend.getDataRange().lowerEndpoint(),
 					legend.getDataValueForOutRangeMidpoint(),
-					legend.getDataRange().getPointB());
-		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(legend.getDataRange().getPointA()));
+					legend.getDataRange().upperEndpoint());
+		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(legend.getDataRange().lowerEndpoint()));
 		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(legend.getDataValueForOutRangeMidpoint()));
-		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.getDataRange().getPointB()));
+		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(legend.getDataRange().upperEndpoint()));
 		
 		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("extremaLabelFontSize", extremaLabelFontSize);

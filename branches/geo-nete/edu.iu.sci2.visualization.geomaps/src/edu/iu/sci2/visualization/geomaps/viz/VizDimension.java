@@ -12,7 +12,6 @@ import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
-import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
@@ -40,7 +39,7 @@ public interface VizDimension {
 		}
 		
 		
-		public abstract Coding<D> codingForDataRange(Continuum<Double> usableContinuum, Range<Double> scaledRange, Shapefile shapefile);
+		public abstract Coding<D> codingForDataRange(Range<Double> usableRange, Range<Double> scaledRange, Shapefile shapefile);
 		
 		public D dimension() {
 			return dimension;

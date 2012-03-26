@@ -70,26 +70,28 @@ public class LabeledReferenceCircles implements LabeledReference {
 		
 		invocationTemplate.setAttribute(
 				"minRadius",
-				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointA()));
+				Circle.calculateRadiusFromArea(areaLegend.getVizContinuum().getPointA()));
 		invocationTemplate.setAttribute(
 				"midRadius",
 				Circle.calculateRadiusFromArea(areaLegend.getMidpointArea()));
 		invocationTemplate.setAttribute(
 				"maxRadius",
-				Circle.calculateRadiusFromArea(areaLegend.getVizRange().getPointB()));
+				Circle.calculateRadiusFromArea(areaLegend.getVizContinuum().getPointB()));
 		
 		invocationTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
 		
 		UnsignedZeroFormat doubleFormatter =
 			NumberFormatFactory.getNumberFormat(
 					areaLegend.numericFormatType(),
-					areaLegend.getDataRange().getPointA(), areaLegend.getDataValueForOutputMidpoint(), areaLegend.getDataRange().getPointB());
+					areaLegend.getDataRange().lowerEndpoint(),
+					areaLegend.getDataValueForOutputMidpoint(),
+					areaLegend.getDataRange().upperEndpoint());
 		invocationTemplate.setAttribute(
-				"minLabel", doubleFormatter.format(areaLegend.getDataRange().getPointA()));
+				"minLabel", doubleFormatter.format(areaLegend.getDataRange().lowerEndpoint()));
 		invocationTemplate.setAttribute(
 				"midLabel", doubleFormatter.format(areaLegend.getDataValueForOutputMidpoint()));
 		invocationTemplate.setAttribute(
-				"maxLabel", doubleFormatter.format(areaLegend.getDataRange().getPointB()));
+				"maxLabel", doubleFormatter.format(areaLegend.getDataRange().upperEndpoint()));
 
 		invocationTemplate.setAttribute(
 				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);

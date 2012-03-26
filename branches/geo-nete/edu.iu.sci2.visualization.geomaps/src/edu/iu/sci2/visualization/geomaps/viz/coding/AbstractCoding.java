@@ -1,8 +1,9 @@
 package edu.iu.sci2.visualization.geomaps.viz.coding;
 
+import com.google.common.collect.Range;
+
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
-import edu.iu.sci2.visualization.geomaps.utility.Continuum;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory.NumericFormatType;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
@@ -14,10 +15,10 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implements Coding<D> {
 	private final Binding<D> binding;
-	private Continuum<Double> usableRange;
+	private Range<Double> usableRange;
 	protected final Interpolator<V> interpolator;
 	
-	public AbstractCoding(Binding<D> binding, Continuum<Double> usableRange, Interpolator<V> interpolator) {
+	public AbstractCoding(Binding<D> binding, Range<Double> usableRange, Interpolator<V> interpolator) {
 		this.binding = binding;
 		this.usableRange = usableRange;
 		this.interpolator = interpolator;

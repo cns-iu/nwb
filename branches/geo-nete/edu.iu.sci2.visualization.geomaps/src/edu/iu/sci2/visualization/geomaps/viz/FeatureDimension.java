@@ -41,7 +41,7 @@ public enum FeatureDimension implements VizDimension {
 		public Binding<FeatureDimension> bindingFor(final Dictionary<String, Object> parameters) {
 			return new Binding<FeatureDimension>(this, parameters) {
 				@Override
-				public Coding<FeatureDimension> codingForDataRange(Continuum<Double> usableRange, Range<Double> dataRange, final Shapefile shapefile) {
+				public Coding<FeatureDimension> codingForDataRange(Range<Double> usableRange, Range<Double> dataRange, final Shapefile shapefile) {
 					Continuum<Color> outRange = AbstractColorCoding.COLOR_RANGES.get(parameters.get(getRangeParameterId()));			
 					final Interpolator<Color> interpolator = ColorInterpolator.between(dataRange, outRange);
 					
