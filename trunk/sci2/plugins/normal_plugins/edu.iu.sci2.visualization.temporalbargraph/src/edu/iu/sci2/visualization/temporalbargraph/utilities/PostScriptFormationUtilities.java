@@ -8,6 +8,7 @@ public class PostScriptFormationUtilities {
 	public static final double POINTS_PER_INCH = 72;
 	private static final double PIXELS_PER_INCH = POINTS_PER_INCH;
 	
+	// TODO Replace with something like edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility.escapeForPostScript(String)?
 	public static String matchParentheses(String originalLabel) {
 		int openingParenthesisCount = StringUtilities.countOccurrencesOfChar(
 				originalLabel, '(');
