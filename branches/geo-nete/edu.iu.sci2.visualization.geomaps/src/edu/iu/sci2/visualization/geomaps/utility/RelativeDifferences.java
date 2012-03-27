@@ -12,7 +12,7 @@ public class RelativeDifferences {
 	
 	/**
 	 * The returned equivalence provides a trivial hash implementation and is <em>not</em> suitable
-	 * for most {@link Equivalence} purposes. TODO Are you *sure* UnsupportedOperationException wouldn't be preferable?
+	 * for most {@link Equivalence} purposes.
 	 */
 	public static Equivalence<Double> equivalenceUpToTolerance(final double tolerance) {
 		return new Equivalence<Double>() {

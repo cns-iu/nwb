@@ -9,7 +9,7 @@ public class Points {
 	
 	/**
 	 * The returned equivalence provides a trivial hash implementation and is <em>not</em> suitable
-	 * for most {@link Equivalence} purposes. TODO Are you *sure* UnsupportedOperationException wouldn't be preferable?
+	 * for most {@link Equivalence} purposes.
 	 */
 	public static Equivalence<Point2D.Double> distanceEquivalenceWithTolerance(
 			final double tolerance) {
@@ -22,7 +22,7 @@ public class Points {
 			@Override
 			protected int doHash(Point2D.Double t) {
 				return 0;
-			}			
+			}
 		};
 	}
 }

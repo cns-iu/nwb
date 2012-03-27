@@ -20,7 +20,7 @@ public class CircleAreaStrategy implements Strategy {
 
 	@Override
 	public String toPostScript() {
-		return String.valueOf(area); // TODO :\
+		return String.valueOf(area);
 	}
 
 	public static double calculateAreaFromRadius(double radius) {

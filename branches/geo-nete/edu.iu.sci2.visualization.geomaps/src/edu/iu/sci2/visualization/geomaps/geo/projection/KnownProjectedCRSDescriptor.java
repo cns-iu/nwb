@@ -14,16 +14,17 @@ import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
 
 public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, NicelyNamed {
 	ECKERT_IV("Eckert IV", "Eckert IV", new EPSGCode("EPSG:54012")),
-	WINKEL_TRIPEL("Winkel Tripel", "Winkel Tripel", // TODO findCentralMeridian is broken on Winkel
-			new WKT("PROJCS[\"World_Winkel_Tripel_NGS\"," +
-					"GEOGCS[\"GCS_WGS_1984\"," +
-					"DATUM[\"D_WGS_1984\"," +
-					"SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
-					"PRIMEM[\"Greenwich\",0.0]," +
-					"UNIT[\"Degree\",0.0174532925199433]]," +
-					"PROJECTION[\"Winkel_Tripel\"]," +
-					"PARAMETER[\"standard_parallel_1\",40.0]," +
-					"UNIT[\"Meter\",1.0]]")),
+	// TODO findCentralMeridian is broken on Winkel
+//	WINKEL_TRIPEL("Winkel Tripel", "Winkel Tripel",
+//			new WKT("PROJCS[\"World_Winkel_Tripel_NGS\"," +
+//					"GEOGCS[\"GCS_WGS_1984\"," +
+//					"DATUM[\"D_WGS_1984\"," +
+//					"SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
+//					"PRIMEM[\"Greenwich\",0.0]," +
+//					"UNIT[\"Degree\",0.0174532925199433]]," +
+//					"PROJECTION[\"Winkel_Tripel\"]," +
+//					"PARAMETER[\"standard_parallel_1\",40.0]," +
+//					"UNIT[\"Meter\",1.0]]")),
 	MERCATOR("Mercator", "Mercator", new EPSGCode("EPSG:3395")),
 	ALBERS("Albers Equal-Area Conic", "Albers equal-area conic", new EPSGCode("EPSG:3083")),
 	LAMBERT("Lambert Conformal Conic", "Lambert conformal conic", new EPSGCode("EPSG:102004"));
@@ -89,16 +90,16 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, Nicel
 	}
 
 	
-	private static final class WKT implements ProjectedCRSDescriptor {
-		private final String wkt;
-		
-		public WKT(String wkt) {
-			this.wkt = wkt;
-		}
-	
-		@Override
-		public ProjectedCRS asProjectedCRS() throws FactoryException {
-			return CRS.getProjectedCRS(CRS.parseWKT(wkt));
-		}		
-	}
+//	private static final class WKT implements ProjectedCRSDescriptor {
+//		private final String wkt;
+//		
+//		public WKT(String wkt) {
+//			this.wkt = wkt;
+//		}
+//	
+//		@Override
+//		public ProjectedCRS asProjectedCRS() throws FactoryException {
+//			return CRS.getProjectedCRS(CRS.parseWKT(wkt));
+//		}		
+//	}
 }

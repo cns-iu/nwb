@@ -88,7 +88,7 @@ public class HowToRead implements PostScriptable {
 		content += PSUtility.setgray(TEXT_FONT_GRAY) + "\n";
 		
 		
-		// Hack to italicize the map name in the text
+		// XXX Hack to italicize the map name in the text
 		String firstLine = lines.get(0);
 		Iterable<String> firstLineParts = Splitter.on(mapKind).split(firstLine);
 		String beforeMapKind = Iterables.get(firstLineParts, 0);

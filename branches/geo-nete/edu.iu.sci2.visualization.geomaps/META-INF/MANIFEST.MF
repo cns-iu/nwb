@@ -50,7 +50,7 @@ Import-Package: com.google.common.base;version="11.0.1",
  prefuse.data,
  prefuse.data.util
 X-AutoStart: true
-Service-Component: OSGI-INF/web-Regions.xml, OSGI-INF/Regions.xml, OSGI-INF/web-Circles.xml, OSGI-INF/Circles.xml, OSGI-INF/Network.xml
+Service-Component: OSGI-INF/circles-print.xml, OSGI-INF/circles-web.xml, OSGI-INF/network.xml, OSGI-INF/regions-print.xml, OSGI-INF/regions-web.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: edu.iu.sci2.visualization.geomaps.utility,
  edu.iu.sci2.visualization.geomaps.utility.numberformat

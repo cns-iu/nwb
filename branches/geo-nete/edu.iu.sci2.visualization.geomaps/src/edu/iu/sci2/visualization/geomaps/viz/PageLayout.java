@@ -122,7 +122,7 @@ public enum PageLayout {
 	}
 	
 
-	/* TODO These do not currently dictate the actual dimensions, they only reserve some
+	/* These do not currently dictate the actual dimensions, they only reserve some
 	 * rough space to better fit other components around it.
 	 */
 	public Dimension<Double> legendariumReservedDimensions() {

@@ -33,7 +33,7 @@ import edu.iu.sci2.visualization.geomaps.viz.coding.AbstractColorCoding;
 import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
-public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
+public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Choropleth Map";
 	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
 			HowToRead.TEMPLATE_GROUP.getInstanceOf("choropleth");
@@ -53,8 +53,20 @@ public class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	
-	PageLayout getPageLayout() {
-		return PageLayout.PRINT;
+	abstract PageLayout getPageLayout();
+	
+	public static class Print extends GeoMapsRegionsFactory {
+		@Override
+		PageLayout getPageLayout() {
+			return PageLayout.PRINT;
+		}		
+	}
+	
+	public static class Web extends GeoMapsRegionsFactory {
+		@Override
+		PageLayout getPageLayout() {
+			return PageLayout.WEB;
+		}
 	}
 	
 	@Override

@@ -102,8 +102,8 @@ public enum Shapefile implements NicelyNamed {
 		this.insetForFeatureName = Maps.uniqueIndex(insets, new Function<Inset, String>() {
 			@Override
 			public String apply(Inset inset) {
-				return inset.featureName().toLowerCase(); // TODO fix normalization at both ends
-			}			
+				return normalizeFeatureName(inset.featureName());
+			}
 		});
 		
 		try {
@@ -113,6 +113,10 @@ public enum Shapefile implements NicelyNamed {
 		} catch (IOException e) {
 			throw new ShapefileException("The shapefile data store could not be opened.", e);
 		}
+	}
+	
+	private static String normalizeFeatureName(String featureName) {
+		return featureName.toLowerCase();
 	}
 	
 	/**
@@ -126,7 +130,7 @@ public enum Shapefile implements NicelyNamed {
 	}
 	
 	public Geometry inset(String rawFeatureName, Geometry geometry) throws MismatchedDimensionException, TransformException {
-		String featureName = rawFeatureName.toLowerCase(); // TODO fix normalization at both ends
+		String featureName = normalizeFeatureName(rawFeatureName);
 		
 		if (!insetForFeatureName.containsKey(featureName)) {
 			return geometry;
@@ -247,13 +251,11 @@ public enum Shapefile implements NicelyNamed {
 		
 		/**
 		 * Does {@code geometry} intersect WEST_OF_ZERO_LONGITUDE_POLYGON?
-		 * 
-		 * TODO Will break easily and spectacularly..
 		 */
+		// XXX Will break easily and spectacularly..
 		private static boolean containsLargePositiveLongitudes(Geometry geometry) {
 			return WEST_OF_ZERO_LONGITUDE_POLYGON.intersects(geometry);
 		}
-
 		
 		public static final Inset ALASKA = Inset.of(
 				"Alaska", 0.3, new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
@@ -261,6 +263,7 @@ public enum Shapefile implements NicelyNamed {
 				"Hawaii", 1, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
 		public static final Inset PUERTO_RICO = Inset.of(
 				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
+		
 		
 		private final String featureName;
 		private final MathTransform transform;
@@ -285,8 +288,8 @@ public enum Shapefile implements NicelyNamed {
 			return featureName;
 		}
 		
-		public Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
-			// TODO This is an awful hack to suppress Alaska's tail
+		private Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
+			// XXX This is an awful hack to suppress Alaska's tail
 			if (seemsToBePartOfAlaskasTail(geometry)) {
 				return EMPTY_GEOMETRY;
 			}

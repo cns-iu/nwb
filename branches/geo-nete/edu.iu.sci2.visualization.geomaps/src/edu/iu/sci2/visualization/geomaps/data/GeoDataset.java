@@ -70,14 +70,24 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		return new GeoDataset<G, D>(ImmutableSet.copyOf(geoData), ImmutableSet.copyOf(bindings));
 	}
 	
-	public enum Stage { // TODO I hate this
+	/**
+	 * A "stage" of this immutable geo data is a view of its contents after applying zero or more
+	 * filters or transformations from the below sequence.
+	 */
+	public enum Stage {
+		/**
+		 * The data in its original form.
+		 */
 		RAW {
 			@Override
 			protected <G, D extends Enum<D> & VizDimension> Collection<GeoDatum<G, D>> transform(
 					Collection<GeoDatum<G, D>> geoData, Collection<Binding<D>> bindings) {
 				return geoData;
-			}			
+			}
 		},
+		/**
+		 * Only the above data that is scalable by the given bindings.
+		 */
 		SCALABLE {
 			@Override
 			protected <G, D extends Enum<D> & VizDimension> Collection<GeoDatum<G, D>> transform(
@@ -101,6 +111,9 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 										})));
 			}
 		},
+		/**
+		 * The above data scaled by the given bindings.
+		 */
 		SCALED {
 			@Override
 			protected <G, D extends Enum<D> & VizDimension> Collection<GeoDatum<G, D>> transform(

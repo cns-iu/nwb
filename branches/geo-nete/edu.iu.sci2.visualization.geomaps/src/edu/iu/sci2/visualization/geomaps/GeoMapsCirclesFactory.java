@@ -30,7 +30,7 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
-public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
+public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Proportional Symbol Map";
 	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
 			HowToRead.TEMPLATE_GROUP.getInstanceOf("proportionalSymbols");
@@ -53,8 +53,20 @@ public class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator
 				(LogService) ciShellContext.getService(LogService.class.getName()));
 	}
 	
-	PageLayout getPageLayout() {
-		return PageLayout.PRINT;
+	abstract PageLayout getPageLayout();
+	
+	public static class Print extends GeoMapsCirclesFactory {
+		@Override
+		PageLayout getPageLayout() {
+			return PageLayout.PRINT;
+		}		
+	}
+	
+	public static class Web extends GeoMapsCirclesFactory {
+		@Override
+		PageLayout getPageLayout() {
+			return PageLayout.WEB;
+		}
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.sci2.visualization.geomaps.GeoMapsWebCirclesFactory.component" immediate="false">
-	<implementation class="edu.iu.sci2.visualization.geomaps.GeoMapsWebCirclesFactory"/>
-	<properties entry="OSGI-INF/web-circles.properties"/>
+<component name="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Web.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Web"/>
+	<properties entry="OSGI-INF/regions-web.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
 	

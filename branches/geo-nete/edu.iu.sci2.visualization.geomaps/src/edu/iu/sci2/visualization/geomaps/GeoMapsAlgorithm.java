@@ -45,8 +45,8 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScriptWriterException;
 import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
-/* TODO The codings and legends are determined using all available data, not just data that is
- * actually shown.  Is this bad?   
+/* The codings and legends are determined using all available data, not just data that is
+ * actually shown.
  */
 public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Algorithm {
 	public static final String BASE_TITLE = "Geospatial Visualization";
@@ -98,6 +98,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			
 			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, fullTitle);
 			
+			// TODO extract method
 			String mapKind = subtitle.toLowerCase();
 			templateForHowToRead.setAttribute("mapKind", mapKind);
 			templateForHowToRead.setAttribute("baseMapDescription", geoMap.getShapefile().makeMapDescription());
@@ -149,9 +150,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	
 	public static void main(String[] args) {
-		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+//		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-//		Example.US_REGIONS.run(PageLayout.PRINT);
+		Example.US_REGIONS.run(PageLayout.PRINT);
 //		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
@@ -162,8 +163,8 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				Shapefile.WORLD,
 				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "25mostPopulousNationsWithGDPs.csv"),
 				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
-						PageLayout.PRINT, GeoMapsCirclesFactory.class,
-						PageLayout.WEB, GeoMapsWebCirclesFactory.class),
+						PageLayout.PRINT, GeoMapsCirclesFactory.Print.class,
+						PageLayout.WEB, GeoMapsCirclesFactory.Web.class),
 				ImmutableMap.<String, Object>builder()
 						.put("latitude", "Latitude")
 						.put("longitude", "Longitude")
@@ -193,8 +194,8 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				Shapefile.UNITED_STATES,
 				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "us-state-populations.csv"),
 				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
-						PageLayout.PRINT, GeoMapsRegionsFactory.class,
-						PageLayout.WEB, GeoMapsWebRegionsFactory.class),
+						PageLayout.PRINT, GeoMapsRegionsFactory.Print.class,
+						PageLayout.WEB, GeoMapsRegionsFactory.Web.class),
 				ImmutableMap.<String, Object>builder()
 						.put("featureName", "State")
 						.put("featureColorColumnName",

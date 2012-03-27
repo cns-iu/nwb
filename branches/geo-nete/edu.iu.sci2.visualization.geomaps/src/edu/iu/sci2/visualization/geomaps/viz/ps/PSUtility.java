@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -30,6 +31,11 @@ public class PSUtility {
 		return String.format("%f %f %f setrgbcolor ", red, green, blue);
 	}
 	
+	/**
+	 * Appends style info to the font name in a way PostScript understands. 
+	 * 
+	 * <p>If {@code font}'s name is "Arial" then "MT" is appended.
+	 */
 	public static String psFontName(Font font) {
 		String name = font.getName();
 		
@@ -39,7 +45,7 @@ public class PSUtility {
 		}
 		
 		if (Objects.equal(font.getName(), "Arial")) {
-			name += "MT"; // TODO hack..
+			name += "MT";
 		}
 		
 		return name;
@@ -75,17 +81,24 @@ public class PSUtility {
 		return String.format("%f setgray ", brightness);
 	}
 	
+	/**
+	 * If {@code points} is empty, " " is returned.
+	 * @throw IllegalArgumentException	If {@code points} is empty.
+	 */
 	public static String path(List<? extends Point2D.Double> points) {
-		if (points.isEmpty()) {
-			return " "; // TODO ?
-		} else {
-			return path(
-					Iterables.getFirst(points, null),
-					Iterables.toArray(Iterables.skip(points, 1), Point2D.Double.class));
-		}
+		Preconditions.checkArgument(!(points.isEmpty()));
+		
+		return path(
+				Iterables.getFirst(points, null),
+				Iterables.toArray(Iterables.skip(points, 1), Point2D.Double.class));
 	}
 	
+	/**
+	 * @throw IllegalArgumentException	If {@code points} is empty.
+	 */
 	public static String closedPath(List<? extends Point2D.Double> points) {
+		Preconditions.checkArgument(!(points.isEmpty()));
+		
 		return path(points) + " closepath ";
 	}
 	

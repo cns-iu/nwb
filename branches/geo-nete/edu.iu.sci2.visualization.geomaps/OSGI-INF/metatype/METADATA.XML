@@ -34,19 +34,19 @@
 	</OCD>
 	
 	
-	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory">
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Print">
 		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
 	</Designate>
 	
-	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsWebRegionsFactory">
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Web">
 		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
 	</Designate>
 	
-	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory">
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory$Print">
 		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
 	</Designate>
 	
-	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsWebCirclesFactory">
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory$Web">
 		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
 	</Designate>
 	

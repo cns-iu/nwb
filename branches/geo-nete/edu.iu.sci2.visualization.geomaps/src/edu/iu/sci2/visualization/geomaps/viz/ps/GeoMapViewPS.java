@@ -51,8 +51,8 @@ public class GeoMapViewPS {
 	
 	public File writeToPSFile(String dataLabel)
 				throws IOException, TransformException {		
-		File psFile =
-			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
+		File psFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+				"geoMaps", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
@@ -163,7 +163,6 @@ public class GeoMapViewPS {
 								featureName,
 								(Geometry) feature.getDefaultGeometry()));
 			} catch (IllegalArgumentException e) {
-				// TODO Is there a way to repair the geometry?  Can't even reliably reproduce the problem..
 				/* This seems to happen intermittently with version 2.7.4 of geolibs/Geotools for
 				 * one subgeometry of Minnesota in Shapefile.UNITED_STATES. */
 				System.err.println(String.format(

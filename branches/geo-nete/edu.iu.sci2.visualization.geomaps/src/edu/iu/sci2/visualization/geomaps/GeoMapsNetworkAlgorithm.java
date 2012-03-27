@@ -120,7 +120,8 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 					ImmutableSet.<LabeledReference>of(),
 					getPageLayout());
 			
-			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout(), Optional.<HowToRead>absent()); // TODO How to read for Networks?
+			// TODO How to read for Networks?
+			postScriptWriter = new GeoMapViewPS(geoMap, getPageLayout(), Optional.<HowToRead>absent());
 			
 			File geoMapFile = postScriptWriter.writeToPSFile("");
 
