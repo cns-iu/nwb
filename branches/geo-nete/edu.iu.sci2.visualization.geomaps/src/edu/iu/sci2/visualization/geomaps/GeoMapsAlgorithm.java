@@ -150,9 +150,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	public static void main(String[] args) {
 		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
-		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-		Example.US_REGIONS.run(PageLayout.PRINT);
-		Example.US_REGIONS.run(PageLayout.WEB);
+//		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+//		Example.US_REGIONS.run(PageLayout.PRINT);
+//		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
 

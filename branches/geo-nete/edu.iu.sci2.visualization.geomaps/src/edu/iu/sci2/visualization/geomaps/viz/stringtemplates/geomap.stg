@@ -255,13 +255,18 @@ circleAreaLegendDefinitions() ::= <<
 				/midCircleY {maxCircleY maxRadius sub midRadius add} bind def
 				/minCircleY {maxCircleY maxRadius sub minRadius add} bind def
 				
+				/roughFontHeight {.8 extremaLabelFontSize mul} bind def
+				
 				/labelX {2 maxRadius mul 5 add} bind def
-				/minLabelY {minCircleY minRadius add} bind def
-				% Try to put vertically position the mid and max labels
-				% so that they center on their circle's center, but if that
-				% would result in overlapping labels, position them higher to prevent that.
-				/midLabelY {midCircleY midRadius add .7 extremaLabelFontSize mul sub} bind def
-				/maxLabelY {maxCircleY maxRadius add .7 extremaLabelFontSize mul sub} bind def
+				% Try to top-align the min label with the min circle,
+				% but if the label would extend below the circle, move it up to bottom-align
+				/minLabelY {minCircleY minRadius add roughFontHeight sub minCircleY minRadius sub 2max} bind def				
+				% Try to top-align the mid label with the mid circle,
+				% but if it would overlap the min label, move it up a bit
+				/midLabelY {midCircleY midRadius add roughFontHeight sub minLabelY roughFontHeight add 2max} bind def
+				% Try to top-align the max label with the max circle,
+				% but if it would overlap the mid label, move it up a bit
+				/maxLabelY {maxCircleY maxRadius add roughFontHeight sub midLabelY roughFontHeight add 2max} bind def
 				
 				% Minimum
 				%   Circle
