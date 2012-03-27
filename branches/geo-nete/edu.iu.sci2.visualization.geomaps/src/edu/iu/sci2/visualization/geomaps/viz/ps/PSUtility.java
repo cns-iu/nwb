@@ -18,6 +18,7 @@ public class PSUtility {
 	
 	private PSUtility() {}
 
+	
 	/**
 	 * Generates a {@code setrgbcolor} command for {@code color}.
 	 */
@@ -66,11 +67,13 @@ public class PSUtility {
 		return builder.toString();
 	}
 
+	// TODO Move somewhere more public
 	/**
-	 * Replaces each backslash with two backslashes.
+	 * Replaces each backslash with two backslashes, then each open parenthesis with an escaped
+	 * open parenthesis, then each close parenthesis with an escaped parenthesis.
 	 */
 	public static String escapeForPostScript(String string) {
-		return string.replace("\\", "\\\\");
+		return string.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)");
 	}
 
 	public static String findscalesetfont(Font font) {
@@ -82,7 +85,6 @@ public class PSUtility {
 	}
 	
 	/**
-	 * If {@code points} is empty, " " is returned.
 	 * @throw IllegalArgumentException	If {@code points} is empty.
 	 */
 	public static String path(List<? extends Point2D.Double> points) {

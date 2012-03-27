@@ -26,13 +26,17 @@ public class NaiveLineLengthSplitter {
 		return new NaiveLineLengthSplitter(targetedLineLength);
 	}
 	
+	/* TODO This counts only "word" characters, but it would be less surprising and more useful if
+	 * it counted all characters in the resulting lines instead.
+	 */
 	/**
 	 * Splits text on whitespace, then groups the resulting "words" into lines whose total
-	 * "word" character count are as close to the requested count as possible, over-running it
-	 * only when necessary (as it is when the character count of a single "word" is too large).
+	 * "word" character count (<strong>not</strong> including whitespace characters!) are as close
+	 * to the requested count as possible, over-running it only when necessary (as it is when the
+	 * character count of a single "word" is too large).
 	 * 
 	 * <p>"Words" are never broken.  Splits happen only on whitespace.
- 	 * 
+	 * 
  	 * <p>Your whitespace will be clobbered.
 	 * 
 	 * @see Splitter#on(CharMatcher)

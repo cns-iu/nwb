@@ -109,7 +109,7 @@ public class LabeledReferenceCircles implements LabeledReference {
 		invocationTemplate.setAttribute(
 				"scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
 		
-		invocationTemplate.setAttribute("keyLabel", areaLegend.columnName());
+		invocationTemplate.setAttribute("keyLabel", PSUtility.escapeForPostScript(areaLegend.columnName()));
 		invocationTemplate.setAttribute(
 				"keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute(

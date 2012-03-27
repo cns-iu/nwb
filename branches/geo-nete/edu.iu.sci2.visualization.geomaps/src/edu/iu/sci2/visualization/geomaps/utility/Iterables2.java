@@ -33,7 +33,7 @@ public class Iterables2 {
 	public static <E> List<List<E>> split(
 			Iterable<? extends E> toSplit, Equivalence<? super E> equivalence) {
 		List<List<E>> split = Lists.newArrayList();
-	
+
 		if (Iterables.isEmpty(toSplit)) {
 			return split;
 		} 		

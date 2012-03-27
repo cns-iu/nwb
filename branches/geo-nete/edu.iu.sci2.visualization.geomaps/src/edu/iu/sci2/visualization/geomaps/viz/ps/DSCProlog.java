@@ -2,7 +2,8 @@ package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 
-/* DSC = Document Structuring Conventions, the standards that a piece of
+/** 
+ * DSC = Document Structuring Conventions, the standards that a piece of
  * PostScript code must obey to be valid Encapsulated PostScript.
  * 
  * The DSC Prolog is a set of PostScript comments at the start of the file

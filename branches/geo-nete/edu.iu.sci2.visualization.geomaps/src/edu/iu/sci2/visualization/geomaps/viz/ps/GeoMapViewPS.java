@@ -6,11 +6,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import org.cishell.utilities.FileUtilities;
 import org.geotools.feature.FeatureIterator;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
@@ -56,7 +56,9 @@ public class GeoMapViewPS {
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
-		writeCodeHeader(out, psFile.getName(), pageLayout);
+		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
+		
+		out.write((new DSCProlog(psFile.getName(), pageLayout.pageDimensions()).toPostScript()));
 		
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 		out.write("\n");
@@ -131,9 +133,7 @@ public class GeoMapViewPS {
 	}
 	
 	private static String timestamp() {
-		Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy | hh:mm:ss aa");
-	    return sdf.format(cal.getTime());
+		return DateTimeFormat.forPattern("MMM dd, yyyy | hh:mm:ss aa").print(new DateTime());
 	}
 
 	/**
@@ -172,8 +172,8 @@ public class GeoMapViewPS {
 				continue;
 			}
 
-			for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
-				Geometry subgeometry = geometry.getGeometryN(gg);
+			for (int ii = 0; ii < geometry.getNumGeometries(); ii++) {
+				Geometry subgeometry = geometry.getGeometryN(ii);
 
 				Coordinate[] coordinates = subgeometry.getCoordinates();
 
@@ -191,13 +191,6 @@ public class GeoMapViewPS {
 		it.close();
 		
 		return rectangle;
-	}
-
-	private static void writeCodeHeader(
-			BufferedWriter out, String outputPSFileName, PageLayout pageLayout) throws IOException {
-		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
-
-		out.write((new DSCProlog(outputPSFileName, pageLayout.pageDimensions()).toPostScript()));
 	}
 
 	public static class ShapefilePostScriptWriterException extends Exception {

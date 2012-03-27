@@ -22,6 +22,7 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DataFactory;
 import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
+import org.osgi.framework.BundleException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -33,8 +34,7 @@ import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
-import edu.iu.sci2.visualization.geomaps.testing.LogOnlyCIShellContext;
-import edu.iu.sci2.visualization.geomaps.testing.StdErrLogService;
+import edu.iu.sci2.testutilities.TestContext;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
@@ -66,7 +66,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private final String subtitle;
 	private final StringTemplate templateForHowToRead;
 	
-	public static LogService logger = new StdErrLogService();
+	public static LogService logger;
 	
 	public GeoMapsAlgorithm(
 			Data[] data,
@@ -98,18 +98,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			
 			GeoMap geoMap = annotationMode.createGeoMap(inTable, parameters, pageLayout, fullTitle);
 			
-			// TODO extract method
-			String mapKind = subtitle.toLowerCase();
-			templateForHowToRead.setAttribute("mapKind", mapKind);
-			templateForHowToRead.setAttribute("baseMapDescription", geoMap.getShapefile().makeMapDescription());
-			templateForHowToRead.setAttribute("projectionName", geoMap.getKnownProjectedCRSDescriptor().getNiceNamePlain());
-			templateForHowToRead.setAttribute("hasInsets", geoMap.getShapefile().hasInsets());
-			templateForHowToRead.setAttribute("partType", geoMap.getShapefile().getComponentDescriptionPlain());
-			String howToReadText = templateForHowToRead.toString().trim();
-			Optional<HowToRead> howToRead =
-					(pageLayout.howToReadLowerLeft().isPresent())
-					? (Optional.of(new HowToRead(pageLayout.howToReadLowerLeft().get(), pageLayout, howToReadText, mapKind)))
-					: (Optional.<HowToRead>absent());
+			Optional<HowToRead> howToRead = createHowToRead(geoMap);
 			
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout, howToRead);
 			File geoMapFile = geoMapView.writeToPSFile(dataLabel);
@@ -142,6 +131,32 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	}
 
 
+	private Optional<HowToRead> createHowToRead(GeoMap geoMap) {
+		if (!(pageLayout.howToReadLowerLeft().isPresent())) {
+			return Optional.<HowToRead>absent();
+		}
+		
+		String mapKind = subtitle.toLowerCase();
+		
+		templateForHowToRead.setAttributes(ImmutableMap.of(
+				"mapKind", mapKind,
+				"baseMapDescription", geoMap.getShapefile().makeMapDescription(),
+				"projectionName", geoMap.getKnownProjectedCRSDescriptor().getNiceNamePlain(),
+				"hasInsets", geoMap.getShapefile().hasInsets(),
+				"partType", geoMap.getShapefile().getComponentDescriptionPlain()));		
+		String howToReadText = templateForHowToRead.toString().trim();
+		
+		Optional<HowToRead> howToRead =
+				Optional.of(new HowToRead(
+						pageLayout.howToReadLowerLeft().get(),
+						pageLayout,
+						howToReadText,
+						mapKind));
+				
+		return howToRead;
+	}
+
+
 	private static StringTemplateGroup loadTemplates() {
 		return new StringTemplateGroup(
 				new InputStreamReader(
@@ -150,10 +165,10 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	
 	public static void main(String[] args) {
-//		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
-//		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+		Example.WORLD_CIRCLES.run(PageLayout.WEB);
 		Example.US_REGIONS.run(PageLayout.PRINT);
-//		Example.US_REGIONS.run(PageLayout.WEB);
+		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
 
@@ -271,10 +286,10 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				URL csvFileURL,
 				Dictionary<String, Object> parameters)
 						throws InstantiationException, IllegalAccessException, URISyntaxException,
-								AlgorithmExecutionException {
+								AlgorithmExecutionException, BundleException {
 			AlgorithmFactory algorithmFactory = algorithmFactoryClass.newInstance();
 			Data[] prefuseTableData = convertToPrefuseTableData(csvFileURL);			
-			CIShellContext ciContext = new LogOnlyCIShellContext();
+			CIShellContext ciContext = new TestContext();
 			
 			return algorithmFactory.createAlgorithm(prefuseTableData, parameters, ciContext);
 		}

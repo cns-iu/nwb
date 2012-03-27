@@ -121,7 +121,7 @@ public class LabeledReferenceGradient implements LabeledReference {
 		invocationTemplate.setAttribute("scalingLabel", "(" + legend.getScalingLabel() + ")");
 		invocationTemplate.setAttribute("scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
 		
-		invocationTemplate.setAttribute("keyLabel", legend.getColumnName());
+		invocationTemplate.setAttribute("keyLabel", PSUtility.escapeForPostScript(legend.getColumnName()));
 		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("keyLabelFontSize", keyLabelFontSize);
 		

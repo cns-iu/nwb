@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 import com.google.common.primitives.Doubles;
 
 import edu.iu.sci2.visualization.geomaps.utility.RelativeDifferences;
@@ -20,25 +21,29 @@ public class NumberFormatFactory {
 		YEAR,
 		GENERAL;
 
+		private static final Range<Double> TYPICAL_YEAR_RANGE = Ranges.closed(1200.0, 3000.0);
+
+		/**
+		 * Returns {@link NumericFormatType#GENERAL} if either parameter is null.
+		 */
 		public static NumericFormatType guessFor(String columnName, Range<Double> range) {
 			// Default to something reasonable
 			if ((columnName == null) || (range == null)) {
 				return GENERAL;
 			}
 		
-			if (mentionsSomethingLikeYear(columnName) && rangeIsInThousands(range)) {
+			if (isYearish(columnName) && isYearish(range)) {
 				return YEAR;
 			}
 		
 			return GENERAL;
 		}
 
-		private static boolean rangeIsInThousands(Range<Double> range) {
-			return (range.lowerEndpoint().doubleValue() >= 1000) &&
-				   (range.upperEndpoint().doubleValue() < 10000);
+		private static boolean isYearish(Range<Double> range) {
+			return TYPICAL_YEAR_RANGE.encloses(range);
 		}
 
-		private static boolean mentionsSomethingLikeYear(final String string) {
+		private static boolean isYearish(final String string) {
 			return Iterables.any(
 					ImmutableSet.of("year", "yr", "date", "time"),
 					StringPredicates.substringOf(string, ToCaseFunction.LOWER));
@@ -69,7 +74,10 @@ public class NumberFormatFactory {
 	 * 		(so that you don't get, for example, [0.00001, 0.00002, 1]
 	 * 		and return a DecimalFormat which will produce [0, 0, 1] on those values).
 	 */
-	private static void setFormatPrecision(NumberFormat formatter, double[] values) {
+	/**
+	 * @see java.text.NumberFormat#setMaximumFractionDigits(int)
+	 */
+	private static void setFormatPrecision(NumberFormat formatter, double... values) {
 		int maximumNumberOfFractionDigits = 0;
 		
 		// Add another fraction digit and re-check the stopping conditions
@@ -80,9 +88,9 @@ public class NumberFormatFactory {
 			
 			/* Format each value in values and record that format's double value in
 			 * approximateValues. */
-			for (int jj = 0; jj < values.length; jj++) {
+			for (int ii = 0; ii < values.length; ii++) {
 				try {
-					approximateValues[jj] = formatter.parse(formatter.format(values[jj])).doubleValue();
+					approximateValues[ii] = formatter.parse(formatter.format(values[ii])).doubleValue();
 				} catch (ParseException e) {
 					throw new RuntimeException("TODO Failed to parse formatter result.", e);
 				}

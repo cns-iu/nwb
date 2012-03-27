@@ -32,5 +32,5 @@ public class StringPredicates {
 				return normalizedBaseString.contains(normalizer.apply(candidateSubstring));
 			}				
 		};
-	}	
+	}
 }
