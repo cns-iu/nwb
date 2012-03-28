@@ -23,6 +23,7 @@ import org.cishell.utilities.DataFactory;
 import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -34,7 +35,6 @@ import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
-import edu.iu.sci2.testutilities.TestContext;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
@@ -289,7 +289,32 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 								AlgorithmExecutionException, BundleException {
 			AlgorithmFactory algorithmFactory = algorithmFactoryClass.newInstance();
 			Data[] prefuseTableData = convertToPrefuseTableData(csvFileURL);			
-			CIShellContext ciContext = new TestContext();
+			CIShellContext ciContext = new CIShellContext() { // TODO Replace with a better mock
+				@Override
+				public Object getService(String service) {
+					return new LogService() {
+						@Override
+						public void log(int arg0, String arg1) {
+							System.err.println(arg1);
+							}
+
+						@Override
+						public void log(int arg0, String arg1, Throwable arg2) {
+							System.err.println(arg1);
+						}
+
+						@Override
+						public void log(ServiceReference arg0, int arg1, String arg2) {
+							System.err.println(arg2);
+						}
+
+						@Override
+						public void log(ServiceReference arg0, int arg1, String arg2, Throwable arg3) {
+							System.err.println(arg2);
+						}						
+					};
+				}				
+			};
 			
 			return algorithmFactory.createAlgorithm(prefuseTableData, parameters, ciContext);
 		}
