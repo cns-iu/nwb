@@ -19,10 +19,12 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> of(G geo, EnumMap<D, Double> values) {
 		return new GeoDatum<G, D>(geo, values);		
 	}
-	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> copyOf(GeoDatum<G, D> geoDatum, D dimension, Double newValue) {
-		return copyOf(geoDatum, Maps.newEnumMap(ImmutableMap.of(dimension, newValue)));
+	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> modifiedCopyOf(
+			GeoDatum<G, D> geoDatum, D dimension, Double newValue) {
+		return modifiedCopyOf(geoDatum, Maps.newEnumMap(ImmutableMap.of(dimension, newValue)));
 	}
-	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> copyOf(GeoDatum<G, D> geoDatum, EnumMap<D, Double> overridingValues) {
+	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> modifiedCopyOf(
+			GeoDatum<G, D> geoDatum, EnumMap<D, Double> overridingValues) {
 		EnumMap<D, Double> updatedValues = Maps.newEnumMap(geoDatum.values);
 		updatedValues.putAll(overridingValues);
 		

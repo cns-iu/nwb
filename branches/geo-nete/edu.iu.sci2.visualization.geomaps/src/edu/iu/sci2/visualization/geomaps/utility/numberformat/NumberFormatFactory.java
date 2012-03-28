@@ -92,7 +92,8 @@ public class NumberFormatFactory {
 				try {
 					approximateValues[ii] = formatter.parse(formatter.format(values[ii])).doubleValue();
 				} catch (ParseException e) {
-					throw new RuntimeException("TODO Failed to parse formatter result.", e);
+					// TODO RuntimeException is OK?
+					throw new RuntimeException("Failed to parse formatter result.", e);
 				}
 			}
 			

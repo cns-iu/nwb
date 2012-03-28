@@ -4,7 +4,7 @@ package edu.iu.sci2.visualization.geomaps.data.scaling;
 public enum Scaling {
 	Linear {
 		@Override
-		public double scaleUnchecked(double value) {
+		protected double scaleUnchecked(double value) {
 			return value;
 		}		
 
@@ -15,7 +15,7 @@ public enum Scaling {
 	},
 	Logarithmic {
 		@Override
-		public double scaleUnchecked(double value) {
+		protected double scaleUnchecked(double value) {
 			return Math.log10(value);
 		}
 
@@ -26,7 +26,7 @@ public enum Scaling {
 	},
 	Exponential {
 		@Override
-		public double scaleUnchecked(double value) {
+		protected double scaleUnchecked(double value) {
 			return Math.pow(10.0, value);
 		}
 
@@ -36,7 +36,7 @@ public enum Scaling {
 		}		
 	};
 	
-	public abstract double scaleUnchecked(double value);
+	protected abstract double scaleUnchecked(double value);
 	public abstract Scaling inverse();
 	
 	

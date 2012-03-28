@@ -36,6 +36,9 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.FillColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.StrokeColorStrategy;
 
+/**
+ * Each constant identifies a quantitative dimension of geo data and how it maps to a visual coding.
+ */
 public enum CircleDimension implements VizDimension {
 	AREA("circleAreaColumnName", "None (uniform sizes)", "circleAreaScaling", null) {
 		@Override
@@ -92,7 +95,7 @@ public enum CircleDimension implements VizDimension {
 												pageLayout.legendLowerLeft().getY()),
 										pageLayout);
 							} catch (ScalingException e) {
-								throw new LegendCreationException("TODO Problem formatting numbers for legend.", e);
+								throw new LegendCreationException("Problem formatting numbers for legend.", e);
 							}
 						}
 					};

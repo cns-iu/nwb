@@ -140,9 +140,5 @@ public class GeometryProjector {
 		public GeometryProjectorException(String message) {
 			super(message);
 		}
-
-		public GeometryProjectorException(Throwable cause) {
-			super(cause);
-		}
 	}
 }

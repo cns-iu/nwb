@@ -18,16 +18,12 @@ import com.google.common.collect.Maps;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
-import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
-import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
-import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
@@ -63,27 +59,6 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 				});
 	}
 	
-	@Override
-	protected GeoMap createGeoMap(
-			String title,
-			Shapefile shapefile,
-			KnownProjectedCRSDescriptor projectedCrs,
-			GeoDataset<String, FeatureDimension> scaledData,
-			Collection<? extends Coding<FeatureDimension>> codings,
-			Collection<LabeledReference> legends,
-			PageLayout pageLayout) throws GeoMapException {
-		Collection<FeatureView> featureViews = asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
-		
-		return new GeoMap(
-				title,
-				shapefile,
-				projectedCrs,
-				featureViews,
-				ImmutableSet.<Circle>of(),
-				legends,
-				pageLayout);
-	}
-	
 	public static Collection<FeatureView> asFeatureViews(Collection<? extends GeoDatum<String, FeatureDimension>> valuedFeatures, final Collection<? extends Coding<FeatureDimension>> codings) {
 		return Collections2.transform(
 				valuedFeatures,
@@ -100,5 +75,21 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 						return new FeatureView(featureName, strategies);
 					}			
 				});
+	}
+
+
+
+	@Override
+	protected Collection<Circle> makeCircles(GeoDataset<String, FeatureDimension> scaledData,
+			Collection<? extends Coding<FeatureDimension>> codings) {
+		return ImmutableSet.<Circle>of(); // No circles in the regions mode
+	}
+
+
+	@Override
+	protected Collection<FeatureView> makeFeatureViews(
+			GeoDataset<String, FeatureDimension> scaledData,
+			Collection<? extends Coding<FeatureDimension>> codings) {
+		return asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
 	}
 }

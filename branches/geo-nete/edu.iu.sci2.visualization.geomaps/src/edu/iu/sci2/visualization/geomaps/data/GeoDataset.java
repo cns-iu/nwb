@@ -126,7 +126,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 								GeoDatum<G, D> scaled = geoDatum;
 								for (Binding<D> binding : bindings) {
 									try {
-										scaled = GeoDatum.copyOf(scaled, binding.dimension(), binding.scale(geoDatum));
+										scaled = GeoDatum.modifiedCopyOf(scaled, binding.dimension(), binding.scale(geoDatum));
 									} catch (ScalingException e) {
 										String message = String.format(
 												"The geo datum %s is not scalable by %s.",

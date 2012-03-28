@@ -27,16 +27,24 @@ import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
 
 public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
+	/**
+	 * The quantitative dimensions visualized by this annotation mode.
+	 */
 	protected abstract EnumSet<D> dimensions();
+	/**
+	 * Read {@code table} using the specified {@code bindings} into a geo dataset.
+	 */
 	protected abstract GeoDataset<G, D> readTable(Table table, Collection<Binding<D>> bindings);
-	protected abstract GeoMap createGeoMap(
-			String title,
-			Shapefile shapefile,
-			KnownProjectedCRSDescriptor projectedCrs,
-			GeoDataset<G, D> scaledData,
-			Collection<? extends Coding<D>> codings,
-			Collection<LabeledReference> legends,
-			PageLayout pageLayout) throws GeoMapException;
+	/**
+	 * Code the given dataset into a collection of circle views (if any).
+	 */
+	protected abstract Collection<Circle> makeCircles(
+			GeoDataset<G, D> scaledData, Collection<? extends Coding<D>> codings);
+	/**
+	 * Code the given dataset into a collection of feature/region views (if any).
+	 */
+	protected abstract Collection<FeatureView> makeFeatureViews(
+			GeoDataset<G, D> scaledData, Collection<? extends Coding<D>> codings);
 
 	public GeoMap createGeoMap(
 			final Table table,
@@ -76,8 +84,14 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			legends.add(legend);
 		}
 
-		return createGeoMap(
-				title, shapefile, knownProjectedCRSDescriptor, usableData, codings, legends, pageLayout);
+		return new GeoMap(
+				title,
+				shapefile,
+				knownProjectedCRSDescriptor,
+				makeFeatureViews(usableData, codings),
+				makeCircles(usableData, codings),
+				legends,
+				pageLayout);
 	}
 	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {
@@ -87,7 +101,6 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 					new Function<D, Binding<D>>() {
 						@Override
 						public Binding<D> apply(D dimension) {
-							// TODO ?
 							return (Binding<D>) dimension.bindingFor(parameters);
 						}
 					}),

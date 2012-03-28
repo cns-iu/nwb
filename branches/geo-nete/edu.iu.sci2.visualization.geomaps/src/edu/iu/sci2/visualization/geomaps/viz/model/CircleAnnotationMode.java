@@ -19,16 +19,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.data.GeoDatum;
-import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
-import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
-import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.coding.Coding;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimension> {
@@ -65,29 +61,8 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 						return new Coordinate(
 								NumberUtilities.interpretObjectAsDouble(input.get(longitudeColumnName)),
 								NumberUtilities.interpretObjectAsDouble(input.get(latitudeColumnName)));
-					}					
+					}
 				});
-	}
-	
-	@Override
-	protected GeoMap createGeoMap(
-			String title,
-			Shapefile shapefile,
-			KnownProjectedCRSDescriptor projectedCrs,
-			GeoDataset<Coordinate, CircleDimension> scaledData,
-			Collection<? extends Coding<CircleDimension>> codings,
-			Collection<LabeledReference> legends,
-			PageLayout pageLayout) throws GeoMapException {
-		Collection<Circle> circles = asCirclesInDrawingOrder(scaledData.geoData(Stage.SCALED), codings);
-		
-		return new GeoMap(
-				title,
-				shapefile,
-				projectedCrs,
-				ImmutableSet.<FeatureView>of(),
-				circles,
-				legends,
-				pageLayout);
 	}
 
 
@@ -113,5 +88,20 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 						return new Circle(coordinate, strategies);
 					}
 				});
+	}
+
+	@Override
+	protected Collection<Circle> makeCircles(
+			GeoDataset<Coordinate, CircleDimension> scaledData,
+			Collection<? extends Coding<CircleDimension>> codings) {
+		return asCirclesInDrawingOrder(scaledData.geoData(Stage.SCALED), codings);
+	}
+
+	
+	@Override
+	protected Collection<FeatureView> makeFeatureViews(
+			GeoDataset<Coordinate, CircleDimension> scaledData,
+			Collection<? extends Coding<CircleDimension>> codings) {
+		return ImmutableSet.<FeatureView>of(); // No feature views in the circles mode
 	}
 }
