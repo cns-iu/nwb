@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: geolibs
 Bundle-SymbolicName: geolibs
 Bundle-Version: 2.7.4
-Export-Package: 
- com.sun.media.jai.iterator,
+Export-Package: com.sun.media.jai.iterator,
  com.sun.media.jai.mlib,
  com.sun.media.jai.opimage,
  com.sun.media.jai.remote,
