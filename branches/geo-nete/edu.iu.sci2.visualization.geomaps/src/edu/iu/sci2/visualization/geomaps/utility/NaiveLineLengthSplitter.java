@@ -39,6 +39,19 @@ public class NaiveLineLengthSplitter {
 	 * 
  	 * <p>Your whitespace will be clobbered.
 	 * 
+	 * <p>For example, the text {@code Lorem ipsum dolor sit amet; consectetuer adipiscing elit; sed
+	 * diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.} targeting
+	 * line length 40 splits like this:<br/>
+	 * <br/>
+	 * //  5  5  5  3  5 12    = 32<=40 and 10 more would make 42 > 40<br/>
+	 * {@code Lorem ipsum dolor sit amet; consectetuer},<br/>
+	 * // 10  5  3  4  7  4  7 = 40<=40 and  9 more would make 49 > 40<br/>
+	 * {@code adipiscing elit; sed diam nonummy nibh euismod},<br/>
+	 * //  9  2  7  6  5  7  4 = 40<=40 and  9 more would make 49 > 40<br/>
+	 * {@code tincidunt ut laoreet dolore magna aliquam erat},<br/>
+	 * //  9                   =  9<=40 and we're done<br/>
+	 * {@code volutpat.}<br/>
+	 * 
 	 * @see Splitter#on(CharMatcher)
 	 * @see CharMatcher#WHITESPACE
 	 */
