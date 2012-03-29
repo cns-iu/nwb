@@ -4,9 +4,9 @@
   <artifactId>javaGeom</artifactId>
   <version>0.10.0</version>
   <parent>
-  	<groupId>edu.iu.sci2</groupId>
-  	<artifactId>parent</artifactId>
-  	<version>1.0.0</version>
+  	<groupId>edu.iu.sci2.libs</groupId>
+  	<artifactId>libs</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
   </parent>
   <packaging>eclipse-plugin</packaging>
 </project>
