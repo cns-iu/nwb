@@ -27,7 +27,7 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
  * Each constant identifies a quantitative dimension of geo data and how it maps to a visual coding.
  */
 public enum FeatureDimension implements VizDimension {
-	REGION_COLOR("featureColorColumnName", "None (no coloring)", "featureColorScaling", "featureColorRange") {
+	REGION_COLOR("featureColorColumnName", "None (uniform coloring)", "featureColorScaling", "featureColorRange") {
 		@Override
 		public void addOptionsToAlgorithmParameters(
 				DropdownMutator mutator, List<String> numericColumnNames) {

@@ -147,7 +147,7 @@ public enum CircleDimension implements VizDimension {
 			};
 		}
 	},
-	INNER_COLOR("innerColorColumnName", "None (uniform coloring)", "innerColorScaling", "innerColorRange") {
+	INNER_COLOR("innerColorColumnName", "None (no coloring)", "innerColorScaling", "innerColorRange") {
 		@Override
 		public void addOptionsToAlgorithmParameters(DropdownMutator mutator,
 				List<String> numericColumnNames) {
