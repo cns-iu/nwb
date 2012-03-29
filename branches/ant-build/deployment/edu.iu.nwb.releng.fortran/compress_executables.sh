@@ -13,7 +13,7 @@ do
 	X=`echo $line | cut -d"," -f 2`
 	if [ ! -e "build/$X" ]
 	then
-		svn co svn+ssh://cns-nd3.slis.indiana.edu/projects/svn/nwb/trunk/plugins/$TYPE/$X build/$X
+		svn co svn+ssh://cns-nd3.slis.indiana.edu/projects/svn/nwb/branches/ant-build/plugins/$TYPE/$X build/$X
 	fi
 done
 
