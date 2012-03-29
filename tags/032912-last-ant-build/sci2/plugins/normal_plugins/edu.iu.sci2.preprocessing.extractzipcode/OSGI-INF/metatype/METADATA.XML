@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract ZIP code" id="edu.iu.sci2.preprocessing.extractzipcode.ExtractZipcodeAlgorithm.OCD"
+		 	description="Extracts ZIP code from the given address.">
+		<AD name="Address column" id="addresscolumn" type="String" 
+			description="Column containing ZIP code." default="address"/>
+		<AD name="Truncate ZIP code" id="truncate" type="Boolean" 
+			description="Truncate 9-digit long-form ZIP code like 12345-6789 into 1245 - a 5-digit short-form ZIP code." default="true"/>	
+
+	</OCD>
+	<Designate pid="edu.iu.sci2.preprocessing.extractzipcode.ExtractZipcodeAlgorithm">
+		<Object ocdref="edu.iu.sci2.preprocessing.extractzipcode.ExtractZipcodeAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

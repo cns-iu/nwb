@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Paper Citation Network" id="edu.iu.nwb.composite.extractpapercitationnetwork.algorithm.ExtractPaperCitationNetwork.OCD"
+		 description="This algorithm creates a network that draws edges from a paper's references to that paper ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.composite.extractpapercitationnetwork.algorithm.ExtractPaperCitationNetwork">
+		<Object ocdref="edu.iu.nwb.composite.extractpapercitationnetwork.algorithm.ExtractPaperCitationNetwork.OCD" />
+	</Designate>
+</metatype:MetaData>

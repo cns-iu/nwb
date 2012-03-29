@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form style="Swing" ide="eclipse" builder="jigloo" version="2.7.2">
+<NonVisualComponents>
+		<Component class="java.lang.Object" name="Non-visual components" style="0">
+			<Constraints>
+				<LayoutConstraint/>
+			</Constraints>
+		</Component></NonVisualComponents>
+	<Component class="javax.swing.JDialog" name="GraphTypeDialog">
+		<Constraints>
+			<LayoutConstraint/>
+		</Constraints>
+		<Layout class="GridBag">
+			<Property name="columnWidths" type="IntegerArray">
+			<IntegerArray value="[ 1 ]"/>
+		</Property>
+			<Property name="rowHeights" type="IntegerArray">
+			<IntegerArray value="[ 1,1,1 ]"/>
+		</Property>
+			<Property name="columnWeights" type="DoubleArray">
+			<DoubleArray value="[ 0.1 ]"/>
+		</Property>
+			<Property name="rowWeights" type="DoubleArray">
+			<DoubleArray value="[ 0.1,0.1,0.1 ]"/>
+		</Property>
+			<Property name="columns" type="int" value="1"/>
+			<Property name="rows" type="int" value="3"/>
+		</Layout>
+		<Events>
+		</Events>
+		<Properties>
+			<Property name="title" type="String" value="Graph Type"/>
+			<Property name="size" type="Dimension">
+				<Dimension value="[194, 330]"/>
+			</Property>
+			<Property name="bounds" type="Rectangle">
+				<Rectangle value="[0, 0, 194, 330]"/>
+			</Property>
+		</Properties>
+		<SubComponents>
+			<Component class="javax.swing.JPanel" name="predicatesPanel">
+				<Constraints>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="0"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="1.0"/>
+						<Property name="weighty" type="double" value="0.4"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="1"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Layout class="GridBag">
+					<Property name="columnWidths" type="IntegerArray">
+					<IntegerArray value="[ 1,1 ]"/>
+				</Property>
+					<Property name="rowHeights" type="IntegerArray">
+					<IntegerArray value="[ 1,1,1 ]"/>
+				</Property>
+					<Property name="columnWeights" type="DoubleArray">
+					<DoubleArray value="[ 0.1,0.1 ]"/>
+				</Property>
+					<Property name="rowWeights" type="DoubleArray">
+					<DoubleArray value="[ 0.1,0.1,0.1 ]"/>
+				</Property>
+					<Property name="columns" type="int" value="2"/>
+					<Property name="rows" type="int" value="3"/>
+				</Layout>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="autoscrolls" type="boolean" value="true"/>
+					<Property name="border" class="javax.swing.border.TitledBorder">
+						<Property name="border" class="javax.swing.border.LineBorder">
+							<Property name="lineColor" type="Color">
+							<Color red="0" green="0" blue="0"/>
+						</Property>
+							<Property name="thickness" type="int" value="1"/>
+							<Property name="roundedCorners" type="boolean" value="false"/>
+						</Property>
+						<Property name="title" type="String" value="Graph Type"/>
+						<Property name="titleJustification" type="int" value="4"/>
+						<Property name="titlePosition" type="int" value="2"/>
+						<Property name="titleFont" type="Font">
+						<Font name="Dialog" size="12" style="1" strikeout="false" underline="false"/>
+					</Property>
+						<Property name="titleColor" type="Color">
+						<Color red="0" green="0" blue="0"/>
+					</Property>
+					</Property>
+				</Properties>
+				<SubComponents>
+					<Component class="javax.swing.JLabel" name="lblIsDirected">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="0"/>
+								<Property name="gridy" type="int" value="0"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.0"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="13"/>
+								<Property name="fill" type="int" value="0"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[5, 5, 5, 5]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="text" type="String" value="Directed"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JTextField" name="tfIsDirected">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="1"/>
+								<Property name="gridy" type="int" value="0"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.6"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="2"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="enabled" type="boolean" value="false"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JLabel" name="lblIsConnected">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="0"/>
+								<Property name="gridy" type="int" value="1"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.0"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="13"/>
+								<Property name="fill" type="int" value="0"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[5, 5, 5, 5]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="text" type="String" value="Connected"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JTextField" name="tfIsConnected">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="1"/>
+								<Property name="gridy" type="int" value="1"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.6"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="2"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="enabled" type="boolean" value="false"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JLabel" name="lblHasParallelEdges">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="0"/>
+								<Property name="gridy" type="int" value="2"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.0"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="13"/>
+								<Property name="fill" type="int" value="0"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[5, 5, 5, 5]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="text" type="String" value="Parallel Edges"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JTextField" name="tfHasParallelEdges">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="1"/>
+								<Property name="gridy" type="int" value="2"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.6"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="2"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="enabled" type="boolean" value="false"/>
+						</Properties>
+					</Component>
+				</SubComponents>
+			</Component>
+			<Component class="javax.swing.JPanel" name="countsPanel">
+				<Constraints>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="1"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.5"/>
+						<Property name="weighty" type="double" value="0.4"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="1"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Layout class="GridBag">
+					<Property name="columnWidths" type="IntegerArray">
+					<IntegerArray value="[ 1,1 ]"/>
+				</Property>
+					<Property name="rowHeights" type="IntegerArray">
+					<IntegerArray value="[ 1,1,1 ]"/>
+				</Property>
+					<Property name="columnWeights" type="DoubleArray">
+					<DoubleArray value="[ 0.1,0.1 ]"/>
+				</Property>
+					<Property name="rowWeights" type="DoubleArray">
+					<DoubleArray value="[ 0.1,0.1,0.1 ]"/>
+				</Property>
+					<Property name="columns" type="int" value="2"/>
+					<Property name="rows" type="int" value="3"/>
+				</Layout>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="border" class="javax.swing.border.TitledBorder">
+						<Property name="border" class="javax.swing.border.LineBorder">
+							<Property name="lineColor" type="Color">
+							<Color red="0" green="0" blue="0"/>
+						</Property>
+							<Property name="thickness" type="int" value="1"/>
+							<Property name="roundedCorners" type="boolean" value="false"/>
+						</Property>
+						<Property name="title" type="String" value="Counts"/>
+						<Property name="titleJustification" type="int" value="4"/>
+						<Property name="titlePosition" type="int" value="2"/>
+						<Property name="titleFont" type="Font">
+						<Font name="Dialog" size="12" style="1" strikeout="false" underline="false"/>
+					</Property>
+						<Property name="titleColor" type="Color">
+						<Color red="0" green="0" blue="0"/>
+					</Property>
+					</Property>
+				</Properties>
+				<SubComponents>
+					<Component class="javax.swing.JLabel" name="lblNumNodes">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="0"/>
+								<Property name="gridy" type="int" value="0"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.0"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="0"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="text" type="String" value="Number of Nodes"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JLabel" name="lblNumEdges">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="0"/>
+								<Property name="gridy" type="int" value="1"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.0"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="0"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="text" type="String" value="Number of Edges"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JLabel" name="lblNumSelfLoops">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="0"/>
+								<Property name="gridy" type="int" value="2"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.0"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="0"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="text" type="String" value="Number of Loops"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JTextField" name="tfNumNodes">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="1"/>
+								<Property name="gridy" type="int" value="0"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.6"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="2"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="enabled" type="boolean" value="false"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JTextField" name="tfNumEdges">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="1"/>
+								<Property name="gridy" type="int" value="1"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.6"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="2"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="enabled" type="boolean" value="false"/>
+						</Properties>
+					</Component>
+					<Component class="javax.swing.JTextField" name="tfNumLoops">
+						<Constraints>
+							<LayoutConstraint class="java.awt.GridBagConstraints">
+								<Property name="gridx" type="int" value="1"/>
+								<Property name="gridy" type="int" value="2"/>
+								<Property name="gridwidth" type="int" value="1"/>
+								<Property name="gridheight" type="int" value="1"/>
+								<Property name="weightx" type="double" value="0.6"/>
+								<Property name="weighty" type="double" value="0.0"/>
+								<Property name="anchor" type="int" value="10"/>
+								<Property name="fill" type="int" value="2"/>
+								<Property name="insets" type="Insets">
+								<Insets value="[0, 0, 0, 0]"/>
+							</Property>
+								<Property name="ipadx" type="int" value="0"/>
+								<Property name="ipady" type="int" value="0"/>
+							</LayoutConstraint>
+						</Constraints>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="enabled" type="boolean" value="false"/>
+						</Properties>
+					</Component>
+				</SubComponents>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnPrintToConsole">
+				<Constraints>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="2"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.2"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnPrintToConsoleActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Print To Console"/>
+				</Properties>
+			</Component>
+		</SubComponents>
+	</Component>
+</Form>

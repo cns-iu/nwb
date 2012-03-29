@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Refer Validation" id="edu.iu.nwb.converter.prefuserefer.ReferValidationAlgorithm.OCD"
+		 description="Validates a file in refer format">
+	</OCD>
+	<Designate pid="edu.iu.nwb.converter.prefuserefer.ReferValidationAlgorithm">
+		<Object ocdref="edu.iu.nwb.converter.prefuserefer.ReferValidationAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

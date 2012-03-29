@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.database.scopus.load.ScopusDatabaseLoaderAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.database.scopus.load.ScopusDatabaseLoaderAlgorithmFactory"/>
+	<properties entry="OSGI-INF/scopus_load.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
+	<reference name="DB" interface="org.cishell.service.database.DatabaseService"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

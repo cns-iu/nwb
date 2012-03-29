@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Node Degree and Strength" id="edu.iu.nwb.analysis.weighted.degreestrength.gui"
+		 description="Node Degree and Strength">
+		<AD name="DROPALWAYS" id="DROPALWAYS" 
+			type="Integer" default="10" min="8"
+                        description="Workaround for null paramters"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.weighted.degreestrength">
+		<Object ocdref="edu.iu.nwb.analysis.weighted.degreestrength.gui" />
+	</Designate>
+</metatype:MetaData>

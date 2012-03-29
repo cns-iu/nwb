@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Temporal Bar Graph" id="edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithm.OCD"
+		 description="Takes tabular data and generates PostScript for a temporal bar graph.">
+		 <AD name="Label" id="label" type="String" description="The field used to label the bar lines" default="TITLE"/>
+		 <AD name="Start Date" id="start_date" type="String" description="The field used for the starting date" default="START_DATE"/>
+		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
+		 <AD name="Size By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
+		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
+		 <AD name="Query" id="query" type="String" description="The query that created the data." default="" />
+		 <AD name="Categeory" id="category" type="String" description="The field used for identifying cagegories within the data and color coding the bars as those categories.  More than 10 unique categories is not recommended." default="" />
+		 <AD name="Scale Output?" id="should_scale_output" type="boolean" description="If selected, all the bars will be fit into a single page.  If not, 50 bars per page will be used." default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithm">
+		<Object ocdref="edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithm.OCD" />
+	</Designate>
+	
+	<OCD name="Web Temporal Bar Graph" id="edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithm.OCD"
+		 description="Takes tabular data and generates PostScript for a temporal bar graph.">
+		 <AD name="Label" id="label" type="String" description="The field used to label the bar lines" default="TITLE"/>
+		 <AD name="Start Date" id="start_date" type="String" description="The field used for the starting date" default="START_DATE"/>
+		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
+		 <AD name="Size By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
+		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
+		 <AD name="Category (for coloring)" id="category" type="String" description="The field used for identifying cagegories within the data and color coding the bars as those categories.  More than 10 unique categories is not recommended." default="" />
+		 <AD name="Scale Output?" id="should_scale_output" type="boolean" description="If selected, all the bars will be fit into a single page.  If not, 50 bars per page will be used." default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithm">
+		<Object ocdref="edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Single-Population" id="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm.OCD"
+		 description="Simulate an infection or infections with given epidemics model and a simple single-population population model.">
+		<AD name="Initial compartment"
+			id="initialCompartment"
+			type="String"
+			description="Which compartment represents the initial population?"
+			default="Mutate"/>
+	</OCD>
+	<Designate pid="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm">
+		<Object ocdref="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm.OCD" />
+	</Designate>
+	
+	<OCD name="Exact" id="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm.OCD"
+		 description="Convert the model to a system of partial differential equations and numerically integrate them using an adaptive Runge-Kutta procedure.">
+		<AD name="Initial compartment"
+			id="initialCompartment"
+			type="String"
+			description="Which compartment represents the initial population?"
+			default="Mutate"/>
+	</OCD>
+	<Designate pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm">
+		<Object ocdref="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm.OCD" />
+	</Designate>
+	
+	<OCD name="Network" id="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm.OCD"
+		 description="Consider each individual to be a node on a network interacting with its nearest neighbors.">
+		<AD name="Initial compartment"
+			id="initialCompartment"
+			type="String"
+			description="Which compartment represents the initial population?"
+			default="Mutate"/>
+	</OCD>
+	<Designate pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm">
+		<Object ocdref="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

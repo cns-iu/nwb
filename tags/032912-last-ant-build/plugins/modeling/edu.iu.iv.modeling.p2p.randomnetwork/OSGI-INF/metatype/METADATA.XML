@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="The Random Network Modeling Algorithm" id="edu.iu.iv.modeling.p2p.randomnetwork.RandomNetwork.OCD"
+		 description="Enter network size and probability">
+		<AD name="Number of nodes" description="Enter number of nodes in the network, must be &gt; 0" id="networkSize" type="Integer" default="1" min="1" />
+		<AD name="Wiring probability" description="Enter wiring probability (0.0 &lt;= probability &lt; 1.0)" id="probability" type="Double" default="0.0" min="0" max="1.0" />
+	</OCD>
+	<Designate pid="edu.iu.iv.modeling.p2p.randomnetwork.RandomNetwork">
+		<Object ocdref="edu.iu.iv.modeling.p2p.randomnetwork.RandomNetwork.OCD" />
+	</Designate>
+</metatype:MetaData>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component
+	name="edu.iu.nwb.converter.prefuseisi.reader.PrefuseIsiValidation.component"
+	immediate="false">
+	<implementation
+		class="edu.iu.nwb.converter.prefuseisi.reader.PrefuseIsiValidation" />
+	<properties entry="OSGI-INF/validation.properties" />
+	<reference name="LOG" interface="org.osgi.service.log.LogService" />
+	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService" />
+
+	<service>
+		<provide interface="org.cishell.framework.algorithm.AlgorithmFactory" />
+	</service>
+</component>

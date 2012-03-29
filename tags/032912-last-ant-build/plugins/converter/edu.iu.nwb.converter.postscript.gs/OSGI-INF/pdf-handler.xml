@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.nwb.converter.postscript.gs.pdf.PDFHandlerAlgorithmFactory.component" immediate="false">
+	<implementation class="edu.iu.nwb.converter.postscript.gs.pdf.PDFHandlerAlgorithmFactory"/>
+	<properties entry="OSGI-INF/pdf-handler.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

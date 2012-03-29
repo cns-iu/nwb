@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="HITS" id="edu.iu.nwb.analysis.hits.HITSAlgorithm.OCD"
+		 	description="Performs HITS on the network.">
+		<AD name="Number of Iterations" id="iterations" type="Integer" 
+			description="Number of Iteration to perform HITS" default="20"/>
+		<AD name="Edge Weight Column Name" id="weightcolumn" type="String" description="Column with edge weight value." default="weight"/>	
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.hits.HITSAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.hits.HITSAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

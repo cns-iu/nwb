@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Aggregate Data" id="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm.OCD"
+		 	description="Aggregate Data in the table based on a column.">
+		<AD name="Aggregate On column" id="aggregateoncolumn" type="String" 
+			description="Column on which aggregation is to be performed." default="aggregate"/>
+		<AD name="Text Delimiter" id="delimiter" type="String" 
+			description="The character used to separate values in the column." default="|"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

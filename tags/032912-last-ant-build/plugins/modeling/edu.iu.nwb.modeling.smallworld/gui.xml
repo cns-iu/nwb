@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Watts-Strogatz Small World" id="edu.iu.nwb.modeling.smallworld.gui"
+		 description="Small World">
+		<AD name="Number of nodes" id="NumNodes" 
+			type="Integer" default="1000" min="10"
+                        description="Number of nodes of the network"/> 
+<!-- Put extremes of range, if unknown leave blank -->
+<!-- Can be required from users for information -->
+		<AD name="Number of initial neighbors" id="InitNeighbors" 
+			type="Integer" default="10" min="1"                        
+                        description="Number of initial neighbors of a node to its right/left, must be at least 1"/> 
+		<AD name="Rewiring probability" id="RewireProb" 
+			type="Double" default="0.1" min="0.0" max="1.0"                        
+                        description="Rewiring probability of a link, must be in [0,1]"/> 
+		<AD name="Seed of random number generator" id="RandomSeed" 
+			type="Integer" default="1" min="1"                        
+                        description="Seed of random number generator, must be at least 1"/> 
+	</OCD>
+	<Designate pid="edu.iu.nwb.modeling.smallworld">
+		<Object ocdref="edu.iu.nwb.modeling.smallworld.gui" />
+	</Designate>
+</metatype:MetaData>

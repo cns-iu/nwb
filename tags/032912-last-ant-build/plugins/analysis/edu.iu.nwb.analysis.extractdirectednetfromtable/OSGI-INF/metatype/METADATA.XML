@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Directed Network" id="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractDirectedNetwork.OCD"
+		 description="Given a table, this algorithm creates a directed network by placing a directed edge that starts at a first column node and ends at a second column node.">
+		<AD name="Source Column" id="sourceColumn" type="String" description="The column to draw the source information from" default=""/>
+		<AD name="Target Column" id="targetColumn" type="String" description="The column to which the source column creates edges to." default=""/>
+		<AD name="Text Delimiter" id="delimiter" type="String" description="The character that separates values in table columns." default="|"/>
+		<AD	name="Aggregate Function File" id="aff" type="String" default="file:"
+			description="The name of a file that contains functions to perform on the data." required="false"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractDirectedNetwork">
+		<Object ocdref="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractDirectedNetwork.OCD" />
+	</Designate>
+	
+	<OCD name="Extract Bipartite Network" id="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractBipartiteNetwork.OCD"
+		 description="Extract a bipartite network from two columns in the table.  If the column values may list multiple entries, enter the special text which delimits them.">
+		<AD name="First column" id="sourceColumn" type="String" description="The column to draw the source information from" default=""/>
+		<AD name="Second column" id="targetColumn" type="String" description="The column to which the source column creates edges to." default=""/>
+		<AD name="Text Delimiter" id="delimiter" type="String" description="The character that separates values in table columns." default="|"/>
+		<AD	name="Aggregate Function File" id="aff" type="String" default="file:"
+			description="The name of a file that contains functions to perform on the data." required="false"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractBipartiteNetwork">
+		<Object ocdref="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractBipartiteNetwork.OCD" />
+	</Designate>
+</metatype:MetaData>

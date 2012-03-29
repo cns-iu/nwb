@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Weak Component Clustering" id="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm.OCD"
+		 description="Creates new graphs containing the top connected components.">
+		<AD name="Number of top clusters" id="n" type="Integer" description="Number of top connected components to create from a given graph. 0 for all." default="0"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

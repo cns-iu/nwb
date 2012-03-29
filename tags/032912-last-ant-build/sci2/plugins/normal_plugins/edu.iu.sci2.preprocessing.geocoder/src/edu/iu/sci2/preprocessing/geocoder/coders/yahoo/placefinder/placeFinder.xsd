@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+	<xs:element name="ResultSet">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Error" type="xs:integer" />
+				<xs:element name="ErrorMessage" type="xs:string" />
+				<xs:element name="Locale" type="xs:string" />
+				<xs:element name="Quality" type="xs:integer" />
+				<xs:element name="Found" type="xs:integer" />
+				<xs:element name="Result" type="YahooServiceResult" minOccurs="0" maxOccurs="50" />
+			</xs:sequence>
+			<xs:attribute name="version" type="xs:float" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="YahooServiceResult">
+		<xs:all>
+			<xs:element name="quality" type="xs:integer" />
+			<xs:element name="latitude" type="xs:float" />
+			<xs:element name="longitude" type="xs:float" />
+			<xs:element name="offsetlat" type="xs:float" />
+			<xs:element name="offsetlon" type="xs:float" />
+			<xs:element name="radius" type="xs:integer" />
+			<xs:element name="boundingbox" type="Bounding" minOccurs="0" />
+			<xs:element name="name" type="xs:string" minOccurs="0" />
+			<xs:element name="line1" type="xs:string" minOccurs="0" />
+			<xs:element name="line2" type="xs:string" minOccurs="0" />
+			<xs:element name="line3" type="xs:string" minOccurs="0" />
+			<xs:element name="line4" type="xs:string" minOccurs="0" />
+			<xs:element name="cross" type="xs:string" minOccurs="0" />
+			<xs:element name="house" type="xs:string" minOccurs="0" />
+			<xs:element name="street" type="xs:string" minOccurs="0" />
+			<xs:element name="xstreet" type="xs:string" minOccurs="0" />
+			<xs:element name="unittype" type="xs:string" minOccurs="0" />
+			<xs:element name="unit" type="xs:string" minOccurs="0" />
+			<xs:element name="postal" type="xs:string" minOccurs="0" />
+			<xs:element name="neighborhood" type="xs:string" minOccurs="0" />
+			<xs:element name="city" type="xs:string" minOccurs="0" />
+			<xs:element name="county" type="xs:string" minOccurs="0" />
+			<xs:element name="state" type="xs:string" minOccurs="0" />
+			<xs:element name="country" type="xs:string" minOccurs="0" />
+			<xs:element name="level14" type="xs:string" minOccurs="0" />
+			<xs:element name="level13" type="xs:string" minOccurs="0" />
+			<xs:element name="level12" type="xs:string" minOccurs="0" />
+			<xs:element name="level11" type="xs:string" minOccurs="0" />
+			<xs:element name="level10" type="xs:string" minOccurs="0" />
+			<xs:element name="countrycode" type="xs:string" minOccurs="0" />
+			<xs:element name="statecode" type="xs:string" minOccurs="0" />
+			<xs:element name="countycode" type="xs:string" minOccurs="0" />
+			<xs:element name="level12code" type="xs:string" minOccurs="0" />
+			<xs:element name="level11code" type="xs:string" minOccurs="0" />
+			<xs:element name="level10code" type="xs:string" minOccurs="0" />
+			<xs:element name="areacode" type="xs:string" minOccurs="0" />
+			<xs:element name="timezone" type="xs:string" minOccurs="0" />
+			<xs:element name="uzip" type="xs:string" minOccurs="0" />
+			<xs:element name="hash" type="xs:string" minOccurs="0" />
+			<xs:element name="woeid" type="xs:integer" minOccurs="0" />
+			<xs:element name="woetype" type="xs:integer" minOccurs="0" />
+		</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="Bounding">
+		<xs:sequence>
+			<xs:element name="north" type="xs:float" />
+			<xs:element name="south" type="xs:float" />
+			<xs:element name="east" type="xs:float" />
+			<xs:element name="west" type="xs:float" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Average Nearest Neighbor Degree" id="edu.iu.nwb.analysis.weighted.averagenearestneighbor.gui"
+		 description="Average weighted nearest neighbor degree">
+		<AD name="Number of bins" id="NumBins" 
+			type="Integer" default="10" min="2"
+                        description="Number of bins for logarithmic binning; must be at least 2"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.weighted.averagenearestneighbor">
+		<Object ocdref="edu.iu.nwb.analysis.weighted.averagenearestneighbor.gui" />
+	</Designate>
+</metatype:MetaData>

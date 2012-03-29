@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Topological Overlap (Meet/Min Directed)" id="edu.iu.nwb.transformations.tomeetmindirected.gui"
+		 description="Topological Overlap, Meet/Min, Directed">
+	<!--	<AD name="Number of bins" id="NumBins" 
+			type="Integer" default="10" min="8"
+                        description="Number of bins for the distribution of the clustering coefficients, must be at least 8"/>
+	-->
+	</OCD>
+	<Designate pid="edu.iu.nwb.transformations.tomeetmindirected">
+		<Object ocdref="edu.iu.nwb.transformations.tomeetmindirected.gui" />
+	</Designate>
+</metatype:MetaData>

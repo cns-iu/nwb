@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Dichotomize" id="edu.iu.nwb.analysis.dichotomize.Dichotomize.OCD"
+		 description="Remove edges not passing the comparison">
+		<AD name="Attribute" id="attribute" type="String" description="Dichotomize over this." default="weight"/>
+		<AD name="Comparator" id="comparator" type="String" description="Compare using this." default=">"/>
+		<AD name="Cutoff" id="cutoff" type="Double" description="Compare to this." default="0"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.dichotomize.Dichotomize">
+		<Object ocdref="edu.iu.nwb.analysis.dichotomize.Dichotomize.OCD" />
+	</Designate>
+</metatype:MetaData>

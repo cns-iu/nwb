@@ -1,0 +1,2862 @@
+group references;
+
+
+header(creator, title, pageOrder, boundingBoxString) ::= <<
+%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: <creator>
+%%Title: <title>
+%%Pages: 1
+%%BoundingBox: <boundingBoxString>
+%%Page: 1
+%%EndComments
+
+>>
+
+
+justShow() ::= <<
+	(<it.name>) show
+>>
+
+
+legendDefinitions() ::= <<
+
+/legendLabelDict 1 dict def
+/legendLabel {
+	legendLabelDict begin
+		/font exch def
+		
+		/keyLabelFontSize exch def
+		/keyLabelBrightness exch def
+		/keyLabel exch def
+		
+		/scalingLabelBrightness exch def
+		/scalingLabel exch def
+		
+		/typeLabelFontSize exch def
+		/typeLabelBrightness exch def
+		/typeLabel exch def
+		
+		/y exch def
+		/x exch def
+
+
+		gsave
+			x y moveto
+
+			%gsave
+			%	font typeLabelFontSize scalefont setfont
+			%
+			%	typeLabelBrightness setgray
+			%	typeLabel show
+			%	( ) show
+			%
+			%	scalingLabelBrightness setgray
+			%	scalingLabel show
+			%grestore
+			
+			gsave
+				0 keyLabelFontSize neg rmoveto
+				%0 5 neg rmoveto
+			
+				font keyLabelFontSize scalefont setfont
+				keyLabelBrightness setgray
+				keyLabel show
+			grestore
+		grestore
+	end
+} def
+
+>>
+
+
+circleAreaLegendDefinitions() ::= <<
+
+% Pops two numbers
+% Pushes the lesser of them
+/2min { 2 copy ge { exch } if pop } bind def
+
+% Pops two numbers
+% Pushes the greater of them
+/2max { 2 copy le { exch } if pop } bind def
+
+% Pops n, the number of values to pop for averaging, and n values
+% Pushes the mean of those n values
+/mean {
+	% Basically, fold + from 0 on the n values.
+	% The final exch div divides the sum by n,
+	% which we've kept rolled at the bottom of the stack.
+	0 1 index {3 -1 roll add} repeat exch div
+} def
+
+% <string> underlinedShow
+% Pops a string
+% Shows the string underlined
+/underlinedShowDict 1 dict def
+/underlinedShow {
+	underlinedShowDict begin
+		/UNDERLINE_THICKNESS 0.1 def
+		/UNDERLINE_VERTICAL_OFFSET -0.8 def
+
+		gsave
+			0 UNDERLINE_VERTICAL_OFFSET rmoveto
+			dup stringwidth rlineto
+			UNDERLINE_THICKNESS setlinewidth stroke
+		grestore
+		
+		show
+	end
+} bind def
+
+
+/circleAreaLegendDict 1 dict def
+/circleAreaLegend {
+	circleAreaLegendDict begin
+		/font exch def
+		
+		/keyLabelFontSize exch def
+		/keyLabelBrightness exch def
+		/keyLabel exch def
+		
+		/scalingLabelBrightness exch def
+		/scalingLabel exch def
+		
+		/typeLabelFontSize exch def
+		/typeLabelBrightness exch def
+		/typeLabel exch def
+		
+		/extremaLabelFontSize exch def
+		/extremaLabelBrightness exch def		
+		/maxLabel exch def
+		/midLabel exch def
+		/minLabel exch def
+		
+		/circleBrightness exch def
+		/maxRadius exch def
+		/midRadius exch def
+		/minRadius exch def
+		
+		/y exch def
+		/x exch def
+
+
+		gsave
+			x y translate
+		
+			gsave
+				%0 keyLabelFontSize neg translate %10 add neg translate
+			
+				font extremaLabelFontSize scalefont setfont
+				
+				/minLabelwidth {minLabel stringwidth pop} bind def
+				/midLabelwidth {midLabel stringwidth pop} bind def
+				/maxLabelwidth {maxLabel stringwidth pop} bind def
+
+				/circleX {maxRadius} bind def
+				/minCircleY {minRadius neg 5 sub} bind def
+				/midCircleY {midRadius neg 5 sub} bind def
+				/maxCircleY {maxRadius neg 5 sub} bind def
+				
+				/labelX {2 maxRadius mul 5 add} bind def
+				/minLabelY {minCircleY extremaLabelFontSize 2 div sub} bind def
+				% Try to put vertically position the mid and max labels
+				% so that they center on their circle's center, but if that
+				% would result in overlapping labels, position them yet lower
+				% to prevent that.
+				/midLabelY {midCircleY extremaLabelFontSize 2 div sub minLabelY extremaLabelFontSize sub 2min} bind def
+				/maxLabelY {maxCircleY extremaLabelFontSize 2 div sub midLabelY extremaLabelFontSize sub 2min} bind def
+
+				% Minimum
+				%   Circle
+				gsave
+					circleX minCircleY minRadius .1 circleBrightness circleBrightness circleBrightness node stroke
+				grestore
+				%   Label
+				gsave
+					extremaLabelBrightness setgray
+					labelX minLabelY moveto
+					minLabel show
+				grestore
+
+				% Midpoint
+				%   Circle
+				gsave
+					circleBrightness setgray
+					circleX midCircleY midRadius .1 circleBrightness circleBrightness circleBrightness node stroke
+				grestore
+				%   Label
+				gsave
+					extremaLabelBrightness setgray
+					labelX midLabelY moveto
+					midLabel show
+				grestore
+				
+				% Maximum
+				%   Circle
+				gsave
+					circleBrightness setgray
+					circleX maxCircleY maxRadius .1 circleBrightness circleBrightness circleBrightness node stroke
+				grestore
+				%   Label
+				gsave
+					extremaLabelBrightness setgray
+					labelX maxLabelY moveto
+					maxLabel show
+				grestore
+				
+				0 0 extremaLabelFontSize add typeLabel typeLabelBrightness typeLabelFontSize scalingLabel scalingLabelBrightness keyLabel keyLabelBrightness keyLabelFontSize font legendLabel
+			grestore
+
+			
+		grestore
+	end
+} def
+
+>>
+
+
+circleAreaLegend(x,y,minRadius,midRadius,maxRadius,circleBrightness,minLabel,midLabel,maxLabel,extremaLabelBrightness,extremaLabelFontSize,typeLabel,typeLabelBrightness,typeLabelFontSize,scalingLabel,scalingLabelBrightness,keyLabel,keyLabelBrightness,keyLabelFontSize,fontName) ::= <<
+
+<x> <y> <minRadius> <midRadius> <maxRadius> <circleBrightness> (<minLabel>) (<midLabel>) (<maxLabel>) <extremaLabelBrightness> <extremaLabelFontSize> (<typeLabel>) <typeLabelBrightness> <typeLabelFontSize> (<scalingLabel>) <scalingLabelBrightness> (<keyLabel>) <keyLabelBrightness> <keyLabelFontSize> {/<fontName> findfont} circleAreaLegend
+
+>>
+
+
+
+categoryName(nameFormat) ::= <<
+
+0 lineHeight -1.3 mul translate
+gsave
+newpath
+lineHeight neg lineHeight 4 div moveto
+lineHeight dup 3 div add neg lineHeight 4 div lineHeight 3 div 0 360 arc
+<it.color> setrgbcolor
+gsave
+1.51 setlinewidth
+.2 setgray
+stroke
+grestore
+1.5 setlinewidth
+stroke
+grestore
+0 0 moveto
+gsave
+currentfont 1.5 scalefont setfont
+
+<it:(nameFormat)()>
+
+grestore
+
+>>
+
+category() ::= <<
+
+<it:categoryName(nameFormat="justShow")>
+
+<it.journals:referenceProper();separator="\n">
+
+>>
+
+
+
+referenceCore(name,total) ::= <<
+
+0 lineHeight neg translate .2 inch 0 moveto
+gsave
+  (<total>) dup stringwidth pop .05 inch add neg 0 rmoveto show
+grestore
+(<name>) show
+
+>>
+
+referenceProper() ::= <<
+
+<referenceCore(name=it.name, total=it.total)>
+
+>>
+
+referenceEntry() ::= <<
+
+<referenceCore(name=it.key, total=it.value)>
+
+>>
+
+
+
+
+mapofscience(edges,emptyNodes,nodes,x,y,minRadius,midRadius,maxRadius,circleBrightness,minLabel,midLabel,maxLabel,extremaLabelBrightness,extremaLabelFontSize,typeLabel,typeLabelBrightness,typeLabelFontSize,scalingLabel,scalingLabelBrightness,keyLabel,keyLabelBrightness,keyLabelFontSize,fontName) ::= <<
+
+gsave
+<circleAreaLegend(x=x,y=y,minRadius=minRadius,midRadius=midRadius,maxRadius=maxRadius,circleBrightness=circleBrightness,minLabel=minLabel,midLabel=midLabel,maxLabel=maxLabel,extremaLabelBrightness=extremaLabelBrightness,extremaLabelFontSize=extremaLabelFontSize,typeLabel=typeLabel,typeLabelBrightness=typeLabelBrightness,typeLabelFontSize=typeLabelFontSize,scalingLabel=scalingLabel,scalingLabelBrightness=scalingLabelBrightness,keyLabel=keyLabel,keyLabelBrightness=keyLabelBrightness,keyLabelFontSize=keyLabelFontSize,fontName=fontName)>
+grestore
+
+gsave
+
+/Garamond findfont 6 scalefont setfont
+
+5.8 inch -.15 inch moveto (Copyright \(c\) 2008 The Regents of the University of California) show
+
+/linebarline {
+	gsave
+	/Garamond findfont 7 scalefont setfont
+	newpath
+	1 setlinewidth
+	.3 setgray %OLD .6
+	dup stringwidth pop 2 div dup 1 inch add neg 2 moveto
+	.8 inch 0 rlineto
+	stroke
+	dup neg -1 moveto
+	exch show
+	.2 inch add 2 moveto
+	.8 inch 0 rlineto
+	stroke
+	grestore
+} def
+
+gsave
+.5 inch 1.5 inch translate
+90 rotate
+(Map continued on right) linebarline
+grestore
+
+gsave
+8 inch 1.5 inch translate
+-90 rotate
+(Map continued on left) linebarline
+grestore
+
+gsave
+
+1 -1 scale 1 inch 0 translate
+
+<edges;separator="\n">
+
+<emptyNodes;separator="\n">
+
+<nodes;separator="\n">
+
+grestore
+
+gsave
+
+/Garamond findfont 8 scalefont setfont
+
+/category {
+1 index 1 index
+moveto
+5 index
+.3 setgray
+show
+moveto
+setrgbcolor
+.01 0 rmoveto
+show
+} def
+
+(Social Sciences) 1 1 0 6.2 inch 1 inch category
+
+% 1 1 0 setrgbcolor
+% 6.2 inch 1 inch moveto
+% (Social Sciences) show
+
+(Electrical Engineering) 1 .5216 1 .9 inch 1.24 inch category
+(& Computer Science) 1 .5216 1 .9 inch 1.12 inch category
+
+% 1 .5216 1 setrgbcolor
+% .9 inch 1.24 inch moveto
+% (Electrical Engineering) show
+% .9 inch 1.12 inch moveto
+% (& Computer Science) show
+
+(Biology) 0 .6 0 3.73 inch .6 inch category
+
+% 0 .6 0 setrgbcolor
+% 3.73 inch .6 inch moveto
+% (Biology) show
+
+(Biotechnology) 0 1 .5 3.1 inch 1.45 inch category
+
+% 0 1 .5 setrgbcolor
+% 3.1 inch 1.45 inch moveto
+% (Biotechnology) show
+
+(Brain Research) 1 .56 0 5.63 inch 1.23 inch category
+
+% 1 0 0 setrgbcolor
+% 5.63 inch 1.23 inch moveto
+% (Brain Research) show
+
+(Medical Specialties) 1 0 0 5.1 inch .88 inch category
+
+% 1 .71 .157 setrgbcolor
+% 5.1 inch .88 inch moveto
+% (Medical Specialties) show
+
+(Chemical, Mechanical, & Civil Engineering) .38 1 1 2.08 inch 1.1 inch category
+
+% .38 1 1 setrgbcolor
+% 2.08 inch 1.1 inch moveto
+% (Chemical, Mechanical, & Civil Engineering) show
+
+(Chemistry) 0 0 1 2.38 inch 2.45 inch category
+
+% 0 0 1 setrgbcolor
+% 2.38 inch 2.45 inch moveto
+% (Chemistry) show
+
+(Earth Sciences) .52 .19 .05 2.65 inch .4 inch category
+
+% .651 0 0 setrgbcolor
+% 2.65 inch .4 inch moveto
+% (Earth Sciences) show
+
+(Health Professionals) .94 .55 .51 5.3 inch 2.55 inch category
+
+% 1 .5 .3 setrgbcolor
+% 5.3 inch 2.55 inch moveto
+% (Health Professionals) show
+
+(Humanities) 1 1 .5 6.18 inch .4 inch category
+
+% 1 1 .5 setrgbcolor
+% 6.18 inch .4 inch moveto
+% (Humanities) show
+
+(Infectious Disease) .72 0 0 4.41 inch 1.05 inch category
+
+% .72 0 0 setrgbcolor
+% 4.41 inch 1.05 inch moveto
+% (Infectious Diseases) show
+
+(Math & Physics) .64 .078 .98 1.15 inch 2.31 inch category
+
+% .64 .078 .98 setrgbcolor
+% 1.15 inch 2.31 inch moveto
+% (Math & Physics) show
+
+grestore
+
+
+
+grestore
+
+>>
+
+
+headerfooter() ::= <<
+
+gsave
+/Garamond findfont 8 scalefont setfont
+.3 setgray
+.5 inch 10.7 inch moveto
+(Date and time of analysis: ) show analysistime show
+.5 inch 10.55 inch moveto
+(Input data: ) show analysisDataLabel show
+%%%%%%%%%%%incrementpage
+%%%%%%%%%%%7.6 inch 10.7 inch moveto
+%%%%%%%%%%%(page ) show page 5 string cvs show
+
+% \<string\> underlinedShow
+% Pops a string
+% Shows the string underlined
+/underlinedShowDict 1 dict def
+/underlinedShow {
+	underlinedShowDict begin
+		/UNDERLINE_THICKNESS 0.1 def
+		/UNDERLINE_VERTICAL_OFFSET -0.8 def
+
+		gsave
+			0 UNDERLINE_VERTICAL_OFFSET rmoveto
+			dup stringwidth rlineto
+			UNDERLINE_THICKNESS setlinewidth stroke
+		grestore
+		
+		show
+	end
+} bind def
+
+.5 inch .35 inch moveto
+(Cyberinfrastructure for Network Science Center (2010) Science Map. Indiana University, ) show
+(http://sci.slis.indiana.edu) underlinedShow
+(.) show
+
+grestore
+
+>>
+
+proposal(title,proposalMap,totals,numberOfHitCategories,numberOfIDsHit,listFont,categories,unfound,unfoundExist,analysisTime,analysisDataLabel) ::= <<
+
+/inch {72 mul} def
+/fontSize 10 def
+/Garamond findfont fontSize scalefont setfont
+
+/analysistime (<analysisTime>) def
+/analysisDataLabel (<analysisDataLabel>) def
+
+
+<headerfooter()>
+
+<ucsd()>
+
+gsave
+
+gsave
+.5 inch 10.2 inch moveto
+/Garamond findfont 14 scalefont setfont
+(Science Map via Journals for <title>) show
+grestore
+
+.5 inch 9.9 inch moveto
+(<totals.found> journal references matched out of <totals.all> found.) show
+
+.5 inch 9.62 inch moveto
+(These <totals.found> references are associated with <numberOfHitCategories> of 13 disciplines of science and <numberOfIDsHit> of 554 research specialties in the UCSD Map of Science.) show
+
+0 6.5 inch translate
+
+<proposalMap>
+
+
+1 inch -.2 inch translate
+
+gsave
+
+currentfont <listFont> fontSize div scalefont setfont
+/lineHeight <listFont> 1.5 mul def
+
+<categories:category();separator="\n">
+
+
+-.5 inch lineHeight -2.2 mul translate
+
+gsave
+0 0 moveto
+currentfont 1.5 scalefont setfont
+
+<if(unfoundExist)>
+(Journals which could not be located on the map of science:) show
+<else>
+(All journals were successfully identified.) show
+<endif>
+
+grestore
+
+.4 setgray
+
+<unfound:referenceEntry();separator="\n">
+
+grestore
+
+grestore
+
+showpage
+
+>>
+
+
+
+
+
+
+
+
+
+ucsd() ::= <<
+
+/edge {
+	newpath
+	.7 setgray
+	0 setlinewidth
+	moveto
+	lineto
+	stroke
+} bind def
+
+/node {
+	newpath
+	setrgbcolor
+	setlinewidth
+	0 360 arc closepath
+	stroke
+} bind def
+
+/writeedges {
+-10.08 -97.200005 -10.08 -97.200005 edge
+-10.08 -97.200005 -10.08 -97.200005 edge
+-10.08 -97.200005 -8.639999 -104.4 edge
+-10.08 -97.200005 -10.08 -97.200005 edge
+-10.08 -97.200005 -8.639999 -104.4 edge
+-10.08 -97.200005 -8.639999 -104.4 edge
+-10.08 -114.48 0.0 -118.08 edge
+-10.08 -114.48 4.3199997 -118.799995 edge
+-10.08 -114.48 5.04 -122.4 edge
+-10.08 -114.48 5.7599998 -120.96 edge
+-10.08 -114.48 17.279999 -124.56 edge
+-8.639999 -104.4 -4.3199997 -129.59999 edge
+-8.639999 -104.4 12.24 -132.48 edge
+-4.3199997 -129.59999 3.6000001 -130.31999 edge
+-4.3199997 -129.59999 12.24 -132.48 edge
+-4.3199997 -129.59999 28.079998 -146.88 edge
+0.0 -118.08 4.3199997 -118.799995 edge
+0.0 -118.08 17.279999 -124.56 edge
+0.0 -118.08 23.76 -129.59999 edge
+3.6000001 -130.31999 5.04 -122.4 edge
+3.6000001 -130.31999 5.7599998 -120.96 edge
+3.6000001 -130.31999 23.76 -129.59999 edge
+4.3199997 -118.799995 17.279999 -124.56 edge
+4.3199997 -118.799995 17.279999 -125.28 edge
+4.3199997 -118.799995 23.76 -129.59999 edge
+4.3199997 -118.799995 30.24 -124.56 edge
+5.04 -122.4 5.7599998 -120.96 edge
+5.04 -122.4 12.24 -132.48 edge
+5.04 -122.4 17.279999 -126.0 edge
+5.04 -122.4 18.72 -131.04001 edge
+5.04 -122.4 23.76 -141.84 edge
+5.04 -122.4 23.76 -129.59999 edge
+5.7599998 -120.96 17.279999 -126.0 edge
+5.7599998 -120.96 23.76 -129.59999 edge
+5.7599998 -120.96 30.24 -124.56 edge
+12.24 -132.48 28.079998 -146.88 edge
+12.24 -132.48 28.800001 -147.59999 edge
+12.24 -132.48 30.24 -148.31999 edge
+12.24 -132.48 32.399998 -149.04 edge
+12.24 -132.48 32.399998 -149.04 edge
+17.279999 -124.56 17.279999 -124.56 edge
+17.279999 -124.56 21.6 -123.12 edge
+17.279999 -124.56 23.76 -129.59999 edge
+17.279999 -124.56 23.76 -122.4 edge
+17.279999 -124.56 25.920002 -125.28 edge
+17.279999 -124.56 25.920002 -125.28 edge
+17.279999 -124.56 28.079998 -134.64 edge
+17.279999 -124.56 29.52 -128.88 edge
+17.279999 -124.56 30.24 -124.56 edge
+17.279999 -126.0 17.279999 -124.56 edge
+17.279999 -126.0 23.76 -129.59999 edge
+17.279999 -126.0 24.48 -127.44 edge
+17.279999 -126.0 27.36 -130.31999 edge
+17.279999 -126.0 28.800001 -131.04001 edge
+17.279999 -124.56 17.279999 -125.28 edge
+17.279999 -124.56 23.76 -129.59999 edge
+17.279999 -124.56 23.76 -122.4 edge
+17.279999 -124.56 24.48 -127.44 edge
+17.279999 -124.56 27.36 -130.31999 edge
+17.279999 -124.56 28.800001 -131.04001 edge
+17.279999 -124.56 30.24 -124.56 edge
+17.279999 -125.28 18.72 -131.04001 edge
+17.279999 -125.28 23.76 -129.59999 edge
+17.279999 -125.28 24.48 -127.44 edge
+17.279999 -125.28 29.52 -128.88 edge
+18.72 -131.04001 21.6 -138.95999 edge
+18.72 -131.04001 23.76 -141.84 edge
+18.72 -131.04001 29.52 -128.88 edge
+18.72 -131.04001 30.960001 -130.31999 edge
+21.6 -138.95999 23.76 -129.59999 edge
+21.6 -138.95999 24.48 -127.44 edge
+21.6 -138.95999 30.24 -148.31999 edge
+21.6 -123.12 23.76 -129.59999 edge
+21.6 -123.12 23.76 -122.4 edge
+21.6 -123.12 25.920002 -125.28 edge
+21.6 -123.12 25.920002 -125.28 edge
+21.6 -123.12 29.52 -128.88 edge
+23.76 -141.84 28.079998 -146.88 edge
+23.76 -141.84 28.800001 -147.59999 edge
+23.76 -141.84 30.24 -148.31999 edge
+23.76 -141.84 32.399998 -149.04 edge
+23.76 -141.84 32.399998 -149.04 edge
+23.76 -141.84 32.399998 -151.92 edge
+23.76 -141.84 33.12 -154.8 edge
+23.76 -141.84 45.36 -145.44 edge
+23.76 -129.59999 24.48 -127.44 edge
+23.76 -129.59999 26.64 -140.40001 edge
+23.76 -129.59999 27.36 -130.31999 edge
+23.76 -129.59999 28.800001 -131.04001 edge
+23.76 -129.59999 29.52 -128.88 edge
+23.76 -129.59999 30.24 -124.56 edge
+23.76 -129.59999 30.24 -127.44 edge
+23.76 -129.59999 30.960001 -136.8 edge
+23.76 -129.59999 30.960001 -130.31999 edge
+23.76 -129.59999 35.28 -135.36 edge
+23.76 -129.59999 35.28 -133.2 edge
+23.76 -129.59999 38.88 -143.28 edge
+23.76 -129.59999 38.88 -136.08 edge
+23.76 -129.59999 39.600002 -131.76001 edge
+23.76 -129.59999 41.04 -139.68001 edge
+23.76 -129.59999 43.920002 -133.2 edge
+23.76 -129.59999 46.8 -140.40001 edge
+23.76 -122.4 25.920002 -125.28 edge
+23.76 -122.4 25.920002 -125.28 edge
+23.76 -122.4 29.52 -128.88 edge
+23.76 -122.4 30.24 -124.56 edge
+24.48 -127.44 28.800001 -131.04001 edge
+24.48 -127.44 30.24 -124.56 edge
+24.48 -127.44 39.600002 -131.76001 edge
+25.920002 -125.28 25.920002 -125.28 edge
+25.920002 -125.28 38.88 -136.08 edge
+25.920002 -125.28 38.88 -136.08 edge
+26.64 -140.40001 28.079998 -134.64 edge
+26.64 -140.40001 38.88 -143.28 edge
+27.36 -130.31999 28.800001 -131.04001 edge
+27.36 -130.31999 30.960001 -136.8 edge
+27.36 -130.31999 35.28 -135.36 edge
+27.36 -130.31999 43.920002 -133.2 edge
+28.079998 -146.88 28.800001 -147.59999 edge
+28.079998 -146.88 30.24 -148.31999 edge
+28.079998 -146.88 32.399998 -149.04 edge
+28.079998 -146.88 32.399998 -149.04 edge
+28.079998 -146.88 32.399998 -151.92 edge
+28.079998 -146.88 33.12 -154.8 edge
+28.079998 -146.88 45.36 -145.44 edge
+28.079998 -146.88 46.079998 -146.88 edge
+28.079998 -146.88 51.12 -147.59999 edge
+28.079998 -146.88 55.44 -158.40001 edge
+28.079998 -134.64 30.960001 -136.8 edge
+28.079998 -134.64 35.28 -135.36 edge
+28.079998 -134.64 38.88 -143.28 edge
+28.079998 -134.64 39.600002 -131.76001 edge
+28.800001 -131.04001 33.84 -136.8 edge
+28.800001 -131.04001 33.84 -136.8 edge
+28.800001 -131.04001 39.600002 -131.76001 edge
+28.800001 -131.04001 43.920002 -133.2 edge
+28.800001 -147.59999 30.24 -148.31999 edge
+28.800001 -147.59999 32.399998 -149.04 edge
+28.800001 -147.59999 32.399998 -149.04 edge
+28.800001 -147.59999 33.12 -154.8 edge
+28.800001 -147.59999 45.36 -145.44 edge
+28.800001 -147.59999 46.079998 -146.88 edge
+29.52 -128.88 30.24 -127.44 edge
+29.52 -128.88 30.960001 -130.31999 edge
+29.52 -128.88 33.84 -125.28 edge
+29.52 -128.88 33.84 -126.72 edge
+29.52 -128.88 35.28 -133.2 edge
+29.52 -128.88 37.44 -132.48 edge
+29.52 -128.88 38.159996 -133.2 edge
+29.52 -128.88 38.88 -136.08 edge
+29.52 -128.88 38.88 -138.23999 edge
+29.52 -128.88 40.32 -135.36 edge
+30.24 -148.31999 32.399998 -149.04 edge
+30.24 -148.31999 32.399998 -149.04 edge
+30.24 -148.31999 33.12 -154.8 edge
+30.24 -148.31999 45.36 -145.44 edge
+30.24 -148.31999 46.079998 -146.88 edge
+30.24 -148.31999 55.44 -158.40001 edge
+30.24 -124.56 79.200005 -126.0 edge
+30.24 -127.44 30.960001 -130.31999 edge
+30.24 -127.44 33.84 -126.72 edge
+30.24 -127.44 38.88 -136.08 edge
+30.960001 -136.8 31.68 -141.12 edge
+30.960001 -136.8 34.559998 -137.52 edge
+30.960001 -136.8 35.28 -135.36 edge
+30.960001 -136.8 38.88 -143.28 edge
+30.960001 -136.8 38.88 -136.08 edge
+30.960001 -130.31999 33.84 -125.28 edge
+30.960001 -130.31999 33.84 -126.72 edge
+30.960001 -130.31999 37.44 -132.48 edge
+30.960001 -130.31999 38.159996 -133.2 edge
+30.960001 -130.31999 38.88 -136.08 edge
+30.960001 -130.31999 38.88 -138.23999 edge
+31.68 -141.12 34.559998 -137.52 edge
+31.68 -141.12 35.28 -135.36 edge
+31.68 -141.12 38.88 -143.28 edge
+32.399998 -149.04 32.399998 -149.04 edge
+32.399998 -149.04 33.12 -154.8 edge
+32.399998 -149.04 45.36 -145.44 edge
+32.399998 -149.04 46.079998 -146.88 edge
+32.399998 -149.04 51.12 -147.59999 edge
+32.399998 -149.04 55.44 -158.40001 edge
+32.399998 -149.04 33.12 -154.8 edge
+32.399998 -149.04 45.36 -145.44 edge
+32.399998 -149.04 46.079998 -146.88 edge
+32.399998 -149.04 51.12 -147.59999 edge
+32.399998 -149.04 55.44 -158.40001 edge
+32.399998 -151.92 45.36 -145.44 edge
+32.399998 -151.92 46.079998 -146.88 edge
+33.12 -154.8 55.44 -158.40001 edge
+33.84 -125.28 37.44 -132.48 edge
+33.84 -125.28 38.88 -136.08 edge
+33.84 -136.8 33.84 -136.8 edge
+33.84 -136.8 43.920002 -133.2 edge
+33.84 -136.8 43.920002 -133.2 edge
+33.84 -126.72 35.28 -133.2 edge
+33.84 -126.72 37.44 -132.48 edge
+33.84 -126.72 38.88 -136.08 edge
+33.84 -126.72 40.32 -128.16 edge
+34.559998 -137.52 35.28 -135.36 edge
+34.559998 -137.52 35.28 -133.2 edge
+34.559998 -137.52 37.44 -132.48 edge
+34.559998 -137.52 38.88 -143.28 edge
+34.559998 -137.52 38.88 -136.08 edge
+34.559998 -137.52 38.88 -138.23999 edge
+35.28 -135.36 38.88 -143.28 edge
+35.28 -135.36 39.600002 -131.76001 edge
+35.28 -135.36 50.399998 -131.04001 edge
+35.28 -133.2 37.44 -132.48 edge
+35.28 -133.2 38.88 -136.08 edge
+35.28 -133.2 38.88 -138.23999 edge
+35.28 -133.2 40.32 -128.16 edge
+35.28 -133.2 46.8 -142.56 edge
+37.44 -132.48 38.88 -136.08 edge
+37.44 -132.48 38.88 -138.23999 edge
+37.44 -132.48 40.32 -135.36 edge
+37.44 -132.48 46.8 -142.56 edge
+38.159996 -133.2 38.88 -136.08 edge
+38.159996 -133.2 38.88 -136.08 edge
+38.159996 -133.2 40.32 -135.36 edge
+38.159996 -133.2 49.68 -142.56 edge
+38.88 -143.28 57.600002 -151.92 edge
+38.88 -143.28 61.2 -156.24 edge
+38.88 -136.08 38.88 -138.23999 edge
+38.88 -136.08 40.32 -128.16 edge
+38.88 -136.08 40.32 -135.36 edge
+38.88 -136.08 46.8 -141.84 edge
+38.88 -136.08 46.8 -142.56 edge
+38.88 -136.08 57.600002 -152.63998 edge
+38.88 -136.08 40.32 -135.36 edge
+38.88 -136.08 43.920002 -133.2 edge
+38.88 -136.08 46.8 -142.56 edge
+38.88 -136.08 49.68 -142.56 edge
+38.88 -136.08 61.920002 -150.48 edge
+38.88 -138.23999 46.8 -142.56 edge
+38.88 -138.23999 54.0 -150.48 edge
+39.600002 -131.76001 43.920002 -133.2 edge
+39.600002 -131.76001 46.8 -140.40001 edge
+39.600002 -131.76001 50.399998 -131.04001 edge
+39.600002 -131.76001 62.64 -130.31999 edge
+40.32 -128.16 40.32 -135.36 edge
+40.32 -128.16 46.8 -138.95999 edge
+40.32 -135.36 46.8 -142.56 edge
+40.32 -135.36 49.68 -142.56 edge
+41.04 -139.68001 43.920002 -133.2 edge
+41.04 -139.68001 46.8 -141.84 edge
+41.04 -139.68001 46.8 -140.40001 edge
+41.04 -139.68001 46.8 -138.95999 edge
+41.04 -139.68001 46.8 -142.56 edge
+41.04 -139.68001 56.159996 -148.31999 edge
+43.920002 -133.2 45.36 -145.44 edge
+43.920002 -133.2 46.8 -140.40001 edge
+43.920002 -133.2 50.399998 -131.04001 edge
+43.920002 -133.2 59.04 -126.0 edge
+43.920002 -133.2 62.64 -130.31999 edge
+43.920002 -133.2 69.119995 -131.76001 edge
+45.36 -145.44 46.079998 -146.88 edge
+45.36 -145.44 51.12 -147.59999 edge
+45.36 -145.44 55.44 -158.40001 edge
+45.36 -145.44 79.92 -135.36 edge
+46.079998 -146.88 51.12 -147.59999 edge
+46.079998 -146.88 78.48 -132.48 edge
+46.8 -141.84 46.8 -140.40001 edge
+46.8 -141.84 46.8 -138.95999 edge
+46.8 -141.84 46.8 -142.56 edge
+46.8 -141.84 56.159996 -148.31999 edge
+46.8 -140.40001 46.8 -138.95999 edge
+46.8 -140.40001 46.8 -142.56 edge
+46.8 -140.40001 46.8 -142.56 edge
+46.8 -140.40001 49.68 -142.56 edge
+46.8 -140.40001 50.399998 -131.04001 edge
+46.8 -140.40001 56.159996 -148.31999 edge
+46.8 -140.40001 69.119995 -151.92 edge
+46.8 -138.95999 56.159996 -148.31999 edge
+46.8 -142.56 46.8 -142.56 edge
+46.8 -142.56 49.68 -142.56 edge
+46.8 -142.56 57.600002 -152.63998 edge
+46.8 -142.56 61.920002 -150.48 edge
+46.8 -142.56 54.0 -150.48 edge
+46.8 -142.56 56.159996 -154.08 edge
+46.8 -142.56 61.2 -144.0 edge
+49.68 -142.56 61.920002 -150.48 edge
+49.68 -142.56 63.36 -153.36002 edge
+50.399998 -131.04001 59.04 -126.0 edge
+50.399998 -131.04001 62.64 -130.31999 edge
+50.399998 -131.04001 69.119995 -131.76001 edge
+51.12 -147.59999 55.44 -158.40001 edge
+51.12 -147.59999 84.96 -134.64 edge
+54.0 -150.48 56.159996 -154.08 edge
+54.0 -150.48 57.600002 -152.63998 edge
+54.0 -150.48 57.600002 -151.92 edge
+54.0 -150.48 61.2 -156.24 edge
+54.0 -150.48 63.36 -153.36002 edge
+54.0 -150.48 66.96 -156.24 edge
+55.44 -158.40001 67.68 -159.12 edge
+55.44 -158.40001 67.68 -159.12 edge
+55.44 -158.40001 69.840004 -160.56 edge
+55.44 -158.40001 79.200005 -154.08 edge
+55.44 -158.40001 82.08 -160.56 edge
+55.44 -158.40001 100.799995 -167.04 edge
+56.159996 -148.31999 66.96 -156.24 edge
+56.159996 -148.31999 80.64 -156.96 edge
+56.159996 -154.08 57.600002 -152.63998 edge
+56.159996 -154.08 57.600002 -151.92 edge
+56.159996 -154.08 63.36 -153.36002 edge
+56.159996 -154.08 65.520004 -159.12 edge
+57.600002 -152.63998 57.600002 -151.92 edge
+57.600002 -152.63998 61.2 -156.24 edge
+57.600002 -152.63998 61.920002 -150.48 edge
+57.600002 -152.63998 65.520004 -159.12 edge
+57.600002 -152.63998 66.96 -156.24 edge
+57.600002 -152.63998 67.68 -159.12 edge
+57.600002 -152.63998 69.119995 -158.40001 edge
+57.600002 -152.63998 80.64 -156.96 edge
+57.600002 -151.92 61.2 -156.24 edge
+57.600002 -151.92 78.48 -149.76 edge
+59.04 -126.0 79.200005 -126.0 edge
+61.2 -144.0 62.64 -130.31999 edge
+61.2 -144.0 66.96 -156.24 edge
+61.2 -144.0 68.4 -148.31999 edge
+61.2 -144.0 69.840004 -149.76 edge
+61.2 -156.24 65.520004 -159.12 edge
+61.2 -156.24 66.96 -156.24 edge
+61.2 -156.24 67.68 -159.12 edge
+61.2 -156.24 69.119995 -158.40001 edge
+61.2 -156.24 80.64 -156.96 edge
+61.2 -156.24 82.08 -160.56 edge
+61.920002 -150.48 69.119995 -158.40001 edge
+61.920002 -150.48 80.64 -156.96 edge
+61.920002 -150.48 82.08 -160.56 edge
+61.920002 -150.48 83.52 -154.08 edge
+61.920002 -150.48 86.4 -154.8 edge
+62.64 -130.31999 68.4 -148.31999 edge
+62.64 -130.31999 69.840004 -149.76 edge
+62.64 -130.31999 77.04 -117.36 edge
+62.64 -130.31999 78.48 -132.48 edge
+62.64 -130.31999 83.52 -107.28 edge
+63.36 -153.36002 86.4 -154.8 edge
+65.520004 -159.12 80.64 -156.96 edge
+66.96 -156.24 67.68 -159.12 edge
+66.96 -156.24 69.119995 -158.40001 edge
+66.96 -156.24 69.119995 -151.92 edge
+66.96 -156.24 69.840004 -160.56 edge
+66.96 -156.24 69.840004 -149.76 edge
+66.96 -156.24 80.64 -156.96 edge
+66.96 -156.24 82.08 -160.56 edge
+66.96 -156.24 83.52 -154.08 edge
+67.68 -159.12 68.4 -148.31999 edge
+67.68 -159.12 69.840004 -160.56 edge
+67.68 -159.12 69.840004 -149.76 edge
+67.68 -159.12 79.200005 -154.08 edge
+67.68 -159.12 69.119995 -158.40001 edge
+67.68 -159.12 69.840004 -160.56 edge
+67.68 -159.12 69.840004 -149.76 edge
+67.68 -159.12 80.64 -156.96 edge
+67.68 -159.12 82.08 -160.56 edge
+68.4 -148.31999 69.840004 -149.76 edge
+68.4 -148.31999 79.200005 -154.08 edge
+69.119995 -158.40001 69.119995 -151.92 edge
+69.119995 -158.40001 69.840004 -160.56 edge
+69.119995 -158.40001 80.64 -156.96 edge
+69.119995 -158.40001 82.08 -160.56 edge
+69.119995 -131.76001 78.48 -149.76 edge
+69.119995 -131.76001 79.92 -135.36 edge
+69.119995 -131.76001 79.92 -124.56 edge
+69.119995 -131.76001 83.52 -134.64 edge
+69.119995 -131.76001 90.0 -116.64 edge
+69.119995 -151.92 69.840004 -160.56 edge
+69.119995 -151.92 80.64 -156.96 edge
+69.119995 -151.92 82.08 -160.56 edge
+69.119995 -151.92 90.72 -144.0 edge
+69.840004 -160.56 69.840004 -149.76 edge
+69.840004 -160.56 79.200005 -154.08 edge
+69.840004 -160.56 80.64 -156.96 edge
+69.840004 -160.56 82.08 -160.56 edge
+69.840004 -149.76 78.48 -132.48 edge
+69.840004 -149.76 79.200005 -154.08 edge
+69.840004 -149.76 82.08 -160.56 edge
+77.04 -117.36 78.48 -102.96 edge
+77.04 -117.36 78.48 -132.48 edge
+77.04 -117.36 83.52 -107.28 edge
+77.04 -117.36 91.44 -128.16 edge
+78.48 -149.76 86.4 -154.8 edge
+78.48 -149.76 87.12 -152.63998 edge
+78.48 -149.76 88.56 -153.36002 edge
+78.48 -149.76 88.56 -153.36002 edge
+78.48 -149.76 90.72 -144.0 edge
+78.48 -149.76 92.159996 -153.36002 edge
+78.48 -102.96 83.52 -107.28 edge
+78.48 -132.48 79.92 -135.36 edge
+78.48 -132.48 79.92 -124.56 edge
+78.48 -132.48 84.96 -134.64 edge
+78.48 -132.48 85.68001 -128.16 edge
+78.48 -132.48 91.44 -128.16 edge
+78.48 -132.48 91.44 -138.23999 edge
+78.48 -132.48 92.88 -135.36 edge
+78.48 -132.48 92.88 -141.84 edge
+78.48 -132.48 95.76 -123.12 edge
+78.48 -132.48 96.48 -120.24 edge
+79.200005 -154.08 82.08 -160.56 edge
+79.200005 -154.08 97.200005 -127.44 edge
+79.200005 -154.08 100.799995 -167.04 edge
+79.200005 -126.0 88.56 -113.04 edge
+79.200005 -126.0 90.0 -116.64 edge
+79.200005 -126.0 91.44 -128.16 edge
+79.200005 -126.0 96.48 -120.24 edge
+79.200005 -126.0 96.48 -130.31999 edge
+79.200005 -126.0 97.92 -110.159996 edge
+79.200005 -126.0 99.36 -132.48 edge
+79.200005 -126.0 103.68001 -136.08 edge
+79.200005 -126.0 103.68001 -136.08 edge
+79.92 -135.36 83.52 -134.64 edge
+79.92 -135.36 84.96 -134.64 edge
+79.92 -135.36 85.68001 -128.16 edge
+79.92 -135.36 90.0 -144.0 edge
+79.92 -135.36 97.200005 -137.52 edge
+79.92 -135.36 103.68001 -118.08 edge
+79.92 -124.56 83.52 -134.64 edge
+79.92 -124.56 85.68001 -128.16 edge
+79.92 -124.56 90.0 -116.64 edge
+80.64 -156.96 82.08 -160.56 edge
+80.64 -156.96 83.52 -154.08 edge
+80.64 -156.96 86.4 -154.8 edge
+80.64 -156.96 86.4 -154.8 edge
+80.64 -156.96 87.12 -154.8 edge
+80.64 -156.96 87.840004 -157.68001 edge
+80.64 -156.96 91.44 -138.23999 edge
+80.64 -156.96 92.159996 -153.36002 edge
+80.64 -156.96 92.88 -141.84 edge
+80.64 -156.96 99.36 -159.12 edge
+80.64 -156.96 100.799995 -167.04 edge
+80.64 -156.96 110.159996 -157.68001 edge
+80.64 -156.96 111.6 -164.16 edge
+82.08 -160.56 83.52 -154.08 edge
+82.08 -160.56 86.4 -154.8 edge
+82.08 -160.56 87.12 -154.8 edge
+82.08 -160.56 87.840004 -157.68001 edge
+82.08 -160.56 92.159996 -153.36002 edge
+82.08 -160.56 99.36 -159.12 edge
+82.08 -160.56 100.799995 -167.04 edge
+82.08 -160.56 111.6 -164.16 edge
+82.08 -160.56 118.08 -167.76 edge
+82.08 -160.56 118.08 -169.2 edge
+83.52 -134.64 84.96 -134.64 edge
+83.52 -134.64 85.68001 -128.16 edge
+83.52 -134.64 90.0 -144.0 edge
+83.52 -134.64 97.200005 -137.52 edge
+83.52 -107.28 112.31999 -93.6 edge
+83.52 -154.08 86.4 -154.8 edge
+83.52 -154.08 86.4 -154.8 edge
+83.52 -154.08 87.12 -152.63998 edge
+83.52 -154.08 87.12 -154.8 edge
+83.52 -154.08 87.840004 -157.68001 edge
+83.52 -154.08 90.72 -144.0 edge
+83.52 -154.08 91.44 -138.23999 edge
+83.52 -154.08 99.36 -159.12 edge
+84.96 -134.64 85.68001 -128.16 edge
+84.96 -134.64 91.44 -128.16 edge
+84.96 -134.64 92.88 -135.36 edge
+84.96 -134.64 92.88 -141.84 edge
+84.96 -134.64 95.76 -123.12 edge
+84.96 -134.64 96.48 -120.24 edge
+84.96 -134.64 109.44 -134.64 edge
+85.68001 -128.16 91.44 -128.16 edge
+85.68001 -128.16 95.76 -123.12 edge
+86.4 -154.8 87.12 -152.63998 edge
+86.4 -154.8 87.12 -154.8 edge
+86.4 -154.8 87.840004 -157.68001 edge
+86.4 -154.8 88.56 -153.36002 edge
+86.4 -154.8 88.56 -153.36002 edge
+86.4 -154.8 90.0 -144.0 edge
+86.4 -154.8 90.72 -144.0 edge
+86.4 -154.8 92.159996 -153.36002 edge
+86.4 -154.8 90.72 -144.0 edge
+86.4 -154.8 92.159996 -153.36002 edge
+86.4 -154.8 92.88 -135.36 edge
+86.4 -154.8 92.88 -141.84 edge
+86.4 -154.8 110.159996 -157.68001 edge
+86.4 -154.8 110.88 -163.44 edge
+87.12 -152.63998 88.56 -153.36002 edge
+87.12 -152.63998 90.0 -144.0 edge
+87.12 -152.63998 90.72 -144.0 edge
+87.12 -152.63998 92.159996 -153.36002 edge
+87.12 -154.8 87.840004 -157.68001 edge
+87.12 -154.8 88.56 -153.36002 edge
+87.12 -154.8 88.56 -153.36002 edge
+87.12 -154.8 90.0 -144.0 edge
+87.12 -154.8 90.72 -144.0 edge
+87.12 -154.8 92.159996 -153.36002 edge
+87.840004 -157.68001 90.72 -144.0 edge
+87.840004 -157.68001 92.159996 -153.36002 edge
+88.56 -113.04 90.0 -116.64 edge
+88.56 -113.04 96.48 -120.24 edge
+88.56 -113.04 97.92 -110.159996 edge
+88.56 -153.36002 88.56 -153.36002 edge
+88.56 -153.36002 90.72 -144.0 edge
+88.56 -153.36002 92.159996 -153.36002 edge
+88.56 -153.36002 90.0 -144.0 edge
+88.56 -153.36002 90.72 -144.0 edge
+88.56 -153.36002 92.159996 -153.36002 edge
+90.0 -116.64 97.92 -110.159996 edge
+90.0 -116.64 103.68001 -118.08 edge
+90.0 -116.64 112.31999 -101.52 edge
+90.0 -144.0 92.159996 -153.36002 edge
+90.0 -144.0 97.200005 -127.44 edge
+90.0 -144.0 97.200005 -137.52 edge
+90.72 -144.0 92.159996 -153.36002 edge
+90.72 -144.0 101.52 -126.0 edge
+90.72 -144.0 107.28 -109.44 edge
+91.44 -128.16 91.44 -138.23999 edge
+91.44 -128.16 92.88 -135.36 edge
+91.44 -128.16 92.88 -141.84 edge
+91.44 -128.16 95.76 -123.12 edge
+91.44 -128.16 96.48 -120.24 edge
+91.44 -128.16 97.200005 -127.44 edge
+91.44 -128.16 108.0 -119.52 edge
+91.44 -128.16 109.44 -134.64 edge
+91.44 -138.23999 92.159996 -153.36002 edge
+91.44 -138.23999 92.88 -135.36 edge
+91.44 -138.23999 95.76 -123.12 edge
+91.44 -138.23999 96.48 -120.24 edge
+91.44 -138.23999 97.200005 -127.44 edge
+91.44 -138.23999 108.0 -119.52 edge
+92.159996 -153.36002 97.200005 -137.52 edge
+92.159996 -153.36002 99.36 -159.12 edge
+92.159996 -153.36002 110.159996 -157.68001 edge
+92.88 -135.36 92.88 -141.84 edge
+92.88 -135.36 95.76 -123.12 edge
+92.88 -135.36 96.48 -120.24 edge
+92.88 -135.36 97.200005 -127.44 edge
+92.88 -135.36 109.44 -134.64 edge
+92.88 -141.84 95.76 -123.12 edge
+92.88 -141.84 99.36 -159.12 edge
+92.88 -141.84 109.44 -134.64 edge
+95.76 -123.12 96.48 -120.24 edge
+95.76 -123.12 97.200005 -127.44 edge
+95.76 -123.12 109.44 -134.64 edge
+95.76 -123.12 112.31999 -93.6 edge
+96.48 -120.24 107.28 -109.44 edge
+96.48 -120.24 108.0 -119.52 edge
+96.48 -120.24 112.31999 -101.52 edge
+96.48 -120.24 112.31999 -103.68001 edge
+96.48 -130.31999 97.200005 -127.44 edge
+96.48 -130.31999 99.36 -132.48 edge
+96.48 -130.31999 103.68001 -136.08 edge
+96.48 -130.31999 103.68001 -136.08 edge
+96.48 -130.31999 109.44 -134.64 edge
+97.200005 -127.44 108.0 -119.52 edge
+97.200005 -127.44 112.31999 -93.6 edge
+97.200005 -137.52 103.68001 -118.08 edge
+97.200005 -137.52 112.31999 -137.52 edge
+97.200005 -137.52 112.31999 -137.52 edge
+97.92 -110.159996 103.68001 -118.08 edge
+97.92 -110.159996 112.31999 -101.52 edge
+97.92 -110.159996 115.200005 -104.4 edge
+99.36 -159.12 100.799995 -167.04 edge
+99.36 -159.12 115.92 -156.24 edge
+99.36 -159.12 118.08 -167.76 edge
+99.36 -159.12 126.72 -150.48 edge
+99.36 -132.48 103.68001 -136.08 edge
+99.36 -132.48 103.68001 -136.08 edge
+99.36 -132.48 110.159996 -135.36 edge
+99.36 -132.48 116.64 -138.23999 edge
+100.799995 -167.04 118.08 -167.76 edge
+100.799995 -167.04 118.799995 -154.8 edge
+100.799995 -167.04 159.84 -161.28 edge
+100.799995 -167.04 170.63998 -164.16 edge
+101.52 -126.0 107.28 -109.44 edge
+101.52 -126.0 108.0 -119.52 edge
+103.68001 -136.08 103.68001 -136.08 edge
+103.68001 -136.08 110.159996 -135.36 edge
+103.68001 -136.08 112.31999 -137.52 edge
+103.68001 -136.08 112.31999 -137.52 edge
+103.68001 -136.08 112.31999 -143.28 edge
+103.68001 -136.08 116.64 -138.23999 edge
+103.68001 -136.08 110.159996 -135.36 edge
+103.68001 -136.08 112.31999 -137.52 edge
+103.68001 -136.08 112.31999 -137.52 edge
+103.68001 -136.08 112.31999 -143.28 edge
+103.68001 -136.08 116.64 -138.23999 edge
+103.68001 -118.08 110.88 -119.52 edge
+103.68001 -118.08 111.6 -125.28 edge
+103.68001 -118.08 115.200005 -104.4 edge
+103.68001 -118.08 123.12 -96.48 edge
+107.28 -109.44 108.0 -119.52 edge
+107.28 -109.44 111.6 -98.64 edge
+107.28 -109.44 111.6 -98.64 edge
+107.28 -109.44 112.31999 -101.52 edge
+107.28 -109.44 112.31999 -97.92 edge
+107.28 -109.44 112.31999 -93.6 edge
+107.28 -109.44 115.200005 -104.4 edge
+107.28 -109.44 119.52 -83.52 edge
+108.0 -119.52 109.44 -134.64 edge
+108.0 -119.52 111.6 -98.64 edge
+108.0 -119.52 111.6 -98.64 edge
+108.0 -119.52 112.31999 -97.92 edge
+108.0 -119.52 112.31999 -93.6 edge
+108.0 -119.52 116.64 -138.23999 edge
+108.0 -119.52 126.72 -150.48 edge
+109.44 -134.64 110.159996 -157.68001 edge
+109.44 -134.64 116.64 -138.23999 edge
+109.44 -134.64 118.799995 -154.8 edge
+109.44 -134.64 123.12 -138.23999 edge
+109.44 -134.64 129.59999 -156.24 edge
+109.44 -134.64 131.76001 -99.36 edge
+109.44 -134.64 132.48 -156.24 edge
+110.159996 -157.68001 110.88 -163.44 edge
+110.159996 -157.68001 123.12 -138.23999 edge
+110.159996 -157.68001 126.72 -150.48 edge
+110.159996 -157.68001 158.40001 -161.28 edge
+110.159996 -135.36 111.6 -125.28 edge
+110.159996 -135.36 112.31999 -143.28 edge
+110.159996 -135.36 116.64 -138.23999 edge
+110.88 -163.44 133.92 -160.56 edge
+110.88 -119.52 111.6 -125.28 edge
+111.6 -98.64 111.6 -98.64 edge
+111.6 -98.64 112.31999 -97.92 edge
+111.6 -98.64 112.31999 -93.6 edge
+111.6 -98.64 119.52 -83.52 edge
+111.6 -98.64 112.31999 -97.92 edge
+111.6 -98.64 112.31999 -93.6 edge
+111.6 -98.64 119.52 -83.52 edge
+111.6 -164.16 115.92 -156.24 edge
+111.6 -164.16 118.08 -167.76 edge
+111.6 -164.16 118.08 -169.2 edge
+111.6 -164.16 126.72 -150.48 edge
+111.6 -164.16 129.59999 -156.24 edge
+111.6 -164.16 132.48 -156.24 edge
+111.6 -164.16 159.84 -161.28 edge
+112.31999 -101.52 112.31999 -97.92 edge
+112.31999 -101.52 115.200005 -104.4 edge
+112.31999 -101.52 123.12 -96.48 edge
+112.31999 -101.52 133.92 -87.12 edge
+112.31999 -101.52 137.52 -82.799995 edge
+112.31999 -103.68001 112.31999 -93.6 edge
+112.31999 -103.68001 131.76001 -99.36 edge
+112.31999 -97.92 112.31999 -93.6 edge
+112.31999 -97.92 119.52 -83.52 edge
+112.31999 -93.6 115.200005 -104.4 edge
+112.31999 -93.6 119.52 -83.52 edge
+112.31999 -93.6 123.12 -96.48 edge
+112.31999 -93.6 124.56 -65.520004 edge
+112.31999 -93.6 141.84 -58.32 edge
+112.31999 -137.52 112.31999 -137.52 edge
+112.31999 -137.52 121.68001 -138.95999 edge
+112.31999 -137.52 125.28 -132.48 edge
+112.31999 -137.52 121.68001 -138.95999 edge
+112.31999 -137.52 125.28 -132.48 edge
+112.31999 -143.28 115.92 -156.24 edge
+112.31999 -143.28 116.64 -138.23999 edge
+115.200005 -104.4 119.52 -83.52 edge
+115.200005 -104.4 125.28 -132.48 edge
+115.200005 -104.4 130.31999 -87.840004 edge
+115.92 -156.24 118.08 -169.2 edge
+115.92 -156.24 123.12 -138.23999 edge
+116.64 -138.23999 147.59999 -146.16 edge
+118.08 -167.76 118.799995 -154.8 edge
+118.08 -167.76 159.84 -161.28 edge
+118.08 -167.76 170.63998 -164.16 edge
+118.08 -169.2 159.84 -161.28 edge
+118.799995 -154.8 123.12 -138.23999 edge
+118.799995 -154.8 129.59999 -156.24 edge
+119.52 -83.52 133.2 -54.0 edge
+119.52 -83.52 141.12 -72.0 edge
+121.68001 -138.95999 125.28 -132.48 edge
+123.12 -96.48 131.76001 -99.36 edge
+123.12 -96.48 133.2 -86.4 edge
+123.12 -96.48 133.92 -87.12 edge
+123.12 -96.48 137.52 -82.799995 edge
+123.12 -138.23999 126.72 -150.48 edge
+123.12 -138.23999 131.76001 -99.36 edge
+124.56 -65.520004 145.44 -49.68 edge
+125.28 -132.48 147.59999 -146.16 edge
+126.72 -150.48 129.59999 -156.24 edge
+126.72 -150.48 132.48 -156.24 edge
+126.72 -150.48 147.59999 -146.16 edge
+126.72 -150.48 152.63998 -161.28 edge
+126.72 -150.48 159.84 -161.28 edge
+129.59999 -156.24 132.48 -156.24 edge
+129.59999 -156.24 159.84 -161.28 edge
+130.31999 -87.840004 131.76001 -99.36 edge
+130.31999 -87.840004 133.2 -86.4 edge
+130.31999 -87.840004 137.52 -82.799995 edge
+130.31999 -87.840004 141.12 -72.0 edge
+131.76001 -99.36 133.2 -86.4 edge
+131.76001 -99.36 133.92 -87.12 edge
+131.76001 -99.36 137.52 -82.799995 edge
+131.76001 -99.36 156.96 -72.72 edge
+131.76001 -99.36 158.40001 -78.48 edge
+132.48 -156.24 152.63998 -161.28 edge
+132.48 -156.24 159.84 -161.28 edge
+133.2 -86.4 133.92 -87.12 edge
+133.2 -86.4 137.52 -82.799995 edge
+133.2 -86.4 141.12 -72.0 edge
+133.2 -54.0 134.64 -46.079998 edge
+133.2 -54.0 136.8 -46.079998 edge
+133.2 -54.0 136.8 -46.079998 edge
+133.2 -54.0 136.8 -46.079998 edge
+133.2 -54.0 136.8 -47.52 edge
+133.2 -54.0 139.68001 -45.36 edge
+133.2 -54.0 141.84 -51.12 edge
+133.2 -54.0 145.44 -49.68 edge
+133.2 -54.0 151.2 -45.36 edge
+133.92 -87.12 137.52 -82.799995 edge
+133.92 -87.12 141.12 -72.0 edge
+133.92 -87.12 162.0 -77.76 edge
+133.92 -160.56 147.59999 -146.16 edge
+134.64 -46.079998 136.8 -46.079998 edge
+134.64 -46.079998 136.8 -46.079998 edge
+134.64 -46.079998 136.8 -46.079998 edge
+134.64 -46.079998 136.8 -47.52 edge
+134.64 -46.079998 139.68001 -45.36 edge
+134.64 -46.079998 145.44 -49.68 edge
+136.08 -39.600002 137.52 -47.52 edge
+136.08 -39.600002 148.31999 -47.52 edge
+136.8 -46.079998 136.8 -46.079998 edge
+136.8 -46.079998 136.8 -46.079998 edge
+136.8 -46.079998 136.8 -47.52 edge
+136.8 -46.079998 139.68001 -45.36 edge
+136.8 -46.079998 141.84 -51.12 edge
+136.8 -46.079998 145.44 -49.68 edge
+136.8 -46.079998 151.2 -45.36 edge
+136.8 -46.079998 136.8 -46.079998 edge
+136.8 -46.079998 136.8 -47.52 edge
+136.8 -46.079998 139.68001 -45.36 edge
+136.8 -46.079998 141.84 -51.12 edge
+136.8 -46.079998 145.44 -49.68 edge
+136.8 -46.079998 151.2 -45.36 edge
+136.8 -46.079998 136.8 -47.52 edge
+136.8 -46.079998 139.68001 -45.36 edge
+136.8 -46.079998 141.84 -51.12 edge
+136.8 -46.079998 145.44 -49.68 edge
+136.8 -46.079998 151.2 -45.36 edge
+136.8 -47.52 137.52 -47.52 edge
+136.8 -47.52 139.68001 -45.36 edge
+136.8 -47.52 141.84 -51.12 edge
+136.8 -47.52 145.44 -49.68 edge
+136.8 -47.52 146.88 -48.96 edge
+136.8 -47.52 146.88 -54.0 edge
+137.52 -47.52 141.84 -58.32 edge
+137.52 -47.52 145.44 -53.28 edge
+137.52 -47.52 148.31999 -47.52 edge
+137.52 -82.799995 141.12 -72.0 edge
+137.52 -82.799995 158.40001 -64.08 edge
+137.52 -82.799995 159.84 -68.4 edge
+137.52 -82.799995 162.0 -77.76 edge
+139.68001 -45.36 141.84 -51.12 edge
+139.68001 -45.36 145.44 -49.68 edge
+139.68001 -45.36 151.2 -45.36 edge
+139.68001 -45.36 158.40001 -42.48 edge
+141.12 -72.0 145.44 -53.28 edge
+141.12 -72.0 146.88 -54.0 edge
+141.12 -72.0 158.40001 -64.08 edge
+141.12 -72.0 159.84 -68.4 edge
+141.12 -72.0 162.0 -77.76 edge
+141.12 -41.04 146.88 -48.96 edge
+141.12 -41.04 148.31999 -47.52 edge
+141.84 -45.36 145.44 -53.28 edge
+141.84 -45.36 146.88 -48.96 edge
+141.84 -58.32 145.44 -49.68 edge
+141.84 -58.32 145.44 -53.28 edge
+141.84 -58.32 146.88 -48.96 edge
+141.84 -58.32 146.88 -54.0 edge
+141.84 -58.32 148.31999 -47.52 edge
+141.84 -58.32 159.84 -55.44 edge
+141.84 -58.32 161.28 -55.44 edge
+141.84 -58.32 167.04 -51.12 edge
+141.84 -58.32 167.04 -51.12 edge
+141.84 -51.12 145.44 -49.68 edge
+141.84 -51.12 145.44 -53.28 edge
+141.84 -51.12 158.40001 -64.08 edge
+142.56 -48.96 145.44 -53.28 edge
+142.56 -48.96 146.88 -48.96 edge
+142.56 -48.96 146.88 -54.0 edge
+145.44 -49.68 146.88 -48.96 edge
+145.44 -49.68 151.2 -45.36 edge
+145.44 -49.68 158.40001 -42.48 edge
+145.44 -49.68 159.84 -55.44 edge
+145.44 -49.68 167.04 -51.12 edge
+145.44 -49.68 170.63998 -51.12 edge
+145.44 -53.28 146.88 -48.96 edge
+145.44 -53.28 146.88 -54.0 edge
+145.44 -53.28 148.31999 -47.52 edge
+145.44 -53.28 172.8 -58.32 edge
+146.88 -48.96 146.88 -54.0 edge
+146.88 -48.96 148.31999 -47.52 edge
+146.88 -48.96 172.8 -58.32 edge
+146.88 -54.0 148.31999 -47.52 edge
+146.88 -54.0 172.8 -58.32 edge
+147.59999 -146.16 156.24 -156.24 edge
+147.59999 -146.16 159.84 -159.12 edge
+147.59999 -146.16 159.84 -159.12 edge
+147.59999 -146.16 159.84 -158.40001 edge
+147.59999 -146.16 172.08 -156.24 edge
+147.59999 -146.16 189.36002 -113.76 edge
+148.31999 -47.52 172.8 -58.32 edge
+151.2 -45.36 174.96 -47.52 edge
+151.2 -45.36 182.16 -45.36 edge
+152.63998 -161.28 158.40001 -161.28 edge
+152.63998 -161.28 159.84 -161.28 edge
+152.63998 -161.28 159.84 -159.12 edge
+152.63998 -161.28 159.84 -159.12 edge
+152.63998 -161.28 159.84 -158.40001 edge
+152.63998 -161.28 170.63998 -164.16 edge
+152.63998 -161.28 172.08 -156.24 edge
+156.24 -156.24 159.84 -158.40001 edge
+156.96 -72.72 158.40001 -78.48 edge
+156.96 -72.72 158.40001 -64.08 edge
+156.96 -72.72 159.84 -55.44 edge
+156.96 -72.72 175.68001 -67.68 edge
+156.96 -72.72 188.63998 -64.08 edge
+158.40001 -78.48 175.68001 -67.68 edge
+158.40001 -78.48 188.63998 -64.08 edge
+158.40001 -42.48 184.31999 -47.52 edge
+158.40001 -64.08 159.84 -68.4 edge
+158.40001 -64.08 162.0 -77.76 edge
+158.40001 -64.08 164.16 -72.0 edge
+158.40001 -64.08 170.63998 -57.600002 edge
+158.40001 -64.08 172.8 -58.32 edge
+158.40001 -64.08 173.52 -54.0 edge
+158.40001 -64.08 173.52 -60.48 edge
+158.40001 -64.08 175.68001 -67.68 edge
+158.40001 -161.28 159.84 -161.28 edge
+158.40001 -161.28 174.24 -161.28 edge
+158.40001 -161.28 186.48 -154.08 edge
+158.40001 -161.28 190.08 -149.04 edge
+158.40001 -161.28 195.84 -143.28 edge
+159.84 -161.28 159.84 -159.12 edge
+159.84 -161.28 159.84 -159.12 edge
+159.84 -161.28 159.84 -158.40001 edge
+159.84 -161.28 170.63998 -164.16 edge
+159.84 -161.28 172.08 -156.24 edge
+159.84 -161.28 174.24 -161.28 edge
+159.84 -161.28 189.36002 -113.76 edge
+159.84 -161.28 190.08 -149.04 edge
+159.84 -161.28 198.0 -150.48 edge
+159.84 -161.28 208.8 -149.76 edge
+159.84 -161.28 217.44 -138.95999 edge
+159.84 -161.28 222.48 -154.8 edge
+159.84 -159.12 159.84 -159.12 edge
+159.84 -159.12 172.08 -156.24 edge
+159.84 -159.12 172.08 -156.24 edge
+159.84 -68.4 162.0 -77.76 edge
+159.84 -68.4 164.16 -72.0 edge
+159.84 -68.4 170.63998 -57.600002 edge
+159.84 -68.4 172.8 -58.32 edge
+159.84 -68.4 175.68001 -67.68 edge
+159.84 -68.4 180.0 -70.56 edge
+159.84 -158.40001 172.08 -156.24 edge
+159.84 -55.44 161.28 -55.44 edge
+159.84 -55.44 167.04 -51.12 edge
+159.84 -55.44 167.04 -51.12 edge
+159.84 -55.44 188.63998 -64.08 edge
+161.28 -55.44 167.04 -51.12 edge
+161.28 -55.44 172.8 -58.32 edge
+161.28 -55.44 185.04 -60.48 edge
+162.0 -77.76 164.16 -72.0 edge
+162.0 -77.76 180.0 -70.56 edge
+162.0 -77.76 205.92 -100.08 edge
+164.16 -72.0 175.68001 -67.68 edge
+167.04 -51.12 167.04 -51.12 edge
+167.04 -51.12 173.52 -54.0 edge
+167.04 -51.12 174.96 -47.52 edge
+167.04 -51.12 180.0 -48.96 edge
+167.04 -51.12 182.88 -54.0 edge
+167.04 -51.12 183.59999 -53.28 edge
+167.04 -51.12 183.59999 -51.840004 edge
+167.04 -51.12 172.8 -49.68 edge
+167.04 -51.12 173.52 -54.0 edge
+167.04 -51.12 174.96 -47.52 edge
+167.04 -51.12 180.0 -48.96 edge
+167.04 -51.12 183.59999 -53.28 edge
+167.04 -51.12 183.59999 -51.840004 edge
+167.04 -51.12 185.04 -51.840004 edge
+167.04 -51.12 185.04 -60.48 edge
+170.63998 -57.600002 173.52 -54.0 edge
+170.63998 -57.600002 177.84 -56.159996 edge
+170.63998 -57.600002 179.28 -51.840004 edge
+170.63998 -57.600002 182.16 -53.28 edge
+170.63998 -57.600002 182.88 -54.0 edge
+170.63998 -57.600002 183.59999 -53.28 edge
+170.63998 -51.12 172.8 -49.68 edge
+170.63998 -51.12 173.52 -54.0 edge
+170.63998 -51.12 177.84 -56.159996 edge
+170.63998 -51.12 180.0 -48.96 edge
+170.63998 -51.12 183.59999 -53.28 edge
+170.63998 -51.12 185.04 -60.48 edge
+170.63998 -164.16 172.08 -156.24 edge
+170.63998 -164.16 217.44 -138.95999 edge
+170.63998 -164.16 222.48 -154.8 edge
+170.63998 -164.16 234.0 -111.6 edge
+172.08 -156.24 195.84 -143.28 edge
+172.08 -156.24 217.44 -138.95999 edge
+172.8 -49.68 173.52 -54.0 edge
+172.8 -49.68 177.84 -56.159996 edge
+172.8 -49.68 182.88 -54.0 edge
+172.8 -58.32 173.52 -54.0 edge
+172.8 -58.32 173.52 -60.48 edge
+172.8 -58.32 175.68001 -67.68 edge
+172.8 -58.32 177.84 -56.159996 edge
+172.8 -58.32 180.0 -70.56 edge
+172.8 -58.32 182.88 -54.0 edge
+172.8 -58.32 185.04 -60.48 edge
+172.8 -58.32 187.2 -66.96 edge
+172.8 -58.32 188.63998 -74.88 edge
+172.8 -58.32 195.84 -65.520004 edge
+172.8 -58.32 203.04 -68.4 edge
+172.8 -58.32 205.2 -77.76 edge
+173.52 -54.0 177.84 -56.159996 edge
+173.52 -54.0 179.28 -51.840004 edge
+173.52 -54.0 182.16 -53.28 edge
+173.52 -54.0 182.88 -54.0 edge
+173.52 -54.0 183.59999 -53.28 edge
+173.52 -54.0 183.59999 -51.840004 edge
+173.52 -54.0 185.04 -51.840004 edge
+173.52 -60.48 175.68001 -67.68 edge
+173.52 -60.48 177.84 -56.159996 edge
+173.52 -60.48 182.88 -54.0 edge
+173.52 -60.48 185.04 -60.48 edge
+174.24 -161.28 186.48 -154.08 edge
+174.24 -161.28 190.08 -149.04 edge
+174.96 -47.52 182.16 -45.36 edge
+174.96 -47.52 183.59999 -53.28 edge
+174.96 -47.52 189.36002 -53.28 edge
+174.96 -47.52 192.24 -56.159996 edge
+175.68001 -67.68 177.84 -56.159996 edge
+175.68001 -67.68 180.0 -70.56 edge
+175.68001 -67.68 182.88 -54.0 edge
+175.68001 -67.68 204.48 -92.88 edge
+175.68001 -67.68 205.2 -77.76 edge
+177.84 -56.159996 179.28 -51.840004 edge
+177.84 -56.159996 182.16 -53.28 edge
+177.84 -56.159996 182.88 -54.0 edge
+177.84 -56.159996 183.59999 -53.28 edge
+177.84 -56.159996 183.59999 -51.840004 edge
+177.84 -56.159996 185.04 -60.48 edge
+179.28 -51.840004 182.88 -54.0 edge
+179.28 -51.840004 183.59999 -53.28 edge
+179.28 -51.840004 183.59999 -51.840004 edge
+180.0 -70.56 187.2 -66.96 edge
+180.0 -70.56 188.63998 -74.88 edge
+180.0 -70.56 195.84 -65.520004 edge
+180.0 -70.56 205.2 -77.76 edge
+180.0 -48.96 185.04 -51.840004 edge
+180.0 -48.96 190.8 -46.079998 edge
+180.0 -48.96 192.24 -56.159996 edge
+182.16 -53.28 182.88 -54.0 edge
+182.16 -53.28 183.59999 -53.28 edge
+182.16 -53.28 183.59999 -51.840004 edge
+182.16 -53.28 185.04 -51.840004 edge
+182.16 -53.28 194.40001 -57.600002 edge
+182.16 -45.36 195.84 -51.12 edge
+182.16 -45.36 207.36002 -56.159996 edge
+182.88 -54.0 183.59999 -53.28 edge
+182.88 -54.0 183.59999 -51.840004 edge
+182.88 -54.0 185.04 -51.840004 edge
+182.88 -54.0 189.36002 -51.12 edge
+182.88 -54.0 194.40001 -57.600002 edge
+182.88 -54.0 195.84 -51.12 edge
+182.88 -54.0 207.36002 -56.159996 edge
+183.59999 -53.28 183.59999 -51.840004 edge
+183.59999 -53.28 184.31999 -47.52 edge
+183.59999 -53.28 185.04 -51.840004 edge
+183.59999 -53.28 189.36002 -51.12 edge
+183.59999 -53.28 189.36002 -53.28 edge
+183.59999 -53.28 192.24 -56.159996 edge
+183.59999 -53.28 194.40001 -64.08 edge
+183.59999 -53.28 194.40001 -57.600002 edge
+183.59999 -53.28 200.88 -57.600002 edge
+183.59999 -51.840004 184.31999 -47.52 edge
+183.59999 -51.840004 185.04 -51.840004 edge
+183.59999 -51.840004 189.36002 -53.28 edge
+183.59999 -51.840004 194.40001 -57.600002 edge
+183.59999 -51.840004 200.88 -57.600002 edge
+184.31999 -47.52 185.04 -51.840004 edge
+184.31999 -47.52 194.40001 -57.600002 edge
+184.31999 -47.52 200.88 -57.600002 edge
+185.04 -51.840004 189.36002 -53.28 edge
+185.04 -51.840004 194.40001 -57.600002 edge
+185.04 -51.840004 200.88 -57.600002 edge
+185.04 -60.48 187.2 -66.96 edge
+185.04 -60.48 188.63998 -74.88 edge
+185.04 -60.48 195.84 -65.520004 edge
+185.04 -60.48 200.88 -57.600002 edge
+185.04 -60.48 216.72 -83.52 edge
+186.48 -154.08 190.08 -149.04 edge
+186.48 -154.08 211.68001 -132.48 edge
+187.2 -66.96 188.63998 -74.88 edge
+187.2 -66.96 194.40001 -64.08 edge
+187.2 -66.96 205.2 -77.76 edge
+188.63998 -74.88 189.36002 -113.76 edge
+188.63998 -74.88 194.40001 -64.08 edge
+188.63998 -74.88 195.84 -65.520004 edge
+188.63998 -74.88 203.04 -68.4 edge
+188.63998 -74.88 205.2 -77.76 edge
+188.63998 -64.08 189.36002 -53.28 edge
+188.63998 -64.08 192.24 -56.159996 edge
+188.63998 -64.08 253.44 -110.88 edge
+189.36002 -51.12 189.36002 -53.28 edge
+189.36002 -51.12 194.40001 -57.600002 edge
+189.36002 -113.76 204.48 -92.88 edge
+189.36002 -113.76 205.2 -77.76 edge
+189.36002 -113.76 205.92 -100.08 edge
+189.36002 -113.76 210.24 -102.96 edge
+189.36002 -113.76 220.31999 -119.52 edge
+189.36002 -113.76 228.24 -95.76 edge
+189.36002 -53.28 192.24 -56.159996 edge
+189.36002 -53.28 194.40001 -57.600002 edge
+189.36002 -53.28 207.36002 -56.159996 edge
+190.08 -149.04 195.84 -143.28 edge
+190.08 -149.04 208.8 -149.76 edge
+190.08 -149.04 211.68001 -132.48 edge
+190.08 -149.04 221.04 -112.31999 edge
+190.8 -46.079998 192.24 -56.159996 edge
+192.24 -56.159996 212.40001 -84.24 edge
+194.40001 -64.08 200.88 -57.600002 edge
+194.40001 -64.08 203.04 -68.4 edge
+194.40001 -64.08 205.2 -77.76 edge
+194.40001 -57.600002 216.72 -79.200005 edge
+195.84 -51.12 203.04 -61.2 edge
+195.84 -51.12 207.36002 -56.159996 edge
+195.84 -143.28 221.04 -112.31999 edge
+195.84 -143.28 234.0 -111.6 edge
+195.84 -65.520004 203.04 -61.2 edge
+195.84 -65.520004 203.04 -68.4 edge
+195.84 -65.520004 205.2 -77.76 edge
+195.84 -65.520004 207.36002 -56.159996 edge
+195.84 -65.520004 216.72 -83.52 edge
+198.0 -150.48 208.8 -149.76 edge
+198.0 -150.48 218.16 -150.48 edge
+198.0 -150.48 220.31999 -119.52 edge
+200.88 -57.600002 203.04 -68.4 edge
+200.88 -57.600002 226.8 -71.28 edge
+200.88 -57.600002 233.28 -83.52 edge
+203.04 -61.2 205.2 -77.76 edge
+203.04 -61.2 207.36002 -56.159996 edge
+203.04 -68.4 205.2 -77.76 edge
+203.04 -68.4 216.72 -83.52 edge
+203.04 -68.4 228.24 -95.76 edge
+203.04 -68.4 233.28 -83.52 edge
+204.48 -92.88 210.24 -102.96 edge
+204.48 -92.88 216.72 -83.52 edge
+204.48 -92.88 218.16 -99.36 edge
+204.48 -92.88 220.31999 -119.52 edge
+204.48 -92.88 222.48 -101.52 edge
+204.48 -92.88 225.36002 -95.76 edge
+204.48 -92.88 228.24 -95.76 edge
+205.2 -77.76 216.72 -83.52 edge
+205.2 -77.76 221.04 -112.31999 edge
+205.2 -77.76 225.36002 -95.76 edge
+205.2 -77.76 227.52 -104.4 edge
+205.2 -77.76 228.24 -95.76 edge
+205.2 -77.76 234.0 -111.6 edge
+205.2 -77.76 239.04 -92.159996 edge
+205.2 -77.76 244.8 -103.68001 edge
+205.92 -100.08 210.24 -102.96 edge
+205.92 -100.08 212.40001 -84.24 edge
+205.92 -100.08 213.12 -97.92 edge
+205.92 -100.08 220.31999 -119.52 edge
+205.92 -100.08 222.48 -101.52 edge
+205.92 -100.08 254.16 -128.88 edge
+207.36002 -56.159996 226.08 -63.36 edge
+207.36002 -56.159996 226.8 -71.28 edge
+207.36002 -56.159996 236.88 -77.76 edge
+208.8 -149.76 217.44 -138.95999 edge
+208.8 -149.76 218.16 -150.48 edge
+208.8 -149.76 220.31999 -119.52 edge
+208.8 -149.76 222.48 -154.8 edge
+208.8 -149.76 234.0 -111.6 edge
+208.8 -149.76 247.68001 -156.24 edge
+210.24 -102.96 216.72 -83.52 edge
+210.24 -102.96 218.16 -99.36 edge
+210.24 -102.96 220.31999 -119.52 edge
+210.24 -102.96 222.48 -101.52 edge
+210.24 -102.96 228.24 -95.76 edge
+211.68001 -132.48 222.48 -101.52 edge
+211.68001 -132.48 253.44 -110.88 edge
+212.40001 -84.24 213.12 -97.92 edge
+212.40001 -84.24 216.72 -79.200005 edge
+212.40001 -84.24 220.31999 -119.52 edge
+212.40001 -84.24 223.2 -88.56 edge
+212.40001 -84.24 226.08 -90.72 edge
+212.40001 -84.24 226.8 -87.12 edge
+213.12 -97.92 216.72 -79.200005 edge
+213.12 -97.92 220.31999 -119.52 edge
+216.72 -79.200005 223.2 -88.56 edge
+216.72 -79.200005 226.08 -90.72 edge
+216.72 -79.200005 226.8 -87.12 edge
+216.72 -79.200005 237.59999 -98.64 edge
+216.72 -83.52 218.16 -99.36 edge
+216.72 -83.52 222.48 -101.52 edge
+216.72 -83.52 228.24 -95.76 edge
+216.72 -83.52 233.28 -83.52 edge
+216.72 -83.52 234.0 -111.6 edge
+216.72 -83.52 238.31999 -97.92 edge
+216.72 -83.52 248.40001 -104.4 edge
+217.44 -138.95999 221.04 -112.31999 edge
+217.44 -138.95999 222.48 -154.8 edge
+217.44 -138.95999 227.52 -104.4 edge
+217.44 -138.95999 234.0 -111.6 edge
+217.44 -138.95999 247.68001 -156.24 edge
+217.44 -138.95999 252.72 -104.4 edge
+217.44 -138.95999 260.63998 -105.12 edge
+218.16 -99.36 222.48 -101.52 edge
+218.16 -99.36 225.36002 -95.76 edge
+218.16 -99.36 228.24 -95.76 edge
+218.16 -99.36 234.0 -111.6 edge
+218.16 -150.48 220.31999 -119.52 edge
+218.16 -150.48 247.68001 -156.24 edge
+220.31999 -119.52 222.48 -101.52 edge
+220.31999 -119.52 254.16 -128.88 edge
+220.31999 -119.52 268.56 -142.56 edge
+221.04 -97.92 221.04 -112.31999 edge
+221.04 -97.92 225.36002 -95.76 edge
+221.04 -97.92 233.28 -83.52 edge
+221.04 -112.31999 225.36002 -95.76 edge
+221.04 -112.31999 228.24 -95.76 edge
+221.04 -112.31999 233.28 -83.52 edge
+221.04 -112.31999 234.0 -111.6 edge
+221.04 -112.31999 244.8 -103.68001 edge
+221.04 -112.31999 260.63998 -105.12 edge
+222.48 -154.8 234.0 -111.6 edge
+222.48 -154.8 247.68001 -156.24 edge
+222.48 -154.8 269.28 -127.44 edge
+222.48 -101.52 226.08 -90.72 edge
+222.48 -101.52 226.8 -87.12 edge
+222.48 -101.52 228.24 -95.76 edge
+222.48 -101.52 238.31999 -97.92 edge
+222.48 -101.52 248.40001 -104.4 edge
+223.2 -88.56 226.08 -90.72 edge
+223.2 -88.56 226.8 -87.12 edge
+223.2 -88.56 237.59999 -98.64 edge
+225.36002 -95.76 228.24 -95.76 edge
+225.36002 -95.76 233.28 -83.52 edge
+225.36002 -95.76 234.0 -111.6 edge
+225.36002 -95.76 260.63998 -105.12 edge
+226.08 -63.36 226.8 -71.28 edge
+226.08 -63.36 236.88 -77.76 edge
+226.08 -90.72 226.8 -87.12 edge
+226.08 -90.72 228.24 -95.76 edge
+226.08 -90.72 237.59999 -98.64 edge
+226.08 -90.72 246.96 -93.6 edge
+226.8 -71.28 226.8 -87.12 edge
+226.8 -71.28 233.28 -83.52 edge
+226.8 -71.28 236.88 -77.76 edge
+226.8 -71.28 252.72 -104.4 edge
+226.8 -87.12 237.59999 -98.64 edge
+226.8 -87.12 246.96 -93.6 edge
+227.52 -104.4 234.0 -111.6 edge
+227.52 -104.4 244.8 -103.68001 edge
+227.52 -104.4 260.63998 -105.12 edge
+228.24 -95.76 233.28 -83.52 edge
+228.24 -95.76 234.0 -111.6 edge
+228.24 -95.76 246.96 -93.6 edge
+228.24 -95.76 248.40001 -104.4 edge
+228.24 -95.76 251.28 -97.200005 edge
+228.24 -95.76 252.72 -104.4 edge
+228.24 -95.76 252.72 -98.64 edge
+228.24 -95.76 257.04 -102.24 edge
+228.24 -95.76 260.63998 -105.12 edge
+233.28 -83.52 234.0 -111.6 edge
+233.28 -83.52 239.04 -92.159996 edge
+233.28 -83.52 244.8 -103.68001 edge
+233.28 -83.52 251.28 -97.200005 edge
+233.28 -83.52 260.63998 -105.12 edge
+233.28 -83.52 263.52002 -100.799995 edge
+233.28 -83.52 282.24 -100.08 edge
+234.0 -111.6 239.04 -92.159996 edge
+234.0 -111.6 244.8 -103.68001 edge
+234.0 -111.6 246.96 -93.6 edge
+234.0 -111.6 251.28 -97.200005 edge
+234.0 -111.6 252.72 -104.4 edge
+234.0 -111.6 260.63998 -105.12 edge
+234.0 -111.6 271.44 -108.0 edge
+234.0 -111.6 286.56 -108.0 edge
+234.0 -111.6 306.0 -113.04 edge
+236.88 -77.76 244.08 -86.4 edge
+236.88 -77.76 246.96 -93.6 edge
+236.88 -77.76 248.40001 -104.4 edge
+236.88 -77.76 252.72 -98.64 edge
+236.88 -77.76 257.04 -102.24 edge
+237.59999 -98.64 255.59999 -119.52 edge
+237.59999 -98.64 263.52002 -116.64 edge
+238.31999 -97.92 244.8 -99.36 edge
+238.31999 -97.92 245.52 -100.08 edge
+238.31999 -97.92 248.40001 -104.4 edge
+238.31999 -97.92 254.16 -104.4 edge
+238.31999 -97.92 257.04 -102.24 edge
+239.04 -92.159996 244.8 -103.68001 edge
+239.04 -92.159996 246.96 -93.6 edge
+239.04 -92.159996 252.72 -104.4 edge
+239.04 -92.159996 260.63998 -105.12 edge
+239.04 -92.159996 271.44 -108.0 edge
+244.08 -86.4 254.16 -104.4 edge
+244.8 -103.68001 246.96 -93.6 edge
+244.8 -103.68001 251.28 -97.200005 edge
+244.8 -103.68001 252.72 -104.4 edge
+244.8 -103.68001 260.63998 -105.12 edge
+244.8 -103.68001 264.24 -107.28 edge
+244.8 -103.68001 269.28 -131.76001 edge
+244.8 -103.68001 269.28 -127.44 edge
+244.8 -103.68001 271.44 -108.0 edge
+244.8 -99.36 248.40001 -104.4 edge
+244.8 -99.36 257.04 -102.24 edge
+245.52 -100.08 248.40001 -104.4 edge
+245.52 -100.08 254.16 -104.4 edge
+245.52 -100.08 257.04 -102.24 edge
+246.96 -93.6 248.40001 -104.4 edge
+246.96 -93.6 252.72 -104.4 edge
+246.96 -93.6 252.72 -98.64 edge
+246.96 -93.6 260.63998 -105.12 edge
+246.96 -93.6 260.63998 -105.12 edge
+246.96 -93.6 262.08002 -100.08 edge
+246.96 -93.6 263.52002 -100.799995 edge
+246.96 -93.6 264.24 -107.28 edge
+246.96 -93.6 266.4 -77.76 edge
+247.68001 -156.24 253.44 -110.88 edge
+247.68001 -156.24 254.16 -128.88 edge
+247.68001 -156.24 274.32 -154.08 edge
+247.68001 -156.24 289.44 -164.16 edge
+248.40001 -104.4 252.72 -98.64 edge
+248.40001 -104.4 254.16 -104.4 edge
+248.40001 -104.4 257.04 -102.24 edge
+248.40001 -104.4 264.24 -107.28 edge
+248.40001 -104.4 276.47998 -136.08 edge
+248.40001 -104.4 280.80002 -128.16 edge
+251.28 -97.200005 253.44 -110.88 edge
+251.28 -97.200005 260.63998 -105.12 edge
+251.28 -97.200005 263.52002 -100.799995 edge
+251.28 -97.200005 271.44 -108.0 edge
+251.28 -97.200005 282.24 -100.08 edge
+252.72 -104.4 252.72 -98.64 edge
+252.72 -104.4 254.16 -104.4 edge
+252.72 -104.4 260.63998 -105.12 edge
+252.72 -104.4 260.63998 -105.12 edge
+252.72 -104.4 262.08002 -100.08 edge
+252.72 -104.4 263.52002 -100.799995 edge
+252.72 -104.4 264.24 -107.28 edge
+252.72 -104.4 269.28 -127.44 edge
+252.72 -104.4 271.44 -112.31999 edge
+252.72 -104.4 275.04 -115.92 edge
+252.72 -104.4 275.04 -108.72 edge
+252.72 -104.4 286.56 -108.0 edge
+252.72 -98.64 257.04 -102.24 edge
+252.72 -98.64 262.08002 -100.08 edge
+252.72 -98.64 272.16 -118.08 edge
+252.72 -98.64 275.04 -108.72 edge
+253.44 -110.88 255.59999 -153.36002 edge
+253.44 -110.88 260.63998 -105.12 edge
+253.44 -110.88 265.68 -126.0 edge
+253.44 -110.88 286.56 -108.0 edge
+253.44 -110.88 306.0 -113.04 edge
+253.44 -110.88 326.88 -119.52 edge
+254.16 -128.88 268.56 -142.56 edge
+254.16 -128.88 270.0 -134.64 edge
+254.16 -128.88 274.32 -154.08 edge
+254.16 -128.88 285.84 -112.31999 edge
+254.16 -128.88 285.84 -138.95999 edge
+254.16 -104.4 257.04 -102.24 edge
+254.16 -104.4 280.80002 -128.16 edge
+255.59999 -119.52 263.52002 -116.64 edge
+255.59999 -119.52 265.68 -126.0 edge
+255.59999 -119.52 266.4 -133.2 edge
+255.59999 -119.52 267.84 -128.16 edge
+255.59999 -119.52 269.28 -120.96 edge
+255.59999 -153.36002 274.32 -154.08 edge
+257.04 -102.24 264.24 -107.28 edge
+257.04 -102.24 266.4 -77.76 edge
+257.04 -102.24 272.16 -118.08 edge
+257.04 -102.24 275.04 -135.36 edge
+257.04 -102.24 277.19998 -113.04 edge
+257.04 -102.24 280.80002 -128.16 edge
+260.63998 -105.12 262.08002 -100.08 edge
+260.63998 -105.12 263.52002 -100.799995 edge
+260.63998 -105.12 264.24 -107.28 edge
+260.63998 -105.12 265.68 -126.0 edge
+260.63998 -105.12 269.28 -127.44 edge
+260.63998 -105.12 271.44 -108.0 edge
+260.63998 -105.12 271.44 -112.31999 edge
+260.63998 -105.12 272.16 -103.68001 edge
+260.63998 -105.12 273.6 -106.56 edge
+260.63998 -105.12 277.19998 -123.840004 edge
+260.63998 -105.12 280.08002 -96.48 edge
+260.63998 -105.12 280.80002 -102.96 edge
+260.63998 -105.12 282.24 -100.08 edge
+260.63998 -105.12 282.96 -104.4 edge
+260.63998 -105.12 282.96 -100.799995 edge
+260.63998 -105.12 286.56 -108.0 edge
+260.63998 -105.12 306.0 -113.04 edge
+260.63998 -105.12 263.52002 -100.799995 edge
+260.63998 -105.12 264.24 -107.28 edge
+260.63998 -105.12 280.80002 -123.12 edge
+262.08002 -100.08 263.52002 -100.799995 edge
+262.08002 -100.08 264.24 -107.28 edge
+262.08002 -100.08 275.04 -115.92 edge
+262.08002 -100.08 280.80002 -102.96 edge
+263.52002 -100.799995 264.24 -107.28 edge
+263.52002 -100.799995 271.44 -108.0 edge
+263.52002 -100.799995 272.16 -103.68001 edge
+263.52002 -100.799995 280.08002 -110.159996 edge
+263.52002 -100.799995 280.80002 -120.96 edge
+263.52002 -100.799995 282.24 -100.08 edge
+263.52002 -116.64 265.68 -126.0 edge
+263.52002 -116.64 267.84 -128.16 edge
+263.52002 -116.64 269.28 -120.96 edge
+263.52002 -116.64 270.0 -134.64 edge
+263.52002 -116.64 273.6 -106.56 edge
+263.52002 -116.64 274.32 -121.68001 edge
+263.52002 -116.64 277.19998 -115.92 edge
+263.52002 -116.64 280.80002 -120.96 edge
+263.52002 -116.64 280.80002 -128.16 edge
+264.24 -107.28 272.16 -103.68001 edge
+264.24 -107.28 275.04 -115.92 edge
+264.24 -107.28 275.04 -118.799995 edge
+264.24 -107.28 280.80002 -102.96 edge
+264.24 -107.28 280.80002 -123.12 edge
+264.24 -107.28 271.44 -112.31999 edge
+264.24 -107.28 275.04 -115.92 edge
+264.24 -107.28 275.04 -108.72 edge
+264.24 -107.28 277.19998 -113.04 edge
+265.68 -126.0 266.4 -133.2 edge
+265.68 -126.0 270.0 -134.64 edge
+265.68 -126.0 271.44 -108.0 edge
+265.68 -126.0 274.32 -138.23999 edge
+265.68 -126.0 282.96 -131.04001 edge
+266.4 -77.76 278.63998 -70.56 edge
+266.4 -77.76 278.63998 -70.56 edge
+266.4 -77.76 278.63998 -70.56 edge
+266.4 -133.2 270.0 -134.64 edge
+266.4 -133.2 271.44 -143.28 edge
+266.4 -133.2 274.32 -138.23999 edge
+266.4 -133.2 282.96 -131.04001 edge
+267.84 -128.16 269.28 -120.96 edge
+267.84 -128.16 273.6 -106.56 edge
+267.84 -128.16 274.32 -121.68001 edge
+267.84 -128.16 274.32 -154.08 edge
+267.84 -128.16 277.19998 -115.92 edge
+267.84 -128.16 280.80002 -128.16 edge
+268.56 -142.56 270.0 -134.64 edge
+268.56 -142.56 272.16 -118.08 edge
+268.56 -142.56 274.32 -154.08 edge
+268.56 -142.56 285.84 -138.95999 edge
+268.56 -142.56 289.44 -161.28 edge
+268.56 -142.56 315.36002 -156.24 edge
+269.28 -120.96 272.16 -118.08 edge
+269.28 -120.96 273.6 -106.56 edge
+269.28 -120.96 274.32 -121.68001 edge
+269.28 -120.96 277.19998 -115.92 edge
+269.28 -120.96 280.80002 -120.96 edge
+269.28 -120.96 280.80002 -128.16 edge
+269.28 -131.76001 283.68 -141.12 edge
+269.28 -131.76001 283.68 -133.2 edge
+269.28 -131.76001 291.6 -133.2 edge
+269.28 -127.44 272.16 -103.68001 edge
+269.28 -127.44 275.04 -135.36 edge
+269.28 -127.44 275.04 -115.92 edge
+269.28 -127.44 275.04 -108.72 edge
+269.28 -127.44 280.80002 -102.96 edge
+269.28 -127.44 280.80002 -145.44 edge
+269.28 -127.44 283.68 -133.2 edge
+269.28 -127.44 291.6 -133.2 edge
+269.28 -127.44 295.92 -129.59999 edge
+270.0 -134.64 271.44 -143.28 edge
+270.0 -134.64 272.16 -118.08 edge
+270.0 -134.64 274.32 -138.23999 edge
+270.0 -134.64 280.80002 -120.96 edge
+270.0 -134.64 282.96 -131.04001 edge
+270.0 -134.64 285.84 -138.95999 edge
+271.44 -108.0 280.80002 -120.96 edge
+271.44 -108.0 282.24 -100.08 edge
+271.44 -108.0 306.0 -113.04 edge
+271.44 -108.0 319.68 -114.48 edge
+271.44 -112.31999 272.16 -118.08 edge
+271.44 -112.31999 275.04 -108.72 edge
+271.44 -112.31999 277.19998 -113.04 edge
+271.44 -112.31999 283.68 -124.56 edge
+271.44 -112.31999 289.44 -118.08 edge
+271.44 -143.28 274.32 -138.23999 edge
+271.44 -143.28 276.47998 -136.08 edge
+271.44 -143.28 285.84 -138.95999 edge
+272.16 -118.08 274.32 -121.68001 edge
+272.16 -118.08 277.19998 -115.92 edge
+272.16 -118.08 277.19998 -113.04 edge
+272.16 -118.08 280.80002 -120.96 edge
+272.16 -118.08 285.84 -112.31999 edge
+272.16 -118.08 292.32 -120.96 edge
+272.16 -103.68001 273.6 -106.56 edge
+272.16 -103.68001 280.08002 -96.48 edge
+272.16 -103.68001 280.80002 -102.96 edge
+272.16 -103.68001 282.96 -100.799995 edge
+272.16 -103.68001 285.84 -112.31999 edge
+273.6 -106.56 277.19998 -115.92 edge
+273.6 -106.56 280.08002 -96.48 edge
+273.6 -106.56 280.80002 -102.96 edge
+273.6 -106.56 282.96 -100.799995 edge
+273.6 -106.56 292.32 -99.36 edge
+274.32 -121.68001 277.19998 -115.92 edge
+274.32 -121.68001 280.80002 -120.96 edge
+274.32 -121.68001 292.32 -120.96 edge
+274.32 -154.08 289.44 -161.28 edge
+274.32 -154.08 295.92 -172.08 edge
+274.32 -154.08 315.36002 -156.24 edge
+274.32 -138.23999 293.04 -135.36 edge
+275.04 -135.36 280.80002 -145.44 edge
+275.04 -135.36 290.16 -147.59999 edge
+275.04 -135.36 291.6 -133.2 edge
+275.04 -115.92 280.80002 -123.12 edge
+275.04 -115.92 280.80002 -128.16 edge
+275.04 -115.92 282.96 -131.04001 edge
+275.04 -115.92 285.12 -102.24 edge
+275.04 -115.92 290.16 -128.16 edge
+275.04 -115.92 291.6 -133.2 edge
+275.04 -118.799995 277.19998 -123.840004 edge
+275.04 -118.799995 280.80002 -123.12 edge
+275.04 -118.799995 290.16 -128.16 edge
+275.04 -108.72 277.19998 -113.04 edge
+275.04 -108.72 300.24 -116.64 edge
+275.04 -108.72 300.96 -115.92 edge
+276.47998 -136.08 280.80002 -123.12 edge
+276.47998 -136.08 280.80002 -128.16 edge
+276.47998 -136.08 290.16 -128.16 edge
+276.47998 -136.08 303.84 -154.8 edge
+277.19998 -115.92 280.80002 -120.96 edge
+277.19998 -115.92 285.84 -112.31999 edge
+277.19998 -115.92 296.63998 -109.44 edge
+277.19998 -113.04 285.84 -126.0 edge
+277.19998 -113.04 288.72003 -114.48 edge
+277.19998 -113.04 289.44 -118.08 edge
+277.19998 -113.04 292.32 -120.96 edge
+277.19998 -123.840004 280.80002 -123.12 edge
+277.19998 -123.840004 283.68 -124.56 edge
+277.19998 -123.840004 288.0 -136.8 edge
+277.19998 -123.840004 290.16 -128.16 edge
+278.63998 -70.56 278.63998 -70.56 edge
+278.63998 -70.56 278.63998 -70.56 edge
+278.63998 -70.56 285.84 -86.4 edge
+278.63998 -70.56 278.63998 -70.56 edge
+278.63998 -70.56 285.84 -86.4 edge
+278.63998 -70.56 285.84 -86.4 edge
+280.08002 -96.48 280.08002 -110.159996 edge
+280.08002 -96.48 280.80002 -102.96 edge
+280.08002 -96.48 284.4 -77.04 edge
+280.08002 -96.48 284.4 -115.200005 edge
+280.08002 -96.48 285.84 -112.31999 edge
+280.08002 -96.48 290.88 -100.799995 edge
+280.08002 -96.48 292.32 -99.36 edge
+280.08002 -110.159996 284.4 -115.200005 edge
+280.08002 -110.159996 285.84 -112.31999 edge
+280.08002 -110.159996 289.44 -122.4 edge
+280.08002 -110.159996 290.16 -128.16 edge
+280.80002 -102.96 280.80002 -128.16 edge
+280.80002 -102.96 282.96 -104.4 edge
+280.80002 -102.96 282.96 -100.799995 edge
+280.80002 -102.96 285.84 -112.31999 edge
+280.80002 -102.96 288.72003 -103.68001 edge
+280.80002 -102.96 290.88 -100.799995 edge
+280.80002 -102.96 292.32 -99.36 edge
+280.80002 -102.96 294.48 -95.04 edge
+280.80002 -102.96 295.92 -94.31999 edge
+280.80002 -120.96 282.24 -100.08 edge
+280.80002 -120.96 291.6 -146.16 edge
+280.80002 -120.96 317.52 -113.76 edge
+280.80002 -123.12 280.80002 -128.16 edge
+280.80002 -123.12 283.68 -124.56 edge
+280.80002 -123.12 289.44 -122.4 edge
+280.80002 -123.12 290.16 -128.16 edge
+280.80002 -123.12 293.04 -108.72 edge
+280.80002 -123.12 298.08 -149.76 edge
+280.80002 -128.16 284.4 -115.200005 edge
+280.80002 -128.16 285.84 -126.0 edge
+280.80002 -128.16 288.0 -136.8 edge
+280.80002 -128.16 289.44 -164.16 edge
+280.80002 -128.16 290.16 -128.16 edge
+280.80002 -128.16 295.92 -153.36002 edge
+280.80002 -128.16 296.63998 -131.04001 edge
+280.80002 -128.16 298.08 -149.76 edge
+280.80002 -128.16 303.84 -154.8 edge
+280.80002 -128.16 317.52 -120.96 edge
+280.80002 -145.44 291.6 -133.2 edge
+280.80002 -145.44 293.76 -149.76 edge
+282.24 -100.08 306.0 -113.04 edge
+282.24 -100.08 317.52 -113.76 edge
+282.24 -100.08 328.32 -113.04 edge
+282.96 -104.4 282.96 -100.799995 edge
+282.96 -104.4 289.44 -118.08 edge
+282.96 -104.4 292.32 -120.96 edge
+282.96 -104.4 292.32 -99.36 edge
+282.96 -100.799995 285.84 -112.31999 edge
+282.96 -100.799995 288.72003 -103.68001 edge
+282.96 -100.799995 292.32 -99.36 edge
+282.96 -100.799995 294.48 -95.04 edge
+282.96 -100.799995 296.63998 -109.44 edge
+282.96 -131.04001 294.48 -139.68001 edge
+282.96 -131.04001 301.68 -131.04001 edge
+282.96 -131.04001 302.4 -121.68001 edge
+283.68 -141.12 283.68 -133.2 edge
+283.68 -141.12 291.6 -133.2 edge
+283.68 -141.12 295.92 -129.59999 edge
+283.68 -124.56 285.84 -126.0 edge
+283.68 -124.56 288.0 -136.8 edge
+283.68 -124.56 288.72003 -114.48 edge
+283.68 -124.56 289.44 -122.4 edge
+283.68 -124.56 290.16 -128.16 edge
+283.68 -124.56 293.04 -135.36 edge
+283.68 -133.2 291.6 -133.2 edge
+283.68 -133.2 300.24 -116.64 edge
+284.4 -115.200005 289.44 -122.4 edge
+284.4 -115.200005 290.16 -128.16 edge
+285.12 -102.24 285.84 -112.31999 edge
+285.12 -102.24 290.88 -100.799995 edge
+285.12 -102.24 295.19998 -105.12 edge
+285.84 -86.4 285.84 -112.31999 edge
+285.84 -86.4 288.72003 -103.68001 edge
+285.84 -86.4 293.04 -108.72 edge
+285.84 -86.4 295.19998 -105.12 edge
+285.84 -112.31999 285.84 -138.95999 edge
+285.84 -112.31999 288.72003 -103.68001 edge
+285.84 -112.31999 289.44 -118.08 edge
+285.84 -112.31999 290.88 -100.799995 edge
+285.84 -112.31999 292.32 -120.96 edge
+285.84 -112.31999 293.04 -108.72 edge
+285.84 -112.31999 295.19998 -105.12 edge
+285.84 -112.31999 296.63998 -109.44 edge
+285.84 -112.31999 310.32 -136.08 edge
+285.84 -126.0 288.0 -136.8 edge
+285.84 -126.0 288.72003 -114.48 edge
+285.84 -126.0 289.44 -122.4 edge
+285.84 -126.0 290.16 -128.16 edge
+285.84 -126.0 293.04 -135.36 edge
+285.84 -138.95999 290.16 -128.16 edge
+285.84 -138.95999 311.04 -134.64 edge
+285.84 -138.95999 315.36002 -156.24 edge
+286.56 -108.0 306.0 -113.04 edge
+286.56 -108.0 319.68 -114.48 edge
+286.56 -108.0 326.88 -119.52 edge
+286.56 -108.0 333.36002 -113.76 edge
+288.0 -136.8 289.44 -122.4 edge
+288.0 -136.8 290.16 -128.16 edge
+288.0 -136.8 303.84 -154.8 edge
+288.72003 -103.68001 288.72003 -114.48 edge
+288.72003 -103.68001 289.44 -118.08 edge
+288.72003 -103.68001 292.32 -120.96 edge
+288.72003 -103.68001 293.04 -108.72 edge
+288.72003 -103.68001 295.19998 -105.12 edge
+288.72003 -114.48 289.44 -122.4 edge
+288.72003 -114.48 290.16 -128.16 edge
+288.72003 -114.48 293.04 -108.72 edge
+288.72003 -114.48 295.19998 -105.12 edge
+288.72003 -114.48 296.63998 -109.44 edge
+289.44 -164.16 295.92 -153.36002 edge
+289.44 -164.16 313.19998 -172.08 edge
+289.44 -164.16 313.92 -167.76 edge
+289.44 -122.4 289.44 -118.08 edge
+289.44 -122.4 292.32 -120.96 edge
+289.44 -122.4 294.48 -139.68001 edge
+289.44 -122.4 289.44 -118.08 edge
+289.44 -122.4 290.16 -128.16 edge
+289.44 -122.4 292.32 -120.96 edge
+289.44 -122.4 293.04 -108.72 edge
+289.44 -161.28 298.08 -149.76 edge
+289.44 -161.28 315.36002 -156.24 edge
+289.44 -118.08 290.16 -128.16 edge
+289.44 -118.08 292.32 -120.96 edge
+289.44 -118.08 310.32 -136.08 edge
+290.16 -147.59999 291.6 -146.16 edge
+290.16 -147.59999 293.76 -149.76 edge
+290.16 -147.59999 294.48 -139.68001 edge
+290.16 -147.59999 295.92 -150.48 edge
+290.16 -147.59999 300.24 -138.95999 edge
+290.16 -147.59999 301.68 -156.24 edge
+290.16 -128.16 292.32 -120.96 edge
+290.16 -128.16 293.04 -108.72 edge
+290.16 -128.16 295.92 -153.36002 edge
+290.16 -128.16 296.63998 -131.04001 edge
+290.16 -128.16 298.08 -149.76 edge
+290.16 -128.16 303.84 -108.72 edge
+290.16 -128.16 303.84 -154.8 edge
+290.16 -128.16 317.52 -120.96 edge
+290.88 -100.799995 292.32 -99.36 edge
+290.88 -100.799995 295.19998 -105.12 edge
+290.88 -100.799995 300.96 -115.92 edge
+291.6 -133.2 334.08 -123.840004 edge
+291.6 -146.16 293.76 -149.76 edge
+291.6 -146.16 295.92 -150.48 edge
+291.6 -146.16 300.24 -138.95999 edge
+291.6 -146.16 301.68 -156.24 edge
+292.32 -120.96 300.24 -116.64 edge
+292.32 -120.96 300.96 -115.92 edge
+292.32 -120.96 302.4 -121.68001 edge
+292.32 -120.96 308.88 -126.0 edge
+292.32 -120.96 308.88 -145.44 edge
+292.32 -120.96 310.32 -136.08 edge
+292.32 -99.36 294.48 -95.04 edge
+292.32 -99.36 295.92 -94.31999 edge
+292.32 -99.36 296.63998 -109.44 edge
+292.32 -99.36 300.24 -116.64 edge
+292.32 -99.36 300.96 -84.96 edge
+292.32 -99.36 308.88 -110.159996 edge
+293.04 -135.36 306.72003 -128.88 edge
+293.04 -135.36 311.04 -134.64 edge
+293.04 -108.72 295.19998 -105.12 edge
+293.04 -108.72 296.63998 -109.44 edge
+293.04 -108.72 303.84 -108.72 edge
+293.04 -108.72 308.88 -110.159996 edge
+293.76 -149.76 294.48 -139.68001 edge
+293.76 -149.76 295.92 -150.48 edge
+293.76 -149.76 300.24 -138.95999 edge
+293.76 -149.76 301.68 -156.24 edge
+294.48 -139.68001 295.92 -150.48 edge
+294.48 -139.68001 300.24 -138.95999 edge
+294.48 -139.68001 301.68 -131.04001 edge
+294.48 -139.68001 303.12 -126.72 edge
+294.48 -95.04 295.92 -94.31999 edge
+294.48 -95.04 296.63998 -109.44 edge
+294.48 -95.04 300.96 -84.96 edge
+294.48 -95.04 303.84 -108.72 edge
+295.19998 -105.12 310.32 -126.0 edge
+295.92 -172.08 315.36002 -156.24 edge
+295.92 -153.36002 303.84 -154.8 edge
+295.92 -153.36002 313.92 -167.76 edge
+295.92 -129.59999 300.24 -138.95999 edge
+295.92 -129.59999 300.96 -115.92 edge
+295.92 -129.59999 303.12 -126.72 edge
+295.92 -129.59999 304.56 -123.12 edge
+295.92 -129.59999 310.32 -126.0 edge
+295.92 -150.48 300.24 -138.95999 edge
+295.92 -150.48 301.68 -156.24 edge
+295.92 -94.31999 296.63998 -109.44 edge
+295.92 -94.31999 300.96 -84.96 edge
+295.92 -94.31999 303.84 -108.72 edge
+296.63998 -131.04001 308.88 -126.0 edge
+296.63998 -109.44 302.4 -121.68001 edge
+296.63998 -109.44 303.12 -126.72 edge
+296.63998 -109.44 303.84 -108.72 edge
+296.63998 -109.44 304.56 -123.12 edge
+296.63998 -109.44 308.88 -110.159996 edge
+298.08 -149.76 303.84 -154.8 edge
+298.08 -149.76 308.88 -145.44 edge
+298.08 -149.76 316.08 -164.88 edge
+298.08 -149.76 320.4 -162.0 edge
+300.24 -116.64 300.24 -138.95999 edge
+300.24 -116.64 300.96 -115.92 edge
+300.24 -116.64 308.88 -110.159996 edge
+300.24 -116.64 312.48 -108.72 edge
+300.24 -116.64 321.12 -113.04 edge
+300.24 -138.95999 300.96 -115.92 edge
+300.24 -138.95999 301.68 -156.24 edge
+300.24 -138.95999 303.12 -126.72 edge
+300.24 -138.95999 310.32 -126.0 edge
+300.96 -115.92 308.88 -110.159996 edge
+300.96 -115.92 312.48 -108.72 edge
+300.96 -115.92 321.12 -113.04 edge
+301.68 -131.04001 302.4 -121.68001 edge
+301.68 -131.04001 303.12 -126.72 edge
+301.68 -131.04001 304.56 -123.12 edge
+301.68 -131.04001 306.72003 -128.88 edge
+301.68 -131.04001 310.32 -126.0 edge
+301.68 -131.04001 311.04 -134.64 edge
+301.68 -156.24 323.27997 -167.04 edge
+302.4 -121.68001 303.12 -126.72 edge
+302.4 -121.68001 303.84 -108.72 edge
+302.4 -121.68001 304.56 -123.12 edge
+302.4 -121.68001 306.72003 -128.88 edge
+302.4 -121.68001 308.88 -126.0 edge
+302.4 -121.68001 308.88 -110.159996 edge
+302.4 -121.68001 310.32 -126.0 edge
+303.12 -126.72 304.56 -123.12 edge
+303.12 -126.72 306.72003 -128.88 edge
+303.12 -126.72 310.32 -126.0 edge
+303.84 -108.72 308.88 -110.159996 edge
+303.84 -108.72 317.52 -113.76 edge
+303.84 -108.72 317.52 -120.96 edge
+303.84 -154.8 308.88 -145.44 edge
+303.84 -154.8 310.32 -136.08 edge
+303.84 -154.8 313.92 -167.76 edge
+303.84 -154.8 316.08 -164.88 edge
+303.84 -154.8 317.52 -169.92 edge
+303.84 -154.8 318.96 -167.76 edge
+303.84 -154.8 319.68 -167.76 edge
+303.84 -154.8 320.4 -162.0 edge
+303.84 -154.8 320.4 -164.88 edge
+303.84 -154.8 323.27997 -167.04 edge
+304.56 -123.12 306.72003 -128.88 edge
+304.56 -123.12 310.32 -126.0 edge
+306.0 -113.04 308.88 -126.0 edge
+306.0 -113.04 312.48 -108.72 edge
+306.0 -113.04 317.52 -113.76 edge
+306.0 -113.04 319.68 -114.48 edge
+306.0 -113.04 326.88 -119.52 edge
+306.0 -113.04 328.32 -113.04 edge
+306.0 -113.04 331.92 -114.48 edge
+306.0 -113.04 333.36002 -113.76 edge
+306.0 -113.04 340.56 -113.76 edge
+306.0 -113.04 344.88 -116.64 edge
+306.0 -113.04 346.32 -120.24 edge
+306.72003 -128.88 308.88 -126.0 edge
+306.72003 -128.88 310.32 -126.0 edge
+306.72003 -128.88 311.04 -134.64 edge
+308.88 -126.0 308.88 -145.44 edge
+308.88 -126.0 317.52 -120.96 edge
+308.88 -126.0 319.68 -114.48 edge
+308.88 -145.44 326.88 -162.0 edge
+308.88 -110.159996 317.52 -113.76 edge
+308.88 -110.159996 317.52 -120.96 edge
+308.88 -110.159996 328.32 -113.04 edge
+308.88 -110.159996 331.92 -113.76 edge
+310.32 -136.08 310.32 -126.0 edge
+310.32 -136.08 326.88 -162.0 edge
+310.32 -136.08 339.84 -127.44 edge
+310.32 -126.0 339.84 -127.44 edge
+311.04 -134.64 324.72003 -134.64 edge
+311.04 -134.64 331.19998 -126.0 edge
+312.48 -108.72 319.68 -114.48 edge
+312.48 -108.72 321.12 -113.04 edge
+313.19998 -172.08 313.92 -167.76 edge
+313.19998 -172.08 317.52 -169.92 edge
+313.19998 -172.08 323.27997 -167.04 edge
+313.19998 -172.08 323.27997 -170.63998 edge
+313.19998 -172.08 324.72003 -169.92 edge
+313.19998 -172.08 326.16 -169.2 edge
+313.92 -167.76 316.08 -164.88 edge
+313.92 -167.76 317.52 -169.92 edge
+313.92 -167.76 318.96 -167.76 edge
+313.92 -167.76 319.68 -167.76 edge
+313.92 -167.76 320.4 -164.88 edge
+313.92 -167.76 323.27997 -167.04 edge
+313.92 -167.76 323.27997 -170.63998 edge
+313.92 -167.76 324.72003 -169.92 edge
+313.92 -167.76 326.16 -169.2 edge
+313.92 -167.76 326.88 -162.0 edge
+313.92 -167.76 327.6 -172.08 edge
+315.36002 -156.24 316.08 -164.88 edge
+315.36002 -156.24 320.4 -162.0 edge
+315.36002 -156.24 320.4 -164.88 edge
+315.36002 -156.24 357.12 -126.72 edge
+315.36002 -156.24 360.72003 -131.76001 edge
+316.08 -164.88 320.4 -162.0 edge
+316.08 -164.88 323.27997 -167.04 edge
+316.08 -164.88 323.27997 -170.63998 edge
+316.08 -164.88 324.72003 -169.92 edge
+316.08 -164.88 326.16 -169.2 edge
+317.52 -113.76 317.52 -120.96 edge
+317.52 -113.76 319.68 -114.48 edge
+317.52 -113.76 326.88 -119.52 edge
+317.52 -113.76 328.32 -113.04 edge
+317.52 -113.76 331.92 -113.76 edge
+317.52 -113.76 331.92 -114.48 edge
+317.52 -113.76 333.36002 -113.76 edge
+317.52 -113.76 346.32 -120.24 edge
+317.52 -113.76 346.32 -118.799995 edge
+317.52 -120.96 328.32 -113.04 edge
+317.52 -120.96 331.92 -113.76 edge
+317.52 -120.96 331.92 -114.48 edge
+317.52 -120.96 346.32 -120.24 edge
+317.52 -120.96 353.52 -122.4 edge
+317.52 -169.92 323.27997 -167.04 edge
+317.52 -169.92 323.27997 -170.63998 edge
+317.52 -169.92 324.72003 -169.92 edge
+317.52 -169.92 326.16 -169.2 edge
+318.96 -167.76 319.68 -167.76 edge
+318.96 -167.76 323.27997 -167.04 edge
+318.96 -167.76 323.27997 -170.63998 edge
+318.96 -167.76 335.52 -164.16 edge
+319.68 -114.48 321.12 -113.04 edge
+319.68 -114.48 326.88 -119.52 edge
+319.68 -114.48 328.32 -113.04 edge
+319.68 -114.48 331.92 -113.76 edge
+319.68 -114.48 331.92 -114.48 edge
+319.68 -114.48 333.36002 -113.76 edge
+319.68 -114.48 340.56 -113.76 edge
+319.68 -114.48 344.88 -116.64 edge
+319.68 -114.48 346.32 -120.24 edge
+319.68 -167.76 323.27997 -167.04 edge
+319.68 -167.76 323.27997 -170.63998 edge
+319.68 -167.76 324.72003 -169.92 edge
+319.68 -167.76 326.88 -162.0 edge
+319.68 -167.76 335.52 -164.16 edge
+320.4 -162.0 320.4 -164.88 edge
+320.4 -162.0 326.16 -169.2 edge
+320.4 -162.0 346.32 -157.68001 edge
+320.4 -164.88 323.27997 -167.04 edge
+320.4 -164.88 324.72003 -169.92 edge
+320.4 -164.88 326.88 -162.0 edge
+320.4 -164.88 335.52 -164.16 edge
+321.12 -113.04 340.56 -113.76 edge
+321.12 -113.04 344.88 -116.64 edge
+323.27997 -167.04 323.27997 -170.63998 edge
+323.27997 -167.04 324.72003 -169.92 edge
+323.27997 -167.04 326.16 -169.2 edge
+323.27997 -167.04 326.88 -162.0 edge
+323.27997 -167.04 327.6 -172.08 edge
+323.27997 -167.04 335.52 -164.16 edge
+323.27997 -167.04 336.24 -167.04 edge
+323.27997 -167.04 338.4 -166.31999 edge
+323.27997 -167.04 340.56 -163.44 edge
+323.27997 -170.63998 324.72003 -169.92 edge
+323.27997 -170.63998 326.16 -169.2 edge
+323.27997 -170.63998 326.88 -162.0 edge
+323.27997 -170.63998 327.6 -172.08 edge
+323.27997 -170.63998 335.52 -164.16 edge
+324.72003 -169.92 326.16 -169.2 edge
+324.72003 -169.92 326.88 -162.0 edge
+324.72003 -169.92 335.52 -164.16 edge
+324.72003 -169.92 336.24 -167.04 edge
+326.16 -169.2 335.52 -164.16 edge
+326.16 -169.2 336.24 -167.04 edge
+326.16 -169.2 340.56 -163.44 edge
+326.88 -162.0 327.6 -172.08 edge
+326.88 -162.0 335.52 -164.16 edge
+326.88 -162.0 336.24 -167.04 edge
+326.88 -162.0 338.4 -166.31999 edge
+326.88 -162.0 340.56 -163.44 edge
+326.88 -162.0 341.27997 -166.31999 edge
+326.88 -162.0 346.32 -157.68001 edge
+326.88 -119.52 333.36002 -113.76 edge
+326.88 -119.52 346.32 -120.24 edge
+326.88 -119.52 353.52 -122.4 edge
+326.88 -119.52 357.12 -126.72 edge
+326.88 -119.52 360.72003 -131.76001 edge
+327.6 -172.08 335.52 -164.16 edge
+328.32 -113.04 331.92 -113.76 edge
+328.32 -113.04 331.92 -114.48 edge
+328.32 -113.04 344.88 -116.64 edge
+328.32 -113.04 346.32 -120.24 edge
+328.32 -113.04 346.32 -118.799995 edge
+328.32 -113.04 350.63998 -118.799995 edge
+328.32 -113.04 353.52 -122.4 edge
+331.19998 -126.0 344.88 -116.64 edge
+331.92 -113.76 340.56 -113.76 edge
+331.92 -113.76 344.88 -116.64 edge
+331.92 -113.76 346.32 -120.24 edge
+331.92 -113.76 353.52 -122.4 edge
+331.92 -114.48 333.36002 -113.76 edge
+331.92 -114.48 346.32 -120.24 edge
+331.92 -114.48 353.52 -122.4 edge
+333.36002 -113.76 340.56 -113.76 edge
+333.36002 -113.76 346.32 -120.24 edge
+333.36002 -113.76 353.52 -122.4 edge
+333.36002 -113.76 363.6 -115.92 edge
+334.08 -123.840004 340.56 -113.76 edge
+334.08 -123.840004 344.88 -116.64 edge
+334.08 -123.840004 357.84 -115.200005 edge
+334.08 -123.840004 363.6 -115.92 edge
+335.52 -164.16 336.24 -167.04 edge
+335.52 -164.16 338.4 -166.31999 edge
+335.52 -164.16 340.56 -163.44 edge
+335.52 -164.16 341.27997 -166.31999 edge
+335.52 -164.16 346.32 -157.68001 edge
+335.52 -164.16 356.4 -141.84 edge
+336.24 -167.04 338.4 -166.31999 edge
+336.24 -167.04 340.56 -163.44 edge
+336.24 -167.04 341.27997 -166.31999 edge
+336.24 -167.04 346.32 -157.68001 edge
+338.4 -166.31999 340.56 -163.44 edge
+338.4 -166.31999 341.27997 -166.31999 edge
+338.4 -166.31999 346.32 -157.68001 edge
+339.84 -127.44 356.4 -124.56 edge
+339.84 -127.44 357.12 -126.72 edge
+339.84 -127.44 368.63998 -122.4 edge
+340.56 -113.76 344.88 -116.64 edge
+340.56 -113.76 346.32 -120.24 edge
+340.56 -113.76 346.32 -118.799995 edge
+340.56 -113.76 357.84 -115.200005 edge
+340.56 -113.76 360.0 -112.31999 edge
+340.56 -113.76 363.6 -115.92 edge
+340.56 -163.44 341.27997 -166.31999 edge
+340.56 -163.44 346.32 -157.68001 edge
+340.56 -163.44 356.4 -141.84 edge
+341.27997 -166.31999 346.32 -157.68001 edge
+344.88 -116.64 346.32 -120.24 edge
+344.88 -116.64 346.32 -118.799995 edge
+344.88 -116.64 350.63998 -118.799995 edge
+344.88 -116.64 357.84 -115.200005 edge
+344.88 -116.64 360.0 -112.31999 edge
+344.88 -116.64 367.92 -130.31999 edge
+344.88 -116.64 378.0 -113.76 edge
+346.32 -157.68001 356.4 -141.84 edge
+346.32 -157.68001 367.92 -130.31999 edge
+346.32 -120.24 346.32 -118.799995 edge
+346.32 -120.24 353.52 -122.4 edge
+346.32 -120.24 356.4 -141.84 edge
+346.32 -120.24 357.12 -126.72 edge
+346.32 -120.24 363.6 -123.840004 edge
+346.32 -120.24 370.08 -123.12 edge
+346.32 -120.24 371.52 -119.52 edge
+346.32 -120.24 372.24 -120.96 edge
+346.32 -120.24 376.56 -117.36 edge
+346.32 -118.799995 350.63998 -118.799995 edge
+346.32 -118.799995 353.52 -122.4 edge
+346.32 -118.799995 363.6 -123.840004 edge
+346.32 -118.799995 367.92 -130.31999 edge
+350.63998 -118.799995 353.52 -122.4 edge
+350.63998 -118.799995 367.92 -130.31999 edge
+353.52 -122.4 356.4 -141.84 edge
+353.52 -122.4 357.12 -126.72 edge
+353.52 -122.4 363.6 -123.840004 edge
+353.52 -122.4 370.08 -123.12 edge
+353.52 -122.4 372.24 -120.96 edge
+353.52 -122.4 375.12 -125.28 edge
+353.52 -122.4 376.56 -117.36 edge
+353.52 -122.4 379.44 -121.68001 edge
+356.4 -141.84 363.6 -123.840004 edge
+356.4 -141.84 368.63998 -122.4 edge
+356.4 -141.84 370.08 -123.12 edge
+356.4 -141.84 372.24 -120.96 edge
+356.4 -141.84 375.12 -125.28 edge
+356.4 -124.56 368.63998 -122.4 edge
+357.12 -126.72 360.72003 -131.76001 edge
+357.12 -126.72 363.6 -123.840004 edge
+357.12 -126.72 397.44 -105.840004 edge
+357.84 -115.200005 360.0 -112.31999 edge
+357.84 -115.200005 363.6 -115.92 edge
+357.84 -115.200005 380.88 -115.92 edge
+360.0 -112.31999 380.88 -115.92 edge
+360.72003 -131.76001 371.52 -119.52 edge
+360.72003 -131.76001 380.88 -115.92 edge
+360.72003 -131.76001 390.96 -122.4 edge
+363.6 -123.840004 368.63998 -122.4 edge
+363.6 -123.840004 370.08 -123.12 edge
+363.6 -123.840004 371.52 -119.52 edge
+363.6 -123.840004 372.24 -120.96 edge
+363.6 -123.840004 376.56 -117.36 edge
+363.6 -115.92 397.44 -116.64 edge
+367.92 -130.31999 379.44 -121.68001 edge
+367.92 -130.31999 390.96 -122.4 edge
+367.92 -130.31999 397.44 -116.64 edge
+368.63998 -122.4 370.08 -123.12 edge
+368.63998 -122.4 372.24 -120.96 edge
+368.63998 -122.4 381.6 -115.92 edge
+368.63998 -122.4 383.04 -115.200005 edge
+368.63998 -122.4 397.44 -105.840004 edge
+370.08 -123.12 371.52 -119.52 edge
+370.08 -123.12 372.24 -120.96 edge
+370.08 -123.12 395.27997 -113.04 edge
+371.52 -119.52 372.24 -120.96 edge
+371.52 -119.52 376.56 -117.36 edge
+371.52 -119.52 378.0 -113.76 edge
+371.52 -119.52 380.88 -115.92 edge
+371.52 -119.52 381.6 -115.92 edge
+371.52 -119.52 383.04 -115.200005 edge
+371.52 -119.52 384.48 -115.92 edge
+372.24 -120.96 375.12 -125.28 edge
+372.24 -120.96 376.56 -117.36 edge
+372.24 -120.96 378.0 -113.76 edge
+372.24 -120.96 379.44 -121.68001 edge
+372.24 -120.96 380.88 -115.92 edge
+372.24 -120.96 381.6 -115.92 edge
+372.24 -120.96 384.48 -115.92 edge
+372.24 -120.96 395.27997 -113.04 edge
+375.12 -125.28 376.56 -117.36 edge
+375.12 -125.28 380.88 -115.92 edge
+375.12 -125.28 381.6 -115.92 edge
+375.12 -125.28 397.44 -116.64 edge
+376.56 -117.36 379.44 -121.68001 edge
+376.56 -117.36 381.6 -115.92 edge
+376.56 -117.36 397.44 -116.64 edge
+376.56 -117.36 399.6 -107.28 edge
+378.0 -113.76 380.88 -115.92 edge
+378.0 -113.76 383.04 -115.200005 edge
+378.0 -113.76 384.48 -115.92 edge
+378.0 -113.76 395.27997 -113.04 edge
+378.0 -113.76 399.6 -107.28 edge
+379.44 -121.68001 383.04 -115.200005 edge
+379.44 -121.68001 390.96 -122.4 edge
+379.44 -121.68001 393.12 -118.799995 edge
+379.44 -121.68001 397.44 -116.64 edge
+380.88 -115.92 381.6 -115.92 edge
+380.88 -115.92 383.04 -115.200005 edge
+380.88 -115.92 384.48 -115.92 edge
+380.88 -115.92 390.96 -122.4 edge
+380.88 -115.92 397.44 -105.840004 edge
+380.88 -115.92 397.44 -116.64 edge
+380.88 -115.92 399.6 -107.28 edge
+381.6 -115.92 383.04 -115.200005 edge
+381.6 -115.92 384.48 -115.92 edge
+381.6 -115.92 395.27997 -113.04 edge
+381.6 -115.92 397.44 -105.840004 edge
+383.04 -115.200005 384.48 -115.92 edge
+383.04 -115.200005 395.27997 -113.04 edge
+383.04 -115.200005 397.44 -105.840004 edge
+384.48 -115.92 390.96 -122.4 edge
+384.48 -115.92 399.6 -107.28 edge
+390.96 -122.4 393.12 -118.799995 edge
+390.96 -122.4 397.44 -116.64 edge
+390.96 -122.4 399.6 -107.28 edge
+390.96 -122.4 406.08 -112.31999 edge
+390.96 -122.4 419.04 -125.28 edge
+393.12 -118.799995 397.44 -116.64 edge
+393.12 -118.799995 406.08 -112.31999 edge
+395.27997 -113.04 425.52 -102.96 edge
+397.44 -105.840004 425.52 -83.52 edge
+397.44 -105.840004 425.52 -102.96 edge
+397.44 -116.64 399.6 -107.28 edge
+397.44 -116.64 406.08 -112.31999 edge
+397.44 -116.64 419.04 -125.28 edge
+397.44 -116.64 425.52 -102.96 edge
+397.44 -116.64 426.24 -110.88 edge
+399.6 -107.28 406.08 -112.31999 edge
+399.6 -107.28 409.68 -85.68001 edge
+399.6 -107.28 411.12 -102.24 edge
+399.6 -107.28 412.56 -103.68001 edge
+399.6 -107.28 413.27997 -102.96 edge
+399.6 -107.28 414.0 -109.44 edge
+399.6 -107.28 414.0 -105.12 edge
+406.08 -112.31999 412.56 -103.68001 edge
+406.08 -112.31999 425.52 -102.96 edge
+409.68 -85.68001 411.12 -102.24 edge
+409.68 -85.68001 412.56 -103.68001 edge
+409.68 -85.68001 413.27997 -102.96 edge
+409.68 -85.68001 416.16 -63.36 edge
+411.12 -102.24 412.56 -103.68001 edge
+411.12 -102.24 413.27997 -102.96 edge
+411.12 -102.24 414.0 -109.44 edge
+411.12 -102.24 414.0 -105.12 edge
+411.12 -102.24 425.52 -102.96 edge
+412.56 -103.68001 413.27997 -102.96 edge
+412.56 -103.68001 414.0 -109.44 edge
+412.56 -103.68001 414.0 -105.12 edge
+412.56 -103.68001 425.52 -110.88 edge
+412.56 -103.68001 425.52 -102.96 edge
+413.27997 -102.96 414.0 -109.44 edge
+413.27997 -102.96 414.0 -105.12 edge
+413.27997 -102.96 425.52 -110.88 edge
+413.27997 -102.96 425.52 -102.96 edge
+414.0 -109.44 414.0 -105.12 edge
+414.0 -109.44 419.04 -125.28 edge
+414.0 -109.44 421.92 -102.96 edge
+414.0 -109.44 425.52 -102.96 edge
+414.0 -105.12 421.92 -102.96 edge
+414.0 -105.12 425.52 -102.96 edge
+414.0 -105.12 426.96 -103.68001 edge
+416.16 -63.36 418.32 -51.12 edge
+416.16 -63.36 421.92 -46.079998 edge
+416.16 -63.36 424.08 -77.76 edge
+418.32 -51.12 421.19998 -42.48 edge
+418.32 -51.12 421.92 -46.079998 edge
+418.32 -51.12 422.63998 -46.079998 edge
+419.04 -125.28 438.48 -132.48 edge
+421.19998 -42.48 421.92 -41.04 edge
+421.19998 -42.48 422.63998 -39.600002 edge
+421.19998 -42.48 422.63998 -42.48 edge
+421.19998 -42.48 422.63998 -41.04 edge
+421.19998 -42.48 422.63998 -41.04 edge
+421.19998 -42.48 423.36002 -45.36 edge
+421.19998 -27.36 421.92 -33.84 edge
+421.92 -41.04 421.92 -46.079998 edge
+421.92 -41.04 422.63998 -42.48 edge
+421.92 -41.04 422.63998 -41.04 edge
+421.92 -41.04 422.63998 -46.079998 edge
+421.92 -41.04 422.63998 -41.04 edge
+421.92 -41.04 423.36002 -45.36 edge
+421.92 -41.04 421.92 -46.079998 edge
+421.92 -41.04 422.63998 -39.600002 edge
+421.92 -41.04 422.63998 -42.48 edge
+421.92 -41.04 422.63998 -41.04 edge
+421.92 -41.04 422.63998 -46.079998 edge
+421.92 -41.04 423.36002 -45.36 edge
+421.92 -41.04 421.92 -46.079998 edge
+421.92 -41.04 422.63998 -39.600002 edge
+421.92 -41.04 422.63998 -42.48 edge
+421.92 -41.04 422.63998 -41.04 edge
+421.92 -41.04 423.36002 -45.36 edge
+421.92 -33.84 422.63998 -42.48 edge
+421.92 -33.84 422.63998 -41.04 edge
+421.92 -33.84 422.63998 -41.04 edge
+421.92 -102.96 424.08 -95.04 edge
+421.92 -102.96 424.08 -92.88 edge
+421.92 -102.96 425.52 -102.96 edge
+421.92 -102.96 426.24 -105.12 edge
+421.92 -102.96 426.96 -96.48 edge
+421.92 -102.96 431.27997 -110.159996 edge
+421.92 -46.079998 422.63998 -55.44 edge
+421.92 -46.079998 422.63998 -42.48 edge
+421.92 -46.079998 422.63998 -41.04 edge
+421.92 -46.079998 422.63998 -41.04 edge
+421.92 -46.079998 422.63998 -41.04 edge
+421.92 -46.079998 422.63998 -46.079998 edge
+421.92 -46.079998 422.63998 -41.04 edge
+421.92 -46.079998 423.36002 -45.36 edge
+421.92 -46.079998 424.08 -41.04 edge
+421.92 -46.079998 424.08 -54.0 edge
+421.92 -46.079998 425.52 -47.52 edge
+421.92 -46.079998 426.96 -43.920002 edge
+422.63998 -39.600002 422.63998 -42.48 edge
+422.63998 -39.600002 422.63998 -41.04 edge
+422.63998 -39.600002 422.63998 -41.04 edge
+422.63998 -39.600002 423.36002 -45.36 edge
+422.63998 -55.44 422.63998 -42.48 edge
+422.63998 -55.44 422.63998 -46.079998 edge
+422.63998 -55.44 423.36002 -45.36 edge
+422.63998 -55.44 424.08 -77.76 edge
+422.63998 -55.44 424.08 -54.0 edge
+422.63998 -42.48 422.63998 -41.04 edge
+422.63998 -42.48 422.63998 -41.04 edge
+422.63998 -42.48 423.36002 -45.36 edge
+422.63998 -42.48 424.08 -41.04 edge
+422.63998 -42.48 425.52 -46.079998 edge
+422.63998 -41.04 422.63998 -41.04 edge
+422.63998 -41.04 422.63998 -41.04 edge
+422.63998 -41.04 422.63998 -46.079998 edge
+422.63998 -41.04 422.63998 -41.04 edge
+422.63998 -41.04 423.36002 -45.36 edge
+422.63998 -41.04 424.08 -41.04 edge
+422.63998 -41.04 422.63998 -46.079998 edge
+422.63998 -41.04 423.36002 -45.36 edge
+422.63998 -41.04 422.63998 -46.079998 edge
+422.63998 -41.04 422.63998 -41.04 edge
+422.63998 -41.04 423.36002 -45.36 edge
+422.63998 -41.04 424.08 -41.04 edge
+422.63998 -46.079998 422.63998 -41.04 edge
+422.63998 -46.079998 423.36002 -45.36 edge
+422.63998 -46.079998 424.08 -41.04 edge
+422.63998 -46.079998 424.08 -54.0 edge
+422.63998 -46.079998 424.80002 -47.52 edge
+422.63998 -46.079998 425.52 -47.52 edge
+422.63998 -46.079998 425.52 -46.079998 edge
+422.63998 -46.079998 426.96 -43.920002 edge
+422.63998 -41.04 423.36002 -45.36 edge
+422.63998 -41.04 424.08 -41.04 edge
+423.36002 -45.36 424.08 -41.04 edge
+423.36002 -45.36 424.08 -54.0 edge
+423.36002 -45.36 424.80002 -47.52 edge
+423.36002 -45.36 425.52 -47.52 edge
+423.36002 -45.36 425.52 -46.079998 edge
+423.36002 -45.36 426.96 -43.920002 edge
+423.36002 -90.0 424.08 -90.72 edge
+423.36002 -90.0 424.08 -95.04 edge
+423.36002 -90.0 424.08 -92.88 edge
+423.36002 -90.0 424.80002 -93.6 edge
+423.36002 -90.0 424.80002 -93.6 edge
+423.36002 -90.0 425.52 -84.96 edge
+423.36002 -90.0 426.24 -90.72 edge
+423.36002 -90.0 427.68 -90.0 edge
+424.08 -77.76 424.08 -90.72 edge
+424.08 -77.76 425.52 -102.96 edge
+424.08 -77.76 426.24 -90.0 edge
+424.08 -77.76 426.24 -90.72 edge
+424.08 -77.76 426.24 -92.88 edge
+424.08 -77.76 426.96 -87.12 edge
+424.08 -90.72 424.08 -95.04 edge
+424.08 -90.72 424.08 -92.88 edge
+424.08 -90.72 424.80002 -93.6 edge
+424.08 -90.72 425.52 -102.96 edge
+424.08 -90.72 426.24 -90.72 edge
+424.08 -41.04 425.52 -46.079998 edge
+424.08 -41.04 432.72003 -33.84 edge
+424.08 -95.04 424.08 -92.88 edge
+424.08 -95.04 424.80002 -93.6 edge
+424.08 -95.04 424.80002 -93.6 edge
+424.08 -95.04 425.52 -102.96 edge
+424.08 -95.04 426.24 -90.72 edge
+424.08 -95.04 426.96 -102.96 edge
+424.08 -95.04 427.68 -90.0 edge
+424.08 -92.88 425.52 -83.52 edge
+424.08 -92.88 425.52 -84.96 edge
+424.08 -92.88 426.24 -105.12 edge
+424.08 -92.88 426.24 -90.72 edge
+424.08 -92.88 426.96 -102.96 edge
+424.08 -54.0 424.80002 -47.52 edge
+424.08 -54.0 425.52 -47.52 edge
+424.08 -54.0 425.52 -83.52 edge
+424.08 -54.0 425.52 -46.079998 edge
+424.08 -54.0 426.96 -43.920002 edge
+424.80002 -47.52 425.52 -47.52 edge
+424.80002 -47.52 425.52 -46.079998 edge
+424.80002 -47.52 426.96 -43.920002 edge
+424.80002 -93.6 424.80002 -93.6 edge
+424.80002 -93.6 425.52 -102.96 edge
+424.80002 -93.6 426.24 -90.72 edge
+424.80002 -93.6 426.24 -92.88 edge
+424.80002 -93.6 427.68 -90.0 edge
+424.80002 -93.6 425.52 -102.96 edge
+424.80002 -93.6 426.24 -90.72 edge
+424.80002 -93.6 427.68 -90.0 edge
+425.52 -47.52 425.52 -46.079998 edge
+425.52 -83.52 425.52 -84.96 edge
+425.52 -83.52 431.27997 -90.72 edge
+425.52 -83.52 434.88 -95.76 edge
+425.52 -83.52 438.48 -94.31999 edge
+425.52 -84.96 426.24 -90.72 edge
+425.52 -84.96 431.27997 -90.72 edge
+425.52 -102.96 426.24 -110.88 edge
+425.52 -102.96 426.24 -105.12 edge
+425.52 -102.96 426.24 -90.0 edge
+425.52 -102.96 426.24 -90.72 edge
+425.52 -102.96 426.24 -92.88 edge
+425.52 -102.96 426.96 -96.48 edge
+425.52 -102.96 426.96 -102.96 edge
+425.52 -102.96 426.96 -103.68001 edge
+425.52 -102.96 428.4 -95.04 edge
+425.52 -102.96 430.56 -95.76 edge
+425.52 -102.96 431.27997 -110.159996 edge
+425.52 -102.96 431.27997 -110.159996 edge
+425.52 -102.96 432.72003 -112.31999 edge
+425.52 -102.96 434.88 -95.76 edge
+425.52 -102.96 434.88 -111.6 edge
+425.52 -102.96 439.19998 -101.52 edge
+425.52 -102.96 439.92 -113.76 edge
+425.52 -102.96 439.92 -113.76 edge
+426.24 -110.88 426.24 -105.12 edge
+426.24 -110.88 426.96 -103.68001 edge
+426.24 -110.88 431.27997 -110.159996 edge
+426.24 -110.88 431.27997 -110.159996 edge
+426.24 -110.88 432.72003 -112.31999 edge
+426.24 -110.88 439.19998 -101.52 edge
+426.24 -105.12 431.27997 -110.159996 edge
+426.24 -105.12 431.27997 -110.159996 edge
+426.24 -90.0 426.24 -90.72 edge
+426.24 -90.0 426.24 -92.88 edge
+426.24 -90.0 426.96 -87.12 edge
+426.24 -90.0 426.96 -96.48 edge
+426.24 -90.0 430.56 -95.76 edge
+426.24 -90.72 426.24 -92.88 edge
+426.24 -90.72 426.96 -96.48 edge
+426.24 -90.72 427.68 -90.0 edge
+426.24 -90.72 437.04 -93.6 edge
+426.24 -92.88 426.96 -87.12 edge
+426.24 -92.88 426.96 -96.48 edge
+426.24 -92.88 426.96 -103.68001 edge
+426.24 -92.88 428.4 -95.04 edge
+426.24 -92.88 430.56 -95.76 edge
+426.96 -87.12 426.96 -96.48 edge
+426.96 -87.12 428.4 -95.04 edge
+426.96 -87.12 430.56 -95.76 edge
+426.96 -96.48 426.96 -102.96 edge
+426.96 -96.48 426.96 -103.68001 edge
+426.96 -96.48 428.4 -95.04 edge
+426.96 -96.48 430.56 -95.76 edge
+426.96 -96.48 431.27997 -90.72 edge
+426.96 -43.920002 432.72003 -33.84 edge
+426.96 -102.96 431.27997 -110.159996 edge
+426.96 -102.96 431.27997 -110.159996 edge
+426.96 -103.68001 428.4 -95.04 edge
+426.96 -103.68001 430.56 -95.76 edge
+426.96 -103.68001 431.27997 -110.159996 edge
+426.96 -103.68001 439.92 -113.76 edge
+427.68 -90.0 437.04 -93.6 edge
+428.4 -95.04 430.56 -95.76 edge
+428.4 -95.04 431.27997 -90.72 edge
+428.4 -95.04 435.6 -94.31999 edge
+430.56 -95.76 431.27997 -90.72 edge
+430.56 -95.76 435.6 -94.31999 edge
+430.56 -95.76 439.19998 -101.52 edge
+430.56 -95.76 439.92 -97.200005 edge
+431.27997 -90.72 435.6 -94.31999 edge
+431.27997 -90.72 439.19998 -101.52 edge
+431.27997 -110.159996 431.27997 -110.159996 edge
+431.27997 -110.159996 432.72003 -112.31999 edge
+431.27997 -110.159996 434.88 -111.6 edge
+431.27997 -110.159996 439.92 -113.76 edge
+431.27997 -110.159996 439.92 -113.76 edge
+431.27997 -110.159996 432.72003 -112.31999 edge
+431.27997 -110.159996 434.88 -111.6 edge
+431.27997 -110.159996 439.92 -113.76 edge
+432.72003 -33.84 440.63998 -27.36 edge
+432.72003 -33.84 440.63998 -27.36 edge
+432.72003 -112.31999 439.92 -113.76 edge
+434.88 -95.76 438.48 -94.31999 edge
+434.88 -95.76 439.19998 -101.52 edge
+434.88 -95.76 440.63998 -96.48 edge
+434.88 -111.6 439.92 -113.76 edge
+434.88 -111.6 439.92 -113.76 edge
+435.6 -94.31999 439.19998 -101.52 edge
+435.6 -94.31999 440.63998 -96.48 edge
+437.04 -93.6 438.48 -94.31999 edge
+437.04 -93.6 439.19998 -101.52 edge
+437.04 -93.6 439.92 -97.200005 edge
+437.04 -93.6 440.63998 -96.48 edge
+438.48 -94.31999 439.19998 -101.52 edge
+438.48 -94.31999 439.92 -97.200005 edge
+438.48 -94.31999 440.63998 -96.48 edge
+439.19998 -101.52 439.92 -97.200005 edge
+439.19998 -101.52 440.63998 -96.48 edge
+439.92 -97.200005 440.63998 -96.48 edge
+439.92 -113.76 439.92 -113.76 edge
+440.63998 -27.36 440.63998 -27.36 edge
+
+} def
+
+>>

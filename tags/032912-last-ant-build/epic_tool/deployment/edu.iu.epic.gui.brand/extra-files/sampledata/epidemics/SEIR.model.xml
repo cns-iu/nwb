@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<compartmentalModel xmlns="http://www.gleamviz.org/xmlns/gleamviz_v2">
+    <compartments>
+        <compartment id="Susceptible" isSecondary="false" x="216" y="21"/>
+        <compartment id="Exposed" isSecondary="false" x="216" y="115"/>
+        <compartment id="Infectious" isSecondary="true" x="216" y="199"/>
+        <compartment id="Recovered" isSecondary="false" x="216" y="295"/>
+    </compartments>
+    <ratioTransitions>
+        <ratioTransition source="Exposed" target="Infectious" ratio="epsilon"/>
+        <ratioTransition source="Infectious" target="Recovered" ratio="mu"/>
+    </ratioTransitions>
+    <infections>
+        <infection source="Susceptible" target="Exposed">
+            <infector source="Infectious" ratio="beta"/>
+        </infection>
+    </infections>
+    <variables>
+        <variable name="beta" value="0.66"/>
+        <variable name="epsilon" value="0.5"/>
+        <variable name="mu" value="0.33"/>
+    </variables>
+</compartmentalModel>

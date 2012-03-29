@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Snowball Sampling (n nodes)" id="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm.OCD"
+		 description="Samples from a graph using N-node snowball sampling">
+		<AD name="Nodes" id="nodes" type="Integer" description="The number of nodes to sample from the graph" default="2"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm.OCD" />
+	</Designate>
+	<OCD name="Node Sampling" id="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm.OCD"
+		 description="Samples from a graph by choosing a random N nodes and the intervening edges">
+		<AD name="Nodes" id="nodes" type="Integer" description="The number of nodes to sample from the graph" default="2"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm.OCD" />
+	</Designate>
+	<OCD name="Edge Sampling" id="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm.OCD"
+		 description="Samples from a graph by choosing a random N edges and the attached nodes">
+		<AD name="Edges" id="edges" type="Integer" description="The number of edges to sample from the graph" default="2"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

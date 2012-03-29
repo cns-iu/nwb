@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.epic.gui.brand.welcometext.WelcomeTextActivator.component" immediate="true">
+	<implementation class="edu.iu.epic.gui.brand.welcometext.WelcomeTextActivator"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+</component>

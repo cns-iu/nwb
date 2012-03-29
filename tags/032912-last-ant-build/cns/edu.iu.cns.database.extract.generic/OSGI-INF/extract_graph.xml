@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.database.extract.generic.ExtractTable.component" immediate="false">
+	<implementation class="edu.iu.cns.database.extract.generic.ExtractGraphFactory"/>
+	<properties entry="OSGI-INF/extract_graph.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Remove Edge Attributes" id="edu.iu.nwb.preprocessing.removeedgeattributes.RemoveEdgeAttributesAlgorithm.OCD"
+		 description="Select attributes to remove from all edges">
+		 <AD name="DUMMY_AD" id="DUMMY_AD" type="String" description="This dummy attribute definition is included only so that mutateParameters does not receive a null OCD.  This will be removed in mutateParameters." default="DUMMY_AD"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.removeedgeattributes.RemoveEdgeAttributesAlgorithm">
+		<Object ocdref="edu.iu.nwb.preprocessing.removeedgeattributes.RemoveEdgeAttributesAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

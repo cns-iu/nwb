@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Burst Detection" id="edu.iu.nwb.analysis.burst.Burst.OCD"
+		 description="Perform Burst Detection on time-series textual data.">
+		<AD name="Gamma" id="gamma" type="Double" description="State transition costs are logarithmically proportional to this value. The higher the value, the less likely a burst will reach the next level." default="1"/>
+		<AD name="Density Scaling" id="ratio" type="Double" description="This parameter controls the propability of a burst occurring. The probability increases exponentially as the scaling value increases." default="2"/>
+		<AD name="Bursting States" id="states" type="Integer" description="The maximum number of bursting states." default="1"/>
+		<AD name="Date Column" id="date" type="String" description="The column containing date values." default="date"/>
+		<AD name="Date Format" id="format" type="String" description="The format of the date column, conforming to the description at http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html ." default="yyyy"/>
+		<AD name="Burst Length Unit" id="batchBy" type="String" description="How to divide the date range into burstable units." default="Year"/>
+		<AD name="Burst Length" id="batchByUnits" type="Integer" description="Number of burstable units per burstable period.  For example, 10 years generates bursts by decade." default="1"/>
+		<AD name="Text Column" id="text" type="String" description="The column containing the text." default="text"/>
+		<AD name="Text Separator" id="separator" type="String" description="The separator between strings in the text column." default="|"/>
+		<AD name="Document Column" id="document" type="String" description="The column containing document identifiers." default="document"/>
+		<AD name="Ignore Input With Empty Text" id="ignore" type="Boolean" description="Ignore rows with empty text in the model." default="true"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.burst.Burst">
+		<Object ocdref="edu.iu.nwb.analysis.burst.Burst.OCD" />
+	</Designate>
+</metatype:MetaData>

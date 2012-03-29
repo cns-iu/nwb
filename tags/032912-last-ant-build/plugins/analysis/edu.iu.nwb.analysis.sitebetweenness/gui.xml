@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Node Betweenness Centrality" id="edu.iu.nwb.analysis.sitebetweenness.gui"
+		 description="Site betweenness of Freeman">
+		<AD name="Number of bins" id="NumBins" 
+			type="Integer" default="10" min="8"
+            description="Number of bins for the distribution of the site betweenness, must be at least 8"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.sitebetweenness">
+		<Object ocdref="edu.iu.nwb.analysis.sitebetweenness.gui" />
+	</Designate>
+</metatype:MetaData>

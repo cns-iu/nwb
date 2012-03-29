@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.converter.nwb_graphstream.NWBToGraphStreamAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.converter.nwb_graphstream.NWBToGraphStreamAlgorithmFactory"/>
+	<properties entry="OSGI-INF/nwb_graphstream.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Slice Table by Time" id="edu.iu.nwb.preprocessing.timeslice.Slice.OCD"
+		 description="Slice a table into groups of rows by time.">
+		<AD name="Date/Time Column" id="column" type="String" description="Column with date/time information for the row." default="date"/>
+		<AD name="Date/Time Format" id="format" type="String" description="The format of the date/time. Commonly used are y for year, M for 
+		month of year, d for day of month. See http://joda-time.sourceforge.net/api-release/org/joda/time/format/DateTimeFormat.html for details." default="yyyy"/>
+		<AD name="Slice Into" id="interval" type="String" description="What time interval should the data be sliced into?" default="days">
+			<Option label="Milliseconds" value="milliseconds"/>
+			<Option label="Seconds" value="seconds"/>
+			<Option label="Minutes" value="minutes"/>
+			<Option label="Hours" value="hours"/>
+			<Option label="Days" value="days"/>
+			<Option label="Weeks" value="weeks"/>
+			<Option label="Months" value="months"/>
+			<Option label="Quarters" value="quarters"/>
+			<Option label="Years" value="years"/>
+			<Option label="Decades" value="decades"/>
+			<Option label="Centuries" value="centuries"/>
+		</AD>
+		<AD name="How Many?" id="periodmultiplier" type="Integer" description="Enter an Integer Multiplier for selected Period." default="1"/>
+		<AD name="From Time" id="fromtime" type="String" description="Enter the Period from which slicing will start." default="yyyy"/>
+		<AD name="To Time" id="totime" type="String" description="Enter the Period where the slicing should end." default="yyyy"/>
+		<AD name="Cumulative?" id="cumulative" type="Boolean" description="Should each slice be cumulative with earlier slices?" default="false"/>
+		<AD name="Align With Calendar" id="align" type="Boolean" description="Should the intervals be aligned with calendar intervals?" default="false"/>
+		<AD name="Week Starts On" id="weekstart" type="String" description="What day does the week start on?" default="sunday">
+			<Option label="Sunday" value="sunday"/>
+			<Option label="Monday" value="monday"/>
+			<Option label="Saturday" value="saturday"/>
+		</AD>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.timeslice.Slice">
+		<Object ocdref="edu.iu.nwb.preprocessing.timeslice.Slice.OCD" />
+	</Designate>
+</metatype:MetaData>

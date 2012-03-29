@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Author Co-Citation Network" id="edu.iu.sci2.database.isi.extract.network.cocitation.author.core.OCD"
+		 description="Extracts the author co-citation network from this database. ">
+	</OCD>
+	<Designate pid="edu.iu.sci2.database.isi.extract.network.cocitation.author.core">
+		<Object ocdref="edu.iu.sci2.database.isi.extract.network.cocitation.author.core.OCD" />
+	</Designate>
+</metatype:MetaData>

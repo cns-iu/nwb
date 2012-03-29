@@ -1,0 +1,10 @@
+#Wed Jul 28 12:15:52 EDT 2010
+isCoreColumn="true","false","true","true","false","false","true","true"
+name="Cites","Authors","Title","Year","Source","Publisher","ArticleURL","CitesURL"
+nameForDatabase="CITES","AUTHORS","TITLE","YEAR","SOURCE","PUBLISHER","ARTICLEURL","CITESURL"
+separator=",",",",",",",",",",",",",",","
+columnIndex="0","1","2","3","4","5","6","7"
+coreEntityName=Documents
+type="Integer","String","String","Integer","String","String","String","String"
+isMultiValued="true","true","true","true","false","false","true","true"
+shouldMergeIdenticalValues="false","true","false","false","true","true","false","false"

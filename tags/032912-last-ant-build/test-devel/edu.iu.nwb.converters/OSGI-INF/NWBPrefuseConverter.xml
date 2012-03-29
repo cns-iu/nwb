@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.nwb.converters.NWBPrefuseConverter.component" immediate="false">
+	<implementation class="edu.iu.nwb.converters.NWBPrefuseConverter"/>
+	<properties entry="OSGI-INF/NWBPrefuseConverter.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+		
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+		<provide interface=
+			"org.cishell.framework.algorithm.DataValidator"/>
+	</service>
+</component>

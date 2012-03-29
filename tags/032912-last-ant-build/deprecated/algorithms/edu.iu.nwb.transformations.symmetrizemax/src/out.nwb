@@ -1,0 +1,663 @@
+//Symmetrized by Maximum ....Cesifoti..:-)..NWB
+*Nodes 168
+1 Prof. Kirk Dombrowski
+10 Mr. Nicholas Altieri
+100 Mr. Richard Twu
+101 Physics (45)
+102 Ms. Duygu Balcan
+103 Prof. Phillip Bonacich
+104 Dr. Paulette Lloyd
+105 Transportation (17)
+106 Mr. Suresh Pillai
+107 Mr. Justin Donaldson
+108 Information Technology (47)
+109 Dr. Santo Fortunato
+11 Kimberlie Stephens
+110 Dr. Harold Green
+111 Dr. Ariel Balter
+112 Mr. Armando Razo
+113 James A. Danowsky
+114 Mr. Joseph Cottam
+115 Dr. Soma Sanyal
+116 Prof. Shlomo Havlin
+117 James Leinart
+118 Stephen Uzzo
+119 Dr. Denise Collins
+12 David Sloane
+120 Biochemistry (5)
+121 Dr. Alan Reifman
+122 Dr. Francesca Odella
+123 Portia Iversen
+124 Scientometrics (14)
+125 Dr. Alain Barrat
+126 Mr. Shashikant Penumarthy
+127 Operations Research (9)
+128 Mr. Bruce Herr
+129 Luis Galvis
+13 Mr. Cesar A Hidalgo
+130 Prof. Albert-Laszlo Barabasi
+131 Mr. Victor P Corona
+132 Mr. Andreas Rechtsteiner
+133 Mr. John Burgoon
+134 Organizations Theory (39)
+135 Prof. Sergey Dorogovtsev
+136 Prof. Igor Kanovsky
+137 Mr. Jan Zajac
+138 Oleg Sindiy
+139 Mr. Seyed Mussavi Rizi
+14 Mr. Maciej Kurant
+140 Randall Landry
+141 Mr. Christian Briggs
+142 Mr. Alex K.S. Ng
+143 Internet (46)
+144 Prof. Stan Wasserman
+145 Andrew Feldstein
+146 Dr. Steven Harper
+147 Juyong Park
+148 Ms. Heather Roinestad
+149 Dr. Nicholas Difonzo
+15 Mr. Gabor Csardi
+150 Chemistry (other than biochemistry) (2)
+151 Floriana Gargiulo
+152 Jimi Adams
+153 Dr. Katherine Strandburg
+154 Psychology (30)
+155 Prof. David Levinson
+156 Dr. Naoki Masuda
+157 Dr. Alexei Vazquez
+158 Prof. Manju Ahuja
+159 Mr. Christopher Honey
+16 Medicine (2)
+160 Mr. Peter Fleck
+161 Mr. Justin Gross
+162 Mr. Jongwon Park
+163 Mr. Jan Scholz
+164 Ms. Jing Wang
+165 Mr. Pu Wang
+166 Dr. Takuya Yamano
+167 Mr. Israel Lederhendler
+168 Dr. Daniel A Newman
+17 Ms. Mengxiao Zhu
+18 Mr. Winter Mason
+19 Dr. Carol Choksy
+2 Dr. Maria Carmen Pin Arias
+20 Mr. Kevin Makice
+21 Biology (26)
+22 Mr. Hari Thadakamalla
+23 Mr. Peter Hook
+24 Mr. Dylan Walker
+25 Dr. Filippo Menczer
+26 Sricharan Ayyalasomayajula
+27 Public Health / Epidemiology (7)
+28 Mr. Huafeng Xie
+29 Ecology (9)
+3 Prof. Agusti Canals Parera
+30 Mr. Lev Muchnik
+31 Mr. Benjamin Markines
+32 Dr. Francisco Martin
+33 Ms. Kathryn Clodfelter
+34 Mr. Aaron Clauset
+35 Ms. Ann Mccranie
+36 Mr. Mark R Meiss
+37 Benoy Jacob
+38 Dr. Marc Barthelemy
+39 Kevin Boyack
+4 Mr. Shanon Donnelly
+40 Mr. Adam Tatarynowicz
+41 Prof. Craig M Allen
+42 Thomas Hills
+43 Mr. Todd Holloway
+44 Mr. Nebiyou Tilahun
+45 Public Policy (20)
+46 Prof. Dimitris G Assimakopoulos
+47 Mr. Wieslaw Bartkowski
+48 Economics (26)
+49 Mr. Srikanth Mudigonda
+5 Dr. Krzysztof Krejtz
+50 Mr. Shai Carmi
+51 Dr. Kimberly A Fredericks
+52 Kim B Serota
+53 James Moody
+54 Dr. Dan Horn
+55 Dr. Izabela Krejtz
+56 Management (32)
+57 Prof. Venkat Venkatasubramanian
+58 Dr. Alexander Samukhin
+59 Mrs. Elise Hall
+6 Dr. Denis Boyer
+60 Sociology (52)
+61 Prof. Jeffrey Johnson
+62 Mr. Nobuhiko Oshida
+63 Prof. Noshir Contractor
+64 Dr. Vittoria Colizza
+65 Mr. Chris Nissen
+66 Rosalyn Rael
+67 Mr. Roni Parshani
+68 Political Science (16)
+69 Mr. Nathaniel Bulkley
+7 Mr. Nishith Pathak
+70 Mr. Marcelo Lufin
+71 Mr. Domenico Salvatore
+72 Kimberly Johns
+73 Mr. Soong Kang
+74 Prof. Andrzej Nowak
+75 En-Pei Han
+76 Dr. Thimo Rohlf
+77 Dr. Jozsef Baranyi
+78 Mr. Eric R Giannella
+79 Dr. Tsuyoshi Murata
+8 Prof. Hawoong Jeong
+80 Mr. Bernard Hogan
+81 Donald Fry
+82 Dr. James Scott
+83 Prof. David C Bangert
+84 Computer Sciences (41)
+85 Paul Dwyer
+86 Mr. Liang Jing
+87 Kun Huang
+88 Alessandro Chessa
+89 Dr. Sharon Mastracci
+9 Ms. Margaret Clements
+90 Dr. Daniel Delaurentis
+91 Allessandro Vespignani
+92 Marcello Mezzedimi
+93 Steven Wilcox
+94 Anthony Strathman
+95 Dr. Katy Borner
+96 Ms. Bettina Richards Heiss
+97 Utilities (2)
+98 Telecommunications (other than internet) (11)
+99 Cuauhcihuatl Vital
+*UndirectedEdges
+1 154 1
+1 21 1
+1 29 1
+1 60 1
+10 154 1
+100 134 1
+100 45 1
+100 56 1
+102 101 1
+102 21 1
+103 60 1
+104 60 1
+104 68 1
+106 101 1
+106 143 1
+106 48 1
+106 60 1
+106 84 1
+109 101 1
+11 134 1
+11 56 1
+110 108 1
+110 134 1
+110 143 1
+110 154 1
+110 27 1
+110 45 1
+110 56 1
+110 60 1
+111 101 1
+111 21 1
+112 134 1
+112 48 1
+112 60 1
+112 68 1
+113 108 1
+113 124 1
+113 134 1
+113 143 1
+113 154 1
+113 60 1
+113 68 1
+113 98 1
+114 84 1
+115 101 1
+115 108 1
+115 124 1
+116 101 1
+116 105 1
+116 143 1
+116 21 1
+117 127 1
+117 84 1
+118 108 1
+118 21 1
+119 134 1
+119 60 1
+12 16 1
+121 154 1
+121 60 1
+122 154 1
+122 45 1
+122 60 1
+123 108 1
+123 143 1
+123 154 1
+123 60 1
+125 101 1
+125 143 1
+126 101 1
+126 108 1
+126 124 1
+126 143 1
+126 48 1
+126 56 1
+126 84 1
+128 108 1
+128 124 1
+128 143 1
+128 154 1
+128 84 1
+129 48 1
+13 101 1
+13 21 1
+13 48 1
+13 60 1
+130 101 1
+130 108 1
+130 120 1
+130 143 1
+130 150 1
+130 21 1
+130 48 1
+130 60 1
+130 84 1
+130 98 1
+131 127 1
+131 134 1
+131 60 1
+132 108 1
+132 21 1
+132 84 1
+133 108 1
+135 101 1
+136 101 1
+136 108 1
+136 143 1
+136 84 1
+137 134 1
+137 154 1
+137 60 1
+138 105 1
+138 45 1
+139 45 1
+139 48 1
+139 68 1
+139 84 1
+14 105 1
+14 143 1
+14 84 1
+14 98 1
+140 108 1
+140 143 1
+140 84 1
+141 108 1
+141 134 1
+141 143 1
+141 56 1
+141 60 1
+141 84 1
+142 105 1
+142 127 1
+144 60 1
+145 134 1
+145 143 1
+145 48 1
+145 56 1
+145 60 1
+146 127 1
+146 56 1
+147 101 1
+147 60 1
+148 108 1
+148 143 1
+148 154 1
+148 21 1
+148 29 1
+148 84 1
+149 154 1
+15 101 1
+15 108 1
+15 124 1
+15 143 1
+15 48 1
+15 84 1
+151 101 1
+151 60 1
+151 68 1
+152 60 1
+153 101 1
+153 143 1
+153 45 1
+153 48 1
+153 60 1
+155 105 1
+155 45 1
+155 60 1
+156 101 1
+156 21 1
+156 29 1
+156 60 1
+157 101 1
+157 143 1
+157 21 1
+158 108 1
+158 134 1
+158 56 1
+159 154 1
+160 101 1
+160 21 1
+161 154 1
+161 45 1
+161 60 1
+161 68 1
+162 124 1
+162 134 1
+162 45 1
+162 60 1
+162 68 1
+163 101 1
+163 143 1
+163 84 1
+163 98 1
+164 134 1
+165 101 1
+165 84 1
+166 101 1
+166 48 1
+167 108 1
+167 56 1
+168 134 1
+168 154 1
+168 56 1
+168 60 1
+17 108 1
+17 134 1
+17 143 1
+17 56 1
+17 84 1
+18 154 1
+18 60 1
+19 108 1
+19 134 1
+19 143 1
+19 56 1
+2 21 1
+20 101 1
+20 108 1
+20 134 1
+20 143 1
+20 154 1
+20 56 1
+20 60 1
+20 68 1
+22 105 1
+22 108 1
+22 127 1
+23 108 1
+23 124 1
+23 68 1
+24 101 1
+25 108 1
+25 143 1
+25 84 1
+26 105 1
+26 27 1
+26 45 1
+26 48 1
+28 101 1
+3 101 1
+3 124 1
+3 134 1
+3 143 1
+3 48 1
+3 56 1
+3 60 1
+3 84 1
+30 101 1
+30 105 1
+30 108 1
+30 124 1
+30 127 1
+30 143 1
+30 154 1
+30 16 1
+30 48 1
+30 60 1
+30 68 1
+30 84 1
+31 101 1
+31 108 1
+31 143 1
+31 84 1
+32 108 1
+32 134 1
+32 143 1
+32 48 1
+32 56 1
+32 98 1
+33 108 1
+33 134 1
+33 143 1
+33 154 1
+33 45 1
+33 56 1
+33 60 1
+33 68 1
+33 84 1
+33 98 1
+34 101 1
+34 143 1
+34 21 1
+34 84 1
+35 45 1
+35 60 1
+36 108 1
+36 124 1
+36 143 1
+36 84 1
+38 101 1
+38 105 1
+38 134 1
+38 29 1
+38 97 1
+38 98 1
+39 108 1
+39 120 1
+39 124 1
+39 150 1
+39 27 1
+39 56 1
+39 84 1
+40 101 1
+40 134 1
+40 48 1
+40 56 1
+40 60 1
+40 84 1
+41 127 1
+41 134 1
+41 56 1
+41 84 1
+42 154 1
+42 21 1
+42 29 1
+42 60 1
+43 108 1
+43 143 1
+43 84 1
+44 105 1
+44 48 1
+46 108 1
+46 134 1
+46 143 1
+46 48 1
+46 56 1
+46 60 1
+47 101 1
+47 108 1
+47 143 1
+47 154 1
+47 60 1
+47 84 1
+49 108 1
+49 124 1
+49 134 1
+49 143 1
+49 154 1
+49 56 1
+49 60 1
+49 84 1
+5 154 1
+50 101 1
+50 105 1
+50 120 1
+50 143 1
+50 21 1
+50 84 1
+51 134 1
+51 45 1
+51 56 1
+51 68 1
+53 60 1
+54 154 1
+55 154 1
+57 108 1
+57 134 1
+57 21 1
+58 101 1
+59 154 1
+6 101 1
+6 29 1
+6 60 1
+61 134 1
+61 154 1
+61 21 1
+61 29 1
+61 48 1
+61 60 1
+61 68 1
+62 101 1
+62 108 1
+62 21 1
+63 108 1
+63 134 1
+63 143 1
+63 154 1
+63 27 1
+63 45 1
+63 56 1
+63 60 1
+63 84 1
+63 98 1
+64 101 1
+64 105 1
+64 27 1
+65 108 1
+65 56 1
+65 98 1
+66 29 1
+67 101 1
+67 105 1
+67 120 1
+67 143 1
+67 21 1
+67 84 1
+69 108 1
+69 134 1
+69 48 1
+69 56 1
+69 60 1
+7 60 1
+7 84 1
+71 134 1
+71 56 1
+73 134 1
+73 48 1
+73 56 1
+73 60 1
+74 154 1
+75 105 1
+76 101 1
+76 21 1
+76 84 1
+77 21 1
+78 101 1
+78 108 1
+78 120 1
+78 124 1
+78 21 1
+78 45 1
+78 48 1
+78 56 1
+78 84 1
+79 84 1
+8 101 1
+8 108 1
+8 143 1
+8 21 1
+8 48 1
+8 60 1
+8 84 1
+80 108 1
+80 143 1
+80 60 1
+80 98 1
+81 105 1
+82 143 1
+82 45 1
+82 60 1
+83 134 1
+83 45 1
+83 56 1
+85 108 1
+85 134 1
+85 143 1
+85 154 1
+85 48 1
+85 56 1
+85 60 1
+85 68 1
+85 84 1
+86 101 1
+86 108 1
+86 143 1
+86 21 1
+86 48 1
+86 56 1
+86 98 1
+87 134 1
+87 27 1
+87 45 1
+87 56 1
+87 60 1
+88 101 1
+88 108 1
+90 105 1
+90 127 1
+90 27 1
+90 45 1
+90 97 1
+91 101 1
+91 105 1
+91 143 1
+92 108 1
+92 134 1
+92 143 1
+92 84 1
+93 127 1
+93 134 1
+93 154 1
+93 48 1
+93 60 1
+93 68 1
+94 101 1
+94 84 1
+95 108 1
+95 124 1
+96 134 1
+96 143 1
+99 21 1
+99 29 1

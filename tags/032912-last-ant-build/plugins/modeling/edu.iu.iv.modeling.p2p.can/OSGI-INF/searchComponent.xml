@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.iv.search.p2p.can.CanSearchAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.iv.search.p2p.can.CanSearchAlgorithmFactory"/>
+	<properties entry="OSGI-INF/searchAlgorithm.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+		<provide interface=
+			"org.cishell.framework.algorithm.DataValidator"/>
+	</service>
+</component>
