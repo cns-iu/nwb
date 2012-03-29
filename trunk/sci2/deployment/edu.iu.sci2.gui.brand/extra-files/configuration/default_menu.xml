@@ -221,8 +221,8 @@
 	    -->
 	    
 	    <menu name="Geospatial" type="group">
-			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory"/>
-			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory"/>
+			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory$Print"/>
+			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Print"/>
 	    </menu>
 	    
 	    <!-- Keep this commented out unless you're going to put something in it.
