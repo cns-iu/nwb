@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Table by Query" id="edu.iu.cns.database.extract.generic.ExtractTable.OCD"
+		 description="Given a query, extract a table of data. ">
+		<AD name="Paste Table Query Here" id="query" type="String" description="This query will be run on the selected database." default="textarea:"/>
+	</OCD>
+	<OCD name="Extract Graph by Queries" id="edu.iu.cns.database.extract.generic.ExtractGraph.OCD"
+		 description="Given two queries, extract a table of data. ">
+		<AD name="Paste Node Query Here" id="node_query" type="String" description="This query will be run on the selected database to retrieve the nodes." default="textarea:"/>
+		<AD name="Paste Edge Query Here" id="edge_query" type="String" description="This query will be run on the selected database to retrieve the edges." default="textarea:"/>
+		<AD name="Node ID Column" id="id_column" type="String" description="The column in the node table containing the node id." default="ID"/>
+		<AD name="Source ID Column" id="source_column" type="String" description="The column in the edge table containing the source id." default="SOURCE"/>
+		<AD name="Target ID Column" id="target_column" type="String" description="The column in the edge table containing the source id." default="TARGET"/>
+		<AD name="Directed?" id="directed" type="Boolean" description="Whether or not the resulting graph will be directed." default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.cns.database.extract.generic.ExtractTable">
+		<Object ocdref="edu.iu.cns.database.extract.generic.ExtractTable.OCD" />
+	</Designate>
+	<Designate pid="edu.iu.cns.database.extract.generic.ExtractGraph">
+		<Object ocdref="edu.iu.cns.database.extract.generic.ExtractGraph.OCD" />
+	</Designate>
+</metatype:MetaData>

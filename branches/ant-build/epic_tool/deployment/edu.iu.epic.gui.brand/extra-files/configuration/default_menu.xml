@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!-- <?xml version="1.0" encoding="ISO-8859-1" ?> -->
+<menu_layout> 
+    <top_menu name="File">
+		<menu pid="org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
+		<menu type="break"/>
+		<menu pid= "org.cishell.reference.gui.persistence.save.Save"/>
+		<menu type="break"/>
+		<menu pid="org.cishell.reference.gui.persistence.view.FileView"/>
+		<menu pid="org.cishell.reference.gui.persistence.viewwith.FileViewWith"/>
+		<menu type="break"/>
+		<menu pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
+		<menu pid= "edu.iu.nwb.converter.tablegraph.GraphTable"/>
+		<menu type="break"/>
+		<menu name="Exit" type="preserved"/>
+    </top_menu>
+    
+    <top_menu name="Compartmental Modeling">
+    	<menu pid="edu.iu.epic.modelbuilder.gui.ModelBuilderNewModelAlgorithmFactory"/>
+    	<menu pid="edu.iu.epic.modelbuilder.gui.ModelBuilderImportModelAlgorithmFactory"/>
+    </top_menu>
+    
+    <top_menu name="Networks">
+	    <menu name="Modeling" type="group">
+	    	<menu pid="edu.iu.nwb.modeling.erdosrandomgraph"/>
+			<menu pid="edu.iu.nwb.modeling.smallworld"/>
+			<menu pid="edu.iu.nwb.modeling.barabasialbert"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.iv.modeling.p2p.can.CanAlgorithm"/>
+			<menu pid="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm"/>
+			<menu pid="edu.id.iv.modeling.p2p.hypergrid.Hypergrid"/>
+			<menu pid="edu.iu.iv.modeling.p2p.pru.PruAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
+	    </menu>
+	    
+	    <menu name="Preprocessing" type="group">
+	    	<menu pid="edu.iu.epic.preprocessing.extracttimestep.ExtractTimestepAlgorithm"/>
+	    	<menu type="break"/>
+			<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
+	    	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>
+	    	<menu pid="edu.iu.nwb.preprocessing.removeegraphattributes.nodes.RemoveNodeAttributesAlgorithmFactory"/>		
+	 		<menu pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
+			<menu pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
+			<menu pid="edu.iu.nwb.preprocessing.deleteisolates.DeleteIsolatesAlgorithm"/>
+	    	<menu type="break"/>
+	    	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
+	 		<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
+	 		<menu pid="edu.iu.nwb.preprocessing.removeegraphattributes.edges.RemoveEdgeAttributesAlgorithmFactory"/>
+			<menu pid="edu.iu.nwb.analysis.selfloops.Remove"/>
+			<menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
+			<menu pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
+			<menu pid="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/>
+			<menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
+			<menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
+			<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalizer"/>
+			<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
+	    </menu>
+	    
+	    <menu name="Analysis" type="group">
+		    <menu pid="edu.iu.nwb.toolkit.networkanalysis"/>
+		    <menu type="break"/>
+			<menu name="Unweighted and Undirected" type="group">
+				<menu pid="edu.iu.nwb.analysis.java.nodedegree"/>
+				<menu pid="edu.iu.nwb.analysis.totaldegreedistribution"/>
+		        <menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.clustering"/>
+				<menu pid="edu.iu.nwb.analysis.clustering_vs_k"/>
+				<menu type="break"/>	
+				<menu pid="edu.iu.nwb.analysis.diameter"/>
+				<menu pid="edu.iu.nwb.analysis.averageshortestpath"/>
+				<menu pid="edu.iu.nwb.analysis.shortestpathdistr"/>
+				<menu pid="edu.iu.nwb.analysis.sitebetweenness.wrapper.SiteBetweennessWrapperAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.connectedcomponents"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
+		        <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+			</menu>
+			<menu name="Weighted and Undirected" type="group">
+				<menu pid="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.degreeaveragestrength"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.degreestrength"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.endpointdegree"/>
+				<menu pid="edu.iu.nwb.analysis.java.undirectedknn"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
+				<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+				<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
+				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
+			    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
+			    <menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>		
+			</menu>
+			<menu name="Unweighted and Directed" type="group">
+				<menu pid="edu.iu.nwb.analysis.java.nodeindegree"/>
+		        <menu pid="edu.iu.nwb.analysis.java.nodeoutdegree"/>
+		       	<menu pid="edu.iu.nwb.analysis.indegreedistribution"/>
+		        <menu pid="edu.iu.nwb.analysis.outdegreedistribution"/>
+		       	<menu type="break"/>	
+		      	<menu pid="edu.iu.nwb.analysis.java.directedknn"/>
+				<menu pid="edu.iu.nwb.analysis.onepointcorrelations"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
+				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.reciprocity.dyad"/>
+				<menu pid="edu.iu.nwb.analysis.reciprocity.arc"/>
+				<menu pid="edu.iu.nwb.analysis.transitivity.adjacency"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>	
+				<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>
+			    <menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>	
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
+		        <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+			<menu type="break"/>			
+			</menu>
+			<menu name = "Weighted and Directed" type="group">
+				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
+				<menu type="break"/>
+			    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+			</menu>
+			<menu type="break"/>	
+			<menu name="Search" type="group">
+				<menu pid="edu.iu.iv.search.p2p.can.CanSearchAlgorithm"/> 
+				<menu pid="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm"/> 
+				<menu pid="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm"/> 
+				<menu pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm"/> 
+		    </menu>
+		    <menu name = "Discrete Network Dynamics" type="group">
+		    	<menu pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm"/>
+		    </menu>
+	    </menu>
+	    
+	    <menu name="Visualization" type="group">
+	    	<menu pid="edu.iu.nwb.visualization.guess"/>
+		    <menu type="break"/>
+		    <menu pid="edu.iu.nwb.visualization.gnuplot"/>
+		    <menu type="break"/>	
+		 	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
+		 	<menu type="break"/>
+			<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
+			<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/> 
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
+			<menu type="break"/>
+			<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="nwb.visualization.lanet"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>	
+	    </menu>
+	</top_menu>
+    
+    <top_menu name="Simulation">
+    	<menu name="Single-Population" type="group">
+    		<menu pid="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm"/>
+    		<menu pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm"/>
+    	</menu>
+    	<menu name="Network" type="group">
+    		<menu pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm"/>
+    	</menu>
+    </top_menu>
+    
+    <top_menu name="Visualization">
+	    <menu pid="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm"/>
+		<menu pid="edu.iu.nwb.visualization.guess" name="GUESS Network Visualization"/>
+	</top_menu>
+
+	<top_menu name="R">
+		<menu pid="edu.iu.cns.r.CreateRAlgorithm"/>
+		<menu pid="edu.iu.cns.r.RunRAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm"/>
+	</top_menu>
+	
+    <top_menu name="Help">      
+		<menu name="Documentation" pid=""/>
+		<menu type="break"/>
+		<menu name="Update" pid=""/>
+		<menu name="Manage Configuration" pid=""/>
+		<menu type="break"/>
+		<menu name="About Network Workbench Tool" pid=""/>
+    </top_menu>    
+</menu_layout>

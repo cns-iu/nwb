@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Node Betweenness Centrality" id="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm.OCD"
+		 description="This algorithm calculates the node betweenness centrality for the provided network. ">
+		<AD name="Weight" id="weight" type="String" description="The weight attribute to consider when calculating the node betweenness centrality on your network." default="MUTATED"/>
+		<AD name="Centrality Attribute Name" id="centralityAttributeName" type="String" description="The name of attribute to place the centrality values in." default="betweenness_centrality"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

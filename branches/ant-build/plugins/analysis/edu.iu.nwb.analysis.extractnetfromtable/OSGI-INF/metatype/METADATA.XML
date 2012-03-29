@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Network from Table" id="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm.OCD"
+		 description="Extracts a network from a delimited table ">
+		<AD name="Column Name" id="columnName" type="String" description="The column to use for extracting the network." default=""></AD>
+		<AD name="Aggregation Function File" id="aggregationFunctionFile" type="String" description="The name of the file which contains optional aggregation functions." default="file:" required="false"/>
+		<AD name="Text Delimiter" id="delimiter" type="String" description="The character used to separate values in the column." default="|"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
+

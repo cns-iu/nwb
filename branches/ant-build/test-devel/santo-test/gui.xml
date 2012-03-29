@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="PageRank" id="edu.iu.informatics.analysis.pagerank.gui"
+		 description="PageRank Algorithm">
+		<AD name="Dampening Factor" id="dampeningFactor" 
+			type="Double" default="0.0010" min="0" max="1.0"/>
+		<AD name="Extra param" id="anotherParam" 
+			type="Integer" default="0.0010" min="0" max="1.0"/>
+	</OCD>
+	<Designate pid="edu.iu.informatics.analysis.pagerank">
+		<Object ocdref="edu.iu.informatics.analysis.pagerank.gui" />
+	</Designate>
+</metatype:MetaData>

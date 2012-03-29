@@ -1,0 +1,15 @@
+Functions,Names
+f1=x12,APC
+f2=~x1,Bcat
+f3=x8*x2*~x7,cmyc
+f4=x7+~x3,p27
+f5=x9,p21
+f6=x9,Bax
+f7=x13,SMAD
+f8=~x13,RAS
+f9=x14,p53
+f10=~x5*~x4,CycCDK
+f11=~x10,Rb
+f12=x12,OvrPop
+f13=x13,Hyp
+f14=x14,DNAdmg

@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: edu.iu.nwb.analysis.extractdirectednetfromtable
+Bundle-SymbolicName: edu.iu.nwb.analysis.extractdirectednetfromtable
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Import-Package: edu.iu.nwb.analysis.extractnetfromtable.aggregate,
+ edu.iu.nwb.analysis.extractnetfromtable.components,
+ org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.reference.service.metatype,
+ org.cishell.utilities,
+ org.cishell.utilities.mutateParameter,
+ org.cishell.utilities.mutateParameter.dropdown,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.component;version="1.0.0",
+ org.osgi.service.log;version="1.3.0",
+ org.osgi.service.metatype;version="1.1.0",
+ org.osgi.service.prefs;version="1.1.0",
+ prefuse.data,
+ prefuse.data.column
+X-AutoStart: true
+Service-Component: OSGI-INF/extractDirectedNetwork.xml, OSGI-INF/extractBipartiteNetwork.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.converter.psraster.postscript.psvalidator.PSValidator.component" immediate="false">
+	<implementation class="edu.iu.sci2.converter.psraster.postscript.psvalidator.PSValidatorFactory"/>
+	<properties entry="OSGI-INF/ps-validator/psvalidator.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

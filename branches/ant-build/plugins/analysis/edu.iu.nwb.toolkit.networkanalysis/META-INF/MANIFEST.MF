@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Networkanalysis Toolkit
+Bundle-SymbolicName: edu.iu.nwb.toolkit.networkanalysis
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Import-Package: org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.utilities,
+ org.osgi.framework;version="1.4.0",
+ org.osgi.service.log;version="1.3.0",
+ prefuse.data,
+ prefuse.data.column
+X-AutoStart: true
+Service-Component: OSGI-INF/toolkit.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

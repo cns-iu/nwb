@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component
+	name="edu.iu.sci2.visualization.bipartitenet.algorithm.BipartiteNetAlgorithm.component">
+   <implementation class="edu.iu.sci2.visualization.bipartitenet.algorithm.BipartiteNetAlgorithmFactory"/>
+   
+   <service>
+      <provide interface="org.cishell.framework.algorithm.AlgorithmFactory"/>
+   </service>
+   <properties entry="OSGI-INF/component.properties"/>
+   <reference interface="org.osgi.service.metatype.MetaTypeService" name="MTS"/>
+</component>

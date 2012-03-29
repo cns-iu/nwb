@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form style="Swing" ide="eclipse" builder="jigloo" version="2.7.2">
+<NonVisualComponents>
+		<Component class="java.lang.Object" name="object1">
+			<Constraints>
+				<LayoutConstraint/>
+			</Constraints>
+			<Properties>
+			</Properties>
+		</Component></NonVisualComponents>
+	<Component class="javax.swing.JDialog" name="GraphPathsDialog">
+		<Constraints>
+			<LayoutConstraint/>
+		</Constraints>
+		<Layout class="GridBag">
+			<Property name="columnWidths" type="IntegerArray">
+			<IntegerArray value="[ 1,1,1,1 ]"/>
+		</Property>
+			<Property name="rowHeights" type="IntegerArray">
+			<IntegerArray value="[ 1,1,1,1,1,1 ]"/>
+		</Property>
+			<Property name="columnWeights" type="DoubleArray">
+			<DoubleArray value="[ 0.1,0.1,0.1,0.1 ]"/>
+		</Property>
+			<Property name="rowWeights" type="DoubleArray">
+			<DoubleArray value="[ 0.1,0.1,0.1,0.1,0.1,0.1 ]"/>
+		</Property>
+			<Property name="columns" type="int" value="4"/>
+			<Property name="rows" type="int" value="6"/>
+		</Layout>
+		<Events>
+		</Events>
+		<Properties>
+			<Property name="title" type="String" value="Network Paths"/>
+			<Property name="size" type="Dimension">
+				<Dimension value="[305, 199]"/>
+			</Property>
+			<Property name="bounds" type="Rectangle">
+				<Rectangle value="[0, 0, 305, 199]"/>
+			</Property>
+		</Properties>
+		<SubComponents>
+			<Component class="javax.swing.JCheckBox" name="cbDiameter">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="0"/>
+						<Property name="gridwidth" type="int" value="2"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="17"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Diameter"/>
+					<Property name="bounds" type="Rectangle">
+						<Rectangle value="[6, 4, 77, 23]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JCheckBox" name="cbCharacteristicPathLength">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="1"/>
+						<Property name="gridwidth" type="int" value="2"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="17"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Characteristic Path Length"/>
+					<Property name="bounds" type="Rectangle">
+						<Rectangle value="[6, 37, 177, 23]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JCheckBox" name="cbNumPathsLengthK">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="2"/>
+						<Property name="gridwidth" type="int" value="2"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="17"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="enabled" type="boolean" value="false"/>
+					<Property name="text" type="String" value="Number of Paths of Length"/>
+					<Property name="toolTipText" type="String" value="Not yet implemented :)"/>
+					<Property name="bounds" type="Rectangle">
+						<Rectangle value="[6, 70, 176, 23]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JTextField" name="tfDiameter">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="3"/>
+						<Property name="gridy" type="int" value="0"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.6"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="editable" type="boolean" value="false"/>
+					<Property name="enabled" type="boolean" value="true"/>
+					<Property name="minimumSize" type="Dimension">
+						<Dimension value="[60, 20]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JTextField" name="tfCharacteristicPathLength">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="3"/>
+						<Property name="gridy" type="int" value="1"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.6"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="editable" type="boolean" value="false"/>
+					<Property name="enabled" type="boolean" value="true"/>
+					<Property name="minimumSize" type="Dimension">
+						<Dimension value="[60, 20]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JTextField" name="tfLength">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="2"/>
+						<Property name="gridy" type="int" value="2"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.2"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="2"/>
+					<Property name="minimumSize" type="Dimension">
+						<Dimension value="[40, 20]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JTextField" name="tfNumPathsOfLengthK">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="3"/>
+						<Property name="gridy" type="int" value="2"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.6"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="editable" type="boolean" value="false"/>
+					<Property name="enabled" type="boolean" value="true"/>
+					<Property name="minimumSize" type="Dimension">
+						<Dimension value="[60, 20]"/>
+					</Property>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnCompute">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="4"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="17"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnComputeActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Compute"/>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JCheckBox" name="cbSelectAll">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="3"/>
+						<Property name="gridwidth" type="int" value="1"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="17"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="cbSelectAllActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Select All"/>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnPrintToConsole">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="5"/>
+						<Property name="gridwidth" type="int" value="2"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="17"/>
+						<Property name="fill" type="int" value="0"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[5, 5, 5, 5]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnPrintToConsoleActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="enabled" type="boolean" value="true"/>
+					<Property name="text" type="String" value="Print To Console"/>
+				</Properties>
+			</Component>
+		</SubComponents>
+	</Component>
+</Form>

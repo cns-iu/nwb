@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory"/>
+	<properties entry="OSGI-INF/webalgorithm.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

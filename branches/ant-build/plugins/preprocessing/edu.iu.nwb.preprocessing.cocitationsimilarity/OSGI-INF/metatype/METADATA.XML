@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Create Co-Citation Similarity Network" id="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm.OCD"
+		 description="This algorithm extracts a co-citation similarity network from an existing network">
+		<!--  <AD name="Max Edges Per Node" id="maxEdges" type="Double" description="Sets the maximum number of top edges per node to keep. Set to zero to keep all edges." default="0" min="0"/> --> 
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm">
+		<Object ocdref="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

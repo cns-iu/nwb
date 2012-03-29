@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+
+<!--
+ Jython Database Specification API 2.0
+
+ $Id: test.xml,v 1.1 2005/10/05 20:19:30 eytanadar Exp $
+
+ Copyright (c) 2001 brian zimmer <bzimmer@ziclix.com>
+-->
+
+<tests>
+	<vendor name="postgresql"
+		datahandler="com.ziclix.python.sql.handler.PostgresqlDataHandler">
+		<test name="driver" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connect">
+				<argument name="url" value="jdbc:postgresql://localhost:5432/ziclix"/>
+				<argument name="usr" value="jython"/>
+				<argument name="pwd" value=""/>
+				<argument name="driver" value="org.postgresql.Driver"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase">
+				<!-- Returns any empty ResultSet every time. -->
+				<ignore name="testIndexInfo"/>
+			</testcase>
+			<testcase from="zxtest" import="BCPTestCase"/>
+			<testcase from="dbextstest" import="dbextsTestCase"/>
+		</test>
+		<!--
+		<test name="datasource" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connectx">
+				<argument name="datasource" value="org.postgresql.PostgresqlDataSource"/>
+				<keyword name="serverName" value="localhost"/>
+				<keyword name="databaseName" value="ziclix"/>
+				<keyword name="user" value="jython"/>
+				<keyword name="password" value=""/>
+				<keyword name="portNumber" value="5432" type="int"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase">
+				<ignore name="testIndexInfo"/>
+			</testcase>
+			<testcase from="zxtest" import="BCPTestCase"/>
+		</test>
+		-->
+		<table ref="texttable" name="c_texttable">
+			create table c_texttable (a int not null, primary key(a), b text not null)
+		</table>
+		<table ref="floattable" name="c_floattable">
+			create table c_floattable (a int, b numeric(5,2))
+		</table>
+		<table ref="datetable" name="c_datetable">
+			create table c_datetable (a int, b date)
+		</table>
+		<table ref="timetable" name="c_timetable">
+			create table c_timetable (a int, b time)
+		</table>
+		<table ref="timestamptable" name="c_timestamptable">
+			create table c_timestamptable (a int, b datetime)
+		</table>
+		<table ref="blobtable" name="b_blobtable">
+			create table b_blobtable (a int, b blob)
+		</table>
+		<table ref="pktable" name="b_pktable">
+			create table b_pktable (a int not null, b int, primary key(a))
+		</table>
+		<table ref="autoincrementtable" name="aitable">
+			create table aitable (a serial not null, b int, primary key(a))
+		</table>
+		<table ref="post_autoincrementtable" name="aitable_a_seq">
+			drop sequence aitable_a_seq
+		</table>
+	</vendor>
+	<vendor name="mysql"
+		datahandler="com.ziclix.python.sql.handler.MySQLDataHandler">
+		<test name="driver" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connect">
+				<argument name="url" value="jdbc:mysql://localhost/ziclix"/>
+				<argument name="usr" value=""/>
+				<argument name="pwd" value=""/>
+				<argument name="driver" value="org.gjt.mm.mysql.Driver"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase"/>
+			<testcase from="zxtest" import="BCPTestCase"/>
+			<testcase from="dbextstest" import="dbextsTestCase"/>
+		</test>
+		<test name="datasource" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connectx">
+				<argument name="datasource" value="org.gjt.mm.mysql.MysqlDataSource"/>
+				<keyword name="serverName" value="localhost"/>
+				<keyword name="databaseName" value="ziclix"/>
+				<keyword name="user" value=""/>
+				<keyword name="password" value=""/>
+				<keyword name="port" value="3306" type="int"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase"/>
+			<testcase from="zxtest" import="BCPTestCase"/>
+		</test>
+		<!--
+		<test name="lookup" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="lookup">
+				<argument name="jndiName" value="/jdbc/mysqldb"/>
+				<keyword name="INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase"/>
+			<testcase from="zxtest" import="BCPTestCase"/>
+		</test>
+		-->
+		<table ref="texttable" name="c_texttable">
+			create table c_texttable (a int not null auto_increment, primary key(a), b text not null)
+		</table>
+		<table ref="floattable" name="c_floattable">
+			create table c_floattable (a int, b float(5,2))
+		</table>
+		<table ref="datetable" name="c_datetable">
+			create table c_datetable (a int, b date)
+		</table>
+		<table ref="timetable" name="c_timetable">
+			create table c_timetable (a int, b time)
+		</table>
+		<table ref="timestamptable" name="c_timestamptable">
+			create table c_timestamptable (a int, b datetime)
+		</table>
+		<table ref="blobtable" name="b_blobtable">
+			create table b_blobtable (a int, b longblob)
+		</table>
+		<table ref="pktable" name="b_pktable">
+			create table b_pktable (a int not null, b int, primary key(a))
+		</table>
+		<table ref="autoincrementtable" name="aitable">
+			create table aitable (a int not null auto_increment, primary key(a), b int)
+		</table>
+	</vendor>
+	<vendor name="oracle"
+		datahandler="com.ziclix.python.sql.handler.OracleDataHandler">
+		<test name="driver" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connect">
+				<argument name="url" value="jdbc:oracle:thin:@localhost:1521:ziclix"/>
+				<argument name="usr" value="jython"/>
+				<argument name="pwd" value="jython"/>
+				<argument name="driver" value="oracle.jdbc.driver.OracleDriver"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase">
+				<ignore name="testRowid"/>
+			</testcase>
+			<testcase from="zxtest" import="BCPTestCase"/>
+			<testcase from="dbextstest" import="dbextsTestCase"/>
+			<testcase from="sptest" import="OracleSPTest"/>
+		</test>
+		<!--
+		<test name="datasource" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connectx">
+				<argument name="datasource" value="oracle.jdbc.pool.OracleConnectionPoolDataSource"/>
+				<keyword name="URL" value="jdbc:oracle:thin:@localhost:1521:ziclix"/>
+				<keyword name="user" value="jython"/>
+				<keyword name="password" value="jython"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase">
+				<ignore name="testRowid"/>
+			</testcase>
+			<testcase from="zxtest" import="BCPTestCase"/>
+			<testcase from="sptest" import="OracleSPTest"/>
+		</test>
+		-->
+		<table ref="texttable" name="c_texttable">
+			create table c_texttable (a int, b varchar2(4000) not null)
+		</table>
+		<table ref="floattable" name="c_floattable">
+			create table c_floattable (a int, b number(5,2))
+		</table>
+		<table ref="datetable" name="c_datetable">
+			create table c_datetable (a int, b date)
+		</table>
+		<table ref="timetable" name="c_timetable">
+			create table c_timetable (a int, b date)
+		</table>
+		<table ref="timestamptable" name="c_timestamptable">
+			create table c_timestamptable (a int, b date)
+		</table>
+		<table ref="blobtable" name="b_blobtable">
+			create table b_blobtable (a int, b blob)
+		</table>
+		<table ref="pktable" name="b_pktable">
+			create table b_pktable (a int not null, b int, primary key(a))
+		</table>
+		<table ref="clobtable" name="b_clobtable">
+			create table b_clobtable (a int, b clob)
+		</table>
+	</vendor>
+	<vendor name="microsoft"
+		datahandler="com.ziclix.python.sql.handler.SQLServerDataHandler">
+		<test name="opta driver" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connect">
+				<argument name="url" value="jdbc:inetdae7:localhost:1433?database=ziclix"/>
+				<argument name="usr" value="jython"/>
+				<argument name="pwd" value="jython"/>
+				<argument name="driver" value="com.inet.tds.TdsDriver"/>
+			</factory>
+			<!--
+			<testcase from="zxtest" import="zxAPITestCase">
+				<ignore name="testRowid"/>
+			</testcase>
+			<testcase from="dbextstest" import="dbextsTestCase">
+				<ignore name="testBulkcopy"/>
+				<ignore name="testBulkcopyWithDynamicColumns"/>
+			</testcase>
+			-->
+			<testcase from="sptest" import="SQLServerSPTest"/>
+		</test>
+		<test name="microsoft driver" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connect">
+				<argument name="url" value="jdbc:microsoft:sqlserver://localhost:1433"/>
+				<argument name="usr" value="jython"/>
+				<argument name="pwd" value="jython"/>
+				<argument name="driver" value="com.microsoft.jdbc.sqlserver.SQLServerDriver"/>
+			</factory>
+			<!--
+			<testcase from="zxtest" import="zxAPITestCase">
+				<ignore name="testRowid"/>
+			</testcase>
+			<testcase from="zxtest" import="BCPTestCase"/>
+			<testcase from="dbextstest" import="dbextsTestCase"/>
+			<testcase from="sptest" import="SQLServerSPTest"/>
+			-->
+		</test>
+		<table ref="texttable" name="c_texttable">
+			create table c_texttable (a int not null, primary key(a), b text not null)
+		</table>
+		<table ref="floattable" name="c_floattable">
+			create table c_floattable (a int, b numeric(5,2))
+		</table>
+		<table ref="datetable" name="c_datetable">
+			create table c_datetable (a int, b datetime)
+		</table>
+		<table ref="timetable" name="c_timetable">
+			create table c_timetable (a int, b datetime)
+		</table>
+		<table ref="timestamptable" name="c_timestamptable">
+			create table c_timestamptable (a int, b datetime)
+		</table>
+		<table ref="blobtable" name="b_blobtable">
+			create table b_blobtable (a int, b blob)
+		</table>
+		<table ref="pktable" name="b_pktable">
+			create table b_pktable (a int not null, b int, primary key(a))
+		</table>
+	</vendor>
+	<!--
+	<vendor name="cloudscape"
+		datahandler="com.ziclix.python.sql.JDBC20DataHandler">
+		<test name="driver" os="java">
+			<factory class="com.ziclix.python.sql.zxJDBC" method="connect">
+				<argument name="url" value="jdbc:cloudscape:ziclix;create=true"/>
+				<argument name="usr" value=""/>
+				<argument name="pwd" value=""/>
+				<argument name="driver" value="COM.cloudscape.core.JDBCDriver"/>
+			</factory>
+			<testcase from="zxtest" import="zxAPITestCase">
+				<ignore name="testRowid"/>
+			</testcase>
+			<testcase from="zxtest" import="BCPTestCase"/>
+			<testcase from="dbextstest" import="dbextsTestCase"/>
+		</test>
+		<table ref="texttable" name="c_texttable">
+			create table c_texttable (a int not null, primary key(a), b long varchar not null)
+		</table>
+		<table ref="floattable" name="c_floattable">
+			create table c_floattable (a int, b numeric(5,2))
+		</table>
+		<table ref="datetable" name="c_datetable">
+			create table c_datetable (a int, b date)
+		</table>
+		<table ref="timetable" name="c_timetable">
+			create table c_timetable (a int, b time)
+		</table>
+		<table ref="timestamptable" name="c_timestamptable">
+			create table c_timestamptable (a int, b timestamp)
+		</table>
+		<table ref="blobtable" name="b_blobtable">
+			create table b_blobtable (a int, b blob)
+		</table>
+		<table ref="pktable" name="b_pktable">
+			create table b_pktable (a int not null, b int, primary key(a))
+		</table>
+	</vendor>
+	-->
+</tests>

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Javabib Original
+Bundle-SymbolicName: javabib.orig
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Export-Package: bibtex,
+ bibtex.dom,
+ bibtex.expansions,
+ bibtex.parser

@@ -1,0 +1,132 @@
+*Vertices 50
+1 "MOLECULAR SEQUENCE DATA" 0.1 0.1 0.1 x_fact 7 y_fact 7 lc Orange ic Orange bc Mahogany
+2 "receptors" 0.2 0.2 0.2 x_fact 2 y_fact 2 ic Orange bc Orange
+3 "cells" 0.3 0.3 0.3 x_fact 2 y_fact 2 ic Mahogany bc Mahogany
+4 "amino acid sequence" 0.4 0.4 0.4 x_fact 1 y_fact 1 ic Orange bc Orange
+5 "base sequence" 0.5 0.5 0.5 x_fact 1 y_fact 1 ic Orange bc Mahogany
+6 "rats" 0.6 0.6 0.6 x_fact 1 y_fact 1 ic Orange bc Orange
+7 "GENES" 0.7 0.7 0.7 x_fact 2 y_fact 2 ic SpringGreen bc Goldenrod
+8 "EXPRESSION" 0.8 0.8 0.8 x_fact 3 y_fact 3 ic Orange bc Orange
+9 "RNA" 0.9 0.9 0.9 x_fact 3 y_fact 3 ic Orange bc Orange
+10 "CELL LINE" 1 1 1 x_fact 2 y_fact 2 ic Orange bc Mahogany
+11 "cultured" 1.1 1.1 1.1 x_fact 1 y_fact 1 ic Mahogany bc Mahogany
+12 "CLONING" 1.2 1.2 1.2 x_fact 3 y_fact 3 ic Orange bc Orange
+13 "protein" 1.3 1.3 1.3 x_fact 1 y_fact 1 ic Black bc Black
+14 "comparative study" 1.4 1.4 1.4 x_fact 1 y_fact 1 ic SpringGreen bc Mahogany
+15 "receptor" 1.5 1.5 1.5 x_fact 3 y_fact 3 ic Orange bc Orange
+16 "kinetics" 1.6 1.6 1.6 x_fact 1 y_fact 1 ic SpringGreen bc Orange
+17 "transfection" 1.7 1.7 1.7 x_fact 1 y_fact 1 ic Mahogany bc Orange
+18 "antigens" 1.8 1.8 1.8 x_fact 1 y_fact 1 ic Orange bc Orange
+19 "gene expression regulation" 1.9 1.9 1.9 x_fact 1 y_fact 1 ic Black bc Black
+20 "activation" 2 2 2 x_fact 2 y_fact 2 ic Mahogany bc Mahogany
+21 "sequence homology" 2.1 2.1 2.1 x_fact 1 y_fact 1 ic Goldenrod bc Mahogany
+22 "mutation" 2.2 2.2 2.2 x_fact 1 y_fact 1 ic Goldenrod bc Black
+23 "models" 2.3 2.3 2.3 x_fact 1 y_fact 1 ic Black bc Black
+24 "structural" 2.4 2.4 2.4 x_fact 3 y_fact 3 ic SpringGreen bc Goldenrod
+25 "binding" 2.5 2.5 2.5 x_fact 1 y_fact 1 ic Orange bc Orange
+26 "signal transduction" 2.6 2.6 2.6 x_fact 3 y_fact 3 ic Mahogany bc Mahogany
+27 "antibodies" 2.7 2.7 2.7 x_fact 1 y_fact 1 ic SpringGreen bc Orange
+28 "tumor cells" 2.8 2.8 2.8 x_fact 1 y_fact 1 ic Black bc Orange
+29 "messenger/genetics" 2.9 2.9 2.9 x_fact 3 y_fact 3 ic Orange bc Orange
+30 "gene expression" 3 3 3 x_fact 6 y_fact 6 ic Orange bc Orange
+31 "polymerase chain reaction" 3.1 3.1 3.1 x_fact 5 y_fact 5 ic Orange bc Orange
+32 "apoptosis" 3.2 3.2 3.2 x_fact 5 y_fact 5 ic Mahogany bc Mahogany
+33 "nucleic acid" 3.3 3.3 3.3 x_fact 5 y_fact 5 ic Goldenrod bc Goldenrod
+34 "sequence" 3.4 3.4 3.4 x_fact 1 y_fact 1 ic Orange bc Orange
+35 "amino acid" 3.5 3.5 3.5 x_fact 4 y_fact 4 ic Orange bc Mahogany
+36 "in vitro" 3.6 3.6 3.6 x_fact 5 y_fact 5 ic Orange bc Orange
+37 "molecular weight" 3.7 3.7 3.7 x_fact 4 y_fact 4 ic SpringGreen bc SpringGreen
+38 "viral" 3.8 3.8 3.8 x_fact 2 y_fact 2 ic SpringGreen bc SpringGreen
+39 "blotting" 3.9 3.9 3.9 x_fact 5 y_fact 5 ic Goldenrod bc Orange
+40 "protein binding" 4 4 4 x_fact 1 y_fact 1 ic Mahogany bc Mahogany
+41 "inbred strains" 4.1 4.1 4.1 x_fact 1 y_fact 1 ic SpringGreen bc Orange
+42 "growth-factor" 4.2 4.2 4.2 x_fact 1 y_fact 1 ic SpringGreen bc Goldenrod
+43 "growth" 4.3 4.3 4.3 x_fact 1 y_fact 1 ic Black bc Black
+44 "mutagenesis" 4.4 4.4 4.4 x_fact 2 y_fact 2 ic Orange bc Orange
+45 "nucleic acid hybridization" 4.5 4.5 4.5 x_fact 4 y_fact 4 ic SpringGreen bc Goldenrod
+46 "plasmids" 4.6 4.6 4.6 x_fact 2 y_fact 2 ic SpringGreen bc Goldenrod
+47 "induction" 4.7 4.7 4.7 x_fact 1 y_fact 1 ic Mahogany bc Orange
+48 "antigen" 4.8 4.8 4.8 x_fact 2 y_fact 2 ic Orange bc Orange
+49 "inhibition" 4.9 4.9 4.9 x_fact 1 y_fact 1 ic Orange bc Orange
+50 "restriction mapping" 5 5 5 x_fact 5 y_fact 5 ic Goldenrod bc Orange
+*Edges
+1 6 0.42 w 4.2
+1 14 0.26 w 2.6
+1 22 0.75 w 7.5
+1 32 0.81 w 8.1
+1 35 0.02 w 0.2
+2 16 0.41 w 4.1
+3 9 0.37 w 3.7
+3 12 0.38 w 3.8
+3 14 0.02 w 0.2
+3 29 0.79 w 7.9
+3 37 0.90 w 9
+3 43 0.84 w 8.4
+3 48 0.89 w 8.9
+3 50 0.91 w 9.1
+4 22 0.75 w 7.5
+4 35 0.19 w 1.9
+4 36 0.19 w 1.9
+5 35 0.20 w 2
+7 14 0.41 w 4.1
+7 45 0.86 w 8.6
+8 10 0.56 w 5.6
+8 14 0.21 w 2.1
+8 20 0.65 w 6.5
+8 31 0.43 w 4.3
+11 14 0.60 w 6
+11 29 0.79 w 7.9
+13 16 0.45 w 4.5
+13 17 0.73 w 7.3
+13 18 0.73 w 7.3
+13 21 0.63 w 6.3
+13 23 0.76 w 7.6
+13 24 0.81 w 8.1
+13 26 0.29 w 2.9
+13 27 0.79 w 7.9
+13 28 0.84 w 8.4
+13 35 0.00 w 0
+13 37 0.90 w 9
+13 38 0.87 w 8.7
+13 39 0.83 w 8.3
+13 40 0.89 w 8.9
+13 41 0.85 w 8.5
+13 44 0.65 w 6.5
+13 47 0.92 w 9.2
+13 48 0.89 w 8.9
+13 49 0.74 w 7.4
+13 50 0.91 w 9.1
+15 35 0.68 w 6.8
+18 49 0.71 w 7.1
+19 31 0.65 w 6.5
+24 35 0.81 w 8.1
+24 46 0.97 w 9.7
+24 47 0.98 w 9.8
+25 35 0.58 w 5.8
+25 41 0.85 w 8.5
+30 35 0.70 w 7
+33 35 0.71 w 7.1
+33 46 0.87 w 8.7
+34 36 0.18 w 1.8
+37 40 0.99 w 9.9
+37 46 1.00 w 10
+37 47 1.00 w 10
+37 48 1.00 w 10
+37 50 1.00 w 10
+38 46 0.99 w 9.9
+38 47 0.98 w 9.8
+38 50 0.99 w 9.9
+40 46 1.00 w 10
+40 47 1.00 w 10
+40 50 1.00 w 10
+42 44 0.77 w 7.7
+43 47 0.99 w 9.9
+43 48 0.97 w 9.7
+43 50 0.96 w 9.6
+45 47 1.00 w 10
+46 47 1.00 w 10
+46 48 1.00 w 10
+46 50 1.00 w 10
+47 48 1.00 w 10
+47 50 1.00 w 10
+48 50 0.99 w 9.9

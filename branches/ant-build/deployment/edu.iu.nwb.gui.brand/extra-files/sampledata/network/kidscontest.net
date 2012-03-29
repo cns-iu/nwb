@@ -1,0 +1,174 @@
+*Vertices 84
+1 "4" bc Black
+2 "5" bc Black
+3 "6" bc Black
+4 "7" bc Black
+5 "8" bc Black
+6 "9" bc Black
+7 "10" bc Black
+8 "11" bc Black
+9 "12" bc Black
+10 "13" bc Black
+11 "14" bc Black
+12 "15" bc Black
+13 "Ada Bryon Lovelace" bc Red
+14 "Albert Einstein" bc Red
+15 "Alexander Graham Bell" bc Red
+16 "Antivenom/Penicillin" bc Blue
+17 "Archimedes" bc Red
+18 "Ballista" bc Blue
+19 "Benjamin Franklin" bc Red
+20 "Bill Gates" bc Red
+21 "Bill Nye the Science Guy" bc Red
+22 "Biology" bc Blue
+23 "Charles Darwin" bc Red
+24 "Chemistry" bc Blue
+25 "Circuit Boards" bc Blue
+26 "Circuits" bc Blue
+27 "Darkling Beetle Lifecycle" bc Blue
+28 "Dian Fossey" bc Red
+29 "Dinosaurs" bc Blue
+30 "Discoveries" bc Blue
+31 "Electricity" bc Blue
+32 "Electromagnet" bc Blue
+33 "Elizabeth Blackwell" bc Red
+34 "Galileo Galilei" bc Red
+35 "George Washington Carver" bc Red
+36 "George Westinghouse" bc Red
+37 "Gregor Mendel" bc Red
+38 "Growing Mold" bc Blue
+39 "Gustav Ludwig Hertz" bc Red
+40 "Hans Christian Oersted" bc Red
+41 "Henry Ford" bc Red
+42 "Human Genome Project" bc Blue
+43 "Isaac Newton" bc Red
+44 "Jacques Cousteau" bc Red
+45 "James Watt" bc Red
+46 "Jane Goodall" bc Red
+47 "John Dalton" bc Red
+48 "John Glenn" bc Red
+49 "John Moses Browning" bc Red
+50 "Jonas Salk" bc Red
+51 "Joseph Priestly" bc Red
+52 "Jurassic Park" bc Blue
+53 "King Se-Jong" bc Red
+54 "Lifecycle of a Dandelion" bc Blue
+55 "Light Bulb" bc Blue
+56 "Light Refraction" bc Blue
+57 "Louis Pasteur" bc Red
+58 "Magnets" bc Blue
+59 "Mammals" bc Blue
+60 "Marie Curie" bc Red
+61 "Neil Armstrong" bc Red
+62 "Nikola Tesla" bc Red
+63 "Penicillin Molecule" bc Blue
+64 "Penny Meniscus" bc Blue
+65 "Plant Photosynthesis" bc Blue
+66 "Plants" bc Blue
+67 "Pythagorean Theorem" bc Blue
+68 "Rain Forest" bc Blue
+69 "Samuel Morse" bc Red
+70 "Science Fun" bc Blue
+71 "Science Underwater" bc Blue
+72 "Static Electricity" bc Blue
+73 "Steve Irwin" bc Red
+74 "Straw Through Potato" bc Blue
+75 "Temperature Scales" bc Blue
+76 "Tetsuya Theodore Fujita" bc Red
+77 "The Newtonian Telescope" bc Blue
+78 "Thomas Edison" bc Red
+79 "Volcano" bc Blue
+80 "Whale/Elephant Talk" bc Blue
+81 "What is Science?" bc Blue
+82 "Why Work Gloves & Shovel?" bc Blue
+83 "Wilson Bentley" bc Red
+84 "Worm Electrocution" bc Blue
+*Edges 88
+1 52 1
+1 82 1
+2 29 1
+3 14 1
+3 24 1
+3 43 1
+3 53 1
+3 66 2
+4 43 1
+4 58 3
+4 59 1
+4 66 1
+4 72 1
+4 80 1
+4 81 1
+5 19 1
+5 27 1
+5 31 1
+5 46 1
+5 54 1
+5 56 1
+5 57 1
+5 68 1
+5 75 1
+6 14 1
+6 22 1
+6 30 1
+6 78 1
+6 79 1
+7 15 1
+7 16 1
+7 25 1
+7 26 1
+7 64 1
+7 65 1
+7 69 1
+7 70 1
+7 71 1
+7 84 1
+8 14 1
+8 55 1
+8 78 1
+8 81 2
+9 41 1
+10 18 1
+10 32 1
+10 36 1
+10 37 1
+10 46 1
+10 60 1
+10 67 1
+10 83 1
+11 13 1
+11 14 2
+11 15 3
+11 20 4
+11 21 1
+11 23 1
+11 28 1
+11 33 3
+11 34 2
+11 35 2
+11 37 2
+11 39 1
+11 40 1
+11 42 1
+11 44 3
+11 45 1
+11 46 4
+11 47 1
+11 48 1
+11 49 1
+11 50 1
+11 51 1
+11 61 3
+11 62 1
+11 63 1
+11 73 8
+11 74 1
+11 76 1
+11 77 1
+11 78 6
+11 79 1
+12 14 1
+12 17 1
+12 35 1
+12 38 1
+12 61 1

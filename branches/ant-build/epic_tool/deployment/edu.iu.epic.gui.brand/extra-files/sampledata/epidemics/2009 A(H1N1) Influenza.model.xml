@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<compartmentalModel xmlns="http://www.gleamviz.org/xmlns/gleamviz_v2">
+    <compartments>
+        <compartment id="Susceptible" isSecondary="false" x="146" y="38"/>
+        <compartment id="Latent" isSecondary="false" x="146" y="147"/>
+        <compartment id="Infectious_SympT" isSecondary="true" x="146" y="247"/>
+        <compartment id="Recovered" isSecondary="false" x="146" y="340"/>
+        <compartment id="Infectious_Asymp" isSecondary="false" x="60" y="242"/>
+        <compartment id="Infectious_SympNT" isSecondary="false" x="222" y="245"/>
+    </compartments>
+    <ratioTransitions>
+        <ratioTransition source="Latent" target="Infectious_SympT" ratio="epsilon*pt*upa"/>
+        <ratioTransition source="Infectious_SympT" target="Recovered" ratio="mu"/>
+        <ratioTransition source="Latent" target="Infectious_Asymp" ratio="epsilon*pa"/>
+        <ratioTransition source="Latent" target="Infectious_SympNT" ratio="epsilon*upt*upa"/>
+        <ratioTransition source="Infectious_Asymp" target="Recovered" ratio="mu"/>
+        <ratioTransition source="Infectious_SympNT" target="Recovered" ratio="mu"/>
+    </ratioTransitions>
+    <infections>
+        <infection source="Susceptible" target="Latent">
+            <infector source="Infectious_SympT" ratio="beta"/>
+        </infection>
+        <infection source="Susceptible" target="Latent">
+            <infector source="Infectious_Asymp" ratio="rbeta*beta"/>
+        </infection>
+        <infection source="Susceptible" target="Latent">
+            <infector source="Infectious_SympNT" ratio="beta"/>
+        </infection>
+    </infections>
+    <variables>
+        <variable name="beta" value="0.8383"/>
+        <variable name="epsilon" value="1/1.1"/>
+        <variable name="mu" value="1/2.5"/>
+        <variable name="pa" value="0.33"/>
+        <variable name="pt" value="0.5"/>
+        <variable name="rbeta" value="0.5"/>
+        <variable name="upa" value="1-pa"/>
+        <variable name="upt" value="1-pt"/>
+    </variables>
+</compartmentalModel>

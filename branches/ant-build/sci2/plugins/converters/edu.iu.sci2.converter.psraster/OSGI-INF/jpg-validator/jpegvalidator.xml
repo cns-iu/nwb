@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.converter.psraster.jpg.jpgvalidator.JPGValidator.component" immediate="false">
+	<implementation class="edu.iu.sci2.converter.psraster.jpg.jpgvalidator.JPGValidatorFactory"/>
+	<properties entry="OSGI-INF/jpg-validator/jpegvalidator.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

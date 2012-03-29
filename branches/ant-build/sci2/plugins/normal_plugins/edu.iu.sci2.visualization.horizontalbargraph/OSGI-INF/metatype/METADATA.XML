@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Horizontal Bar Graph" id="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD"
+		 description="Takes tabular data and generates PostScript for a horizontal bar graph.">
+		 <AD name="Label" id="label" type="String" description="The field used to label the bar lines" default="TITLE"/>
+		 <AD name="Start Date" id="start_date" type="String" description="The field used for the starting date" default="START_DATE"/>
+		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
+		 <AD name="Size Bars By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
+		 <AD
+		 	name="Minimum Amount Per Day For Bar Scaling"
+		 	id="minimum_amount_per_day_for_scaling"
+		 	type="Double"
+		 	description="Bars that have have an amount per day of at least this amount will be scaled.  Bars that have an amount per day less than this amount will be displayed differently."
+		 	default="500.0"
+		 	min="1.0"
+		 	/>
+		 <AD name="Bar Scaling" id="bar_scaling" type="String" description="How to scale the bars" default="Mutate"/>
+		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
+		 <AD name="Year Label Font Size" id="year_label_font_size" type="Double" description="The font size to use for year labels.  NOTE: If this is too big, year labels may overlap." default="20.0" min="1.0"/>
+		 <AD name="Bar Label Font Size" id="bar_label_font_size" type="Double" description="The font size to use for bar labels.  NOTE: Extremely large values here may result in poor results." default="20.0" min="1.0"/>
+		 <AD name="Colorized by" id="colorized_by" type="String" description="The field used to color the bar lines" default=""/>
+		 <AD name="Scale to Fit an 8.5x11 page?" id="scale_to_fit_page" type="Boolean" description="When this is checked, the resulting visualization will be scaled to fit a page." default="true"/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm">
+		<Object ocdref="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

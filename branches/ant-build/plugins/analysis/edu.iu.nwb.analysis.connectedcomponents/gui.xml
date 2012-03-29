@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Connected Components" id="edu.iu.nwb.analysis.connectedcomponents.gui"
+		 description="Connected components">
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.connectedcomponents">
+		<Object ocdref="edu.iu.nwb.analysis.connectedcomponents.gui" />
+	</Designate>
+</metatype:MetaData>

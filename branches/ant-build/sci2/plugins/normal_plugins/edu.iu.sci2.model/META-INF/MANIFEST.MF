@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sci2 Model Classes
+Bundle-SymbolicName: edu.iu.sci2.model
+Bundle-Version: 0.0.1
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: edu.iu.sci2.model.geocode

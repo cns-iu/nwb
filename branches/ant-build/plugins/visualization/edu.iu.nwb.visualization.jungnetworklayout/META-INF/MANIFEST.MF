@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jung Network Layout Plug-in
+Bundle-SymbolicName: edu.iu.nwb.visualization.jungnetworklayout
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Service-Component: OSGI-INF/JUNGSpringLayout.xml, OSGI-INF/JUNGCircleLayout.xml, OSGI-INF/JUNGFRLayout.xml, OSGI-INF/JUNGKKLayout.xml
+X-AutoStart: true
+Import-Package: edu.uci.ics.jung.graph,
+ edu.uci.ics.jung.graph.decorators,
+ edu.uci.ics.jung.graph.event,
+ edu.uci.ics.jung.graph.filters,
+ edu.uci.ics.jung.graph.filters.impl,
+ edu.uci.ics.jung.graph.impl,
+ edu.uci.ics.jung.graph.predicates,
+ edu.uci.ics.jung.utils,
+ edu.uci.ics.jung.visualization,
+ edu.uci.ics.jung.visualization.contrib,
+ edu.uci.ics.jung.visualization.control,
+ org.cishell.framework,
+ org.cishell.framework.algorithm,
+ org.cishell.framework.data,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.component;version="1.0.0",
+ org.osgi.service.log;version="1.3.0"

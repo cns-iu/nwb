@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Betweenness Centrality" id="edu.iu.iv.clustering.betweennesscentrality.BetweennessCentralityAlgorithm.OCD"
+		 description="Edge Betweenness Clustering Algorithm">
+		<AD name="Threshold" description="Enter threshold, If normalizing, 0.0 &lt;= threshold &lt;= 1.0  If not normalizing , threshold &gt; 0" min="0" default="1.0" id="threshold" type="Double" />
+		<AD name="Normalize" description="Check if you wish to normalize" id="normalize" type="Boolean"  default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.iv.clustering.betweennesscentrality.BetweennessCentralityAlgorithm">
+		<Object ocdref="edu.iu.iv.clustering.betweennesscentrality.BetweennessCentralityAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

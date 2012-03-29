@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.converter.plot_to_grace.PlotToGraceFileConverterAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.converter.plot_to_grace.PlotToGraceFileConverterAlgorithmFactory"/>
+	<properties entry="OSGI-INF/plot-to-grace-converter/plot-to-grace-converter.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

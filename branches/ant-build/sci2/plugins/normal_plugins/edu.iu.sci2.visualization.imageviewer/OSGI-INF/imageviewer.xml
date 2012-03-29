@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.visualization.imageviewer.ImageViewerAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.imageviewer.ImageViewerFactory"/>
+	<properties entry="OSGI-INF/imageviewer.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

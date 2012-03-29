@@ -1,0 +1,12 @@
+<compartmentalModel date="Tue Nov 10 21:13:13 2009 UTC" xmlns="http://www.gleamviz/xmlns/gleamviz_v1">
+  <compartments>
+    <compartment id="S" x="96" y="59"/>
+    <compartment id="It" x="35" y="278.5"/>
+    <compartment id="Ia" x="486" y="184"/>
+    <compartment id="L" x="235.5" y="389"/>
+    <compartment id="R" x="626" y="98"/>
+  </compartments>
+  <ratioTransitions>
+    <ratioTransition source="L" target="It" ratio="pa1*epsilon" isSecondary="true"/>
+	<ratioTransition source="L" target="Ia" ratio="pa*epsilon" isSecondary="false"/>
+	<ratioTransition source="It" target="R" ratio="miu" isSecondary="false"/>

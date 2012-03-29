@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.preprocessing.zip2district.ZipToDistrictAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.preprocessing.zip2district.ZipToDistrictAlgorithmFactory"/>
+	<properties entry="OSGI-INF/zip2districtalgorithm.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

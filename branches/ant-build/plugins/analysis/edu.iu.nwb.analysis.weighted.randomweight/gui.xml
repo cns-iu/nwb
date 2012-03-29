@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Randomize Weights" id="edu.iu.nwb.analysis.weighted.randomweight.gui"
+		 description="Redistribution of weights while keeping topology invariant">
+		<AD name="Factor of pair-selecting" id="Shuffling" 
+			type="Double" default="1" min="0" max="1"
+                        description="The degree to which the weights are going to be exchanged; must be greater than 0 for any effect"/>
+        <AD name="Seed of random number generator" id="Seed" 
+			type="Integer" default="1" min="1"
+                        description="Seed of the random number generator; must be at least 1"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.weighted.randomweight">
+		<Object ocdref="edu.iu.nwb.analysis.weighted.randomweight.gui" />
+	</Designate>
+</metatype:MetaData>

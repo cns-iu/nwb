@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form style="Swing" ide="eclipse" builder="jigloo" version="2.7.2">
+<NonVisualComponents>
+		<Component class="java.lang.Object" name="object1">
+			<Constraints>
+				<LayoutConstraint/>
+			</Constraints>
+			<Properties>
+			</Properties>
+		</Component></NonVisualComponents>
+	<Component class="javax.swing.JDialog" name="GraphPruningDialog">
+		<Constraints>
+			<LayoutConstraint/>
+		</Constraints>
+		<Layout class="Border">
+			<Property name="hgap" type="int" value="0"/>
+			<Property name="vgap" type="int" value="0"/>
+		</Layout>
+		<Events>
+		</Events>
+		<Properties>
+			<Property name="title" type="String" value="Thresholds"/>
+			<Property name="size" type="Dimension">
+				<Dimension value="[309, 240]"/>
+			</Property>
+			<Property name="bounds" type="Rectangle">
+				<Rectangle value="[0, 0, 309, 240]"/>
+			</Property>
+		</Properties>
+		<SubComponents>
+			<Component class="javax.swing.JTabbedPane" name="containerTabbedPane">
+				<Constraints>
+					<Constraint direction="Center"/>
+					<LayoutConstraint>
+						<Property name="direction" type="String" value="Center"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+				</Events>
+				<Properties>
+					<Property name="preferredSize" type="Dimension">
+						<Dimension value="[309, 265]"/>
+					</Property>
+					<Property name="bounds" type="Rectangle">
+						<Rectangle value="[0, 0, 309, 240]"/>
+					</Property>
+				</Properties>
+				<SubComponents>
+					<Component class="javax.swing.JPanel" name="tbDirectedGraph">
+						<Constraints>
+							<Constraint tabTitle="Directed Graph"/>
+							<LayoutConstraint/>
+						</Constraints>
+						<Layout class="GridBag">
+							<Property name="columnWidths" type="IntegerArray">
+							<IntegerArray value="[ 1 ]"/>
+						</Property>
+							<Property name="rowHeights" type="IntegerArray">
+							<IntegerArray value="[ 1,1,1 ]"/>
+						</Property>
+							<Property name="columnWeights" type="DoubleArray">
+							<DoubleArray value="[ 0.1 ]"/>
+						</Property>
+							<Property name="rowWeights" type="DoubleArray">
+							<DoubleArray value="[ 0.1,0.1,0.1 ]"/>
+						</Property>
+							<Property name="columns" type="int" value="1"/>
+							<Property name="rows" type="int" value="3"/>
+						</Layout>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="preferredSize" type="Dimension">
+								<Dimension value="[304, 242]"/>
+							</Property>
+							<Property name="bounds" type="Rectangle">
+								<Rectangle value="[2, 25, 304, 212]"/>
+							</Property>
+						</Properties>
+						<SubComponents>
+							<Component class="javax.swing.JButton" name="btnFilterDirectedGraph">
+								<Constraints>
+									<Constraint class="java.awt.GridBagConstraints"/>
+									<LayoutConstraint class="java.awt.GridBagConstraints">
+										<Property name="gridx" type="int" value="0"/>
+										<Property name="gridy" type="int" value="4"/>
+										<Property name="gridwidth" type="int" value="1"/>
+										<Property name="gridheight" type="int" value="1"/>
+										<Property name="weightx" type="double" value="0.0"/>
+										<Property name="weighty" type="double" value="0.0"/>
+										<Property name="anchor" type="int" value="17"/>
+										<Property name="fill" type="int" value="0"/>
+										<Property name="insets" type="Insets">
+										<Insets value="[0, 5, 0, 5]"/>
+									</Property>
+										<Property name="ipadx" type="int" value="0"/>
+										<Property name="ipady" type="int" value="0"/>
+									</LayoutConstraint>
+								</Constraints>
+								<Events>
+									<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnFilterDirectedGraphActionPerformed"/>
+								</Events>
+								<Properties>
+									<Property name="text" type="String" value="Filter Graph"/>
+								</Properties>
+							</Component>
+							<Component class="javax.swing.JPanel" name="dirVertexDegreePanel">
+								<Constraints>
+									<Constraint class="java.awt.GridBagConstraints"/>
+									<LayoutConstraint class="java.awt.GridBagConstraints">
+										<Property name="gridx" type="int" value="0"/>
+										<Property name="gridy" type="int" value="0"/>
+										<Property name="gridwidth" type="int" value="1"/>
+										<Property name="gridheight" type="int" value="3"/>
+										<Property name="weightx" type="double" value="0.0"/>
+										<Property name="weighty" type="double" value="0.0"/>
+										<Property name="anchor" type="int" value="10"/>
+										<Property name="fill" type="int" value="1"/>
+										<Property name="insets" type="Insets">
+										<Insets value="[0, 0, 0, 0]"/>
+									</Property>
+										<Property name="ipadx" type="int" value="0"/>
+										<Property name="ipady" type="int" value="0"/>
+									</LayoutConstraint>
+								</Constraints>
+								<Layout class="GridBag">
+									<Property name="columnWidths" type="IntegerArray">
+									<IntegerArray value="[ 1,1 ]"/>
+								</Property>
+									<Property name="rowHeights" type="IntegerArray">
+									<IntegerArray value="[ 1,1,1,1,1 ]"/>
+								</Property>
+									<Property name="columnWeights" type="DoubleArray">
+									<DoubleArray value="[ 0.1,0.1 ]"/>
+								</Property>
+									<Property name="rowWeights" type="DoubleArray">
+									<DoubleArray value="[ 0.1,0.1,0.1,0.1,0.1 ]"/>
+								</Property>
+									<Property name="columns" type="int" value="2"/>
+									<Property name="rows" type="int" value="5"/>
+								</Layout>
+								<Events>
+								</Events>
+								<Properties>
+									<Property name="border" class="javax.swing.border.TitledBorder">
+										<Property name="border" class="javax.swing.border.LineBorder">
+											<Property name="lineColor" type="Color">
+											<Color red="0" green="0" blue="0"/>
+										</Property>
+											<Property name="thickness" type="int" value="1"/>
+											<Property name="roundedCorners" type="boolean" value="false"/>
+										</Property>
+										<Property name="title" type="String" value="Vertex Degree"/>
+										<Property name="titleJustification" type="int" value="4"/>
+										<Property name="titlePosition" type="int" value="2"/>
+										<Property name="titleFont" type="Font">
+										<Font name="Dialog" size="12" style="1" strikeout="false" underline="false"/>
+									</Property>
+										<Property name="titleColor" type="Color">
+										<Color red="0" green="0" blue="0"/>
+									</Property>
+									</Property>
+								</Properties>
+								<SubComponents>
+									<Component class="javax.swing.JLabel" name="lblMinInDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="1"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="17"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 5, 0, 5]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="In-Degree Minimum"/>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JLabel" name="lblMaxInDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="2"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="17"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 5, 0, 5]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="In-Degree Maximum"/>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JLabel" name="lblMinOutDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="3"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="17"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 5, 0, 5]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="Out-Degree Minimum"/>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JLabel" name="lblMaxOutDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="4"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="17"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 5, 0, 5]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="Out-Degree Maximum"/>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JTextField" name="tfInDegreeMin">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="1"/>
+												<Property name="gridy" type="int" value="1"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="2"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[40, 20]"/>
+											</Property>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JTextField" name="tfInDegreeMax">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="1"/>
+												<Property name="gridy" type="int" value="2"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="2"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[40, 20]"/>
+											</Property>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JTextField" name="tfOutDegreeMin">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="1"/>
+												<Property name="gridy" type="int" value="3"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="2"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[40, 20]"/>
+											</Property>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JTextField" name="tfOutDegreeMax">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="1"/>
+												<Property name="gridy" type="int" value="4"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="2"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[40, 20]"/>
+											</Property>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JLabel" name="lblIinstructions">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="0"/>
+												<Property name="gridwidth" type="int" value="2"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="1"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="&lt;html&gt;Enter degree values by which to filter graph. Leave blank to use minimum or maximum value.&lt;/html&gt;"/>
+											<Property name="horizontalAlignment" type="int" value="10"/>
+											<Property name="horizontalTextPosition" type="int" value="11"/>
+											<Property name="verticalAlignment" type="int" value="1"/>
+											<Property name="verticalTextPosition" type="int" value="0"/>
+											<Property name="preferredSize" type="Dimension">
+												<Dimension value="[60, 40]"/>
+											</Property>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[60, 40]"/>
+											</Property>
+										</Properties>
+									</Component>
+								</SubComponents>
+							</Component>
+						</SubComponents>
+					</Component>
+					<Component class="javax.swing.JPanel" name="tbUndirectedGraph">
+						<Constraints>
+							<Constraint tabTitle="Undirected Graph"/>
+							<LayoutConstraint/>
+						</Constraints>
+						<Layout class="GridBag">
+							<Property name="columnWidths" type="IntegerArray">
+							<IntegerArray value="[ 1 ]"/>
+						</Property>
+							<Property name="rowHeights" type="IntegerArray">
+							<IntegerArray value="[ 1,1,1 ]"/>
+						</Property>
+							<Property name="columnWeights" type="DoubleArray">
+							<DoubleArray value="[ 0.1 ]"/>
+						</Property>
+							<Property name="rowWeights" type="DoubleArray">
+							<DoubleArray value="[ 0.1,0.1,0.1 ]"/>
+						</Property>
+							<Property name="columns" type="int" value="1"/>
+							<Property name="rows" type="int" value="3"/>
+						</Layout>
+						<Events>
+						</Events>
+						<Properties>
+							<Property name="preferredSize" type="Dimension">
+								<Dimension value="[304, 212]"/>
+							</Property>
+							<Property name="bounds" type="Rectangle">
+								<Rectangle value="[2, 25, 304, 212]"/>
+							</Property>
+						</Properties>
+						<SubComponents>
+							<Component class="javax.swing.JPanel" name="unDirVertexDegreePanel">
+								<Constraints>
+									<Constraint class="java.awt.GridBagConstraints"/>
+									<LayoutConstraint class="java.awt.GridBagConstraints">
+										<Property name="gridx" type="int" value="0"/>
+										<Property name="gridy" type="int" value="0"/>
+										<Property name="gridwidth" type="int" value="1"/>
+										<Property name="gridheight" type="int" value="2"/>
+										<Property name="weightx" type="double" value="0.0"/>
+										<Property name="weighty" type="double" value="0.0"/>
+										<Property name="anchor" type="int" value="10"/>
+										<Property name="fill" type="int" value="1"/>
+										<Property name="insets" type="Insets">
+										<Insets value="[0, 0, 0, 0]"/>
+									</Property>
+										<Property name="ipadx" type="int" value="0"/>
+										<Property name="ipady" type="int" value="0"/>
+									</LayoutConstraint>
+								</Constraints>
+								<Layout class="GridBag">
+									<Property name="columnWidths" type="IntegerArray">
+									<IntegerArray value="[ 1,1 ]"/>
+								</Property>
+									<Property name="rowHeights" type="IntegerArray">
+									<IntegerArray value="[ 1,1,1,1 ]"/>
+								</Property>
+									<Property name="columnWeights" type="DoubleArray">
+									<DoubleArray value="[ 0.1,0.1 ]"/>
+								</Property>
+									<Property name="rowWeights" type="DoubleArray">
+									<DoubleArray value="[ 0.1,0.1,0.1,0.1 ]"/>
+								</Property>
+									<Property name="columns" type="int" value="2"/>
+									<Property name="rows" type="int" value="4"/>
+								</Layout>
+								<Events>
+								</Events>
+								<Properties>
+									<Property name="border" class="javax.swing.border.TitledBorder">
+										<Property name="border" class="javax.swing.border.LineBorder">
+											<Property name="lineColor" type="Color">
+											<Color red="0" green="0" blue="0"/>
+										</Property>
+											<Property name="thickness" type="int" value="1"/>
+											<Property name="roundedCorners" type="boolean" value="false"/>
+										</Property>
+										<Property name="title" type="String" value="Vertex Degree"/>
+										<Property name="titleJustification" type="int" value="4"/>
+										<Property name="titlePosition" type="int" value="2"/>
+										<Property name="titleFont" type="Font">
+										<Font name="Dialog" size="12" style="1" strikeout="false" underline="false"/>
+									</Property>
+										<Property name="titleColor" type="Color">
+										<Color red="0" green="0" blue="0"/>
+									</Property>
+									</Property>
+								</Properties>
+								<SubComponents>
+									<Component class="javax.swing.JLabel" name="lblMinDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="1"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="17"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 5, 0, 5]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="Minimum Degree"/>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JLabel" name="lblMaxDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="2"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="17"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 5, 0, 5]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="Maximum Degree"/>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JTextField" name="tfMinDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="1"/>
+												<Property name="gridy" type="int" value="1"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[40, 20]"/>
+											</Property>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JTextField" name="tfMaxDegree">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="1"/>
+												<Property name="gridy" type="int" value="2"/>
+												<Property name="gridwidth" type="int" value="1"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="0"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="minimumSize" type="Dimension">
+												<Dimension value="[40, 20]"/>
+											</Property>
+										</Properties>
+									</Component>
+									<Component class="javax.swing.JLabel" name="lblInstructionsDir">
+										<Constraints>
+											<Constraint class="java.awt.GridBagConstraints"/>
+											<LayoutConstraint class="java.awt.GridBagConstraints">
+												<Property name="gridx" type="int" value="0"/>
+												<Property name="gridy" type="int" value="0"/>
+												<Property name="gridwidth" type="int" value="2"/>
+												<Property name="gridheight" type="int" value="1"/>
+												<Property name="weightx" type="double" value="0.0"/>
+												<Property name="weighty" type="double" value="0.0"/>
+												<Property name="anchor" type="int" value="10"/>
+												<Property name="fill" type="int" value="1"/>
+												<Property name="insets" type="Insets">
+												<Insets value="[0, 0, 0, 0]"/>
+											</Property>
+												<Property name="ipadx" type="int" value="0"/>
+												<Property name="ipady" type="int" value="0"/>
+											</LayoutConstraint>
+										</Constraints>
+										<Events>
+										</Events>
+										<Properties>
+											<Property name="text" type="String" value="&lt;html&gt;Enter degree values by which to filter graph. Leave blank to use minimum or maximum value.&lt;/html&gt;"/>
+										</Properties>
+									</Component>
+								</SubComponents>
+							</Component>
+							<Component class="javax.swing.JButton" name="btnFilterUndirectedGraph">
+								<Constraints>
+									<Constraint class="java.awt.GridBagConstraints"/>
+									<LayoutConstraint class="java.awt.GridBagConstraints">
+										<Property name="gridx" type="int" value="0"/>
+										<Property name="gridy" type="int" value="2"/>
+										<Property name="gridwidth" type="int" value="1"/>
+										<Property name="gridheight" type="int" value="1"/>
+										<Property name="weightx" type="double" value="0.0"/>
+										<Property name="weighty" type="double" value="0.0"/>
+										<Property name="anchor" type="int" value="17"/>
+										<Property name="fill" type="int" value="0"/>
+										<Property name="insets" type="Insets">
+										<Insets value="[5, 5, 5, 5]"/>
+									</Property>
+										<Property name="ipadx" type="int" value="0"/>
+										<Property name="ipady" type="int" value="0"/>
+									</LayoutConstraint>
+								</Constraints>
+								<Events>
+									<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnFilterUndirectedGraphActionPerformed"/>
+								</Events>
+								<Properties>
+									<Property name="text" type="String" value="Filter Graph"/>
+								</Properties>
+							</Component>
+						</SubComponents>
+					</Component>
+				</SubComponents>
+			</Component>
+		</SubComponents>
+	</Component>
+</Form>

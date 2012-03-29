@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Metadata Report" id="edu.iu.cns.tool.metadata_report.MetadataReporterAlgorithm.OCD"
+		 description="This algorithm inspects all installed plugins and reports their metadata. ">
+	</OCD>
+	<Designate pid="edu.iu.cns.tool.metadata_report.MetadataReporterAlgorithm">
+		<Object ocdref="edu.iu.cns.tool.metadata_report.MetadataReporterAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
