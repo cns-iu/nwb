@@ -102,12 +102,11 @@ public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, Paramet
 
 		mutator.add(RegionAnnotationMode.FEATURE_NAME_ID, stringColumnNames);
 		
-		mutator.add(RegionAnnotationMode.COLOR_COLUMN_NAME_ID, numericColumnNames);
-		
 		mutator.add(RegionAnnotationMode.COLOR_SCALING_ID,
 				Collections2.transform(EnumSet.allOf(Scaling.class), Functions.toStringFunction()));
 
-		mutator.add(RegionAnnotationMode.COLOR_RANGE_ID, AbstractColorCoding.COLOR_CONTINUUMS.keySet());
+		mutator.add(
+				RegionAnnotationMode.COLOR_RANGE_ID, AbstractColorCoding.COLOR_CONTINUUMS.keySet());
 		
 		return mutator.mutate(oldOCD);
 	}
