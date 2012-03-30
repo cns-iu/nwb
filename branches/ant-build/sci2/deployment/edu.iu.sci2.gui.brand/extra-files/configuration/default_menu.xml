@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!-- <?xml version="1.0" encoding="ISO-8859-1" ?> -->
-<menu_layout> 
+<menu_layout>
     <top_menu name="File">
 		<menu pid= "org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
 		<!-- <menu pid="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm"/> -->
