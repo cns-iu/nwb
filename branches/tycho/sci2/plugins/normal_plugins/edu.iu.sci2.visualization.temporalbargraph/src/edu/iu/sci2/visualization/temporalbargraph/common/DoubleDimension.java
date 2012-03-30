@@ -28,7 +28,7 @@ public class DoubleDimension extends Dimension2D {
 
 	@Override
 	public String toString() {
-		return "DoubleDimension [height=" + height + ", width=" + width + "]";
+		return "DoubleDimension [height=" + this.height + ", width=" + this.width + "]";
 	}
 	
 }

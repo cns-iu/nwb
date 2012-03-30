@@ -1,104 +1,102 @@
 package edu.iu.sci2.visualization.geomaps;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Dictionary;
+import java.util.EnumSet;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplate;
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
+import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Coordinate;
 
-import edu.iu.sci2.visualization.geomaps.metatype.GeoCoordinateParameterFinder;
-import edu.iu.sci2.visualization.geomaps.metatype.Shapefiles;
-import edu.iu.sci2.visualization.geomaps.scaling.ScalerFactory;
-import edu.iu.sci2.visualization.geomaps.utility.Constants;
+import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
+import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
+import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
+import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
+import edu.iu.sci2.visualization.geomaps.viz.model.CircleAnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
-public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
+public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
+	public static final String SUBTITLE = "Proportional Symbol Map";
+	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
+			HowToRead.TEMPLATE_GROUP.getInstanceOf("proportionalSymbols");
+
 	@Override
-	protected AnnotationMode getAnnotationMode() {		
-		return new CircleAnnotationMode();
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciShellContext) {
+		String latitudeColumnName =
+				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
+		String longitudeColumnName =
+				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
+		
+		return new GeoMapsAlgorithm<Coordinate, CircleDimension>(
+				data,
+				parameters,
+				getPageLayout(),
+				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
+				SUBTITLE,
+				TEMPLATE_FOR_HOW_TO_READ,
+				(LogService) ciShellContext.getService(LogService.class.getName()));
+	}
+	
+	abstract PageLayout getPageLayout();
+	
+	public static class Print extends GeoMapsCirclesFactory {
+		@Override
+		PageLayout getPageLayout() {
+			return PageLayout.PRINT;
+		}		
+	}
+	
+	public static class Web extends GeoMapsCirclesFactory {
+		@Override
+		PageLayout getPageLayout() {
+			return PageLayout.WEB;
+		}
 	}
 
 	@Override
-	public ObjectClassDefinition mutateParameters(Data[] data,
-			ObjectClassDefinition oldParameters) {
-		Data inData = data[0];
-		Table table = (Table) inData.getData();
+	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition oldParameters) {
+		Table table = (Table) data[0].getData();
 		
 		List<String> numericColumnNames = Collections.emptyList();
 		try {
 			numericColumnNames =
-				ImmutableList.copyOf(
-						TableUtilities.getValidNumberColumnNamesInTable(table));
+					ImmutableList.copyOf(TableUtilities.getValidNumberColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
+			// Numeric columns are necessary.  Latitude and longitude are not optional.
 			String message =
 				"Table does not seem to have any purely numeric columns.  "
 				+ "If your table does not have columns for the latitudes and longitudes of records,"
 				+ " you may wish to use one of the geocoders under Analysis > Geospatial.";
-			throw new AlgorithmCreationFailedException(message, e);					
+			throw new AlgorithmCreationFailedException(message, e);
 		}
 		
 		DropdownMutator mutator = new DropdownMutator();
 		
-		Shapefiles.addShapefileAndProjectionParameters(mutator);
+		Parameters.addShapefileAndProjectionParameters(mutator);
 	
-		GeoCoordinateParameterFinder.addLatitudeParameter(mutator, numericColumnNames, CircleAnnotationMode.LATITUDE_ID);		
-		GeoCoordinateParameterFinder.addLongitudeParameter(mutator, numericColumnNames, CircleAnnotationMode.LONGITUDE_ID);		
-		addAreaParameters(mutator, numericColumnNames);		
-		addOuterColorParameters(mutator, numericColumnNames);		
-		addInnerColorParameters(mutator, numericColumnNames);
+		Parameters.addLatitudeParameter(mutator, numericColumnNames, GeoMapsNetworkFactory.Parameter.LATITUDE.id());
+		Parameters.addLongitudeParameter(mutator, numericColumnNames, GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
+		
+		for (VizDimension dimension : EnumSet.allOf(CircleDimension.class)) {
+			dimension.addOptionsToAlgorithmParameters(mutator, numericColumnNames);
+		}
 
 		return mutator.mutate(oldParameters);
-	}
-
-	private void addInnerColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
-		numericColumnNames = Lists.newArrayList(numericColumnNames);
-
-		numericColumnNames.add(
-			CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);	
-		
-		mutator.add(CircleAnnotationMode.INNER_COLOR_QUANTITY_ID,
-				numericColumnNames,
-				CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);
-		mutator.add(CircleAnnotationMode.INNER_COLOR_SCALING_ID,
-				new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
-		mutator.add(CircleAnnotationMode.INNER_COLOR_RANGE_ID,
-				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
-	}
-
-	private void addOuterColorParameters(DropdownMutator mutator, List<String> numericColumnNames) {
-		numericColumnNames = Lists.newArrayList(numericColumnNames);
-		
-		numericColumnNames.add(
-				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);		
-		
-		mutator.add(CircleAnnotationMode.OUTER_COLOR_QUANTITY_ID,
-				numericColumnNames,
-				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);
-		mutator.add(CircleAnnotationMode.OUTER_COLOR_SCALING_ID,
-				new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
-		mutator.add(CircleAnnotationMode.OUTER_COLOR_RANGE_ID,
-				new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
-	}
-
-	private void addAreaParameters(DropdownMutator mutator, List<String> numericColumnNames) {
-		numericColumnNames = Lists.newArrayList(numericColumnNames);
-		
-		mutator.add(CircleAnnotationMode.AREA_ID, numericColumnNames);
-		mutator.add(CircleAnnotationMode.AREA_SCALING_ID,
-					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
-	}
-	
-	@Override
-	protected String getOutputAlgorithmName() {
-		return "GeoMapsCircles";
 	}
 }

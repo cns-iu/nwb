@@ -87,15 +87,15 @@ public class VisualizationRunner {
 	}
 
 	protected JFrame getFrame() {
-		return frame;
+		return this.frame;
 	}
 	
 	protected JScrollPane getContainerPanel() {
-		return containerPanel;
+		return this.containerPanel;
 	}
 	
 	protected VisualizationPanel getVisualizationPanel() {
-		return visualizationPanel;
+		return this.visualizationPanel;
 	}
 
 	private Component createContentPane() {

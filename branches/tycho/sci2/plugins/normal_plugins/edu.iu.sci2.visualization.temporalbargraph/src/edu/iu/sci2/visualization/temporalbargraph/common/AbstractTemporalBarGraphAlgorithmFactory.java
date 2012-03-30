@@ -23,10 +23,12 @@ public abstract class AbstractTemporalBarGraphAlgorithmFactory implements Algori
 	public static final String CATEGORY_FIELD_ID = "category";
 	public static final String DO_NOT_PROCESS_CATEGORY_VALUE = "No Category Coloring";
 	
+	@Override
 	public abstract Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext);
     
-    public abstract ObjectClassDefinition mutateParameters(
+    @Override
+	public abstract ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters);
     
 

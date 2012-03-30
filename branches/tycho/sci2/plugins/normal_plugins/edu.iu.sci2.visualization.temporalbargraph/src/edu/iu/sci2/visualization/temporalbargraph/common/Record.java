@@ -6,7 +6,6 @@ import java.util.Date;
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
@@ -14,6 +13,7 @@ import org.joda.time.format.DateTimeParser;
 
 import prefuse.data.Tuple;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 
 import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationUtilities;
@@ -27,22 +27,20 @@ import edu.iu.sci2.visualization.temporalbargraph.utilities.PostScriptFormationU
 public class Record {
 	public static enum Category {
 		DEFAULT
-	};
+	}
 
 	public static final Ordering<Record> START_DATE_ORDERING = Ordering
 			.from(new Comparator<Record>() {
 				@Override
 				public int compare(Record r1, Record r2) {
-					return DateTimeComparator.getInstance().compare(
-							r1.getStartDate(), r2.getStartDate());
+					return ComparisonChain.start().compare(r1.getStartDate(), r2.getStartDate()).compare(r1.getLabel(), r2.getLabel()).result();
 				}
 			});
 	public static final Ordering<Record> END_DATE_ORDERING = Ordering
 			.from(new Comparator<Record>() {
 				@Override
 				public int compare(Record r1, Record r2) {
-					return DateTimeComparator.getInstance().compare(
-							r1.getEndDate(), r2.getEndDate());
+					return ComparisonChain.start().compare(r1.getEndDate(), r2.getEndDate()).compare(r1.getLabel(), r2.getLabel()).result();
 				}
 			});
 
@@ -93,14 +91,22 @@ public class Record {
 			DateTimeFormat.forPattern("MMM/dd/yyyy").getParser(),
 			DateTimeFormat.forPattern("yyyy").getParser(), };
 
+	public static final Ordering<Record> AMOUNT_ORDERING = Ordering
+			.from(new Comparator<Record>() {
+				@Override
+				public int compare(Record r1, Record r2) {
+					return Double.compare(r1.getAmount(), r2.getAmount());
+				}
+			});
+
 	private String label;
 	private DateTime startDate;
 	private DateTime endDate;
 	private double amount;
 	private String category;
 
-	public Record(String label, Date startDate, Date endDate, double amount,
-			String category) {
+	public Record(String label, DateTime startDate, DateTime endDate,
+			double amount, String category) {
 		this.label = label;
 		this.startDate = new DateTime(startDate);
 		this.endDate = new DateTime(endDate);
@@ -114,7 +120,7 @@ public class Record {
 			throw new IllegalArgumentException("The value for the row was null");
 		} else if (date instanceof Date) {
 			return new DateTime(date);
-		} else if (date instanceof String) {
+		} else {
 			DateTimeFormatter formatter;
 			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT.equals(dateFormat)) {
 				formatter = new DateTimeFormatterBuilder().append(null,
@@ -123,17 +129,21 @@ public class Record {
 				formatter = new DateTimeFormatterBuilder().append(null,
 						US_FORMATS).toFormatter();
 			}
-
-			// HACK The nsf data in the sample data all has an extra space
-			// in
-			// the dates other than the start date.
-			return formatter.parseDateTime(((String) date)
-					.replaceAll("  ", " "));
-
-		} else {
+			try {
+				/*
+				 * HACK The nsf data in the sample data all has an extra space
+				 * in the dates other than the start date.
+				 */
+				return formatter.parseDateTime(String.valueOf(date).replaceAll(
+						"  ", " "));
+			} catch (IllegalArgumentException e) {
 			throw new InvalidRecordException(
-					"Only date objects or string representations of the date are supported.  Got " 
-							+ date.getClass().toString());
+						"Only date objects or representations of the date that can "
+								+ "be converted to strings are supported.  You provided an Object of '"
+								+ date.getClass().getName() + "' type."
+								+ System.getProperty("line.separator")
+								+ e.getMessage());
+			}
 		}
 
 	}
@@ -143,24 +153,56 @@ public class Record {
 			String endDateFormat, String categoryKey)
 			throws InvalidRecordException {
 
-		this.label = PostScriptFormationUtilities.matchParentheses(tableRow
-				.get(labelKey).toString());
+		/*
+		 * Handle the label.
+		 */
+		Object rawLabel;
+		if (tableRow.canGetString(labelKey)) {
+			rawLabel = tableRow.getString(labelKey);
+		} else {
+			rawLabel = tableRow.get(labelKey);
+		}
+		if (rawLabel == null) {
+			String exceptionMessage = "The record at row '" + tableRow.getRow()
+					+ "\' did not contain a label.";
+			throw new InvalidRecordException(exceptionMessage);
+		}
+		this.label = String.valueOf(rawLabel);
+		
 
+		/*
+		 * Handle the category.
+		 */
 		if (AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE
 				.equals(categoryKey)) {
 			this.category = PostScriptFormationUtilities
 					.matchParentheses(Category.DEFAULT.toString());
 		} else {
+			Object rawCategoryValue;
+			if (tableRow.canGetString(categoryKey)) {
+				rawCategoryValue = tableRow.getString(categoryKey);
+			} else {
+				rawCategoryValue = tableRow.get(categoryKey);
+			}
+			if (rawCategoryValue == null) {
+				String exceptionMessage = "The record at row '"
+						+ tableRow.getRow()
+						+ "\' did not contain a category.";
+				throw new InvalidRecordException(exceptionMessage);
+			} 
 			this.category = PostScriptFormationUtilities
-					.matchParentheses(tableRow.get(categoryKey).toString());
+					.matchParentheses(String.valueOf(rawCategoryValue));
 		}
 
+		/*
+		 * Handle the start and end date.
+		 */
 		try {
 			Object date = tableRow.get(startDateKey);
 			this.startDate = getDateTimeFromObject(date, startDateFormat);
 		} catch (IllegalArgumentException exception) {
 			String exceptionMessage = "The record labeled \'" + this.label
-					+ "\' contains an invalid start date.  It will be ignored.";
+					+ "\' contains an invalid start date.";
 
 			throw new InvalidRecordException(exceptionMessage, exception);
 		}
@@ -171,32 +213,47 @@ public class Record {
 
 		} catch (IllegalArgumentException exception) {
 			String exceptionMessage = "The record labeled \'" + this.label
-					+ "\' contains an invalid end date.  It will be ignored.";
+					+ "\' contains an invalid end date.";
 
 			throw new InvalidRecordException(exceptionMessage, exception);
 		}
 
+		/*
+		 * Handle the size by. 
+		 */
 		try {
-			this.amount = NumberUtilities.interpretObjectAsDouble(
-					tableRow.get(sizeByKey)).doubleValue();
+			Object rawAmount; 
+			if (tableRow.canGetDouble(sizeByKey)) {
+				rawAmount = tableRow.getDouble(sizeByKey);
+			} else {
+				rawAmount = tableRow.get(sizeByKey);
+			}
+			if (rawAmount == null) {
+				String exceptionMessage = "The record at row '"
+						+ tableRow.getRow()
+						+ "\' did not contain a sizeby value.";
+				throw new InvalidRecordException(exceptionMessage);
+		}
+
+			this.amount = NumberUtilities
+					.interpretObjectAsDouble(rawAmount).doubleValue();
+		if (Double.isInfinite(this.amount) || Double.isNaN(this.amount)) {
+			String exceptionMessage = "The record labeled \'" + this.label
+					+ "\' "
+					+ "contains an invalid value in the specified size-by "
+						+ "column (" + sizeByKey + ").";
+
+			throw new InvalidRecordException(exceptionMessage);
+		}
 		} catch (NumberFormatException invalidNumberFormatException) {
 			String exceptionMessage = "The record labeled \'"
 					+ this.label
 					+ "\' "
 					+ "contains an invalid number in the specified size-by column "
-					+ "(" + sizeByKey + ").  It will be ignored.";
+					+ "(" + sizeByKey + ").";
 
 			throw new InvalidRecordException(exceptionMessage,
 					invalidNumberFormatException);
-		}
-
-		if (Double.isInfinite(this.amount) || Double.isNaN(this.amount)) {
-			String exceptionMessage = "The record labeled \'" + this.label
-					+ "\' "
-					+ "contains an invalid value in the specified size-by "
-					+ "column (" + sizeByKey + ").  It will be ignored.";
-
-			throw new InvalidRecordException(exceptionMessage);
 		}
 
 	}
@@ -224,7 +281,17 @@ public class Record {
 	 * @return the category
 	 */
 	public String getCategory() {
-		return category;
+		return this.category;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Record [label=").append(this.label)
+				.append(", startDate=").append(this.startDate)
+				.append(", endDate=").append(this.endDate).append(", amount=")
+				.append(this.amount).append(", category=")
+				.append(this.category).append("]");
+		return builder.toString();
+	}
 }

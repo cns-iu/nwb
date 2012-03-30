@@ -31,63 +31,62 @@ public class MapOfScienceTest {
 
 	@Before
 	public void setUp() {
-		realJournals.put("BIOl_signal_recept", 100);
-		realJournals.put("embo journal", 13);
-		realJournals.put("environmental HEALTH perspectives", 10);
-		realJournals.put("Oncology", 25);
-		fakeJournals.put("haha", 99);
-		fakeJournals.put(null, 5);
+		this.realJournals.put("BIOl_signal_recept", 100);
+		this.realJournals.put("embo journal", 13);
+		this.realJournals.put("environmental HEALTH perspectives", 10);
+		this.realJournals.put("Oncology", 25);
+		this.fakeJournals.put("haha", 99);
 
-		allJournals.putAll(realJournals);
-		allJournals.putAll(fakeJournals);
+		this.allJournals.putAll(this.realJournals);
+		this.allJournals.putAll(this.fakeJournals);
 
-		mapOfScience = new MapOfScience(allJournals);
+		this.mapOfScience = new MapOfScience(this.allJournals);
 	}
 
 	@Test
 	public void testCountOfMappedPublications() {
 
-		assertTrue(mapOfScience.countOfMappedPublications() == realJournals
+		assertTrue(this.mapOfScience.countOfMappedPublications() == this.realJournals
 				.size());
 	}
 
 	@Test
 	public void testPrettyCountOfMappedPublications() {
 		DecimalFormat formatter = MapOfScience.formatter;
-		assertTrue(mapOfScience.prettyCountOfMappedPublications().equals(
-				formatter.format(mapOfScience.countOfMappedPublications())));
+		assertTrue(this.mapOfScience.prettyCountOfMappedPublications().equals(
+				formatter.format(this.mapOfScience.countOfMappedPublications())));
 	}
 
 	@Test
 	public void testCountOfUnmappedPublications() {
 
-		assertTrue(mapOfScience.countOfUnmappedPublications() == fakeJournals
+		assertTrue(this.mapOfScience.countOfUnmappedPublications() == this.fakeJournals
 				.size());
 	}
 
 	@Test
 	public void testCountOfPublications() {
 
-		assertTrue(mapOfScience.countOfPublications() == allJournals.size());
+		assertTrue(this.mapOfScience.countOfPublications() == this.allJournals.size());
 	}
 
 	
 	@Test
 	public void testCountOfMappedSubdiciplines() {
-		assertTrue(mapOfScience.countOfMappedSubdiciplines() == 83);
+		assertTrue(this.mapOfScience.countOfMappedSubdiciplines() == 83);
 	}
 	
 	@Test
 	public void testCountOfCategoriesUsed() {
-		assertTrue(mapOfScience.countOfCategoriesUsed() == 9);
+		assertTrue("Expected 10 categories to be used but got " + this.mapOfScience.countOfDisciplinesUsed(), this.mapOfScience.countOfDisciplinesUsed() == 10);
 	}
 	
 	@Test
 	public void testGetUnmappedResults(){
-		Map<String, Float> unmappedResults = mapOfScience.getUnmappedResults();
+		Map<String, Float> unmappedResults = this.mapOfScience.getUnmappedResults();
 		for(String journalName : unmappedResults.keySet()){
-			assertTrue(fakeJournals.containsKey(journalName));
-			assertTrue((float) fakeJournals.get(journalName) == unmappedResults.get(journalName));
+			assertTrue(this.fakeJournals.containsKey(journalName));
+			assertTrue((float) this.fakeJournals.get(journalName) == unmappedResults.get(journalName));
 		}
 	}
 	
@@ -111,6 +110,7 @@ public class MapOfScienceTest {
 			parameters.put(JournalsMapAlgorithmFactory.SCALING_FACTOR_ID, 1.0f);
 			parameters.put(JournalsMapAlgorithmFactory.DATA_DISPLAY_NAME_ID,
 					inFile.getName());
+			parameters.put(JournalsMapAlgorithmFactory.SHOW_EXPORT_WINDOW, true);
 			parameters.put(JournalsMapAlgorithmFactory.WEB_VERSION_ID, false);
 
 			AlgorithmFactory algorithmFactory = new JournalsMapAlgorithmFactory();

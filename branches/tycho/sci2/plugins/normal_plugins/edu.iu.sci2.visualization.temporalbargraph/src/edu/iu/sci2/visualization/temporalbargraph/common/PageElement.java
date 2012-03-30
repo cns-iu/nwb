@@ -47,13 +47,13 @@ public class PageElement {
 	}
 	public String renderDefinitionsPostscript() {
 		StringBuilder definitions = new StringBuilder();
-		definitions.append(pagePositionDefinition);
-		definitions.append(elementDefinitions);
+		definitions.append(this.pagePositionDefinition);
+		definitions.append(this.elementDefinitions);
 		return definitions.toString();
 	}
 
 	public String renderPostscript() {
-		return element;
+		return this.element;
 	}
 	
 }

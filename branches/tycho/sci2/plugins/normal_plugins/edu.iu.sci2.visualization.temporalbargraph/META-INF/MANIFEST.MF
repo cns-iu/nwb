@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Temporal Bar Graph Visualization
 Bundle-SymbolicName: edu.iu.sci2.visualization.temporalbargraph
-Bundle-Version: 0.0.1
+Bundle-Version: 0.0.4
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
  com.google.common.base;version="8.0.0",
@@ -16,10 +16,13 @@ Import-Package: au.com.bytecode.opencsv,
  org.cishell.utilities,
  org.cishell.utilities.color,
  org.joda.time,
+ org.joda.time.base,
  org.joda.time.format,
  org.osgi.service.log;version="1.3.0",
  org.osgi.service.metatype;version="1.1.0",
- prefuse.data
+ prefuse.data,
+ prefuse.data.tuple,
+ prefuse.util.collections
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml, OSGI-INF/webcomponent.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

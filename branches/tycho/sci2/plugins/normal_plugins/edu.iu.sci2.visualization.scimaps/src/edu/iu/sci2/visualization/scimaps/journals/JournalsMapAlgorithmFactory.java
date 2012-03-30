@@ -18,25 +18,33 @@ import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-
+//SOMEDAY this and the FieldsMapAlgorithmFactory are very similar.  Combine them.
 public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		ParameterMutator {
 	public static final String JOURNAL_COLUMN_ID = "journalColumn";
 	public static final String DATA_DISPLAY_NAME_ID = "datasetDisplayName";
 	public static final String SCALING_FACTOR_ID = "scalingFactor";
 	public static final String WEB_VERSION_ID = "webVersion";
+	public static final String SHOW_EXPORT_WINDOW = "showWindow";
 
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext context) {
 		String journalColumnName = (String) parameters.get(JOURNAL_COLUMN_ID);
-		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
+		float scalingFactor = ((Float) parameters.get(SCALING_FACTOR_ID))
+				.floatValue();
 		String dataDisplayName = (String) parameters.get(DATA_DISPLAY_NAME_ID);
-		Boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
+		boolean webVersion = ((Boolean) parameters.get(WEB_VERSION_ID))
+				.booleanValue();
+		boolean showWindow = ((Boolean) parameters.get(SHOW_EXPORT_WINDOW))
+				.booleanValue();
+		LogService logger = (LogService) context.getService(LogService.class
+				.getName());
 		return new JournalsMapAlgorithm(data, journalColumnName, scalingFactor,
-				dataDisplayName, webVersion);
+				dataDisplayName, webVersion, showWindow, logger);
 	}
 
 	/**
@@ -85,11 +93,11 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 			mutator.add(JOURNAL_COLUMN_ID, goodColumnNames);
 
 			return mutator.mutate(oldParameters);
-		} else {
-			String message = "Table contains no string or integer columns, "
-					+ "so there is no candidate for a column containing journal identifiers.";
-			throw new AlgorithmCreationFailedException(message);
 		}
+		String message = "Table contains no string or integer columns, "
+				+ "so there is no candidate for a column containing journal identifiers.";
+		throw new AlgorithmCreationFailedException(message);
+
 	}
 
 	/**
@@ -128,7 +136,10 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 			if (normalColumnName.contains("journal")) {
 				if (normalColumnName.contains("name")
 						|| normalColumnName.contains("title")) {
-					return 100;
+					if (normalColumnName.contains("full")) {
+						return 100;
+					}
+					return 50;
 				}
 
 				return 4;

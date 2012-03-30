@@ -2,15 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Geo Maps
 Bundle-SymbolicName: edu.iu.sci2.visualization.geomaps
-Bundle-Version: 0.0.2
+Bundle-Version: 0.1.0
 Bundle-ClassPath: .
-Import-Package: com.google.common.base;version="8.0.0",
- com.google.common.collect;version="8.0.0",
+Import-Package: com.google.common.base;version="11.0.1",
+ com.google.common.collect;version="11.0.1",
+ com.google.common.io;version="11.0.1",
+ com.google.common.primitives;version="11.0.1",
  com.vividsolutions.jts.geom,
  edu.iu.nwb.converter.prefusecsv.reader,
  edu.iu.nwb.util.nwbfile,
  edu.iu.nwb.util.nwbfile.pipe,
- edu.iu.sci2.testutilities,
  org.antlr.stringtemplate,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
@@ -19,8 +20,11 @@ Import-Package: com.google.common.base;version="8.0.0",
  org.cishell.utilities.mutateParameter,
  org.cishell.utilities.mutateParameter.dropdown,
  org.geotools.data,
+ org.geotools.data.shapefile,
+ org.geotools.data.simple,
  org.geotools.factory,
  org.geotools.feature,
+ org.geotools.geometry,
  org.geotools.geometry.jts,
  org.geotools.metadata.iso.citation,
  org.geotools.parameter,
@@ -28,20 +32,27 @@ Import-Package: com.google.common.base;version="8.0.0",
  org.geotools.referencing.crs,
  org.geotools.referencing.operation,
  org.geotools.referencing.operation.projection,
+ org.geotools.referencing.operation.transform,
+ org.joda.time,
+ org.joda.time.format,
  org.opengis.feature,
  org.opengis.feature.simple,
  org.opengis.feature.type,
+ org.opengis.filter,
+ org.opengis.filter.sort,
  org.opengis.geometry,
  org.opengis.parameter,
  org.opengis.referencing,
  org.opengis.referencing.crs,
  org.opengis.referencing.operation,
+ org.opengis.util,
  org.osgi.framework,
  org.osgi.service.log;version="1.3.0",
  org.osgi.service.metatype;version="1.1.0",
  prefuse.data,
  prefuse.data.util
 X-AutoStart: true
-Service-Component: OSGI-INF/Regions.xml, OSGI-INF/Circles.xml, OSGI-INF/Network.xml
+Service-Component: OSGI-INF/circles-print.xml, OSGI-INF/circles-web.xml, OSGI-INF/network.xml, OSGI-INF/regions-print.xml, OSGI-INF/regions-web.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: edu.iu.sci2.visualization.geomaps.numberformat
+Export-Package: edu.iu.sci2.visualization.geomaps.utility,
+ edu.iu.sci2.visualization.geomaps.utility.numberformat

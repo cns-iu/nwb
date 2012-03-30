@@ -4,30 +4,54 @@ import java.awt.Color;
 
 import org.cishell.utilities.color.ColorSchema;
 
+/**
+ * This is the default colors for use by TemporalBarGraph.  Michael came up with
+ * the colors.  He used hex code, so I found it easiest to just keep the hex.
+ *
+ */
 public class TemporalBarGraphColorSchema extends ColorSchema {
 
+	/**
+	 * The default color should be black.
+	 */
 	public static final Color DEFAULT_COLOR = Color.BLACK;
-	public static final Color[] COLOR_ARRAY = new Color[]{ 
-													new Color(166, 206, 227),
-													new Color(31, 120, 180),
-													new Color(51, 160, 44),
-													new Color(178, 223, 138),
-													new Color(251, 154, 153),
-													new Color(227, 26, 28),
-													new Color(253, 191, 111),
-													new Color(255, 127, 0),
-													new Color(202, 178, 214),
-													new Color(106, 61, 154),
-													new Color(255, 255, 153)			
-												};
-	
-	public static final ColorSchema DEFAULT_COLOR_SCHEMA = new ColorSchema(COLOR_ARRAY, DEFAULT_COLOR);
-	
+
+	/**
+	 * Some default colors as given by Michael.
+	 */
+	public static final Color[] COLOR_ARRAY = new Color[] {
+		new Color(0x004949),
+		new Color(0x009292),
+		new Color(0xFF6DB6),
+		new Color(0xFEB6DB),
+		new Color(0x29548E),
+		new Color(0xB66DFF),
+		new Color(0x6FB6FF),
+		new Color(0xDC6D02),
+		new Color(0x620000),
+		new Color(0xFFFF6D)};
+
+	/**
+	 * A default color schema to use for TemporalBarGraph.
+	 */
+	public static final ColorSchema DEFAULT_COLOR_SCHEMA = new ColorSchema(
+			COLOR_ARRAY, DEFAULT_COLOR);
+
+	/**
+	 * Get a default color schema.
+	 */
 	public TemporalBarGraphColorSchema() {
 		this(COLOR_ARRAY, DEFAULT_COLOR);
 	}
-	
-	public TemporalBarGraphColorSchema(Color[] colors, Color defaultColor){
+
+	/**
+	 * Give a default color[] with the colors you'd like to use and a
+	 * default color.
+	 * @param colors The colors to use
+	 * @param defaultColor A default color.
+	 */
+	public TemporalBarGraphColorSchema(final Color[] colors,
+			final Color defaultColor) {
 		super(colors, defaultColor);
 	}
 

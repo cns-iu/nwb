@@ -58,7 +58,7 @@ Import-Package: com.google.common.base;version="11.0.1",
  uk.ac.shef.wit.simmetrics.similaritymetrics
 X-AutoStart: true
 Service-Component: OSGI-INF/create.xml, OSGI-INF/merge.xml
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: edu.iu.cns.database.merge.generic.analyze.mergetable,
  edu.iu.cns.database.merge.generic.detect.redundant_author,
  edu.iu.cns.database.merge.generic.perform,
