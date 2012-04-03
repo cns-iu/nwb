@@ -185,8 +185,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 				&& !this.pageIndependentElements.isEmpty()) {
 			return 1;
 		}
-
-		return this.pageSpecificElements.size();
+		return this.pageSpecificElements.keySet().size();
 	}
 
 	public Dimension getDimension() {

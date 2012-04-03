@@ -30,7 +30,9 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 	private MapOfScience mapOfScience;
 	private Dimension dimensions;
 	private float scalingFactor;
+	// Page Specific Elements are those that only occur on a specific page
 	private Multimap<Integer, PageElement> pageSpecificElements;
+	// Page independent elements are those that should occur on every page
 	private HashSet<PageElement> pageIndependentElements;
 
 	public DocumentRenderer(MapOfScience mapOfScience, Dimension size,
@@ -182,7 +184,7 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 			return 1;
 		}
 
-		return this.pageSpecificElements.size();
+		return this.pageSpecificElements.keySet().size();
 	}
 
 	public Dimension pageDimensions() {
