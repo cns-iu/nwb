@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: edu.iu.sci2.visualization.temporalbargraph.tests
 Bundle-Version: 1.0.0.qualifier
-Fragment-Host: edu.iu.sci2.visualization.temporalbargraph;bundle-version="0.0.1"
+Fragment-Host: edu.iu.sci2.visualization.temporalbargraph;bundle-version="0.0.4"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.8.2"
 Import-Package: edu.iu.nwb.converter.prefusecsv.reader,
