@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.temporalbargraph.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -11,8 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.cishell.utilities.DateUtilities;
 import org.joda.time.DateTime;
@@ -42,7 +41,6 @@ public class RecordTest {
 	public static final String sizeByKey = "size_by";
 	public static final String categoryKey = "category";
 
-	@Override
 	@Before
 	public void setUp() {
 		this.table = new Table();
@@ -116,7 +114,6 @@ public class RecordTest {
 
 	}
 
-	@Ignore
 	@Test
 	public void testIntegerTable() throws InvalidRecordException {
 		table = new Table();
@@ -166,18 +163,22 @@ public class RecordTest {
 
 		try {
 			r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
-				endDateKey, sizeByKey, startDateFormat, endDateFormat,
-				categoryKey);
+					endDateKey, sizeByKey, startDateFormat, endDateFormat,
+					categoryKey);
 			r2 = new Record(this.table.getTuple(1), labelKey, startDateKey,
-				endDateKey, sizeByKey, startDateFormat, endDateFormat,
-				categoryKey);
-		assertEquals(row1Label, r1.getLabel());
-		assertEquals(2012, r1.getStartDate().toLocalDate().getYear());
-		assertEquals(2013, r2.getStartDate().toLocalDate().getYear());
+					endDateKey, sizeByKey, startDateFormat, endDateFormat,
+					categoryKey);
+			assertEquals(row1Label, r1.getLabel());
+			assertEquals(2012, r1.getStartDate().toLocalDate().getYear());
+			assertEquals(2013, r2.getStartDate().toLocalDate().getYear());
 
-		assertEquals(row1CategoryKey, r1.getCategory());
-		assertEquals(row2CategoryKey, r2.getCategory());
-		assertNotSame(r1.getCategory(), r2.getCategory());
+			assertEquals(row1CategoryKey, r1.getCategory());
+			assertEquals(row2CategoryKey, r2.getCategory());
+			assertNotSame(r1.getCategory(), r2.getCategory());
+		} catch (InvalidRecordException e) {
+			fail("An exception was thrown when creating the records that should not have been: "
+					+ e.getMessage());
+		}
 }
 
 	
@@ -255,7 +256,6 @@ public class RecordTest {
 
 	}
 
-	@SuppressWarnings("unused")
 	@Test
 	public void testInvalidRecord() throws InvalidRecordException {
 
@@ -463,9 +463,8 @@ public class RecordTest {
 
 	}
 	
-	@SuppressWarnings({ "unused"})
 	@Test
-	public static void testNullLabel(){
+	public void testNullLabel(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
 		columns.put(labelKey, String.class);
@@ -505,7 +504,7 @@ public class RecordTest {
 	}
 	
 	@Test
-	public static void testNullStartDate(){
+	public void testNullStartDate(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
 		columns.put(labelKey, String.class);
@@ -533,7 +532,7 @@ public class RecordTest {
 	}
 	
 	@Test
-	public static void testNullEndDate(){
+	public void testNullEndDate(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
 		columns.put(labelKey, String.class);
@@ -561,9 +560,8 @@ public class RecordTest {
 		assertTrue(exceptionCaught);
 	}
 	
-	@SuppressWarnings({ "unused" })
 	@Test
-	public static void testNullSizeBy(){
+	public void testNullSizeBy(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
 		columns.put(labelKey, String.class);
@@ -602,9 +600,8 @@ public class RecordTest {
 		assertTrue(exceptionCaught);
 	}
 
-	@SuppressWarnings({ "unused"})
 	@Test
-	public static void testNullCategory(){
+	public void testNullCategory(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
 		columns.put(labelKey, String.class);
@@ -643,9 +640,8 @@ public class RecordTest {
 		assertTrue(exceptionCaught);
 	}
 	
-	@SuppressWarnings({ "unused" })
 	@Test
-	public static void testBadTable() throws InvalidRecordException{
+	public void testBadTable() throws InvalidRecordException{
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();
 
 		columns.put(labelKey, Integer.class);
