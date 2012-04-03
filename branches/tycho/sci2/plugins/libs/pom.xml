@@ -19,5 +19,6 @@
 		<module>org.apache.commons.lang</module>
 		<module>pdfbox_fontbox</module>
 		<module>javaGeom</module>
+		<module>xmlgraphics-commons</module>
 	</modules>
 </project>
