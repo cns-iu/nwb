@@ -1,16 +1,12 @@
 package edu.iu.sci2.visualization.scimaps.rendering.web2012;
 
+import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
+
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.common.CenteredCopyrightInfo;
 import edu.iu.sci2.visualization.scimaps.rendering.common.CircleSizeLegend;
@@ -20,29 +16,18 @@ import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.D
 import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas;
 import edu.iu.sci2.visualization.scimaps.rendering.common.scimaps.MapOfScienceRenderer;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
-import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
-import edu.iu.sci2.visualization.scimaps.tempvis.PageElement.PageElementRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageManager;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
-public class DocumentRenderer implements RenderableVisualization, PageManager {
-
+public class DocumentRenderer extends PageManager implements RenderableVisualization {
 	private MapOfScience mapOfScience;
-	private Dimension dimensions;
 	private float scalingFactor;
-	// Page Specific Elements are those that only occur on a specific page
-	private Multimap<Integer, PageElement> pageSpecificElements;
-	// Page independent elements are those that should occur on every page
-	private HashSet<PageElement> pageIndependentElements;
 
 	public DocumentRenderer(MapOfScience mapOfScience, Dimension size,
 			float scalingFactor) {
 		this.mapOfScience = mapOfScience;
 		this.dimensions = size;
 		this.scalingFactor = scalingFactor;
-
-		this.pageSpecificElements = HashMultimap.create();
-		this.pageIndependentElements = new HashSet<PageElement>();
 
 		addPageIndependentElements();
 		addPageDependentElements();
@@ -86,14 +71,6 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 				inch(17.78f - 0.25f)));
 	}
 
-	private void addToPage(int pageNumber, PageElement pageElement) {
-		this.pageSpecificElements.put(pageNumber, pageElement);
-	}
-
-	private void addToAllPages(PageElement pageElement) {
-		this.pageIndependentElements.add(pageElement);
-	}
-
 	public String title() {
 		String title = "Topical Visualization";
 		return title;
@@ -124,70 +101,6 @@ public class DocumentRenderer implements RenderableVisualization, PageManager {
 	}
 
 	public Dimension getDimension() {
-		return this.dimensions;
-	}
-
-	public void render(int pageNumber, GraphicsState state)
-			throws PageManagerRenderingException {
-		if (!this.pageSpecificElements.isEmpty()
-				&& this.pageSpecificElements.get(pageNumber).isEmpty()) {
-			return;
-		}
-
-		if (pageNumber != 1 && this.pageSpecificElements.isEmpty()) {
-			throw new PageManagerRenderingException("Page number '"
-					+ pageNumber + "' does not exist");
-		}
-
-		List<PageElementRenderingException> exceptions = new ArrayList<PageElementRenderingException>();
-
-		for (PageElement element : this.pageIndependentElements) {
-			try {
-				element.render(state);
-			} catch (PageElementRenderingException e) {
-				exceptions.add(e);
-			}
-		}
-
-		for (PageElement element : this.pageSpecificElements.get(pageNumber)) {
-			try {
-				element.render(state);
-			} catch (PageElementRenderingException e) {
-				exceptions.add(e);
-			}
-		}
-
-		if (!exceptions.isEmpty()) {
-			String newline = System.getProperty("line.separator");
-			String message = "The following exceptions occured when rendering.  The cause of the first is also passed up."
-					+ newline;
-
-			for (PageElementRenderingException e : exceptions) {
-				message += e.getMessage() + newline;
-			}
-
-			throw new PageManagerRenderingException(message, exceptions.get(0));
-		}
-
-		return;
-
-	}
-
-	public int numberOfPages() {
-		if (this.pageIndependentElements.isEmpty()
-				&& this.pageSpecificElements.isEmpty()) {
-			return 0;
-		}
-
-		if (this.pageSpecificElements.isEmpty()
-				&& !this.pageIndependentElements.isEmpty()) {
-			return 1;
-		}
-
-		return this.pageSpecificElements.keySet().size();
-	}
-
-	public Dimension pageDimensions() {
 		return this.dimensions;
 	}
 
