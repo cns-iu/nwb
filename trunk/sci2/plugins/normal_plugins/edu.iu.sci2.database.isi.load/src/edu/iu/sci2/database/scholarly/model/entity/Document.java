@@ -7,20 +7,21 @@ import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Document extends Entity<Document> {
-	public enum Field implements DBField {
+	public static enum Field implements DBField {
 		ABSTRACT_TEXT(DerbyFieldType.TEXT),
 		ARTICLE_NUMBER(DerbyFieldType.TEXT),
 		BEGINNING_PAGE(DerbyFieldType.INTEGER),
 		CITED_REFERENCE_COUNT(DerbyFieldType.INTEGER),
 		CITED_YEAR(DerbyFieldType.INTEGER),
 		DIGITAL_OBJECT_IDENTIFIER(DerbyFieldType.TEXT),
-		DOCUMENT_SOURCE_FK(DerbyFieldType.INTEGER),
+		DOCUMENT_SOURCE_FK(DerbyFieldType.FOREIGN_KEY), // FK
 		DOCUMENT_TYPE(DerbyFieldType.TEXT),
 		DOCUMENT_VOLUME(DerbyFieldType.INTEGER),
 		ENDING_PAGE(DerbyFieldType.INTEGER),
-		FIRST_AUTHOR_FK(DerbyFieldType.INTEGER),
+		FIRST_AUTHOR_FK(DerbyFieldType.FOREIGN_KEY),    // FK
 		FUNDING_AGENCY_AND_GRANT_NUMBER(DerbyFieldType.TEXT),
 		FUNDING_TEXT(DerbyFieldType.TEXT),
 		ISBN(DerbyFieldType.TEXT),
@@ -38,7 +39,7 @@ public class Document extends Entity<Document> {
 		TIMES_CITED(DerbyFieldType.INTEGER),
 		TITLE(DerbyFieldType.TEXT);
 		
-		private DerbyFieldType fieldType;
+		private final DerbyFieldType fieldType;
 
 		private Field(DerbyFieldType type) {
 			this.fieldType = type;
@@ -52,7 +53,10 @@ public class Document extends Entity<Document> {
 	
 	public static final Schema<Document> SCHEMA = new Schema<Document>(
 			true, // autogen primary key
-			Field.values());
+			Field.values())
+			.FOREIGN_KEYS(
+					Field.DOCUMENT_SOURCE_FK.toString(), ISI.SOURCE_TABLE_NAME,
+					Field.FIRST_AUTHOR_FK.toString(), ISI.PERSON_TABLE_NAME);
 
 	public Document(DatabaseTableKeyGenerator keyGenerator,
 			Dictionary<String, Object> attributes) {

@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.bipartitenet.model;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 public class Node {
@@ -11,7 +12,15 @@ public class Node {
 			return it.getWeight();
 		}
 	};
+	public static final Function<Node,String> LABEL_GETTER = new Function<Node,String>() {
+		@Override
+		public String apply(Node it) {
+			return it.getLabel();
+		}
+	};
 	public static final Ordering<Node> WEIGHT_ORDERING = Ordering.natural().onResultOf(WEIGHT_GETTER);
+	public static final Ordering<Node> LABEL_ORDERING = Ordering.natural().onResultOf(LABEL_GETTER);
+	
 	
 	private final String label;
 	private final double weight;
@@ -19,9 +28,8 @@ public class Node {
 
 
 	public Node(String label, double weight, NodeDestination destination) {
-		if (label == null) {
-			throw new NullPointerException("Label must not be null");
-		}
+		Preconditions.checkNotNull(label);
+		Preconditions.checkNotNull(destination);
 		this.destination = destination;
 		this.label = label;
 		this.weight = weight;

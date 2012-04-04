@@ -13,7 +13,7 @@ Bundle-ClassPath: .
 Import-Package: com.google.common.base,
  com.google.common.collect,
  com.sun.xml.bind.v2,
- edu.iu.cns.utilities.testing;resolution:=optional,
+ edu.iu.cns.utilities.testing,
  javax.xml.bind,
  javax.xml.bind.annotation,
  javax.xml.stream,

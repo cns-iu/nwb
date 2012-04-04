@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.nwb.modeling</groupId>
+  <artifactId>modeling</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>edu.iu.iv.modeling.barabasialbertmodel</module>
+    <module>edu.iu.iv.modeling.p2p.can</module>
+    <module>edu.iu.iv.modeling.p2p.chord</module>
+    <module>edu.iu.iv.modeling.p2p.hypergrid</module>
+    <module>edu.iu.iv.modeling.p2p.pru</module>
+    <module>edu.iu.iv.modeling.p2p.randomnetwork</module>
+    <module>edu.iu.iv.modeling.tarl</module>
+    <module>edu.iu.nwb.modeling.discretenetworkdynamics</module>
+  </modules>
+  <parent>
+  	<groupId>edu.iu.nwb</groupId>
+  	<artifactId>plugins</artifactId>
+  	<version>1.0.0</version>
+  	<relativePath>..</relativePath>
+  </parent>
+</project>

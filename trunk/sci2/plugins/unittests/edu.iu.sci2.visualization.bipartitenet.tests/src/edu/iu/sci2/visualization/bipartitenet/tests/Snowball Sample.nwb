@@ -1,0 +1,207 @@
+*Nodes
+id*int label*string  bipartitetype*string
+1	"Immunization Of Complex Networks" "Title"
+2	"Fixed Scale Transformation Approach For Born Model Of Fractures" "Title"
+3	"Absence Of Epidemic Threshold In Scale-free Networks With Degree Correlations" "Title"
+4	"Fixed Scale Transformation Applied To Fractal Aggregation With Levy Flight Particle Trajectories" "Title"
+5	"Scale-free Behavior Of The Internet Global Performance" "Title"
+6	"Fixed Scale Transformation For Fracture Growth-processes Governed By Vectorial Fields" "Title"
+7	"Field Theory Of Absorbing Phase Transitions With A Nondiffusive Conserved Field" "Title"
+8	"Vespignani, A" "Authors"
+9	"Fixed-scale Transformation Approach To Linear And Branched Polymers" "Title"
+10	"Absorbing-state Phase Transitions In Fixed-energy Sandpiles" "Title"
+11	"Universality Class Of Absorbing Phase Transitions With A Conserved Field" "Title"
+12	"Preface On applications Of Networks" "Title"
+13	"Virtual Round Table On Ten Leading Questions For Network Research" "Title"
+14	"Renormalization Group Approach To The Critical Behavior Of The Forest-fire Model - Reply" "Title"
+15	"Order Parameter And Scaling Fields In Self-organized Criticality" "Title"
+16	"Monte Carlo Fixed Scale Transformation For Nonlocal Fractal Growth Models" "Title"
+17	"The Fixed-scale Transformation Approach To Fractal Growth" "Title"
+18	"Critical Load And Congestion Instabilities In Scale-free Networks" "Title"
+19	"Cooperative Evolution In Protein Complexes Of Yeast From Comparative Analyses Of Its Interaction Network" "Title"
+20	"Explaining The Uneven Distribution Of Numbers In Nature: The Laws Of Benford And Zipf" "Title"
+21	"Epidemic Dynamics And Endemic States In Complex Networks" "Title"
+22	"Asymptotic Screening In The Scale Invariant Growth Rules For Laplacian Fractals" "Title"
+23	"Statistical Theory Of Internet Exploration" "Title"
+24	"Dynamical Patterns Of Epidemic Outbreaks In Complex Heterogeneous Networks" "Title"
+25	"Avalanches In Breakdown And Fracture Processes" "Title"
+26	"Dynamical Real Space Renormalization Group Applied To Sandpile Models" "Title"
+27	"Characterization And Modeling Of Protein-protein Interaction Networks" "Title"
+28	"Universality In Sandpiles" "Title"
+29	"Global Protein Function Prediction From Protein-protein Interaction Networks" "Title"
+30	"Fractal And Topological Properties Of Directed Fractures" "Title"
+31	"Deviations From Self-similarity In Plane Dla And The Infinite Drift Scenario" "Title"
+32	"Reaction-diffusion System With Self-organized Critical Behavior" "Title"
+33	"Ferromagnetic Ordering In Graphs With Arbitrary Degree Distribution" "Title"
+34	"Parallel Diffusion-limited Aggregation" "Title"
+35	"The Role Of The Airline Transportation Network In The Prediction And Predictability Of Global Epidemics" "Title"
+36	"Critical Exponents In Stochastic Sandpile Models" "Title"
+37	"Corrections To Scaling In The Forest-fire Model" "Title"
+38	"Behind Enemy Lines" "Title"
+39	"Studying The Emerging Global Brain: Analyzing And Visualizing The Impact Of Co-authorship Teams" "Title"
+40	"Characterization And Modeling Of Weighted Networks" "Title"
+41	"Self-organized Criticality As An Absorbing-state Phase Transition" "Title"
+42	"Weighted Evolving Networks: Coupling Topology And Weight Dynamics" "Title"
+43	"Dynamically Driven Renormalization Group" "Title"
+44	"Complexity In Dislocation Dynamics: Model" "Title"
+45	"Epidemic Outbreaks In Complex Heterogeneous Networks" "Title"
+46	"Local Rigidity And Self-organized Criticality For Avalanches" "Title"
+47	"Intermittent Dislocation Flow In Viscoplastic Deformation" "Title"
+48	"Universality Classes In Directed Sandpile Models" "Title"
+49	"Fixed Scale Transformation Applied To Diffusion Limited Aggregation And Dielectric-breakdown Model In 3-dimensions" "Title"
+50	"Cut-offs And Finite Size Effects In Scale-free Networks" "Title"
+51	"The Architecture Of Complex Weighted Networks" "Title"
+52	"Short-period Attractors And Non-ergodic Behavior In The Deterministic Fixed-energy Sandpile Model" "Title"
+53	"Renormalization Scheme For Forest-fire Models" "Title"
+54	"Universality Of Growth Rules In Fractal Growth" "Title"
+55	"Efficiency And Reliability Of Epidemic Data Dissemination In Complex Networks" "Title"
+56	"Comment On first-order Transition In The Breakdown Of Disordered Media - Zapperi Et Al. Reply" "Title"
+57	"The Effects Of Spatial Constraints On The Evolution Of Weighted Complex Networks" "Title"
+58	"Anomalous Scaling In The Zhang Model" "Title"
+59	"Renormalization-group Approach To The Critical-behavior Of The Forest-fire Model" "Title"
+60	"Ordering Phase Transition In The One-dimensional Axelrod Model" "Title"
+61	"Topology And Correlations In Structured Scale-free Networks" "Title"
+62	"Fractals, Self-organized-criticality And The Fixed Scale Transformation" "Title"
+63	"Crosscut Analysis Of Large Radial Dla - Departures From Self-similarity And Lacunarity Effects" "Title"
+64	"Mean-field Behavior Of The Sandpile Model Below The Upper Critical Dimension" "Title"
+65	"Driving, Conservation, And Absorbing States In Sandpiles" "Title"
+66	"Incomplete Ordering Of The Voter Model On Small-world Networks" "Title"
+67	"Avalanche And Spreading Exponents In Systems With Absorbing States" "Title"
+68	"Persistence Of Screening And Self-criticality In The Scale-invariant Dynamics Of Diffusion-limited Aggregation" "Title"
+69	"Lam, Ch" "Authors"
+70	"Critical Behavior Of A One-dimensional Fixed-energy Stochastic Sandpile" "Title"
+71	"Epidemic Dynamics In Finite Size Scale-free Networks" "Title"
+72	"Dynamical And Correlation Properties Of The Internet" "Title"
+73	"Renormalization Of Nonequilibrium Systems With Critical Stationary States" "Title"
+74	"Structure Of Cycles And Local Ordering In Complex Networks" "Title"
+75	"First-order Transition In The Breakdown Of Disordered Media" "Title"
+76	"Energy Constrained Sandpile Models" "Title"
+77	"How Self-organized Criticality Works: A Unified Mean-field Picture" "Title"
+78	"Velocity And Hierarchical Spread Of Epidemic Outbreaks In Scale-free Networks" "Title"
+79	"Traffic-driven Model Of The World Wide Web Graph" "Title"
+80	"Analysis Of Damage Clusters In Fracture Processes" "Title"
+81	"Traceroute-like Exploration Of Unknown Networks: A Statistical Analysis" "Title"
+82	"Effect Of Empty Configurations In The Fixed Scale Transformation Theory Of Fractal Growth" "Title"
+83	"Epidemic Spreading In Scale-free Networks" "Title"
+84	"Kaufman, H" "Authors"
+85	"Complexity In Dislocation Dynamics: Experiments" "Title"
+86	"Evolution Thinks Modular" "Title"
+87	"Mandelbrot, Bb" "Authors"
+88	"Renormalization Group Approach For Forest Fire Models" "Title"
+89	"Dynamically Driven Renormalization Group Applied To Self-organized Critical Systems" "Title"
+90	"Fluctuations And Correlations In Sandpile Models" "Title"
+91	"Modeling The Evolution Of Weighted Networks" "Title"
+92	"Paths To Self-organized Criticality" "Title"
+93	"Renormalization Scheme For Self-organized Criticality In Sandpile Models" "Title"
+94	"Renormalization Approach To The Self-organized Critical-behavior Of Sandpile Models" "Title"
+95	"Large-scale Topological And Dynamical Properties Of The Internet" "Title"
+96	"Yekutieli, I" "Authors"
+97	"Experimental-evidence For Critical-dynamics In Microfracturing Processes" "Title"
+98	"Universality And Scale Invariant Dynamics In Laplacian Fractal Growth" "Title"
+99	"Plasticity And Avalanche Behaviour In Microfracturing Phenomena" "Title"
+100	"Dislocation Jamming And Andrade Creep" "Title"
+*DirectedEdges
+source*int target*int
+8	32	
+8	78	
+8	77	
+8	13	
+8	31	
+8	51	
+8	7	
+8	43	
+8	97	
+8	99	
+8	15	
+8	61	
+8	68	
+8	18	
+8	90	
+8	72	
+8	70	
+84	34	
+8	79	
+8	34	
+8	59	
+8	98	
+8	38	
+8	89	
+8	83	
+8	5	
+8	16	
+8	27	
+8	10	
+8	73	
+8	56	
+8	25	
+8	2	
+96	31	
+8	50	
+8	65	
+8	93	
+8	24	
+8	88	
+8	92	
+8	28	
+8	71	
+8	1	
+8	41	
+8	20	
+8	85	
+8	52	
+8	76	
+8	75	
+8	58	
+8	30	
+8	19	
+8	57	
+8	14	
+8	80	
+8	60	
+8	100	
+8	26	
+8	21	
+87	63	
+8	4	
+8	42	
+8	91	
+8	36	
+8	22	
+8	47	
+8	67	
+8	6	
+8	33	
+8	95	
+8	23	
+8	48	
+8	82	
+8	81	
+8	86	
+87	31	
+8	64	
+8	62	
+8	40	
+87	34	
+8	3	
+8	49	
+8	39	
+8	37	
+8	46	
+8	29	
+8	17	
+8	12	
+84	63	
+8	55	
+8	44	
+8	63	
+8	45	
+8	54	
+8	11	
+8	35	
+8	66	
+8	9	
+8	74	
+8	94	
+84	31	
+69	31	
+8	53	

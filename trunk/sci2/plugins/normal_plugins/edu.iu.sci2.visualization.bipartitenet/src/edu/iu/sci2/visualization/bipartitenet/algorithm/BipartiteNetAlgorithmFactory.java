@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -17,29 +18,52 @@ import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileUtilities;
 import edu.iu.nwb.util.nwbfile.ParsingException;
+import edu.iu.sci2.visualization.bipartitenet.PageDirector.Layout;
 
 public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+	// These strings must match with the parameter *values* in METADATA.XML
 	private static final String NO_EDGE_WEIGHT_OPTION = "No edge weight";
 	private static final String NO_NODE_WEIGHT_OPTION = "No node weight";
+	
+	// These strings must match with the parameter *names* in METADATA.XML
 	private static final String LEFT_SIDE_TYPE_ID = "leftSideType";
 	private static final String NODE_SIZE_COLUMN_ID = "nodeSizeColumn";
 	private static final String EDGE_WEIGHT_COLUMN_ID = "edgeWeightColumn";
 	private static final String LEFT_COLUMN_TITLE_ID = "leftColumnTitle";
 	private static final String RIGHT_COLUMN_TITLE_ID = "rightColumnTitle";
+	private static final String LAYOUT_TYPE_ID = "layoutType";
 	
-	private NWBFileExaminer examiner;
+	private final CachedFunction<File, BipartiteNWBFileExaminer> examinerMaker =
+			new CachedFunction<File, BipartiteNWBFileExaminer>() {
+				@Override
+				public BipartiteNWBFileExaminer apply(File nwbFile) {
+					BipartiteNWBFileExaminer it 
+						= new BipartiteNWBFileExaminer();
+					try {
+						new NWBFileParser(nwbFile).parse(it);
+					} catch (ParsingException e) {
+						throw new AlgorithmCreationFailedException(e);
+					} catch (IOException e) {
+						throw new AlgorithmCreationFailedException(e);
+					}
+					return it;
+				}
+			};
 	
 	@Override
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
 		LogService log = (LogService) ciShellContext.getService(LogService.class.getName());
+		BipartiteNWBFileExaminer exam = examinerMaker.getAndInvalidate(getNWBFile(data));
 		
-		List<String> types = new ArrayList<String>(examiner.getBipartiteTypes());
+		List<String> types = new ArrayList<String>(exam.getBipartiteTypes());
 		String leftSideType = (String) parameters.get(LEFT_SIDE_TYPE_ID);
 		types.remove(leftSideType);
 		String rightSideType = types.get(0);
@@ -59,7 +83,10 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 			edgeWeightColumn = null;
 		}
 		
+		Layout layout = Layout.valueOf((String) parameters.get(LAYOUT_TYPE_ID));
+		
 		return new BipartiteNetAlgorithm(data[0], getNWBFile(data),
+				layout,
 				nodeWeightColumn, edgeWeightColumn,
 				leftSideType, leftSideTitle, rightSideType, rightSideTitle, log);
 	}
@@ -67,16 +94,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
-		examiner = new NWBFileExaminer();
-		File nwbFile = getNWBFile(data);
-
-		try {
-			new NWBFileParser(nwbFile).parse(examiner);
-		} catch (ParsingException e) {
-			throw new AlgorithmCreationFailedException(e);
-		} catch (IOException e) {
-			throw new AlgorithmCreationFailedException(e);
-		}
+		BipartiteNWBFileExaminer examiner = examinerMaker.applyAndCache(getNWBFile(data));
 
 		LinkedHashMap<String, String> nodeSchema = examiner.getNodeSchema();
 		List<String> nodeNumericColumns = Lists.newArrayList(
@@ -96,7 +114,9 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 		mutator.add(NODE_SIZE_COLUMN_ID, nodeNumericColumns);
 		mutator.add(EDGE_WEIGHT_COLUMN_ID, edgeNumericColumns);
 		
-
+		mutator.add(LAYOUT_TYPE_ID, Collections2.transform(EnumSet.allOf(Layout.class), 
+				Functions.toStringFunction()));
+		
 		return mutator.mutate(oldParameters);
 	}
 

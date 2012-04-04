@@ -81,8 +81,8 @@ public class DisciplineBreakdownArea implements PageElement{
 					state.current.setPaint(discipline.getColor());
 					int boxHeight = state.current.getFontMetrics().getAscent()
 							+ state.current.getFontMetrics().getDescent();
-					state.current.fillRect(0, 0, boxHeight / 2,
-							0 - boxHeight / 2);
+					state.current.fillRect(0, -boxHeight / 2, boxHeight / 2,
+							boxHeight / 2);
 					state.restore();
 				}
 

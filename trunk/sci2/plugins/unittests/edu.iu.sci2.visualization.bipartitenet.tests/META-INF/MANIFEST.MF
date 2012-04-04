@@ -6,3 +6,8 @@ Bundle-Version: 1.0.0
 Fragment-Host: edu.iu.sci2.visualization.bipartitenet
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.7"
+Import-Package: org.apache.commons.lang,
+ org.apache.log4j,
+ org.freehep.graphics2d,
+ org.freehep.graphicsio.ps,
+ org.freehep.util

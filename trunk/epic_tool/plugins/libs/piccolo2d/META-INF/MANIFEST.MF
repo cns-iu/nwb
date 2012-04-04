@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Piccolo2d Plug-in
 Bundle-SymbolicName: piccolo2d
 Bundle-Version: 1.0.0
-Bundle-ClassPath: .
 Export-Package: edu.umd.cs.piccolo,
  edu.umd.cs.piccolo.activities,
  edu.umd.cs.piccolo.event,
@@ -18,3 +17,4 @@ Export-Package: edu.umd.cs.piccolo,
  edu.umd.cs.piccolox.swing,
  edu.umd.cs.piccolox.swt,
  edu.umd.cs.piccolox.util
+Bundle-ClassPath: pre-built/

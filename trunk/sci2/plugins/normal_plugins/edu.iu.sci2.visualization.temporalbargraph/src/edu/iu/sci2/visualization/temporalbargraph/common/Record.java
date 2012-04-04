@@ -137,7 +137,7 @@ public class Record {
 				return formatter.parseDateTime(String.valueOf(date).replaceAll(
 						"  ", " "));
 			} catch (IllegalArgumentException e) {
-				throw new InvalidRecordException(
+			throw new InvalidRecordException(
 						"Only date objects or representations of the date that can "
 								+ "be converted to strings are supported.  You provided an Object of '"
 								+ date.getClass().getName() + "' type."
@@ -233,18 +233,18 @@ public class Record {
 						+ tableRow.getRow()
 						+ "\' did not contain a sizeby value.";
 				throw new InvalidRecordException(exceptionMessage);
-			}
-			
+		}
+
 			this.amount = NumberUtilities
 					.interpretObjectAsDouble(rawAmount).doubleValue();
-			if (Double.isInfinite(this.amount) || Double.isNaN(this.amount)) {
-				String exceptionMessage = "The record labeled \'" + this.label
-						+ "\' "
-						+ "contains an invalid value in the specified size-by "
+		if (Double.isInfinite(this.amount) || Double.isNaN(this.amount)) {
+			String exceptionMessage = "The record labeled \'" + this.label
+					+ "\' "
+					+ "contains an invalid value in the specified size-by "
 						+ "column (" + sizeByKey + ").";
 
-				throw new InvalidRecordException(exceptionMessage);
-			}
+			throw new InvalidRecordException(exceptionMessage);
+		}
 		} catch (NumberFormatException invalidNumberFormatException) {
 			String exceptionMessage = "The record labeled \'"
 					+ this.label

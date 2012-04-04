@@ -14,3 +14,5 @@ Export-Package: uk.ac.shef.wit.simmetrics,
  uk.ac.shef.wit.simmetrics.tokenisers,
  uk.ac.shef.wit.simmetrics.utils,
  uk.ac.shef.wit.simmetrics.wordhandlers
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: built/

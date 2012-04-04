@@ -1,0 +1,1633 @@
+*Nodes
+id*int label*string  bipartitetype*string
+1	"Ferdig, Mt" "Authors"
+2	"Wuchty, S" "Authors"
+3	"Barabasi, Al" "Authors"
+4	"Stable Evolutionary Signal In A Yeast Protein Interaction Network" "Title"
+5	"Balazsi, G" "Authors"
+6	"Oltvai, Zn" "Authors"
+7	"Functional Organization Of Transcriptional-regulatory Networks" "Title"
+8	"Network Biology: From The Metabolism To Protein Interactions" "Title"
+9	"Taming Complexity" "Title"
+10	"Almaas, E" "Authors"
+11	"Macdonald, Pj" "Authors"
+12	"Minimum Spanning Trees Of Weighted Scale-free Networks" "Title"
+13	"Oliveira, Jg" "Authors"
+14	"Human Dynamics: Darwin And Einstein Correspondence Patterns" "Title"
+15	"Topological Units Of Environmental Signal Processing In The Transcriptional Regulatory Network Of Escherichia Coli" "Title"
+16	"The Origin Of Bursts And Heavy Tails In Human Dynamics" "Title"
+17	"Network Theory - The Emergence Of The Creative Enterprise" "Title"
+18	"Vazquez, A" "Authors"
+19	"Inhomogeneous Evolution Of Subgraphs And Cycles In Complex Networks" "Title"
+20	"Makeev, Ma" "Authors"
+21	"Derenyi, I" "Authors"
+22	"Emergence Of Large-scale Vorticity During Diffusion In A Random Potential Under An Alternating Bias" "Title"
+23	"Yook, Sh" "Authors"
+24	"Kertesz, J" "Authors"
+25	"Eisler, Z" "Authors"
+26	"Multiscaling And Non-universality In Fluctuations Of Driven Complex Systems" "Title"
+27	"Eckmann, Jp" "Authors"
+28	"Sergi, D" "Authors"
+29	"Dobrin, R" "Authors"
+30	"The Topological Relationship Between The Large-scale Attributes And Local Interaction Patterns Of Complex Networks" "Title"
+31	"Vicsek, T" "Authors"
+32	"Palla, G" "Authors"
+33	"Farkas, I" "Authors"
+34	"Reverse Engineering Of Linking Preferences From Network Restructuring" "Title"
+35	"De Menezes, Ma" "Authors"
+36	"Separating Internal And External Dynamics Of Complex Systems" "Title"
+37	"Effect Of Surface Morphology On The Sputtering Yields. I. Ion Sputtering From Self-affine Surfaces" "Title"
+38	"Effect Of Surface Morphology On The Sputtering Yields. Ii. Ion Sputtering From Rippled Surfaces" "Title"
+39	"Balensiefer, S" "Authors"
+40	"Brockman, J" "Authors"
+41	"Hot Spots And Universality In Network Dynamics" "Title"
+42	"Functional And Topological Characterization Of Protein Interaction Networks" "Title"
+43	"Beg, Qk" "Authors"
+44	"Aggregation Of Topological Motifs In The Escherichia Coli Transcriptional Regulatory Network" "Title"
+45	"Kovacs, B" "Authors"
+46	"Global Organization Of Metabolic Fluxes In The Bacterium Escherichia Coli" "Title"
+47	"Network Biology: Understanding The Cell's Functional Organization" "Title"
+48	"Fluctuations In Network Dynamics" "Title"
+49	"Dezso, Z" "Authors"
+50	"Bioinformatics Analysis Of Experimentally Determined Protein Complexes In The Yeast Saccharomyces Cerevisiae" "Title"
+51	"Evolutionary Conservation Of Motif Constituents In The Yeast Protein Interaction Network" "Title"
+52	"Overbeek, R" "Authors"
+53	"Scholle, Md" "Authors"
+54	"Fonstein, My" "Authors"
+55	"Kapatral, V" "Authors"
+56	"Grechkin, Y" "Authors"
+57	"Anderson, I" "Authors"
+58	"Osterman, Al" "Authors"
+59	"Gelfand, Ms" "Authors"
+60	"Bhattacharya, A" "Authors"
+61	"Campbell, Jw" "Authors"
+62	"Kyrpides, Nc" "Authors"
+63	"Ravasz, E" "Authors"
+64	"Daugherty, Md" "Authors"
+65	"Gerdes, Sy" "Authors"
+66	"D'souza, M" "Authors"
+67	"Baev, Mv" "Authors"
+68	"Mseeh, F" "Authors"
+69	"Somera, Al" "Authors"
+70	"Experimental Determination And System Level Analysis Of Essential Genes In Escherichia Coli Mg1655" "Title"
+71	"Jeong, H" "Authors"
+72	"Kahng, B" "Authors"
+73	"Yang, I" "Authors"
+74	"Emerging Behavior In Electronic Bidding" "Title"
+75	"Kay, Ka" "Authors"
+76	"Spurious Spatial Periodicity Of Co-expression In Microarray Data Due To Printing Design" "Title"
+77	"Bonabeau, E" "Authors"
+78	"Scale-free Networks" "Title"
+79	"Hierarchical Organization In Complex Networks" "Title"
+80	"Neda, Z" "Authors"
+81	"Measuring Preferential Attachment In Evolving Networks" "Title"
+82	"The Topology Of The Transcription Regulatory Network In The Yeast, Saccharomyces Cerevisiae" "Title"
+83	"Cuerno, R" "Authors"
+84	"Morphology Of Ion-sputtered Surfaces" "Title"
+85	"Schubert, A" "Authors"
+86	"Meda, Z" "Authors"
+87	"Networks In Life: Scaling Properties And Eigenvalue Spectra" "Title"
+88	"Kim, J" "Authors"
+89	"Nanoscale Wire Formation On Sputter-eroded Surfaces" "Title"
+90	"Jeong, Hw" "Authors"
+91	"Modeling The Internet's Large-scale Topology" "Title"
+92	"Life's Complexity Pyramid" "Title"
+93	"Ben-avraham, D" "Authors"
+94	"Havlin, S" "Authors"
+95	"Schwartz, N" "Authors"
+96	"Cohen, R" "Authors"
+97	"Percolation In Directed Scale-free Networks" "Title"
+98	"Evolution Of The Social Network Of Scientific Collaborations" "Title"
+99	"Halting Viruses In Scale-free Networks" "Title"
+100	"Albert, R" "Authors"
+101	"Statistical Mechanics Of Complex Networks" "Title"
+102	"Lee, S" "Authors"
+103	"Furdyna, Jk" "Authors"
+104	"Kwak, Cy" "Authors"
+105	"Monte Carlo Simulation Of Sinusoidally Modulated Superlattice Growth" "Title"
+106	"Rajagopalan, S" "Authors"
+107	"Schiffer, P" "Authors"
+108	"Sample, Jg" "Authors"
+109	"Albert, I" "Authors"
+110	"Morss, Aj" "Authors"
+111	"Granular Drag On A Discrete Object: Shape Effects On Jamming" "Title"
+112	"Albert, L" "Authors"
+113	"Modeling Relaxation And Jamming In Granular Media" "Title"
+114	"Deterministic Scale-free Networks" "Title"
+115	"Tegzes, P" "Authors"
+116	"Stick-slip Fluctuations In Granular Drag" "Title"
+117	"Nanoscale Structure Formation On Sputter Eroded Surface" "Title"
+118	"Szathmary, E" "Authors"
+119	"Tombor, B" "Authors"
+120	"Podani, J" "Authors"
+121	"Comparable System-level Organization Of Archaea And Eukaryotes" "Title"
+122	"Brockman, Jb" "Authors"
+123	"Freeh, Vw" "Authors"
+124	"Parasitic Computing" "Title"
+125	"Farkas, Ij" "Authors"
+126	"Spectra Of real-world Graphs: Beyond The Semicircle Law" "Title"
+127	"The Physics Of The Web" "Title"
+128	"Tu, Y" "Authors"
+129	"Weighted Evolving Networks" "Title"
+130	"Bianconi, G" "Authors"
+131	"Bose-einstein Condensation In Complex Networks" "Title"
+132	"Competition And Multiscaling In Evolving Networks" "Title"
+133	"Mason, Sp" "Authors"
+134	"Lethality And Centrality In Protein Networks" "Title"
+135	"Lee, Cs" "Authors"
+136	"Spatial Ordering Of Stacked Quantum Dots" "Title"
+137	"Quantum Dot And Hole Formation In Sputter Erosion" "Title"
+138	"Jeong, N" "Authors"
+139	"Albet, R" "Authors"
+140	"Error And Attack Tolerance Of Complex Networks (vol 406, Pg 378, 2000)" "Title"
+141	"Topology Of Evolving Networks: Local Events And Universality" "Title"
+142	"The Large-scale Organization Of Metabolic Networks" "Title"
+143	"Error And Attack Tolerance Of Complex Networks" "Title"
+144	"Scale-free Characteristics Of Random Networks: The Topology Of The World-wide Web" "Title"
+145	"Dynamics Of Complex Systems: Scaling Laws For The Period Of Boolean Networks" "Title"
+146	"Brechet, Y" "Authors"
+147	"Physics Of The Rhythmic Applause" "Title"
+148	"Pfeifer, M" "Authors"
+149	"Jamming And Fluctuations In Granular Drag" "Title"
+150	"The Sound Of Many Hands Clapping - Tumultuous Applause Can Transform Itself Into Waves Of Synchronized Clapping" "Title"
+151	"Thermodynamic And Kinetic Mechanisms In Self-assembled Quantum Dot Formation" "Title"
+152	"Paskvan, M" "Authors"
+153	"Liquid-induced Transitions In Granular Media" "Title"
+154	"Park, S" "Authors"
+155	"Dynamics Of Ripple Formation In Sputter Erosion: Nonlinear Phenomena" "Title"
+156	"Mean-field Theory For Scale-free Random Networks" "Title"
+157	"Emergence Of Scaling In Random Networks" "Title"
+158	"Internet - Diameter Of The World-wide Web" "Title"
+159	"Daruka, I" "Authors"
+160	"Germann, Tc" "Authors"
+161	"Bishop, Ar" "Authors"
+162	"Zhou, Sj" "Authors"
+163	"Lomdahl, Ps" "Authors"
+164	"Molecular-dynamics Investigation Of The Surface Stress Distribution In A Ge/si Quantum Dot Superlattice" "Title"
+165	"Janko, B" "Authors"
+166	"Reducing Vortex Density In Superconductors Using The 'ratchet Effect'" "Title"
+167	"Merz, Jl" "Authors"
+168	"Kim, Cs" "Authors"
+169	"Comment On dynamics Of Ripening Of Self-assembled Ii-vi Semiconductor Quantum Dots - Lee Et Al. Reply" "Title"
+170	"The Physics Of Sand Castles: Maximum Angle Of Stability In Wet And Dry Granular Media" "Title"
+171	"Tersoff, J" "Authors"
+172	"Shape Transition In Growth Of Strained Islands" "Title"
+173	"Pfeifer, Ma" "Authors"
+174	"Slow Drag In A Granular Medium" "Title"
+175	"Czirok, A" "Authors"
+176	"Collective Motion Of Self-propelled Particles: Kinetic Phase Transition In One Dimension" "Title"
+177	"Lee, C" "Authors"
+178	"Spatial Ordering Of Islands Grown On Patterned Surfaces" "Title"
+179	"Dynamics Of Ripening Of Self-assembled Ii-vi Semiconductor Quantum Dots" "Title"
+180	"Effect Of Surface Roughness On The Secondary Ion Yield In Ion Sputtering" "Title"
+181	"Dougherty, A" "Authors"
+182	"Carle, N" "Authors"
+183	"Driven Interfaces In Disordered Media: Determination Of Universality Classes From Experimental Data" "Title"
+184	"Frey, U" "Authors"
+185	"Silverman, M" "Authors"
+186	"Suki, B" "Authors"
+187	"Irregularities And Power Law Distributions In The Breathing Pattern In Preterm And Term Infants" "Title"
+188	"Equilibrium Phase Diagrams For Dislocation Free Self-assembled Quantum Dots" "Title"
+189	"Secondary Ion Yield Changes On Rippled Interfaces" "Title"
+190	"Ratchet Effect In Surface Electromigration: Smoothing Surfaces By An Ac Field" "Title"
+191	"Hornbaker, D" "Authors"
+192	"Maximum Angle Of Stability In Wet And Dry Spherical Granular Media" "Title"
+193	"Dislocation-free Island Formation In Heteroepitaxial Growth: A Study At Equilibrium" "Title"
+194	"Ion-induced Effective Surface Diffusion In Ion Sputtering" "Title"
+195	"Hornbaker, Dj" "Authors"
+196	"What Keeps Sandcastles Standing?" "Title"
+197	"Self-assembled Island Formation In Heteroepitaxial Growth" "Title"
+198	"Island Formation And Critical Thickness In Heteroepitaxy" "Title"
+199	"Kaxiras, E" "Authors"
+200	"Dynamic Scaling In Conserved Systems With Coupled Fields: Application To Surfactant-mediated Growth" "Title"
+201	"Amaral, Lan" "Authors"
+202	"Harrington, St" "Authors"
+203	"Buldyrev, Sv" "Authors"
+204	"Sadrlahijany, R" "Authors"
+205	"Stanley, He" "Authors"
+206	"Avalanches In The Directed Percolation Depinning And Self-organized Depinning Models Of Interface Roughening" "Title"
+207	"Jensen, P" "Authors"
+208	"Larralde, H" "Authors"
+209	"A Fractal Model For The First Stages Of Thin Film Growth" "Title"
+210	"Roughening Of Growing Surfaces: Kinetic Models And Continuum Theories" "Title"
+211	"Molinasmata, P" "Authors"
+212	"Martinez, Do" "Authors"
+213	"Munoz, Ma" "Authors"
+214	"Ballistic Random Walker" "Title"
+215	"Makse, Ha" "Authors"
+216	"Elastic String In A Random Medium" "Title"
+217	"Invasion Percolation And Global Optimization" "Title"
+218	"Avalanches In The Lung: A Statistical Mechanical Model" "Title"
+219	"Grinstein, G" "Authors"
+220	"Directed Surfaces In Disordered Media" "Title"
+221	"Growth And Percolation Of Thin-films - A Model Incorporating Deposition, Diffusion And Aggregation" "Title"
+222	"Scaling Properties Of Driven Interfaces In Disordered Media" "Title"
+223	"Dynamic Scaling Of Ion-sputtered Surfaces" "Title"
+224	"Avalanches And The Directed Percolation Depinning Model - Experiments, Simulations, And Theory" "Title"
+225	"Deposition, Diffusion And Aggregation Of Atoms On Surfaces - A Model For Nanostructure Growth" "Title"
+226	"Model Incorporating Deposition, Diffusion, And Aggregation In Submonolayer Nanostructures" "Title"
+227	"Universality Classes For Interface Growth With Quenched Disorder" "Title"
+228	"Lutchen, Kr" "Authors"
+229	"Lung-tissue Viscoelasticity - A Mathematical Framework And Its Molecular-basis" "Title"
+230	"Petak, F" "Authors"
+231	"Hantos, Z" "Authors"
+232	"Avalanches And Power-law Behavior In Lung-inflation" "Title"
+233	"Controlling Nanostructures" "Title"
+234	"New Exponent Characterizing The Effect Of Evaporation On Imbibition Experiments" "Title"
+235	"Surfactant-mediated Growth Of Nonequilibrium Interfaces" "Title"
+236	"Xenias, Hs" "Authors"
+237	"Anomalous Interface Roughening In 3d Porous-media - Experiment And Model" "Title"
+238	"Dynamic Scaling Of Coupled Nonequilibrium Interfaces" "Title"
+239	"Caserta, F" "Authors"
+240	"Anomalous Interface Roughening In Porous-media - Experiment And Model" "Title"
+241	"Araujo, M" "Authors"
+242	"3-dimensional Toom Model - Connection To The Anisotropic Kardar-parisi-zhang Equation" "Title"
+243	"Jensen, M" "Authors"
+244	"Zhang, Yc" "Authors"
+245	"Bourbonnais, R" "Authors"
+246	"Multifractality Of Growing Surfaces" "Title"
+247	"Szepfalusy, P" "Authors"
+248	"Multifractal Spectra Of Multi-affine Functions" "Title"
+249	"A Model For Temporal Fluctuations Of The Surface Width - A Stochastic One-dimensional Map" "Title"
+250	"Multifractality Of Self-affine Fractals" "Title"
+251	"Multi-affine Model For The Velocity Distribution In Fully Turbulent Flows" "Title"
+252	"Self-similarity Of The Loop Structure Of Diffusion-limited Aggregates" "Title"
+253	"Tracing A Diffusion-limited Aggregate - Self-affine Versus Self-similar Scaling" "Title"
+254	"Garfield, E" "Authors"
+255	"The Evolution Of The Science Citation Index" "Title"
+256	"Marion, Ls" "Authors"
+257	"Wilson, Cs" "Authors"
+258	"White, Hd" "Authors"
+259	"Lievrouw, La" "Authors"
+260	"Hargens, Ll" "Authors"
+261	"Social Network Analysis And Citation Network Analysis: Complementary Approaches To The Study Of Scientific Communication (sig Met)" "Title"
+262	"Moed, Hf" "Authors"
+263	"In Basic Science The Percentage Of 'authoritative' References Decreases As Bibliographies Become Shorter" "Title"
+264	"Historiographic Mapping Of Knowledge Domains Literature" "Title"
+265	"Pudovkin, Ai" "Authors"
+266	"Istomin, Vs" "Authors"
+267	"Mapping The Output Of Topical Searches In The Web Of Knowledge And The Case Of Watson-crick" "Title"
+268	"From Materials Science To Nano-ceramics: Citation Analysis Identifies The Key Journals And Players" "Title"
+269	"Why Do We Need Algorithmic Historiography?" "Title"
+270	"Algorithmic Citation-linked Historiography - Mapping The Literature Of Science" "Title"
+271	"Fagan, J" "Authors"
+272	"Paris, G" "Authors"
+273	"Marchionini, G" "Authors"
+274	"Harmon, G" "Authors"
+275	"Bioinformatics In Information Science Education" "Title"
+276	"Abt, Ha" "Authors"
+277	"Is The Relationship Between Numbers Of References And Paper Lengths The Same For All Sciences?" "Title"
+278	"Algorithmic Procedure For Finding Semantically Related Journals" "Title"
+279	"Recollections Of Irving H. Sher 1924-1996: Polymath/information Scientist Extraordinaire" "Title"
+280	"From Laboratory To Information Explosions ... The Evolution Of Chemical Information Services At Isi" "Title"
+281	"A Retrospective And Prospective View Of Information Retrieval And Artificial Intelligence In The 21st Century" "Title"
+282	"Use Of Journal Citation Reports And Journal Performance Indicators In Measuring Short And Long Term Journal Impact" "Title"
+283	"The Diverse Roles Of Citation Indexes In Scientific Research" "Title"
+284	"Random Thoughts On Citationology. Its Theory And Practice - Comments On Theories Of Citation?" "Title"
+285	"From Citation Indexes To Informetrics: Is The Tail Now Wagging The Dog?" "Title"
+286	"The Impact Factor And Using It Correctly" "Title"
+287	"When To Cite" "Title"
+288	"How Can Impact Factors Be Improved?" "Title"
+289	"Science In Spain From The Point-of-view Of Citations (1981-1992)" "Title"
+290	"What Citations Tell Us About Canadian Research" "Title"
+291	"Welljamsdorof, A" "Authors"
+292	"The Microbiology Literature - Languages Of Publication And Their Relative Citation Impact" "Title"
+293	"The Relationship Between Mechanical Indexing, Structural Linguistics And Information-retrieval" "Title"
+294	"Of Nobel Class - A Citation Perspective On High-impact Research Authors" "Title"
+295	"A Citation Analysis Of Austrian Medical-research And Wiener-klinische-wochenschrift" "Title"
+296	"Small, H" "Authors"
+297	"Moravcsik,michael,j. - Multidimensional Scholar And Hero Of Third-world Science" "Title"
+298	"Mapping Cholera Research And The Impact Of De,sambhu,nath Of Calcutta (reprinted From Current-contents, Vol 14, Pg 3-11, 7 April 1986)" "Title"
+299	"Language Use In International Research - A Citation Analysis" "Title"
+300	"The Most-cited Papers Of All Time, Sci 1945-1988 .2. The 2nd 100 Citation-classics" "Title"
+301	"The Russian Are Coming .2. The Top 50 Soviet Papers Most-cited In The 1973-1988 Science-citation-index And A Look At 1988 Research Fronts" "Title"
+302	"The Russians Are Coming .1. The Red Hot 100 Soviet Scientists, 1973-1988" "Title"
+303	"A Publishers Perspective On Launching New Journals" "Title"
+304	"How Isi Selects Journals For Coverage - Quantitative And Qualitative Considerations" "Title"
+305	"Beaven,d.w. On The Dangers Of Alternative Medicine" "Title"
+306	"Response To The Panel On Evaluation Of Scientific-information And The Impact Of New Information Technology" "Title"
+307	"The Most-cited Physical-sciences Publications In The 1945-1954 Science Citation Index .1. 52 Citation Classics In Physics And Chemistry" "Title"
+308	"The Impact Of Fraudulent Research On The Scientific Literature - The Breuning,stephen,e. Case" "Title"
+309	"Role Of Information Scientists And The Transformation Of Society" "Title"
+310	"100 Citation-classics From The Journal-of-the-american-medical-association" "Title"
+311	"An Investment In The Future" "Title"
+312	"The Geography Of Science - Disciplinary And National Mappings" "Title"
+313	"Which Medical Journals Have The Greatest Impact" "Title"
+314	"Mapping The World Of Biomedical-engineering - Alza Lecture (1985)" "Title"
+315	"Fisher, J" "Authors"
+316	"Information-science And The Plastic Surgeon" "Title"
+317	"In Tribute To Price,derek,john,desolla - A Citation Analysis Of Little Science, Big Science" "Title"
+318	"Excerpts From Is Public Confidence In Science Declining (reprinted)" "Title"
+319	"Djerassi,carl - Chemist And Entrepreneur" "Title"
+320	"The Literature Of Marine Biology" "Title"
+321	"The Hazards Of Sunbathing" "Title"
+322	"Is Information-retrieval In The Arts And Humanities Inherently Different From That In Science - Effect That Isis-citation-index-for-the-arts-and-humanities Is Expected To Have On Future Scholarship" "Title"
+323	"2001 - Information-society" "Title"
+324	"Vladutz, G" "Authors"
+325	"Kwpsi - Algorithmically Derived Key Word-phrase Subject Index" "Title"
+326	"Making Contacts At Conferences" "Title"
+327	"Is Citation Analysis A Legitimate Evaluation Tool" "Title"
+328	"Radio - Neglected Medium For Scientific Communication" "Title"
+329	"Where Is Chemical Information-science Going" "Title"
+330	"What This Country Needs Is A Free Phone Call" "Title"
+331	"Sim, M" "Authors"
+332	"Index Chemicus Registry System - Past, Present And Future" "Title"
+333	"Can Italian Biomedical Journals Survive" "Title"
+334	"Koenig, M" "Authors"
+335	"Direnzo, T" "Authors"
+336	"Isi Data-base-produced Information-services" "Title"
+337	"Scientist Uses Citation Indexing To Predict Winners Of Nobel-prize" "Title"
+338	"Permuterm Subject Index - Autobiographical Review" "Title"
+339	"Science In France - Too Provincial" "Title"
+340	"Citation Analysis, Mechanical Translation Of Chemical Nomenclature, And Macrostructure Of Science" "Title"
+341	"Malin, Mv" "Authors"
+342	"System For Automatic Classification Of Scientific Literature" "Title"
+343	"Weekly Subject Index To Current Contents" "Title"
+344	"What Scientific Journals Can Tell Us About Scientific Journals" "Title"
+345	"Granito, Ce" "Authors"
+346	"Substructure Search And Correlation In Management Of Chemical Information" "Title"
+347	"Batzig, Jh" "Authors"
+348	"Revesz, Gs" "Authors"
+349	"Synthetic Chemical Literature From 1960-to-1969" "Title"
+350	"Citation Analysis As A Tool In Journal Evaluation - Journals Can Be Ranked By Frequency And Impact Of Citations For Science Policy Studies" "Title"
+351	"Communication, Engineering, And Engineers" "Title"
+352	"New Methods For Documentation In Synthetic Chemistry" "Title"
+353	"Introducing Malin,mv,phd Isirs Vice President For Corporate Planning And International Relations" "Title"
+354	"Who Is Publishing In Science-and How Much" "Title"
+355	"Information Science And Information-conscious Society" "Title"
+356	"Dorr, Ha" "Authors"
+357	"Calderon, Mm" "Authors"
+358	"Warner, A" "Authors"
+359	"Index Chemicus Registry System . Pragmatic Approach To Substructure Chemical Retrieval" "Title"
+360	"Methods And Objectives In Judging Information Content Of Document Titles" "Title"
+361	"One-letter Notation For Calculating Molecular Formulas And Searching Long-chain Peptides In Index-chemicus-registry-system" "Title"
+362	"Citation Indexing For Studying Science" "Title"
+363	"Who And Why Of Isi" "Title"
+364	"Role Of Medical Librarian In Sdi Systems" "Title"
+365	"World Brain Or Memex - Mechanical And Intellectual Requirements For Universal Bibliographic Control" "Title"
+366	"Sher, Ih" "Authors"
+367	"Isis Experiences With Asca - A Selective Dissemination System" "Title"
+368	"Asca (automatic Subject Citation Alert) - A New Personalized Current Awareness Service For Scientists" "Title"
+369	"Patent Citation Indexing And Notions Of Novelty Similarity And Relevance" "Title"
+370	"Science Citation Index - Answers To Frequently Asked Questions" "Title"
+371	"Stevens, Lj" "Authors"
+372	"On The Science-citation-index (sci) And Related Recent Developments" "Title"
+373	"Science Citation Index-new Dimension In Indexing - Unique Approach Underlies Versatile Bibliographic Systems For Communicating + Evaluating Information" "Title"
+374	"New Factors In Evaluation Of Scientific Literature Through Citation Indexing" "Title"
+375	"Citation Indexes In Sociological And Historical Research" "Title"
+376	"Generic Searching By Use Of Rotated Formula Indexes" "Title"
+377	"An Algorithm For Translating Chemical Names To Molecular Formulas" "Title"
+378	"Information Theory And Other Quantitative Factors In Code Design For Document Card Systems" "Title"
+379	"Avakian, Ea" "Authors"
+380	"Amfis - The Automatic Microfilm Information-system" "Title"
+381	"Breaking The Subject Index Barrier - A Citation Index For Chemical Patents" "Title"
+382	"Rockwell, He" "Authors"
+383	"Hayne, Rl" "Authors"
+384	"A Unique System For Rapid Access To Large Volume Of Pharmacological Data - Application To Published Literature On Chlorpromazine" "Title"
+385	"Citation Indexes For Science - New Dimension In Documentation Through Association Of Ideas" "Title"
+386	"Barthelemy, M" "Authors"
+387	"Vespignani, A" "Authors"
+388	"Barrat, A" "Authors"
+389	"Colizza, V" "Authors"
+390	"The Role Of The Airline Transportation Network In The Prediction And Predictability Of Global Epidemics" "Title"
+391	"Flammini, A" "Authors"
+392	"Serrano, Ma" "Authors"
+393	"Detecting Rich-club Ordering In Complex Networks" "Title"
+394	"Behind Enemy Lines" "Title"
+395	"Alvarez-hamelin, I" "Authors"
+396	"Dall'asta, L" "Authors"
+397	"Traceroute-like Exploration Of Unknown Networks: A Statistical Analysis" "Title"
+398	"Dujon, B" "Authors"
+399	"Vergassola, M" "Authors"
+400	"Cooperative Evolution In Protein Complexes Of Yeast From Comparative Analyses Of Its Interaction Network" "Title"
+401	"The Effects Of Spatial Constraints On The Evolution Of Weighted Complex Networks" "Title"
+402	"Statistical Theory Of Internet Exploration" "Title"
+403	"Maritan, A" "Authors"
+404	"Characterization And Modeling Of Protein-protein Interaction Networks" "Title"
+405	"Pastor-satorras, R" "Authors"
+406	"Dynamical Patterns Of Epidemic Outbreaks In Complex Heterogeneous Networks" "Title"
+407	"Borner, K" "Authors"
+408	"Ke, Wm" "Authors"
+409	"Studying The Emerging Global Brain: Analyzing And Visualizing The Impact Of Co-authorship Teams" "Title"
+410	"Modeling The Evolution Of Weighted Networks" "Title"
+411	"Characterization And Modeling Of Weighted Networks" "Title"
+412	"Traffic-driven Model Of The World Wide Web Graph" "Title"
+413	"Weighted Evolving Networks: Coupling Topology And Weight Dynamics" "Title"
+414	"Nekovee, M" "Authors"
+415	"Moreno, Y" "Authors"
+416	"Efficiency And Reliability Of Epidemic Data Dissemination In Complex Networks" "Title"
+417	"Erzan, A" "Authors"
+418	"Caldarelli, G" "Authors"
+419	"Preface On applications Of Networks" "Title"
+420	"Mantegna, R" "Authors"
+421	"De Los Rios, P" "Authors"
+422	"Mendes, Jff" "Authors"
+423	"Virtual Round Table On Ten Leading Questions For Network Research" "Title"
+424	"Structure Of Cycles And Local Ordering In Complex Networks" "Title"
+425	"Boguna, M" "Authors"
+426	"Cut-offs And Finite Size Effects In Scale-free Networks" "Title"
+427	"Velocity And Hierarchical Spread Of Epidemic Outbreaks In Scale-free Networks" "Title"
+428	"The Architecture Of Complex Weighted Networks" "Title"
+429	"Evolution Thinks Modular" "Title"
+430	"Bagnoli, F" "Authors"
+431	"Cecconi, F" "Authors"
+432	"Short-period Attractors And Non-ergodic Behavior In The Deterministic Fixed-energy Sandpile Model" "Title"
+433	"Vilone, D" "Authors"
+434	"Castellano, C" "Authors"
+435	"Incomplete Ordering Of The Voter Model On Small-world Networks" "Title"
+436	"Global Protein Function Prediction From Protein-protein Interaction Networks" "Title"
+437	"Percacci, R" "Authors"
+438	"Scale-free Behavior Of The Internet Global Performance" "Title"
+439	"Topology And Correlations In Structured Scale-free Networks" "Title"
+440	"Critical Load And Congestion Instabilities In Scale-free Networks" "Title"
+441	"Ordering Phase Transition In The One-dimensional Axelrod Model" "Title"
+442	"Absence Of Epidemic Threshold In Scale-free Networks With Degree Correlations" "Title"
+443	"Zaiser, M" "Authors"
+444	"Miguel, Mc" "Authors"
+445	"Zapperi, S" "Authors"
+446	"Dislocation Jamming And Andrade Creep" "Title"
+447	"Zecchina, R" "Authors"
+448	"Leone, M" "Authors"
+449	"Ferromagnetic Ordering In Graphs With Arbitrary Degree Distribution" "Title"
+450	"Large-scale Topological And Dynamical Properties Of The Internet" "Title"
+451	"Epidemic Outbreaks In Complex Heterogeneous Networks" "Title"
+452	"Epidemic Dynamics In Finite Size Scale-free Networks" "Title"
+453	"Immunization Of Complex Networks" "Title"
+454	"Dynamical And Correlation Properties Of The Internet" "Title"
+455	"Alava, M" "Authors"
+456	"Peltola, J" "Authors"
+457	"Dickman, R" "Authors"
+458	"Critical Behavior Of A One-dimensional Fixed-energy Stochastic Sandpile" "Title"
+459	"Epidemic Dynamics And Endemic States In Complex Networks" "Title"
+460	"Grasso, Jr" "Authors"
+461	"Weiss, J" "Authors"
+462	"Complexity In Dislocation Dynamics: Model" "Title"
+463	"Complexity In Dislocation Dynamics: Experiments" "Title"
+464	"Reaction-diffusion System With Self-organized Critical Behavior" "Title"
+465	"Epidemic Spreading In Scale-free Networks" "Title"
+466	"Intermittent Dislocation Flow In Viscoplastic Deformation" "Title"
+467	"Tosatti, E" "Authors"
+468	"Tosatti, V" "Authors"
+469	"Pietronero, L" "Authors"
+470	"Explaining The Uneven Distribution Of Numbers In Nature: The Laws Of Benford And Zipf" "Title"
+471	"Anomalous Scaling In The Zhang Model" "Title"
+472	"Field Theory Of Absorbing Phase Transitions With A Nondiffusive Conserved Field" "Title"
+473	"Critical Behavior And Conservation In Directed Sandpiles" "Title"
+474	"Marsili, M" "Authors"
+475	"Nonequilibrium Phase Transition In A Model For Social Influence" "Title"
+476	"Absorbing-state Phase Transitions In Fixed-energy Sandpiles" "Title"
+477	"Rossi, M" "Authors"
+478	"Universality Class Of Absorbing Phase Transitions With A Conserved Field" "Title"
+479	"Corrections To Scaling In The Forest-fire Model" "Title"
+480	"Paths To Self-organized Criticality" "Title"
+481	"Universality Classes In Directed Sandpile Models" "Title"
+482	"Chessa, A" "Authors"
+483	"Critical Exponents In Stochastic Sandpile Models" "Title"
+484	"Fluctuations And Correlations In Sandpile Models" "Title"
+485	"Ray, P" "Authors"
+486	"Analysis Of Damage Clusters In Fracture Processes" "Title"
+487	"Ivashkevich, Ev" "Authors"
+488	"Povolotsky, Am" "Authors"
+489	"Dynamical Real Space Renormalization Group Applied To Sandpile Models" "Title"
+490	"Comment On first-order Transition In The Breakdown Of Disordered Media - Zapperi Et Al. Reply" "Title"
+491	"Avalanches In Breakdown And Fracture Processes" "Title"
+492	"Avalanche And Spreading Exponents In Systems With Absorbing States" "Title"
+493	"Universality In Sandpiles" "Title"
+494	"Driving, Conservation, And Absorbing States In Sandpiles" "Title"
+495	"Marinari, E" "Authors"
+496	"Mean-field Behavior Of The Sandpile Model Below The Upper Critical Dimension" "Title"
+497	"How Self-organized Criticality Works: A Unified Mean-field Picture" "Title"
+498	"Loreto, V" "Authors"
+499	"Dynamically Driven Renormalization Group Applied To Self-organized Critical Systems" "Title"
+500	"Self-organized Criticality As An Absorbing-state Phase Transition" "Title"
+501	"Energy Constrained Sandpile Models" "Title"
+502	"Cafiero, R" "Authors"
+503	"Universality And Scale Invariant Dynamics In Laplacian Fractal Growth" "Title"
+504	"Dynamically Driven Renormalization Group" "Title"
+505	"Plasticity And Avalanche Behaviour In Microfracturing Phenomena" "Title"
+506	"Order Parameter And Scaling Fields In Self-organized Criticality" "Title"
+507	"First-order Transition In The Breakdown Of Disordered Media" "Title"
+508	"Renormalization Group Approach To The Critical Behavior Of The Forest-fire Model - Reply" "Title"
+509	"Piccioni, M" "Authors"
+510	"Monte Carlo Fixed Scale Transformation For Nonlocal Fractal Growth Models" "Title"
+511	"Renormalization Of Nonequilibrium Systems With Critical Stationary States" "Title"
+512	"Fixed Scale Transformation Approach For Born Model Of Fractures" "Title"
+513	"Costantini, M" "Authors"
+514	"Alippi, A" "Authors"
+515	"Petri, A" "Authors"
+516	"Paparo, G" "Authors"
+517	"Long Range Correlation On Properties Of Aftershock Relaxation Signals" "Title"
+518	"Renormalization Group Approach For Forest Fire Models" "Title"
+519	"Renormalization Scheme For Forest-fire Models" "Title"
+520	"Mandelbrot, Bb" "Authors"
+521	"Woog, L" "Authors"
+522	"Kaufman, H" "Authors"
+523	"Parallel Diffusion-limited Aggregation" "Title"
+524	"Fractals, Self-organized-criticality And The Fixed Scale Transformation" "Title"
+525	"Ruiz, I" "Authors"
+526	"Zaratti, F" "Authors"
+527	"Fixed Scale Transformation Applied To Fractal Aggregation With Levy Flight Particle Trajectories" "Title"
+528	"Crosscut Analysis Of Large Radial Dla - Departures From Self-similarity And Lacunarity Effects" "Title"
+529	"The Fixed-scale Transformation Approach To Fractal Growth" "Title"
+530	"Renormalization-group Approach To The Critical-behavior Of The Forest-fire Model" "Title"
+531	"Fixed Scale Transformation For Fracture Growth-processes Governed By Vectorial Fields" "Title"
+532	"Lam, Ch" "Authors"
+533	"Yekutieli, I" "Authors"
+534	"Deviations From Self-similarity In Plane Dla And The Infinite Drift Scenario" "Title"
+535	"Renormalization Approach To The Self-organized Critical-behavior Of Sandpile Models" "Title"
+536	"Local Rigidity And Self-organized Criticality For Avalanches" "Title"
+537	"Experimental-evidence For Critical-dynamics In Microfracturing Processes" "Title"
+538	"Fractal And Topological Properties Of Directed Fractures" "Title"
+539	"Renormalization Scheme For Self-organized Criticality In Sandpile Models" "Title"
+540	"Stella, A" "Authors"
+541	"Distasio, M" "Authors"
+542	"Fixed-scale Transformation Approach To Linear And Branched Polymers" "Title"
+543	"Persistence Of Screening And Self-criticality In The Scale-invariant Dynamics Of Diffusion-limited Aggregation" "Title"
+544	"Asymptotic Screening In The Scale Invariant Growth Rules For Laplacian Fractals" "Title"
+545	"Sidoretti, S" "Authors"
+546	"Fixed Scale Transformation Applied To Cluster Cluster Aggregation In 2-dimensions And 3-dimensions" "Title"
+547	"Wiesmann, Hj" "Authors"
+548	"Deangelis, R" "Authors"
+549	"Universality Of Growth Rules In Fractal Growth" "Title"
+550	"Nonconservative Character Of The Intersection Of Self-similar Cascades" "Title"
+551	"Fixed Scale Transformation Applied To Diffusion Limited Aggregation And Dielectric-breakdown Model In 3-dimensions" "Title"
+552	"Effect Of Empty Configurations In The Fixed Scale Transformation Theory Of Fractal Growth" "Title"
+553	"Robins, G" "Authors"
+554	"Pattison, P" "Authors"
+555	"Wasserman, S" "Authors"
+556	"Kanfer, Am" "Authors"
+557	"Statistical Evaluation Of Algebraic Constraints For Social Networks" "Title"
+558	"Logit Models And Logistic Regressions For Social Networks: Ii. Multivariate Relations" "Title"
+559	"Logit Models And Logistic Regressions For Social Networks: Iii. Valued Relations" "Title"
+560	"Anderson, Cj" "Authors"
+561	"Crouch, B" "Authors"
+562	"A P* Primer: Logit Models For Social Networks" "Title"
+563	"Logit Models And Logistic Regressions For Social Networks .1. An Introduction To Markov Graphs And P" "Title"
+564	"Log-multiplicative Models For Valued Social-relations" "Title"
+565	"Constructing Algebraic Models For Local Social Networks Using Statistical-methods" "Title"
+566	"Faust, K" "Authors"
+567	"Correlation And Association Models For Studying Measurements On Ordinal Relations" "Title"
+568	"Galaskiewicz, J" "Authors"
+569	"Social Network Analysis - Concepts, Methodology, And Directions For The 1990s" "Title"
+570	"Wellman, B" "Authors"
+571	"Walker, Me" "Authors"
+572	"Statistical-models For Social Support Networks" "Title"
+573	"Categorical-data Analysis - Agresti,a" "Title"
+574	"Multiway Contingency-tables Analysis For The Social-sciences - Wickens,td" "Title"
+575	"Blockmodels - Interpretation And Evaluation" "Title"
+576	"Building Stochastic Blockmodels" "Title"
+577	"Iacobucci, D" "Authors"
+578	"Statistical Modeling Of One-mode And 2-mode Networks - Simultaneous Analysis Of Graphs And Bipartite Graphs" "Title"
+579	"Social Networks With 2 Sets Of Actors" "Title"
+580	"Correspondence And Canonical-analysis Of Relational Data" "Title"
+581	"Mimetic Processes Within An Interorganizational Field - An Empirical-test" "Title"
+582	"Sequential Social Network Data" "Title"
+583	"A General Framework For The Statistical-analysis Of Sequential Dyadic Interaction Data" "Title"
+584	"Dyadic Social Interactions" "Title"
+585	"Levine Atlas Of Corporate Interlocks - Vol 1, Vol 2 - Levine,jh" "Title"
+586	"Anderson, C" "Authors"
+587	"Stochastic A Posteriori Blockmodels - Construction And Assessment" "Title"
+588	"Conformity Of 2 Sociometric Relations" "Title"
+589	"Statistical-analysis Of Discrete Relational Data" "Title"
+590	"Weaver, So" "Authors"
+591	"Statistical-analysis Of Binary Relational Data - Parameter-estimation" "Title"
+592	"Bielefeld, W" "Authors"
+593	"Rauschenbach, B" "Authors"
+594	"Mullaney, P" "Authors"
+595	"The Influence Of Corporate-power, Social-status, And Market Position On Corporate Interlocks In A Regional Network" "Title"
+596	"Wasserman, Ss" "Authors"
+597	"Meyer, Mm" "Authors"
+598	"Fienberg, Se" "Authors"
+599	"Statistical-analysis Of Multiple Sociometric Relations" "Title"
+600	"Some Generalizations Of P1 - External Constraints, Interactions And Non-binary Relations" "Title"
+601	"A Dynamic Study Of Change In A Regional Corporate Network" "Title"
+602	"An Expotential Family Of Probability-distributions For Directed-graphs - Comment" "Title"
+603	"Analyzing Social Networks As Stochastic-processes" "Title"
+604	"Runger, G" "Authors"
+605	"Longitudinal Analysis Of Friendship Networks" "Title"
+606	"Models For Binary Directed Graphs And Their Applications" "Title"
+607	"Random Directed Graph Distributions And Triad Census In Social Networks" "Title"
+*DirectedEdges
+source*int target*int
+1	4	
+3	4	
+2	4	
+3	7	
+5	7	
+6	7	
+3	8	
+3	9	
+3	12	
+11	12	
+10	12	
+3	14	
+13	14	
+3	15	
+5	15	
+6	15	
+3	16	
+3	17	
+18	19	
+3	19	
+13	19	
+3	22	
+20	22	
+21	22	
+24	26	
+3	26	
+23	26	
+25	26	
+28	30	
+18	30	
+27	30	
+3	30	
+6	30	
+29	30	
+33	34	
+3	34	
+32	34	
+31	34	
+21	34	
+35	36	
+3	36	
+3	37	
+20	37	
+3	38	
+20	38	
+40	41	
+35	41	
+3	41	
+39	41	
+3	42	
+6	42	
+23	42	
+3	44	
+6	44	
+43	44	
+29	44	
+3	46	
+6	46	
+45	46	
+10	46	
+31	46	
+3	47	
+6	47	
+35	48	
+3	48	
+3	50	
+6	50	
+49	50	
+3	51	
+6	51	
+2	51	
+60	70	
+63	70	
+55	70	
+53	70	
+5	70	
+58	70	
+61	70	
+52	70	
+68	70	
+64	70	
+59	70	
+3	70	
+65	70	
+56	70	
+6	70	
+67	70	
+66	70	
+62	70	
+57	70	
+54	70	
+69	70	
+3	74	
+71	74	
+72	74	
+73	74	
+3	76	
+5	76	
+6	76	
+75	76	
+77	78	
+3	78	
+63	79	
+3	79	
+3	81	
+71	81	
+80	81	
+33	82	
+3	82	
+71	82	
+6	82	
+31	82	
+3	84	
+20	84	
+83	84	
+33	87	
+63	87	
+3	87	
+71	87	
+6	87	
+85	87	
+86	87	
+31	87	
+21	87	
+3	89	
+72	89	
+88	89	
+3	91	
+23	91	
+90	91	
+3	92	
+6	92	
+96	97	
+95	97	
+94	97	
+3	97	
+93	97	
+63	98	
+3	98	
+71	98	
+80	98	
+85	98	
+31	98	
+3	99	
+49	99	
+3	101	
+100	101	
+3	105	
+71	105	
+104	105	
+72	105	
+103	105	
+102	105	
+107	111	
+3	111	
+109	111	
+108	111	
+110	111	
+106	111	
+107	113	
+3	113	
+72	113	
+112	113	
+63	114	
+3	114	
+31	114	
+107	116	
+3	116	
+109	116	
+108	116	
+72	116	
+100	116	
+115	116	
+31	116	
+3	117	
+71	117	
+72	117	
+3	121	
+71	121	
+120	121	
+118	121	
+6	121	
+119	121	
+3	124	
+123	124	
+122	124	
+90	124	
+3	126	
+31	126	
+125	126	
+21	126	
+3	127	
+3	129	
+71	129	
+128	129	
+23	129	
+3	131	
+130	131	
+3	132	
+130	132	
+3	134	
+71	134	
+6	134	
+133	134	
+3	136	
+72	136	
+135	136	
+3	137	
+71	137	
+72	137	
+138	140	
+3	140	
+139	140	
+3	141	
+100	141	
+3	142	
+71	142	
+6	142	
+119	142	
+100	142	
+3	143	
+71	143	
+100	143	
+3	144	
+71	144	
+100	144	
+3	145	
+100	145	
+63	147	
+3	147	
+80	147	
+146	147	
+31	147	
+107	149	
+3	149	
+109	149	
+108	149	
+72	149	
+100	149	
+115	149	
+31	149	
+148	149	
+63	150	
+3	150	
+80	150	
+146	150	
+31	150	
+3	151	
+107	153	
+3	153	
+100	153	
+115	153	
+152	153	
+31	153	
+3	155	
+71	155	
+72	155	
+154	155	
+3	156	
+71	156	
+100	156	
+3	157	
+100	157	
+3	158	
+71	158	
+100	158	
+159	164	
+161	164	
+160	164	
+3	164	
+162	164	
+163	164	
+3	166	
+165	166	
+135	166	
+21	166	
+159	169	
+3	169	
+168	169	
+103	169	
+167	169	
+102	169	
+107	170	
+3	170	
+100	170	
+159	172	
+3	172	
+171	172	
+107	174	
+173	174	
+3	174	
+100	174	
+3	176	
+175	176	
+31	176	
+177	178	
+3	178	
+159	179	
+3	179	
+168	179	
+103	179	
+167	179	
+102	179	
+3	180	
+20	180	
+182	183	
+3	183	
+100	183	
+181	183	
+186	187	
+3	187	
+185	187	
+184	187	
+159	188	
+3	188	
+3	189	
+20	189	
+177	190	
+3	190	
+21	190	
+107	192	
+191	192	
+3	192	
+109	192	
+100	192	
+159	193	
+3	193	
+3	194	
+20	194	
+107	196	
+195	196	
+3	196	
+109	196	
+100	196	
+3	197	
+159	198	
+3	198	
+3	200	
+199	200	
+201	206	
+202	206	
+24	206	
+94	206	
+3	206	
+203	206	
+204	206	
+205	206	
+94	209	
+3	209	
+207	209	
+208	209	
+205	209	
+3	210	
+213	214	
+211	214	
+212	214	
+3	214	
+215	216	
+3	216	
+205	216	
+3	217	
+186	218	
+3	218	
+203	218	
+205	218	
+213	220	
+3	220	
+219	220	
+94	221	
+3	221	
+207	221	
+208	221	
+205	221	
+201	222	
+215	222	
+3	222	
+205	222	
+3	223	
+83	223	
+201	224	
+202	224	
+94	224	
+3	224	
+203	224	
+204	224	
+205	224	
+94	225	
+3	225	
+207	225	
+208	225	
+205	225	
+94	226	
+3	226	
+207	226	
+208	226	
+205	226	
+201	227	
+3	227	
+205	227	
+186	229	
+228	229	
+3	229	
+186	232	
+3	232	
+230	232	
+231	232	
+205	232	
+94	233	
+3	233	
+207	233	
+208	233	
+205	233	
+201	234	
+94	234	
+3	234	
+203	234	
+205	234	
+3	235	
+236	237	
+24	237	
+94	237	
+3	237	
+203	237	
+205	237	
+3	238	
+94	240	
+3	240	
+239	240	
+203	240	
+205	240	
+31	240	
+241	242	
+3	242	
+205	242	
+244	246	
+243	246	
+24	246	
+3	246	
+245	246	
+31	246	
+3	248	
+31	248	
+247	248	
+3	249	
+3	250	
+31	250	
+3	251	
+31	251	
+3	252	
+31	252	
+3	253	
+31	253	
+254	255	
+256	261	
+257	261	
+258	261	
+260	261	
+254	261	
+259	261	
+262	263	
+254	263	
+254	264	
+266	267	
+265	267	
+254	267	
+265	268	
+254	268	
+266	269	
+265	269	
+254	269	
+266	270	
+265	270	
+254	270	
+271	275	
+272	275	
+273	275	
+254	275	
+274	275	
+276	277	
+254	277	
+265	278	
+254	278	
+254	279	
+254	280	
+254	281	
+254	282	
+254	283	
+254	284	
+254	285	
+254	286	
+254	287	
+254	288	
+254	289	
+254	290	
+291	292	
+254	292	
+254	293	
+291	294	
+254	294	
+254	295	
+296	297	
+254	297	
+254	298	
+291	299	
+254	299	
+254	300	
+254	301	
+254	302	
+254	303	
+254	304	
+254	305	
+254	306	
+254	307	
+291	308	
+254	308	
+254	309	
+254	310	
+254	311	
+296	312	
+254	312	
+254	313	
+254	314	
+315	316	
+254	316	
+254	317	
+254	318	
+254	319	
+254	320	
+254	321	
+254	322	
+254	323	
+324	325	
+254	325	
+254	326	
+254	327	
+254	328	
+254	329	
+254	330	
+331	332	
+254	332	
+254	333	
+335	336	
+254	336	
+334	336	
+254	337	
+254	338	
+254	339	
+254	340	
+296	342	
+254	342	
+341	342	
+254	343	
+254	344	
+345	346	
+254	346	
+348	349	
+347	349	
+254	349	
+254	350	
+254	351	
+254	352	
+254	353	
+254	354	
+254	355	
+345	359	
+348	359	
+356	359	
+358	359	
+254	359	
+357	359	
+254	360	
+345	361	
+348	361	
+254	361	
+254	362	
+254	363	
+254	364	
+254	365	
+366	367	
+254	367	
+366	368	
+254	368	
+254	369	
+254	370	
+371	372	
+254	372	
+254	373	
+366	374	
+254	374	
+254	375	
+254	376	
+254	377	
+254	378	
+379	380	
+254	380	
+254	381	
+382	384	
+254	384	
+383	384	
+254	385	
+388	390	
+387	390	
+389	390	
+386	390	
+391	393	
+392	393	
+387	393	
+389	393	
+387	394	
+396	397	
+388	397	
+395	397	
+18	397	
+387	397	
+398	400	
+399	400	
+387	400	
+388	401	
+387	401	
+386	401	
+396	402	
+388	402	
+395	402	
+18	402	
+387	402	
+391	404	
+403	404	
+387	404	
+389	404	
+388	406	
+387	406	
+386	406	
+405	406	
+396	409	
+387	409	
+407	409	
+408	409	
+388	410	
+387	410	
+386	410	
+388	411	
+387	411	
+386	411	
+405	411	
+388	412	
+387	412	
+386	412	
+388	413	
+387	413	
+386	413	
+387	416	
+415	416	
+414	416	
+417	419	
+418	419	
+387	419	
+388	423	
+417	423	
+420	423	
+201	423	
+418	423	
+421	423	
+3	423	
+387	423	
+422	423	
+72	423	
+405	423	
+418	424	
+387	424	
+405	424	
+387	426	
+405	426	
+425	426	
+388	427	
+387	427	
+386	427	
+405	427	
+388	428	
+387	428	
+386	428	
+405	428	
+387	429	
+391	432	
+387	432	
+430	432	
+431	432	
+434	435	
+387	435	
+433	435	
+391	436	
+403	436	
+18	436	
+387	436	
+387	438	
+437	438	
+18	439	
+387	439	
+415	439	
+405	439	
+425	439	
+18	440	
+387	440	
+415	440	
+405	440	
+434	441	
+387	441	
+433	441	
+387	442	
+405	442	
+425	442	
+443	446	
+445	446	
+387	446	
+444	446	
+448	449	
+447	449	
+18	449	
+387	449	
+18	450	
+387	450	
+405	450	
+387	451	
+415	451	
+405	451	
+387	452	
+405	452	
+387	453	
+405	453	
+18	454	
+387	454	
+405	454	
+457	458	
+213	458	
+445	458	
+455	458	
+387	458	
+456	458	
+387	459	
+405	459	
+445	462	
+461	462	
+387	462	
+460	462	
+444	462	
+445	463	
+461	463	
+387	463	
+460	463	
+444	463	
+387	464	
+405	464	
+387	465	
+405	465	
+445	466	
+461	466	
+387	466	
+460	466	
+444	466	
+469	470	
+387	470	
+467	470	
+468	470	
+387	471	
+405	471	
+387	472	
+405	472	
+387	473	
+405	473	
+434	475	
+474	475	
+387	475	
+457	476	
+213	476	
+445	476	
+387	476	
+387	478	
+477	478	
+405	478	
+387	479	
+405	479	
+457	480	
+213	480	
+445	480	
+387	480	
+387	481	
+405	481	
+445	483	
+387	483	
+482	483	
+388	484	
+445	484	
+387	484	
+445	486	
+485	486	
+387	486	
+205	486	
+445	489	
+387	489	
+487	489	
+488	489	
+445	490	
+485	490	
+387	490	
+205	490	
+445	491	
+485	491	
+387	491	
+205	491	
+457	492	
+213	492	
+445	492	
+387	492	
+445	493	
+387	493	
+482	493	
+205	493	
+457	494	
+213	494	
+445	494	
+387	494	
+495	496	
+445	496	
+387	496	
+482	496	
+445	497	
+387	497	
+445	499	
+387	499	
+498	499	
+457	500	
+445	500	
+387	500	
+495	501	
+387	501	
+482	501	
+445	503	
+469	503	
+387	503	
+502	503	
+445	504	
+387	504	
+498	504	
+445	505	
+387	505	
+205	505	
+445	506	
+387	506	
+445	507	
+485	507	
+387	507	
+205	507	
+445	508	
+469	508	
+387	508	
+498	508	
+509	510	
+387	510	
+502	510	
+445	511	
+387	511	
+498	511	
+418	512	
+387	512	
+516	517	
+513	517	
+387	517	
+515	517	
+514	517	
+445	518	
+469	518	
+387	518	
+498	518	
+445	519	
+387	519	
+498	519	
+387	523	
+520	523	
+522	523	
+521	523	
+469	524	
+387	524	
+525	527	
+469	527	
+387	527	
+526	527	
+387	528	
+520	528	
+522	528	
+417	529	
+469	529	
+387	529	
+445	530	
+469	530	
+387	530	
+498	530	
+418	531	
+469	531	
+387	531	
+387	534	
+520	534	
+532	534	
+522	534	
+533	534	
+445	535	
+469	535	
+387	535	
+445	536	
+469	536	
+387	536	
+502	536	
+498	536	
+516	537	
+513	537	
+387	537	
+515	537	
+514	537	
+434	538	
+418	538	
+387	538	
+445	539	
+469	539	
+387	539	
+541	542	
+469	542	
+387	542	
+540	542	
+469	543	
+387	543	
+502	543	
+469	544	
+387	544	
+502	544	
+387	546	
+545	546	
+474	549	
+469	549	
+387	549	
+548	549	
+547	549	
+399	550	
+387	550	
+469	551	
+387	551	
+469	552	
+387	552	
+555	557	
+553	557	
+554	557	
+556	557	
+555	558	
+554	558	
+555	559	
+553	559	
+554	559	
+555	562	
+560	562	
+561	562	
+555	563	
+554	563	
+555	564	
+560	564	
+555	565	
+554	565	
+566	567	
+555	567	
+555	569	
+568	569	
+555	572	
+571	572	
+570	572	
+555	573	
+560	573	
+555	574	
+560	574	
+566	575	
+555	575	
+566	576	
+555	576	
+560	576	
+555	578	
+577	578	
+555	579	
+577	579	
+566	580	
+555	580	
+568	580	
+555	581	
+568	581	
+555	582	
+577	582	
+555	583	
+577	583	
+555	584	
+577	584	
+555	585	
+568	585	
+555	587	
+586	587	
+555	588	
+555	589	
+577	589	
+555	591	
+590	591	
+592	595	
+555	595	
+594	595	
+593	595	
+568	595	
+598	599	
+596	599	
+597	599	
+555	600	
+568	600	
+555	601	
+568	601	
+555	602	
+598	602	
+555	603	
+555	605	
+604	605	
+596	606	
+596	607	

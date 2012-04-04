@@ -25,4 +25,4 @@ Import-Package: au.com.bytecode.opencsv,
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml, OSGI-INF/yahooAlgorithm.xml
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

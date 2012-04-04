@@ -3,83 +3,49 @@ package edu.iu.sci2.visualization.bipartitenet.model;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 
-import edu.iu.sci2.visualization.bipartitenet.PageDirector;
+import math.geom2d.Point2D;
 import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 
 public enum NodeDestination {
-	LEFT {
-		/* TODO Extract bits that don't vary per node.. per side even? */
-		
+	LEFT(new Color(31, 120, 180), XAlignment.RIGHT) {
 		@Override
-		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
-			TextLayout layout = fitTextLayout(nv.getLabel(), g, maxHeight);
-			Rectangle2D textBounds = layout.getBounds();
-			double x = nv.getNodeCenter().getX()
-					- nv.getCenterToTextDistance() - textBounds.getWidth();
-
-			layout.draw(g, (float) x, (float) (nv.getNodeCenter().getY()
-					- getFontCenterHeight(g)));
+		protected Point2D getAlignPoint(NodeView nv) {
+			return nv.getNodeCenter().translate(- nv.getCenterToTextDistance(), 0);
 		}
-
-		@Override
-		public
-		Color getFillColor() {
-			return Color.pink;
-		}
-
 	},
-	RIGHT {
+	RIGHT(new Color(178, 223, 138), XAlignment.LEFT) {
 		@Override
-		public void paintLabel(NodeView nv, Graphics2D g, double maxHeight) {
-			TextLayout layout = fitTextLayout(nv.getLabel(), g, maxHeight);
-			double x = nv.getNodeCenter().getX() + nv.getCenterToTextDistance();
-			
-			layout.draw(g, (float) x, (float) (nv.getNodeCenter().getY()
-					- getFontCenterHeight(g)));
-		}
-
-		@Override
-		public
-		Color getFillColor() {
-			return Color.orange;
+		protected Point2D getAlignPoint(NodeView nv) {
+			return nv.getNodeCenter().translate(+ nv.getCenterToTextDistance(), 0);
 		}
 	};
 
-	private static final int MINIMUM_FONT_SIZE = 2;
-	private static final Font LABEL_FONT = PageDirector.BASIC_FONT;
-	public abstract void paintLabel(NodeView nv, Graphics2D g, double maxHeight);
-	public abstract Color getFillColor();
 	
+	private final Color fillColor;
+	private final XAlignment alignDirection;
 	
-	private static TextLayout fitTextLayout(String label, Graphics2D g, double maxHeight) {
-		FontRenderContext frc = g.getFontRenderContext();
-		Font currentFont = fitFontWithinHeight(frc, maxHeight);
-		
-		return new TextLayout(label, currentFont, frc);
+	private NodeDestination(Color fillColor, XAlignment alignDirection) {
+		this.fillColor = fillColor;
+		this.alignDirection = alignDirection;
 	}
 	
-	private static Font fitFontWithinHeight(FontRenderContext frc, double maxHeight) {
-		Font currentFont = LABEL_FONT;
-		for (int fontSize = LABEL_FONT.getSize() ; fontSize >= MINIMUM_FONT_SIZE; fontSize--) {
-			currentFont = LABEL_FONT.deriveFont(LABEL_FONT.getStyle(), fontSize);
-			TextLayout tl = new TextLayout("Alg", currentFont, frc); // "Alg" is a good height test with its risers and descenders
-			Rectangle2D textBounds = tl.getBounds();
-			// "+1" to leave a bit of a margin
-			if (textBounds.getHeight() + 1 < maxHeight) {
-				break;
-			}
-		}
+	protected abstract Point2D getAlignPoint(NodeView nv);
+
+	public void paintLabel(NodeView nv, Graphics2D g, Font defaultFont, double nodeCenterToPageEdge) {
+		SimpleLabelPainter painter =
+				SimpleLabelPainter.alignedBy(alignDirection, YAlignment.STRIKE_HEIGHT)
+				.withFont(defaultFont)
+				.truncatedTo(nodeCenterToPageEdge - nv.getCenterToTextDistance() - 10)
+				.build();
 		
-		return currentFont;
+		painter.paintLabel(getAlignPoint(nv), nv.getLabel(), g);
 	}
 	
-	private static float getFontCenterHeight(Graphics2D g) {
-		 LineMetrics lm = g.getFont().getLineMetrics("Asdf", g.getFontRenderContext());
-		 return lm.getStrikethroughOffset();
+	public Color getFillColor() {
+		return fillColor;
 	}
 }

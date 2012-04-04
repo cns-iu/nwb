@@ -12,12 +12,6 @@ Import-Package: edu.iu.cns.graphstream.common,
  org.cishell.framework.userprefs;version="1.0.0",
  org.cishell.utilities,
  org.graphstream.graph,
- org.graphstream.graph.implementations,
- org.osgi.framework;version="1.3.0",
- org.osgi.service.cm;version="1.2.0",
- org.osgi.service.component;version="1.0.0",
- org.osgi.service.log;version="1.3.0",
- org.osgi.service.metatype;version="1.1.0",
- org.osgi.service.prefs;version="1.1.0"
+ org.graphstream.graph.implementations
 X-AutoStart: true
 Service-Component: OSGI-INF/nwb_graphstream.xml, OSGI-INF/graphstream_nwb.xml

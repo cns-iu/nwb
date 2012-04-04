@@ -19,7 +19,9 @@ public class PaintableContainer implements Paintable {
 	@Override
 	public void paint(Graphics2D g) {
 		for (Paintable p : children) {
-			p.paint((Graphics2D) g.create());
+			Graphics2D newGraphics = (Graphics2D) g.create();
+			p.paint(newGraphics);
+			newGraphics.dispose();
 		}
 	}
 	

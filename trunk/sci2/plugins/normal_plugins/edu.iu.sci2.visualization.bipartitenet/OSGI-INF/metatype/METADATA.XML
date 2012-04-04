@@ -2,6 +2,7 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Bipartite Network Graph" id="edu.iu.sci2.visualization.bipartitenet.algorithm.BipartiteNetAlgorithm.OCD"
 		 description="Enter the columns for each parameter.">
+		<AD name="Layout type" id="layoutType" type="String" description="Layout the resulting graph for web or print use?" default="(mutate)" />
 		<AD name="Left side node type" id="leftSideType" type="String" description="Values taken from the 'bipartitetype' column, which one should be on the left" default="(mutate)" />
 		<AD name="Node size" id="nodeSizeColumn" type="String" description="The column to use to calculate the node size" default="(mutate)" />
 		<AD name="Edge weight" id="edgeWeightColumn" type="String" description="The column to use to calculate the edge weight" default="(mutate)" />

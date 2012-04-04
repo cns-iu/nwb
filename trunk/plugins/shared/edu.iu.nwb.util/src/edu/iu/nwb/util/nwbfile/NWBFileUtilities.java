@@ -116,7 +116,7 @@ public class NWBFileUtilities {
 	}
 	
 	/**
-	 * Removes the required attributes of edges
+	 * Removes the required attributes of nodes
 	 * 
 	 * @see NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES
 	 */

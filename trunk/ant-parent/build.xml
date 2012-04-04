@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ant-parent" default="build">
+
+	<!-- Build non-Java plugins for NWB, EPIC, Sci2, etc. This ant script finds 
+		all build.xml scripts in the source tree, except a few listed below inside 
+		the <fileset/>, and executes them and copies any jar files from the build/ 
+		directory into a directory here. Then, it makes a p2 repository out of them 
+		and zips it up into "nonpde-plugins-p2.zip". -->
+
+	<property environment="env" />
+	<target name="build">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+
+		<delete dir="${basedir}/plugins" />
+		<mkdir dir="${basedir}/plugins" />
+		<foreach target="each-one" param="build.xml.to.build">
+			<path>
+				<fileset dir="${basedir}/..">
+					<include name="**/build.xml" />
+					<exclude name="**/deploy*/**" />
+					<!-- don't build self, that's silly -->
+					<exclude name="**/ant-parent/**" />
+					<exclude name="**/*test-devel*/**" />
+				</fileset>
+			</path>
+		</foreach>
+	</target>
+	<target name="publish">
+		<!-- Publish the plugins into a p2 repository -->
+		<delete dir="${basedir}/repository" />
+		<exec executable="${env.ECLIPSE}">
+			<arg line="-application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher" />
+			<arg line="-metadataRepository file:/${basedir}/repository" />
+			<arg line="-artifactRepository file:/${basedir}/repository" />
+			<arg line="-source ${basedir}" />
+			<!-- If you say ${basedir}, it looks in ${basedir}/plugins/ -->
+			<arg line="-compress" />
+			<arg line="-nosplash" />
+			<arg line="-publishArtifacts" />
+		</exec>
+
+		<zip destfile="${basedir}/nonpde-plugins-p2.zip" basedir="${basedir}"
+			includes="repository/**" />
+
+	</target>
+
+	<target name="each-one">
+		<!-- Transform a/b/c/build.xml into a/b/c/ so we can call ant on it. -->
+		<propertyregex property="dir.to.build" input="${build.xml.to.build}"
+			regexp="(.*)build\.xml" replace="\1" casesensitive="false" />
+		<echo>Going to build plugin in ${dir.to.build}</echo>
+		<ant dir="${dir.to.build}" />
+
+		<copy todir="${basedir}/plugins">
+			<fileset dir="${dir.to.build}/build" includes="*.jar" />
+		</copy>
+
+		<ant dir="${dir.to.build}" target="clean" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${basedir}/plugins" />
+		<delete dir="${basedir}/repository" />
+		<delete file="nonpde-plugins-p2.zip" />
+	</target>
+</project>

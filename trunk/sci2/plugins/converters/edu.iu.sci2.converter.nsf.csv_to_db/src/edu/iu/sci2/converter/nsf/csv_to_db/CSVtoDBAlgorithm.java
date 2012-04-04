@@ -19,14 +19,13 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.service.database.DataSourceWithID;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.DateUtilities;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.sci2.utilities.nsf.NsfNames;
+import edu.iu.sci2.utilities.nsf.*;
 
 //TODO: Expand to support a fuller more sophisticated representation of NSF data in the database
 public class CSVtoDBAlgorithm implements Algorithm  {
@@ -124,14 +123,14 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		try {
 		// TODO: treat some columns as optional and others as mandatory (or is this too much of a hassle)
 		// TODO: Create tables for all nsf data, not just the ones we use right now
-		String createAwardTableSQL = "" + "CREATE TABLE " + NsfNames.DB.AWARD_TABLE + dbID + 
+		String createAwardTableSQL = "" + "CREATE TABLE " + NSF_Database_FieldNames.AWARD_TABLE_NAME + dbID + 
 		"(" + 
-		NsfNames.DB.AWARD_NUMBER + " INTEGER," +
-		NsfNames.DB.AWARD_TITLE + " VARCHAR(500)," +
-		NsfNames.DB.AWARD_START_DATE + " DATE," + 
-		NsfNames.DB.AWARD_EXPIRATION_DATE + " DATE," +
-		NsfNames.DB.AWARDED_AMOUNT_TO_DATE + " INTEGER," + 
-		"PRIMARY KEY (" + NsfNames.DB.AWARD_NUMBER + ")" + 
+		NSF_Database_FieldNames.AWARD_NUMBER + " INTEGER," +
+		NSF_Database_FieldNames.AWARD_HUMAN_READABLE_NAME + " VARCHAR(500)," +
+		NSF_Database_FieldNames.START_DATE + " DATE," + 
+		NSF_Database_FieldNames.EXPIRATION_DATE + " DATE," +
+		NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE + " INTEGER," + 
+		"PRIMARY KEY (" + NSF_Database_FieldNames.AWARD_NUMBER + ")" + 
 		")";
 
 		Statement createAwardTableStatement = dbConnection.createStatement();
@@ -148,19 +147,19 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		try {
 			
 		// TODO: Put data from every column (not just those currently needed) into nsf-db
-		int awardNumberIndex = columnNameToColumnIndex.get(NsfNames.CSV.AWARD_NUMBER);
-		int awardTitleIndex = columnNameToColumnIndex.get(NsfNames.CSV.AWARD_TITLE);
-		int startDateIndex = columnNameToColumnIndex.get(NsfNames.CSV.AWARD_START_DATE);
-		int expirationDateIndex = columnNameToColumnIndex.get(NsfNames.CSV.AWARD_EXPIRATION_DATE);
-		int awardedAmountToDateIndex = columnNameToColumnIndex.get(NsfNames.CSV.AWARDED_AMOUNT_TO_DATE);
+		int awardNumberIndex = columnNameToColumnIndex.get(NSF_CSV_FieldNames.CSV.AWARD_NUMBER);
+		int awardTitleIndex = columnNameToColumnIndex.get(NSF_CSV_FieldNames.CSV.AWARD_TITLE);
+		int startDateIndex = columnNameToColumnIndex.get(NSF_CSV_FieldNames.CSV.AWARD_START_DATE);
+		int expirationDateIndex = columnNameToColumnIndex.get(NSF_CSV_FieldNames.CSV.AWARD_EXPIRATION_DATE);
+		int awardedAmountToDateIndex = columnNameToColumnIndex.get(NSF_CSV_FieldNames.CSV.AWARDED_AMOUNT_TO_DATE);
 		
-		String insertIntoAwardSql = "INSERT INTO " + NsfNames.DB.AWARD_TABLE + dbID + 
+		String insertIntoAwardSql = "INSERT INTO " + NSF_Database_FieldNames.AWARD_TABLE_NAME + dbID + 
 		" (" + 
-		NsfNames.DB.AWARD_NUMBER + "," +
-		NsfNames.DB.AWARD_TITLE + "," +
-		NsfNames.DB.AWARD_START_DATE + "," + 
-		NsfNames.DB.AWARD_EXPIRATION_DATE + "," +
-		NsfNames.DB.AWARDED_AMOUNT_TO_DATE + 
+		NSF_Database_FieldNames.AWARD_NUMBER + "," +
+		NSF_Database_FieldNames.AWARD_HUMAN_READABLE_NAME + "," +
+		NSF_Database_FieldNames.START_DATE + "," + 
+		NSF_Database_FieldNames.EXPIRATION_DATE + "," +
+		NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE + 
 		") " +
 		"VALUES " 
 		+ "("

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.iu.sci2.deployment</groupId>
+  <artifactId>deployment</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>edu.iu.sci2.converter.feature</module>
+    <module>edu.iu.sci2.gui.brand</module>
+    <module>edu.iu.sci2.gui.brand.feature</module>
+    <module>edu.iu.sci2.gui.brand.welcometext</module>
+    <module>edu.iu.sci2.javaalgorithms.feature</module>
+    <module>edu.iu.sci2.releng</module>
+  </modules>
+  <parent>
+  	<groupId>edu.iu.sci2</groupId>
+  	<artifactId>parent</artifactId>
+  	<version>1.0.0</version>
+  </parent>
+</project>

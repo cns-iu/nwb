@@ -7,5 +7,4 @@ Bundle-ClassPath: lucene-snowball-2.3.2.jar
 Export-Package: net.sf.snowball,
  net.sf.snowball.ext,
  org.apache.lucene.analysis.snowball
-Import-Package: org.apache.lucene.analysis.standard,
- org.apache.lucene.analysis
+Require-Bundle: lucene;bundle-version="2.3.2"

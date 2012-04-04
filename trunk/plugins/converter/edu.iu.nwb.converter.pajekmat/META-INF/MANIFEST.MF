@@ -17,3 +17,4 @@ Import-Package: org.cishell.framework,
 X-AutoStart: true
 Service-Component: OSGI-INF/validation.xml, OSGI-INF/filehandler.xml
 Export-Package: edu.iu.nwb.converter.pajekmat.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

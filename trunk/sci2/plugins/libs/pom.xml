@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.iu.sci2.libs</groupId>
+	<artifactId>libs</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<parent>
+		<groupId>edu.iu.sci2.plugins</groupId>
+		<artifactId>plugins</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<modules>
+		<module>antlr_stringtemplate</module>
+		<module>freehep_psviewer</module>
+		<module>geolibs</module>
+		<module>org.apache.commons.lang</module>
+		<module>pdfbox_fontbox</module>
+		<module>javaGeom</module>
+	</modules>
+</project>

@@ -3,8 +3,12 @@ package edu.iu.sci2.visualization.scimaps.journals;
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 
 import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
@@ -15,13 +19,13 @@ import java.util.Set;
 
 import oim.vivo.scimapcore.journal.Journal;
 
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.apache.xmlgraphics.java2d.ps.PSDocumentGraphics2D;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.freehep.util.UserProperties;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -182,14 +186,14 @@ public class JournalsMapAlgorithm implements Algorithm {
 	private static Data createData(PageManager pageManger, Data parentData,
 			LogService logger) throws DataCreationException {
 		try {
-			File outFile = File.createTempFile("Visualization-", ".ps");
+			File outFile = File.createTempFile("MapOfScience_Visualization_", ".ps");
 			OutputStream out = new FileOutputStream(outFile);
 			writePostscript(pageManger, out, logger);
 			out.close();
-
-			Data outData = new BasicData(outFile, "file:text/ps");
+			File hackOutFile = hackPageSizeForFreehepAndAdobe(outFile, pageManger);
+			Data outData = new BasicData(hackOutFile, "file:text/ps");
 			Dictionary<String, Object> metadata = outData.getMetadata();
-			metadata.put(DataProperty.LABEL, "Scimaps Visualization");
+			metadata.put(DataProperty.LABEL, "Map of Science Visualization");
 			metadata.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
 			metadata.put(DataProperty.PARENT, parentData);
 
@@ -200,29 +204,73 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 	}
 	
+	/**
+	 * HACK The file output by freehep 2.1.1 and converted to PDF with Adobe
+	 * Distiller X does not respect the page size setting added to each page by
+	 * freehep. It requires an extra "setpagedevice" to be added, but there is
+	 * no way to do this with freehep. This hack method solves that issue.
+	 * 
+	 * This method should be replaced as soon as another solution is available.
+	 * 
+	 * TODO HACK FIXME XXX
+	 * 
+	 * @throws IOException
+	 */
+	private static File hackPageSizeForFreehepAndAdobe(File psFile,
+			PageManager pageManger) throws IOException {
+		File outFile = File
+				.createTempFile("MapOfScience_Visualization_", ".ps");
+		BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
+		BufferedReader reader = new BufferedReader(new FileReader(psFile));
+		
+		final String newline = System.getProperty("line.separator");
+		final String MAGIC_STRING_TO_APPEND_AFTER = "%%EndComments";
+		final String MAGIC_WORDS = "%%BeginFeature: *PageSize Default\n<< /PageSize [ "
+				+ pageManger.pageDimensions().getWidth()
+				+ " "
+				+ pageManger.pageDimensions().getHeight()
+				+ " ] >> setpagedevice\n%%EndFeature";
+		String line;
+		while ((line = reader.readLine()) != null) {
+			out.write(line + newline);
+			if (line.contains(MAGIC_STRING_TO_APPEND_AFTER)) {
+				out.write(MAGIC_WORDS + newline);
+			}
+		}
+
+		reader.close();
+		out.close();
+		return outFile;
+
+	}
+
 	private static void writePostscript(PageManager pageManger,
 			OutputStream out, LogService logger) throws IOException {
-		PSDocumentGraphics2D g2d = new PSDocumentGraphics2D(false);
-
+		
+		UserProperties psProperties = new UserProperties();
+		psProperties.setProperty(PSGraphics2D.EMBED_FONTS, false);
+		psProperties.setProperty(PSGraphics2D.TEXT_AS_SHAPES, false);
+		psProperties.setProperty(PSGraphics2D.FIT_TO_PAGE, false);
+		psProperties.setProperty(PSGraphics2D.PAGE_SIZE, PSGraphics2D.CUSTOM_PAGE_SIZE);
+		psProperties.setProperty(PSGraphics2D.CUSTOM_PAGE_SIZE, pageManger.pageDimensions());
+		
+		PSGraphics2D psGraphic = new PSGraphics2D(out, pageManger.pageDimensions());
+		psGraphic.setProperties(psProperties);
+		psGraphic.setMultiPage(true);
+		psGraphic.startExport();
+		System.out.println("Pages = " + pageManger.numberOfPages());
 		for (int pageNumber = 0; pageNumber < pageManger.numberOfPages(); pageNumber++) {
-			if (pageNumber > 0) {
-				g2d.nextPage();
-			}
-			g2d.setGraphicContext(new GraphicContext());
-			g2d.setupDocument(out,
-					(int) pageManger.pageDimensions().getWidth(),
-					(int) pageManger.pageDimensions().getHeight());
-			g2d.setClip(0, 0,
-					(int) pageManger.pageDimensions().getWidth(),
-					(int) pageManger.pageDimensions().getHeight());
 			try {
-				pageManger.render(pageNumber, new GraphicsState(g2d));
+				psGraphic.openPage(pageManger.pageDimensions(), "Page " + (pageNumber + 1));
+				psGraphic.setClip(0, 0, (int) pageManger.pageDimensions().getWidth(), (int) pageManger.pageDimensions().getHeight());
+				pageManger.render(pageNumber, new GraphicsState(psGraphic));
+				psGraphic.closePage();
 			} catch (PageManagerRenderingException e) {
 				logger.log(LogService.LOG_ERROR, e.getMessage(), e);
 			}
 		}
-
-		g2d.finish();
+		
+		psGraphic.endExport();
 	}
 
 	public static class DataCreationException extends Exception {

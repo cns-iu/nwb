@@ -83,7 +83,22 @@ public class EntityUtils {
 	// TODO: do better handling if the object is wrong?
 	static <S extends FileField> Integer getNullableInteger(FileTuple<S> source,
 			S sourceKey) {
-		return (Integer) removeArrayWrapper(source.get(sourceKey.getName()), null);
+		Object contents = removeArrayWrapper(source.get(sourceKey.getName()), null);
+		if (contents instanceof Integer) {
+			return (Integer) contents;
+		} else if (contents instanceof Number) {
+			return ((Number) contents).intValue();
+		} else if (contents instanceof String) {
+			try {
+				return Integer.valueOf((String) contents);
+			} catch (NumberFormatException e) {
+				// TODO: throw something?  log?
+				// For example: the volume "number" might be "105 PEDIATRICS"
+				return null;
+			}
+		} else {
+			return null;
+		}
 	}
 
 	private static <S extends FileField> void putStringField(Dictionary<String, Object> dest,
