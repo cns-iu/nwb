@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.database.isi.extract.network.citation.author
 Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.network.citation.author
-Bundle-Version: 0.0.1
+Bundle-Version: 0.0.2
 Bundle-ClassPath: .
 Import-Package: edu.iu.cns.database.extract.generic,
  org.cishell.framework;version="1.0.0",
@@ -17,3 +17,4 @@ Import-Package: edu.iu.cns.database.extract.generic,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

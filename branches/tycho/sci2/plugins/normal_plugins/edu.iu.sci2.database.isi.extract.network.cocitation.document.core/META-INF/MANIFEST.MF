@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.database.isi.extract.network.cocitation.document.core
 Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.network.cocitation.document.core
-Bundle-Version: 0.0.1
+Bundle-Version: 0.0.2
 Bundle-ClassPath: .
 Import-Package: edu.iu.cns.database.extract.generic,
  org.cishell.framework;version="1.0.0",
