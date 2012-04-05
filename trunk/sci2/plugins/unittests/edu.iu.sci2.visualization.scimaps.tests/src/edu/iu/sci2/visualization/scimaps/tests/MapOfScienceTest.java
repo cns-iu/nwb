@@ -96,8 +96,7 @@ public class MapOfScienceTest {
 	public void testVisually() {
 
 		try {
-			String filelocation = "sampledata\\LaszloBarabasi.isi.csv";
-			File inFile = new File(filelocation);
+			File inFile = new File("sampledata", "LaszloBarabasi.isi.csv");
 			Data data = new BasicData(inFile, JournalsMapAlgorithm.CSV_MIME_TYPE);
 
 			PrefuseCsvReader prefuseCSVReader = new PrefuseCsvReader(
