@@ -84,7 +84,7 @@ public enum ComparisonAlgorithm {
 
 			return similarity;
 		}
-	}, SørensenSimilarityIndex {
+	}, SÃ¸rensenSimilarityIndex {
 		@Override
 		public <T> float calculateSimilarity(Collection<T> c1, Collection<T> c2) {
 			/*
