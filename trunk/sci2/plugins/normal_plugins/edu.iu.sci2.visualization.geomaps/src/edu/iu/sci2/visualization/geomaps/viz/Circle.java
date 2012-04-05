@@ -12,8 +12,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPageArea;
 import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
@@ -43,7 +43,7 @@ public class Circle {
 	}
 	
 	
-	public String toPostScript(GeometryProjector geometryProjector, GeoMapViewPageArea geoMapViewPageArea) throws TransformException {
+	public String toPostScript(GeoMap geoMap, GeoMapViewPageArea geoMapViewPageArea) throws TransformException {
 		double radius = calculateRadiusFromArea(
 				((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).getArea());
 		Strategy innerColorStrategy = strategyFor(CircleDimension.INNER_COLOR);
@@ -55,7 +55,7 @@ public class Circle {
 		 * cropping and in cropping we might subtract out rawPoint.
 		 * Then we wouldn't be able to draw this Circle.
 		 */
-		Geometry projectedPoint = geometryProjector.transformGeometry(coordinatePoint);
+		Geometry projectedPoint = geoMap.project(coordinatePoint);
 		Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint.getCoordinate());
 
 		StringBuilder builder = new StringBuilder();

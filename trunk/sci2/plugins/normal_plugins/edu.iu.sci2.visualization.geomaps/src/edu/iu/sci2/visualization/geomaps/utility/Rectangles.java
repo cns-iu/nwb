@@ -21,6 +21,14 @@ public class Rectangles {
 		
 		return rectangle;
 	}	
+	
+	public static Rectangle2D.Double forCornerPoints(
+			Point2D.Double corner1, Point2D.Double corner2) {
+		Rectangle2D.Double rectangle = new Rectangle2D.Double();
+		rectangle.setFrameFromDiagonal(corner1, corner2);
+		
+		return rectangle;
+	}
 
 	public static Range<Double> xRange(Rectangle2D.Double rectangle) {
 		return Ranges.closed(rectangle.getMinX(), rectangle.getMaxX());

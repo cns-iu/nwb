@@ -15,6 +15,7 @@ import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector.GeometryProjectorException;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
@@ -96,7 +97,12 @@ public class GeoMap {
 	}
 
 	public Geometry project(Geometry geometry) throws TransformException {
-		return getGeometryProjector().projectGeometry(geometry);
+		Inset inset = shapefile.inset(geometry);
+		Geometry projectedGeometry = geometryProjector.projectGeometry(geometry);
+		if (inset != null) {
+			projectedGeometry = inset.inset(projectedGeometry, geometryProjector);
+		}
 		
+		return projectedGeometry;
 	}
 }

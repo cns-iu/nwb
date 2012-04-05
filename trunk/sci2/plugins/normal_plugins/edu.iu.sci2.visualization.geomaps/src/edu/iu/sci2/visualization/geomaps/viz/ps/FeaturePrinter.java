@@ -12,10 +12,8 @@ import java.util.Map.Entry;
 
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.StringUtilities;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
@@ -29,13 +27,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
-import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.utility.Iterables2;
 import edu.iu.sci2.visualization.geomaps.utility.Lists2;
 import edu.iu.sci2.visualization.geomaps.utility.Points;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureDimension;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
+import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.NullColorStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
@@ -49,28 +46,17 @@ public class FeaturePrinter {
 	public static final double BORDER_LINE_WIDTH = 0.4;
 	public static final String INDENT = "  ";
 	
-	private final Shapefile shapefile;
-	private final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
-	private final GeometryProjector geometryProjector;
+	private final GeoMap geoMap;
 	private final GeoMapViewPageArea geoMapViewPageArea;
-	private final String shapefileFeatureNameKey;
 	
 	private Map<String, Boolean> featureWasColoredMap;
 	
-	public FeaturePrinter(
-			Shapefile shapefile,
-			FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection,
-			GeometryProjector geometryProjector,
-			GeoMapViewPageArea geoMapViewPageArea,
-			String shapefileFeatureNameKey) {
-		this.shapefile = shapefile;
-		this.featureCollection = featureCollection;
-		this.geometryProjector = geometryProjector;
+	public FeaturePrinter(GeoMap geoMap, GeoMapViewPageArea geoMapViewPageArea) {
+		this.geoMap = geoMap;
 		this.geoMapViewPageArea = geoMapViewPageArea;
-		this.shapefileFeatureNameKey = shapefileFeatureNameKey;
 	}
-	
-	
+
+
 	public void printFeatures(
 			BufferedWriter out,
 			Collection<FeatureView> featureViews)
@@ -100,7 +86,7 @@ public class FeaturePrinter {
 		out.write(PSUtility.setgray(BORDER_BRIGHTNESS) + "\n");
 		out.write("\n");
 
-		FeatureIterator<SimpleFeature> iterator = featureCollection.features();
+		FeatureIterator<SimpleFeature> iterator = geoMap.getShapefile().viewOfFeatureCollection().features();
 		while (iterator.hasNext()) {
 			SimpleFeature feature = iterator.next();
 
@@ -155,7 +141,7 @@ public class FeaturePrinter {
 				+ " regions had "
 				+ "data associated in the table but could not be found in "
 				+ "the shapefile (using region name key \""
-				+ shapefileFeatureNameKey
+				+ geoMap.getShapefile().getFeatureAttributeName()
 				+ "\") and so could not be colored: "
 				+ unfoundFeatureNamesPreview
 				+ ".";
@@ -170,7 +156,7 @@ public class FeaturePrinter {
 				new Exception(
 					"These regions could not be found in the shapefile (using "
 					+ "region name key \""
-					+ shapefileFeatureNameKey
+					+ geoMap.getShapefile().getFeatureAttributeName()
 					+ "\"): "
 					+ StringUtilities.implodeItems(unfoundFeatureNames, ", ")
 					+ "."));
@@ -182,15 +168,12 @@ public class FeaturePrinter {
 			SimpleFeature feature,
 			ImmutableMap<String, FeatureView> featureColorMap)
 				throws IOException, TransformException {
-		String featureName = shapefile.extractFeatureName(feature);
+		String featureName = geoMap.getShapefile().extractFeatureName(feature);
 		
-		Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
-		Geometry insetGeometry = shapefile.inset(featureName, rawGeometry);
-		Geometry geometry = geometryProjector.projectGeometry(insetGeometry);
-
+		Geometry geometry = geoMap.project((Geometry) feature.getDefaultGeometry());
 
 		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
-			out.write(INDENT + "% Feature, " + shapefileFeatureNameKey + " = " + featureName + ", subgeometry " + gg + "\n");
+			out.write(INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
 			Geometry subgeometry = geometry.getGeometryN(gg);
 			
 			printGeometry(subgeometry, out, featureColorMap, featureName);

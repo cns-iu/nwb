@@ -66,7 +66,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, Nicel
 	}
 
 	/**
-	 * If {@code sourceCrs} is null, {@link #FALLBACK_SOURCE_CRS} is assumed.
+	 * If {@code sourceCrs} is null, {@link Shapefile#FALLBACK_SOURCE_CRS} is assumed.
 	 */
 	public MathTransform getTransformFrom(CoordinateReferenceSystem sourceCrs) throws NoSuchAuthorityCodeException, FactoryException {
 		return CRS.findMathTransform(

@@ -75,13 +75,7 @@ public class GeoMapViewPS {
 		out.write(geoMapViewPageArea.toPostScript());
 		out.write("\n");
 		
-		FeaturePrinter featurePrinter =
-			new FeaturePrinter(
-					geoMap.getShapefile(),
-					geoMap.getShapefile().viewOfFeatureCollection(),
-					geoMap.getGeometryProjector(),
-					geoMapViewPageArea,
-					geoMap.getShapefile().getFeatureAttributeName());
+		FeaturePrinter featurePrinter = new FeaturePrinter(geoMap, geoMapViewPageArea);
 		featurePrinter.printFeatures(out, geoMap.getFeatureViews());
 
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circlePrinterDefinitions").toString());
@@ -96,7 +90,7 @@ public class GeoMapViewPS {
 		out.write("\n");
 
 		for (Circle circle : geoMap.getCircles()) {
-			out.write(circle.toPostScript(geoMap.getGeometryProjector(), geoMapViewPageArea));
+			out.write(circle.toPostScript(geoMap, geoMapViewPageArea));
 		}
 
 		out.write("grestore" + "\n");
@@ -139,7 +133,7 @@ public class GeoMapViewPS {
 	/**
 	 * Given a latitude and longitude in a {@link Coordinate} object, projects it onto the
 	 * current map as well as possible.
-	 * @throws TransformException 
+	 * @throws TransformException	When the underlying transform fails.
 	 */
 	public Point2D.Double coordinateToPagePoint(Coordinate coordinate) throws TransformException {
 		return geoMapViewPageArea.displayPointFor(geoMap.project(coordinate));
@@ -157,12 +151,9 @@ public class GeoMapViewPS {
 			SimpleFeature feature = it.next();
 			String featureName = geoMap.getShapefile().extractFeatureName(feature);
 			Geometry geometry;
-			try {				
-				geometry = geoMap.project(
-						geoMap.getShapefile().inset(
-								featureName,
-								(Geometry) feature.getDefaultGeometry()));
-			} catch (IllegalArgumentException e) {
+			try {
+				geometry = geoMap.project((Geometry) feature.getDefaultGeometry());
+			} catch (IllegalArgumentException e) { // TODO Still necessary?
 				/* This seems to happen intermittently with version 2.7.4 of geolibs/Geotools for
 				 * one subgeometry of Minnesota in Shapefile.UNITED_STATES. */
 				System.err.println(String.format(

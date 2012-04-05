@@ -22,7 +22,6 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DataFactory;
 import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 
@@ -36,6 +35,7 @@ import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
+import edu.iu.sci2.visualization.geomaps.viz.CircleDimension;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
@@ -165,10 +165,11 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	
 	public static void main(String[] args) {
+		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
 		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
-		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+//		Example.WORLD_CIRCLES.run(PageLayout.WEB);
 		Example.US_REGIONS.run(PageLayout.PRINT);
-		Example.US_REGIONS.run(PageLayout.WEB);
+//		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
 
@@ -176,7 +177,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private enum Example {
 		WORLD_CIRCLES(
 				Shapefile.WORLD,
-				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "25mostPopulousNationsWithGDPs.csv"),
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM +
+						"area-population-and-population-density-of-20-most-populous-cities.csv"),
+				"20 most populous cities",
 				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
 						PageLayout.PRINT, GeoMapsCirclesFactory.Print.class,
 						PageLayout.WEB, GeoMapsCirclesFactory.Web.class),
@@ -186,28 +189,29 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 						
 						.put("circleAreaColumnName",
 								// CircleDimension.AREA.getColumnNameParameterDisablingToken()
-								"GDP (Billions USD)"
+								"Population"
 								)
 						.put("circleAreaScaling", Scaling.Linear.toString())
 						
 						.put("outerColorColumnName",
 								// CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken()
-								"Population (Thousands)"
+								"Area (sq. km.)"
 								)
-						.put("outerColorScaling", Scaling.Linear.toString())
-						.put("outerColorRange", "Yellow to Red")
+						.put("outerColorScaling", Scaling.Logarithmic.toString())
+						.put("outerColorRange", "White to Black")
 						
 						.put("innerColorColumnName",
-								// CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
-								"Population (Thousands)"
+//								CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
+								"Population density (people per sq. km.)"
 								)
 						.put("innerColorScaling", Scaling.Linear.toString())
-						.put("innerColorRange", "White to Black")
+						.put("innerColorRange", "Yellow to Blue")
 						.build()
 				),
 		US_REGIONS(
 				Shapefile.UNITED_STATES,
 				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "us-state-populations.csv"),
+				"US state populations",
 				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
 						PageLayout.PRINT, GeoMapsRegionsFactory.Print.class,
 						PageLayout.WEB, GeoMapsRegionsFactory.Web.class),
@@ -220,20 +224,47 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 						.put("featureColorScaling", Scaling.Linear.toString())
 						.put("featureColorRange", "Yellow to Blue")
 						.build()
+				),
+		ALASKA_CIRCLE_OVERLAY_INSET_TEST(
+				Shapefile.UNITED_STATES,
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM +
+						"alaska-circle-overlay-inset-test.csv"),
+				"Alaska circle overlay inset test",
+				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
+						PageLayout.PRINT, GeoMapsCirclesFactory.Print.class,
+						PageLayout.WEB, GeoMapsCirclesFactory.Web.class),
+				ImmutableMap.<String, Object>builder()
+						.put("latitude", "Latitude")
+						.put("longitude", "Longitude")
+						
+						.put("circleAreaColumnName", CircleDimension.AREA.getColumnNameParameterDisablingToken())
+						.put("circleAreaScaling", Scaling.Linear.toString())
+						
+						.put("outerColorColumnName", CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken())
+						.put("outerColorScaling", Scaling.Logarithmic.toString())
+						.put("outerColorRange", "White to Black")
+						
+						.put("innerColorColumnName", CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken())
+						.put("innerColorScaling", Scaling.Linear.toString())
+						.put("innerColorRange", "Yellow to Blue")
+						.build()
 				);
 		
 		private final Shapefile shapefile;
 		private final URL csvFileURL;
+		private final String dataLabel;
 		private final ImmutableMap<PageLayout, Class<? extends AlgorithmFactory>> algorithmFactoryClassForPageLayout;
 		private final ImmutableMap<String, Object> baseParameters;
 
 		private Example(
 				Shapefile shapefile,
 				URL tableFileURL,
+				String dataLabel,
 				ImmutableMap<PageLayout, Class<? extends AlgorithmFactory>> algorithmFactoryClassForPageLayout,
 				ImmutableMap<String, Object> baseParameters) {
 			this.shapefile = shapefile;
 			this.csvFileURL = tableFileURL;
+			this.dataLabel = dataLabel;
 			this.algorithmFactoryClassForPageLayout = algorithmFactoryClassForPageLayout;
 			this.baseParameters = baseParameters;
 		}
@@ -246,6 +277,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 						createAlgorithm(
 								algorithmFactoryClassForPageLayout.get(pageLayout),
 								csvFileURL,
+								dataLabel,
 								parameters);
 	
 				System.out.println("Executing.. ");
@@ -284,11 +316,14 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		private static Algorithm createAlgorithm(
 				Class<? extends AlgorithmFactory> algorithmFactoryClass,
 				URL csvFileURL,
+				String dataLabel,
 				Dictionary<String, Object> parameters)
 						throws InstantiationException, IllegalAccessException, URISyntaxException,
-								AlgorithmExecutionException, BundleException {
+								AlgorithmExecutionException {
 			AlgorithmFactory algorithmFactory = algorithmFactoryClass.newInstance();
-			Data[] prefuseTableData = convertToPrefuseTableData(csvFileURL);			
+			Data[] prefuseTableData = convertToPrefuseTableData(csvFileURL);
+			prefuseTableData[0].getMetadata().put(DataProperty.LABEL, dataLabel);
+			
 			CIShellContext ciContext = new CIShellContext() { // TODO Replace with a better mock
 				@Override
 				public Object getService(String service) {

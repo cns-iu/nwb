@@ -13,14 +13,6 @@ public class VizLegendModel<U> {
 	private final String dataColumnName;
 	private final NumericFormatType numericFormatType;
 
-	/**
-	 * @param dataRange
-	 * @param vizContinuum
-	 * @param scalingLabel
-	 * @param legendDescription
-	 * @param dataColumnName
-	 * @param numericFormatType
-	 */
 	public VizLegendModel(Range<Double> dataRange, Continuum<U> vizContinuum, String scalingLabel,
 			String legendDescription, String dataColumnName, NumericFormatType numericFormatType) {
 		this.dataRange = dataRange;

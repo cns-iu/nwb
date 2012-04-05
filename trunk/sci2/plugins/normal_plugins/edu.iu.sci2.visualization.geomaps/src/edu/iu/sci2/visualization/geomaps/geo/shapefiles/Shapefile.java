@@ -5,30 +5,33 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.geotools.data.DataStore;
+import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,12 +40,11 @@ import com.google.common.io.Resources;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
-
 public enum Shapefile implements NicelyNamed {
 	UNITED_STATES(
 			Resources.getResource(Shapefile.class, "st99_d00.shp"),
@@ -52,7 +54,7 @@ public enum Shapefile implements NicelyNamed {
 			"U.S. state",
 			"NAME",
 			KnownProjectedCRSDescriptor.LAMBERT,
-			ImmutableSet.of(Inset.ALASKA, Inset.HAWAII, Inset.PUERTO_RICO),
+			ImmutableSet.of(InsetRequest.ALASKA, InsetRequest.HAWAII, InsetRequest.PUERTO_RICO),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALEUTIAN_ISLANDS,
 					AnchorPoint.NEAR_PUERTO_RICO)),
@@ -64,11 +66,11 @@ public enum Shapefile implements NicelyNamed {
 			"country",
 			"NAME",
 			KnownProjectedCRSDescriptor.ECKERT_IV,
-			ImmutableSet.<Inset>of(),
+			ImmutableSet.<InsetRequest>of(),
 			ImmutableSet.of(
 					AnchorPoint.NEAR_ALASKA,
 					AnchorPoint.NEAR_ANTARCTICA));
-
+	
 	public static final DefaultGeographicCRS FALLBACK_SOURCE_CRS = DefaultGeographicCRS.WGS84;
 	
 	private final String niceName;
@@ -78,8 +80,9 @@ public enum Shapefile implements NicelyNamed {
 	private final String featureAttributeName;
 	private final KnownProjectedCRSDescriptor defaultProjectedCrs;
 	private final SimpleFeatureSource featureSource;
-	private final ImmutableMap<String, Inset> insetForFeatureName;
+	private final Map<ReferencedEnvelope, Inset> boundsToInset;
 	private final ImmutableCollection<AnchorPoint> anchorPoints;
+
 
 	private Shapefile(
 			URL url,
@@ -89,7 +92,7 @@ public enum Shapefile implements NicelyNamed {
 			String componentDescriptionPlain,
 			String featureAttributeName,
 			KnownProjectedCRSDescriptor defaultProjectedCrs,
-			Collection<Inset> insets,
+			Collection<InsetRequest> insetRequests,
 			Collection<AnchorPoint> anchorPoints) throws ShapefileException {
 		this.niceName = niceName;
 		this.mapDescriptionFormat = mapDescriptionFormat;
@@ -98,25 +101,29 @@ public enum Shapefile implements NicelyNamed {
 		this.featureAttributeName = featureAttributeName;
 		this.defaultProjectedCrs = defaultProjectedCrs;
 		this.anchorPoints = ImmutableSet.copyOf(anchorPoints);
-
-		this.insetForFeatureName = Maps.uniqueIndex(insets, new Function<Inset, String>() {
-			@Override
-			public String apply(Inset inset) {
-				return normalizeFeatureName(inset.featureName());
-			}
-		});
 		
 		try {
 			DataStore dataStore = new ShapefileDataStore(url);
-
-			this.featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+			
+			String typeName = dataStore.getTypeNames()[0];
+			this.featureSource = dataStore.getFeatureSource(typeName);
+			
+			boundsToInset = Maps.newHashMap();
+			for (InsetRequest insetRequest : insetRequests) {
+				Query query = new Query(typeName, CQL.toFilter(String.format("NAME = '%s'", insetRequest.getName())));
+				SimpleFeatureCollection featuresToInset = featureSource.getFeatures(query);				
+				ReferencedEnvelope bounds = featuresToInset.getBounds();
+				Inset inset = new Inset(insetRequest, bounds);
+				
+				boundsToInset.put(bounds, inset);
+			}
 		} catch (IOException e) {
 			throw new ShapefileException("The shapefile data store could not be opened.", e);
+		} catch (CQLException e) {
+			throw new ShapefileException("Error detecting boundaries of map insets.", e);
 		}
-	}
-	
-	private static String normalizeFeatureName(String featureName) {
-		return featureName.toLowerCase();
+		
+		
 	}
 	
 	/**
@@ -129,14 +136,15 @@ public enum Shapefile implements NicelyNamed {
 				FALLBACK_SOURCE_CRS);
 	}
 	
-	public Geometry inset(String rawFeatureName, Geometry geometry) throws MismatchedDimensionException, TransformException {
-		String featureName = normalizeFeatureName(rawFeatureName);
-		
-		if (!insetForFeatureName.containsKey(featureName)) {
-			return geometry;
+	public Inset inset(Geometry geometry) {
+		// TODO Terrible, order-sensitive, behavior not clear when any two bounds overlap
+		for (Entry<ReferencedEnvelope, Inset> entry : boundsToInset.entrySet()) {
+			if (entry.getKey().contains(geometry.getEnvelopeInternal())) {
+				return entry.getValue();
+			}
 		}
-		
-		return insetForFeatureName.get(featureName).inset(geometry);
+				
+		return null; // TODO Just for now
 	}
 	
 	public String extractFeatureName(SimpleFeature feature) {
@@ -175,7 +183,7 @@ public enum Shapefile implements NicelyNamed {
 	}
 
 	public boolean hasInsets() {
-		return !insetForFeatureName.isEmpty();
+		return !boundsToInset.isEmpty();
 	}
 	
 	@Override
@@ -224,83 +232,40 @@ public enum Shapefile implements NicelyNamed {
 		}
 	}
 	
-
+	
 	public static class Inset {
-		private static final Geometry EMPTY_GEOMETRY;
-		static {
-			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-			com.vividsolutions.jts.geom.Point pointAtZero = geometryFactory.createPoint(new Coordinate(0.0, 0.0));
-			com.vividsolutions.jts.geom.Point pointAtOne = geometryFactory.createPoint(new Coordinate(1.0, 0.0));
-			EMPTY_GEOMETRY = pointAtZero.intersection(pointAtOne);
+		private InsetRequest request;
+		private ReferencedEnvelope bounds;
+		
+		Inset(InsetRequest request, ReferencedEnvelope bounds) {
+			this.request = request;
+			this.bounds = bounds;
 		}
-		
-		private static final Geometry WEST_OF_ZERO_LONGITUDE_POLYGON;
-		static {
-			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-			WEST_OF_ZERO_LONGITUDE_POLYGON = geometryFactory.createPolygon(
-					geometryFactory.createLinearRing(new Coordinate[] {
-							new Coordinate(179.999, 89.999),
-							new Coordinate(179.999, -89.999),
-							new Coordinate(90, -89.999),
-							new Coordinate(90, 89.999),
-							new Coordinate(179.999, 89.999)
-					}),
-					new LinearRing[]{});
-		}
-		
-		
-		/**
-		 * Does {@code geometry} intersect WEST_OF_ZERO_LONGITUDE_POLYGON?
-		 */
-		// XXX Will break easily and spectacularly..
-		private static boolean containsLargePositiveLongitudes(Geometry geometry) {
-			return WEST_OF_ZERO_LONGITUDE_POLYGON.intersects(geometry);
-		}
-		
-		public static final Inset ALASKA = Inset.of(
-				"Alaska", 0.3, new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
-		public static final Inset HAWAII = Inset.of(
-				"Hawaii", 1, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
-		public static final Inset PUERTO_RICO = Inset.of(
-				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
-		
-		
-		private final String featureName;
-		private final MathTransform transform;
 
-		private Inset(String featureName, MathTransform transform) {
-			this.featureName = featureName;			
-			this.transform = transform;
+		public Geometry inset(Geometry geometry, GeometryProjector geometryProjector) {
+			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+			Point srcGeoPoint = geometryFactory.createPoint(request.getSrc());
+			Point destGeoPoint = geometryFactory.createPoint(request.getDest());
 			
-		}
-		public static Inset of(
-				String featureName, double scaling, Coordinate anchor, Coordinate dest) {
-			AffineTransform preScale = AffineTransform.getTranslateInstance(-anchor.x, -anchor.y);
-			AffineTransform scale = AffineTransform.getScaleInstance(scaling, scaling);
-			AffineTransform postScale = AffineTransform.getTranslateInstance(dest.x, dest.y);			
-
-			return new Inset(
-					featureName, new AffineTransform2D(preConcatenate(preScale, scale, postScale)));
-		}
+			try {
+				Point srcDisplayPoint = geometryProjector.transformGeometry(srcGeoPoint).getCentroid(); // TODO ?
+				Point destDisplayPoint = geometryProjector.transformGeometry(destGeoPoint).getCentroid(); // TODO ?
 				
-		
-		public String featureName() {
-			return featureName;
-		}
-		
-		private Geometry inset(Geometry geometry) throws MismatchedDimensionException, TransformException {
-			// XXX This is an awful hack to suppress Alaska's tail
-			if (seemsToBePartOfAlaskasTail(geometry)) {
-				return EMPTY_GEOMETRY;
+				Coordinate srcDisplayCoordinate = new Coordinate(srcDisplayPoint.getX(), srcDisplayPoint.getY());
+				Coordinate destDisplayCoordinate = new Coordinate(destDisplayPoint.getX(), destDisplayPoint.getY());
+				
+				AffineTransform preScale = AffineTransform.getTranslateInstance(-srcDisplayCoordinate.x, -srcDisplayCoordinate.y);
+				AffineTransform scale = AffineTransform.getScaleInstance(request.getScaling(), request.getScaling());
+				AffineTransform postScale = AffineTransform.getTranslateInstance(destDisplayCoordinate.x, destDisplayCoordinate.y);			
+
+				AffineTransform2D transform = new AffineTransform2D(preConcatenate(preScale, scale, postScale));
+				
+				return JTS.transform(geometry, transform);
+			} catch (TransformException e) {
+				throw new RuntimeException("Inset transform failed."); // TODO
 			}
-			
-			return JTS.transform(geometry, transform);
 		}
-		
-		private static boolean seemsToBePartOfAlaskasTail(Geometry geometry) {
-			return containsLargePositiveLongitudes(geometry);
-		}
-		
+
 		private static AffineTransform preConcatenate(
 				AffineTransform first, AffineTransform... rest) {
 			AffineTransform concat = (AffineTransform) first.clone();
@@ -309,6 +274,49 @@ public enum Shapefile implements NicelyNamed {
 			}
 			
 			return concat;
+		}
+	}
+	
+
+	public static class InsetRequest {
+		public static final InsetRequest ALASKA = InsetRequest.of(
+				"Alaska", 0.3, new Coordinate(-141.0, 69.7), new Coordinate(-109.5, 28.1));
+		public static final InsetRequest HAWAII = InsetRequest.of(
+				"Hawaii", 0.5, new Coordinate(-155.7, 18.9), new Coordinate(-102.7, 25.0));
+		public static final InsetRequest PUERTO_RICO = InsetRequest.of(
+				"Puerto Rico", 1, new Coordinate(-67.3, 18.3), new Coordinate(-88.9, 24.2));
+
+		private final String name;
+		private final double scaling;
+		private final Coordinate src;
+		private final Coordinate dest;
+
+		public InsetRequest(String name, double scaling, Coordinate src, Coordinate dest) {
+			this.name = name;
+			this.scaling = scaling;
+			this.src = src;
+			this.dest = dest;
+		}
+		
+		static InsetRequest of(String name, double scaling, Coordinate src, Coordinate dest) {
+			return new InsetRequest(name, scaling, src, dest);
+		}
+				
+
+		public String getName() {
+			return name;
+		}
+		
+		public double getScaling() {
+			return scaling;
+		}
+		
+		public Coordinate getSrc() {
+			return src;
+		}
+		
+		public Coordinate getDest() {
+			return dest;
 		}
 	}
 

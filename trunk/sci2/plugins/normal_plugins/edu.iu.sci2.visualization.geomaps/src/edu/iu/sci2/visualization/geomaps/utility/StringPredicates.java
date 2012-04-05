@@ -9,8 +9,8 @@ public class StringPredicates {
 
 	/**
 	 * @return	A Predicate for whether {@code string}.contains(a candidate substring).
-	 * @see {@link #substringOf(String, Function)}
-	 * @see {@link Functions#identity()}
+	 * @see StringPredicates#substringOf(String, Function)
+	 * @see Functions#identity()
 	 */
 	public static Predicate<String> substringOf(String string) {
 		return substringOf(string, Functions.<String>identity());
