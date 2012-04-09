@@ -1,21 +1,28 @@
 package edu.iu.sci2.visualization.geomaps.viz.model;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.operation.TransformException;
+import org.osgi.service.log.LogService;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector.GeometryProjectorException;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset.InsetCreationException;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset.Request;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
@@ -34,6 +41,8 @@ public class GeoMap {
 	private final Legendarium legendarium;
 	private final GeometryFactory geometryFactory;
 	private final GeometryProjector geometryProjector;
+
+	private final Collection<Inset> insets;
 
 	public GeoMap(
 			String title,
@@ -60,6 +69,18 @@ public class GeoMap {
 		} catch (GeometryProjectorException e) {
 			throw new GeoMapException("Failed to create map projection.", e);
 		}
+		
+		Set<Inset> insets = Sets.newHashSet();
+		for (Request request : shapefile.getInsetRequests()) {
+			try {
+				insets.add(Inset.forRequest(request, shapefile, geometryProjector));
+			} catch (InsetCreationException e) {
+				GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, String.format(
+						"Failed to create map inset for feature named \"%s\".",
+						request.getFeatureName()));
+			}
+		}
+		this.insets = insets;
 	}
 
 	public GeometryProjector getGeometryProjector() {
@@ -90,19 +111,38 @@ public class GeoMap {
 		return title;
 	}
 
-	public Coordinate project(Coordinate coordinate) throws TransformException {
-		Geometry coordinatePointGeometry = geometryFactory.createPoint(coordinate);
+	public Collection<Coordinate> project(Coordinate naturalCoordinate) throws TransformException {
+		Geometry coordinatePointGeometry = geometryFactory.createPoint(naturalCoordinate);
 		
-		return project(coordinatePointGeometry).getCoordinate();
-	}
-
-	public Geometry project(Geometry geometry) throws TransformException {
-		Inset inset = shapefile.inset(geometry);
-		Geometry projectedGeometry = geometryProjector.projectGeometry(geometry);
-		if (inset != null) {
-			projectedGeometry = inset.inset(projectedGeometry, geometryProjector);
+		Collection<Coordinate> projectedCoordinates = Sets.newHashSet();
+		for (Geometry geometry : project(coordinatePointGeometry)) {
+			projectedCoordinates.add(geometry.getCoordinate());
 		}
 		
-		return projectedGeometry;
+		return projectedCoordinates;
+	}
+
+	public Collection<Geometry> project(Geometry naturalGeometry) throws TransformException {
+		return inset(naturalGeometry, geometryProjector.projectGeometry(naturalGeometry));
+	}
+	
+	private Collection<Geometry> inset(Geometry naturalGeometry, Geometry projectedGeometry) {
+		Collection<Geometry> geometries = Sets.newHashSet();
+		for (Inset inset : insets) {
+			if (inset.shouldInset(naturalGeometry)) {
+				geometries.add(inset.inset(projectedGeometry));
+			}
+		}
+		
+		/* Insettable regions may overlap, so the above loop may result in zero,
+		 * one, or more than one views of the same projected geometry. When the
+		 * given geometry is not part of any inset, we need to explicit return
+		 * it.
+		 */
+		if (geometries.isEmpty()) {
+			return ImmutableSet.of(projectedGeometry);
+		}
+		
+		return geometries;
 	}
 }

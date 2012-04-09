@@ -21,7 +21,6 @@ Import-Package: com.google.common.base;version="11.0.1",
  org.cishell.utilities.mutateParameter.dropdown,
  org.geotools.data,
  org.geotools.data.shapefile,
- org.geotools.data.simple,
  org.geotools.factory,
  org.geotools.feature,
  org.geotools.filter,
@@ -34,6 +33,7 @@ Import-Package: com.google.common.base;version="11.0.1",
  org.geotools.parameter,
  org.geotools.referencing,
  org.geotools.referencing.crs,
+ org.geotools.referencing.factory,
  org.geotools.referencing.operation,
  org.geotools.referencing.operation.projection,
  org.geotools.referencing.operation.transform,
@@ -60,5 +60,9 @@ Import-Package: com.google.common.base;version="11.0.1",
 X-AutoStart: true
 Service-Component: OSGI-INF/circles-print.xml, OSGI-INF/circles-web.xml, OSGI-INF/network.xml, OSGI-INF/regions-print.xml, OSGI-INF/regions-web.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: edu.iu.sci2.visualization.geomaps.utility,
- edu.iu.sci2.visualization.geomaps.utility.numberformat
+Export-Package: edu.iu.sci2.visualization.geomaps.data.scaling,
+ edu.iu.sci2.visualization.geomaps.geo.shapefiles,
+ edu.iu.sci2.visualization.geomaps.metatype,
+ edu.iu.sci2.visualization.geomaps.utility,
+ edu.iu.sci2.visualization.geomaps.utility.numberformat,
+ edu.iu.sci2.visualization.geomaps.viz

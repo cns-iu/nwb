@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -20,7 +21,11 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DataFactory;
+import org.geotools.factory.FactoryRegistry;
 import org.geotools.factory.FactoryRegistryException;
+import org.geotools.referencing.ReferencingFactoryFinder;
+import org.geotools.referencing.factory.ReferencingObjectFactory;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
@@ -166,9 +171,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	public static void main(String[] args) {
 		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
-		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+//		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-		Example.US_REGIONS.run(PageLayout.PRINT);
+//		Example.US_REGIONS.run(PageLayout.PRINT);
 //		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 

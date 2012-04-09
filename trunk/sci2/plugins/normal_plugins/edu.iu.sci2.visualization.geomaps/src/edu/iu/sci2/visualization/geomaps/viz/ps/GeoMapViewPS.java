@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
 
 import org.cishell.utilities.FileUtilities;
 import org.geotools.feature.FeatureIterator;
@@ -16,6 +17,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -136,7 +138,26 @@ public class GeoMapViewPS {
 	 * @throws TransformException	When the underlying transform fails.
 	 */
 	public Point2D.Double coordinateToPagePoint(Coordinate coordinate) throws TransformException {
-		return geoMapViewPageArea.displayPointFor(geoMap.project(coordinate));
+		Collection<Coordinate> projectedCoordinates = geoMap.project(coordinate);
+		
+		if (projectedCoordinates.isEmpty()) {
+			throw new RuntimeException(String.format(
+					"The coordinate \"%s\" was not projected to any display point.", coordinate));
+		}
+		Coordinate aProjectedCoordinate = Iterables.getFirst(projectedCoordinates, null);
+		
+		if (projectedCoordinates.size() > 1) {
+			GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					String.format(
+							"The coordinate \"%s\" projected to multiple display points.  " +
+							"This can happen if the insets defined for this base map indicate " +
+							"overlapping bounding boxes.  " +
+							"A point has been chosen arbitrarily from the possibilities.",
+							coordinate));
+		}
+		
+		return geoMapViewPageArea.displayPointFor(aProjectedCoordinate);
 	}
 	
 	/**
@@ -150,9 +171,9 @@ public class GeoMapViewPS {
 		while (it.hasNext()) {
 			SimpleFeature feature = it.next();
 			String featureName = geoMap.getShapefile().extractFeatureName(feature);
-			Geometry geometry;
+			Collection<Geometry> geometries;
 			try {
-				geometry = geoMap.project((Geometry) feature.getDefaultGeometry());
+				geometries = geoMap.project((Geometry) feature.getDefaultGeometry());
 			} catch (IllegalArgumentException e) { // TODO Still necessary?
 				/* This seems to happen intermittently with version 2.7.4 of geolibs/Geotools for
 				 * one subgeometry of Minnesota in Shapefile.UNITED_STATES. */
@@ -163,19 +184,21 @@ public class GeoMapViewPS {
 				continue;
 			}
 
-			for (int ii = 0; ii < geometry.getNumGeometries(); ii++) {
-				Geometry subgeometry = geometry.getGeometryN(ii);
-
-				Coordinate[] coordinates = subgeometry.getCoordinates();
-
-				for (Coordinate coordinate : coordinates) {
-					Point2D.Double point = new Point2D.Double(coordinate.x, coordinate.y);
+			for (Geometry geometry : geometries) {
+				for (int ii = 0; ii < geometry.getNumGeometries(); ii++) {
+					Geometry subgeometry = geometry.getGeometryN(ii);
 					
-					if (rectangle == null) {
-						rectangle = new Rectangle2D.Double(point.x, point.y, 0, 0);
+					Coordinate[] coordinates = subgeometry.getCoordinates();
+					
+					for (Coordinate coordinate : coordinates) {
+						Point2D.Double point = new Point2D.Double(coordinate.x, coordinate.y);
+						
+						if (rectangle == null) {
+							rectangle = new Rectangle2D.Double(point.x, point.y, 0, 0);
+						}
+						
+						rectangle.add(point);
 					}
-					
-					rectangle.add(point);
 				}
 			}
 		}

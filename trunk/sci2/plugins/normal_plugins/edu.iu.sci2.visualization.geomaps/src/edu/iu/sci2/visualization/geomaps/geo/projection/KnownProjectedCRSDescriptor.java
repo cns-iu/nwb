@@ -14,8 +14,7 @@ import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
 
 public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, NicelyNamed {
 	ECKERT_IV("Eckert IV", "Eckert IV", new EPSGCode("EPSG:54012")),
-	// TODO findCentralMeridian is broken on Winkel
-//	WINKEL_TRIPEL("Winkel Tripel", "Winkel Tripel",
+//	WINKEL_TRIPEL("Winkel Tripel", "Winkel Tripel", // TODO findCentralMeridian is broken on Winkel
 //			new WKT("PROJCS[\"World_Winkel_Tripel_NGS\"," +
 //					"GEOGCS[\"GCS_WGS_1984\"," +
 //					"DATUM[\"D_WGS_1984\"," +

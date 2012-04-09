@@ -170,13 +170,13 @@ public class FeaturePrinter {
 				throws IOException, TransformException {
 		String featureName = geoMap.getShapefile().extractFeatureName(feature);
 		
-		Geometry geometry = geoMap.project((Geometry) feature.getDefaultGeometry());
-
-		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
-			out.write(INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
-			Geometry subgeometry = geometry.getGeometryN(gg);
-			
-			printGeometry(subgeometry, out, featureColorMap, featureName);
+		for (Geometry geometry : geoMap.project((Geometry) feature.getDefaultGeometry())) {
+			for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
+				out.write(INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
+				Geometry subgeometry = geometry.getGeometryN(gg);
+				
+				printGeometry(subgeometry, out, featureColorMap, featureName);
+			}
 		}
 
 		out.write("\n");

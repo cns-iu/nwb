@@ -55,20 +55,20 @@ public class Circle {
 		 * cropping and in cropping we might subtract out rawPoint.
 		 * Then we wouldn't be able to draw this Circle.
 		 */
-		Geometry projectedPoint = geoMap.project(coordinatePoint);
-		Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint.getCoordinate());
-
 		StringBuilder builder = new StringBuilder();
-		
-		double outlineRadius = radius + Circle.OUTLINE_ADDITIONAL_RADIUS;
-		builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + outlineRadius + " circle" + "\n");
-		builder.append(outerColorStrategy.toPostScript());
-		
-		// Create and paint the circle path
-		builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + radius + " circle" + "\n");
-		builder.append(innerColorStrategy.toPostScript());
-		
-		builder.append("\n");
+		for (Geometry projectedPoint : geoMap.project(coordinatePoint)) {
+			Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint.getCoordinate());
+			
+			double outlineRadius = radius + Circle.OUTLINE_ADDITIONAL_RADIUS;
+			builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + outlineRadius + " circle" + "\n");
+			builder.append(outerColorStrategy.toPostScript());
+			
+			// Create and paint the circle path
+			builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + radius + " circle" + "\n");
+			builder.append(innerColorStrategy.toPostScript());
+			
+			builder.append("\n");
+		}
 		
 		return builder.toString();
 	}
