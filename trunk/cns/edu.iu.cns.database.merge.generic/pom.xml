@@ -9,6 +9,6 @@
   </parent>
   <groupId>edu.iu.cns</groupId>
   <artifactId>edu.iu.cns.database.merge.generic</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>eclipse-plugin</packaging>
 </project>
