@@ -86,19 +86,19 @@ public class TryIntegrationTest {
 		rs.next();
 		int documentPK = rs.getInt("PK");
 		System.out.println("primary key of a document: " + documentPK);
-		int firstAuthorPK = rs.getInt(Document.Field.FIRST_AUTHOR_FK.toString());
+		int firstAuthorPK = rs.getInt(Document.Field.FIRST_AUTHOR_ID.toString());
 		assertTrue(firstAuthorPK != 0);
 		
 		s.execute("select * from authors join person on (authors.AUTHORS_PERSON_FK = person.PK) WHERE authors.AUTHORS_DOCUMENT_FK = " + documentPK + " order by ORDER_LISTED");
 		rs = s.getResultSet();
 		rs.next();
-		assertEquals(rs.getString(Person.Field.UNSPLIT_NAME.name()), "Gao M.");
-		assertEquals(firstAuthorPK, rs.getInt(Author.Field.AUTHORS_PERSON_FK.toString()));
+		assertEquals(rs.getString(Person.Field.RAW_NAME.name()), "Gao M.");
+		assertEquals(firstAuthorPK, rs.getInt(Author.Field.PERSON_ID.toString()));
 		
 		rs.next();
-		assertEquals(rs.getString(Person.Field.UNSPLIT_NAME.name()), "Wang M.");
+		assertEquals(rs.getString(Person.Field.RAW_NAME.name()), "Wang M.");
 		rs.next();
-		assertEquals(rs.getString(Person.Field.UNSPLIT_NAME.name()), "Zheng Q.-H.");
+		assertEquals(rs.getString(Person.Field.RAW_NAME.name()), "Zheng Q.-H.");
 		assertFalse(rs.next());
 		rs.close();
 		s.close();

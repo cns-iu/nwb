@@ -74,7 +74,6 @@ public class DocumentTest extends RowItemTest {
 		compareProperty("Beginning Page", document.getBeginningPage(), beginningPage);
 		compareProperty(
 			"Cited Reference Count", document.getCitedReferenceCount(), citedReferenceCount);
-		compareProperty("Cited Year", document.getCitedYear(), citedYear);
 		compareProperty(
 			"Digital Object Identifier",
 			document.getDigitalObjectIdentifier(),
