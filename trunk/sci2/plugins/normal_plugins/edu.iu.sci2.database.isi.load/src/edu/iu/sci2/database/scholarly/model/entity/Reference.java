@@ -16,33 +16,34 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 public class Reference extends Entity<Reference> {
 	public static enum Field implements DBField {
 		ANNOTATION(TEXT),
-		REFERENCE_ARTICLE_NUMBER(TEXT),
-		REFERENCE_AUTHOR_FK(FOREIGN_KEY),
+		ARTICLE_NUMBER(TEXT),
+		AUTHOR_ID(FOREIGN_KEY),
 		DIGITAL_OBJECT_IDENTIFIER(TEXT),
-		REFERENCE_OTHER_INFORMATION(TEXT),
-		REFERENCE_PAGE_NUMBER(INTEGER),
-		PAPER_FK(FOREIGN_KEY),
-		RAW_REFERENCE_STRING(TEXT),
-		REFERENCE_VOLUME(INTEGER),
-		REFERENCE_SOURCE_FK(FOREIGN_KEY),
-		REFERENCE_YEAR(INTEGER),
-		REFERENCE_WAS_STARRED(TEXT);
+		OTHER_INFORMATION(TEXT),
+		PAGE_NUMBER(INTEGER),
+		DOCUMENT_ID(FOREIGN_KEY),
+		RAW_REFERENCE(TEXT),
+		VOLUME(INTEGER),
+		SOURCE_ID(FOREIGN_KEY),
+		YEAR(INTEGER),
+		STARRED(TEXT);
 
 		private final DerbyFieldType type;
 		private Field(DerbyFieldType type) {
 			this.type = type;
 		}
 		
+		@Override
 		public DerbyFieldType type() {
-			return type;
+			return this.type;
 		}
 	}
 	
 	public static final Schema<Reference> SCHEMA = new Schema<Reference>(true, Field.values())
 			.FOREIGN_KEYS(
-					Field.REFERENCE_AUTHOR_FK.toString(), ISI.PERSON_TABLE_NAME,
-					Field.PAPER_FK.toString(), ISI.DOCUMENT_TABLE_NAME,
-					Field.REFERENCE_SOURCE_FK.toString(), ISI.SOURCE_TABLE_NAME);
+					Field.AUTHOR_ID.toString(), ISI.PERSON_TABLE_NAME,
+					Field.DOCUMENT_ID.toString(), ISI.DOCUMENT_TABLE_NAME,
+					Field.SOURCE_ID.toString(), ISI.SOURCE_TABLE_NAME);
 
 	public Reference(DatabaseTableKeyGenerator keyGenerator,
 			Dictionary<String, Object> attributes) {
@@ -54,6 +55,9 @@ public class Reference extends Entity<Reference> {
 		return getPrimaryKey();
 	}
 
+	/**
+	 * Warning!  Unimplemented!
+	 */
 	@Override
 	public void merge(Reference otherItem) {
 	}

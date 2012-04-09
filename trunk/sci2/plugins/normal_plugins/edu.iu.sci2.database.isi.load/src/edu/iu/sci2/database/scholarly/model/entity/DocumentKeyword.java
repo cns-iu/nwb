@@ -17,14 +17,15 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	public static enum Field implements DBField {
-		DOCUMENT_KEYWORDS_DOCUMENT_FK(DerbyFieldType.FOREIGN_KEY),
-		DOCUMENT_KEYWORDS_KEYWORD_FK(DerbyFieldType.FOREIGN_KEY),
+		DOCUMENT_ID(DerbyFieldType.FOREIGN_KEY),
+		KEYWORD_ID(DerbyFieldType.FOREIGN_KEY),
 		ORDER_LISTED(DerbyFieldType.INTEGER);
 		
 		private final DerbyFieldType fieldType;
 		private Field(DerbyFieldType type) {
 			this.fieldType = type;
 		}
+		@Override
 		public DerbyFieldType type() {
 			return this.fieldType;
 		}
@@ -32,8 +33,8 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	
 	public static final Schema<DocumentKeyword> SCHEMA = new Schema<DocumentKeyword>(false, Field.values())
 			.FOREIGN_KEYS(
-					Field.DOCUMENT_KEYWORDS_DOCUMENT_FK.name(), ISI.DOCUMENT_TABLE_NAME,
-					Field.DOCUMENT_KEYWORDS_KEYWORD_FK.name(), ISI.KEYWORD_TABLE_NAME);
+					Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
+					Field.KEYWORD_ID.name(), ISI.KEYWORD_TABLE_NAME);
 
 	public DocumentKeyword(Dictionary<String, Object> attributes) {
 		super(attributes);
@@ -47,8 +48,8 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		for (Keyword k : keywords) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 			
-			putPK(attribs, Field.DOCUMENT_KEYWORDS_DOCUMENT_FK, document);
-			putPK(attribs, Field.DOCUMENT_KEYWORDS_KEYWORD_FK, k);
+			putPK(attribs, Field.DOCUMENT_ID, document);
+			putPK(attribs, Field.KEYWORD_ID, k);
 			putValue(attribs, Field.ORDER_LISTED, keywordNumber++);
 			
 			documentKeywords.add(new DocumentKeyword(attribs));

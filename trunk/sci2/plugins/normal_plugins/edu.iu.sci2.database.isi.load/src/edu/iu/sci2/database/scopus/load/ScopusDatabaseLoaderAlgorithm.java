@@ -34,7 +34,6 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
 	public static final boolean SHOULD_CLEAN_AUTHOR_NAME_CAPITALIZATIONS = true;
 	public static final boolean SHOULD_FILL_FILE_METADATA = true;
 	public static final boolean SHOULD_CLEAN_CITED_REFERENCES = false;
-	private static final String CSV_MIME_TYPE = "text/csv";
 
     private Data inData;
     private LogService logger;
@@ -50,7 +49,8 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
         	(DatabaseService)ciShellContext.getService(DatabaseService.class.getName());
     }
 
-    public Data[] execute() throws AlgorithmExecutionException {
+    @Override
+	public Data[] execute() throws AlgorithmExecutionException {
     	System.out.println("EXECUTING");
     	try {
 	    	// Convert input ISI data to an ISI table.
@@ -90,15 +90,17 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
     	}
     }
 
-    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+    @Override
+	public void setProgressMonitor(ProgressMonitor progressMonitor) {
     	this.progressMonitor = progressMonitor;
     }
 
-    public ProgressMonitor getProgressMonitor() {
+    @Override
+	public ProgressMonitor getProgressMonitor() {
     	return this.progressMonitor;
     }
     
-    private Table scopusToTable(Data inputData) throws AlgorithmExecutionException {
+    private static Table scopusToTable(Data inputData) throws AlgorithmExecutionException {
     	String inFile = (String) inputData.getData();
     	
     	PrefuseCsvReader reader = new PrefuseCsvReader(new File(inFile));
@@ -116,7 +118,7 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
 	    	// Create an in-memory ISI model based off of the table.
 
     		DatabaseModel model =
-    			new ScopusTableModelParser(this.progressMonitor).parseModel(table);
+    			ScopusTableModelParser.parseModel(table);
 
 	    	// Use the ISI model to create an ISI database.
 
@@ -133,9 +135,9 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
     	}
     }
 
-    private double calculateTotalWork(Collection<Integer> rows) {
-    	double totalWork =
-			(double) rows.size() / DerbyDatabaseCreator.PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION;
+    private static double calculateTotalWork(Collection<Integer> rows) {
+		double totalWork = rows.size()
+				/ DerbyDatabaseCreator.PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION;
 
     	return totalWork;
     }
@@ -153,7 +155,7 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
     	this.progressMonitor.done();
     }
 
-    private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
+    private static Data[] annotateOutputData(Database isiDatabase, Data parentData) {
     	Data data = new BasicData(isiDatabase, ISI.ISI_DATABASE_MIME_TYPE);
     	Dictionary<String, Object> metadata = data.getMetadata();
     	metadata.put(

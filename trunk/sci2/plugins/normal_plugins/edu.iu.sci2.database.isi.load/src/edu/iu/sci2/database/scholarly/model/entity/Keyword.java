@@ -10,9 +10,10 @@ import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class Keyword extends Entity<Keyword> {
 	public static enum Field implements DBField {
-		KEYWORD,
+		NAME,
 		TYPE;
 		
+		@Override
 		public DerbyFieldType type() {
 			return DerbyFieldType.TEXT;
 		}
@@ -30,6 +31,9 @@ public class Keyword extends Entity<Keyword> {
 		return getPrimaryKey();
 	}
 
+	/**
+	 * Warning! Unimplemented!!
+	 */
 	@Override
 	public void merge(Keyword otherItem) {
 	}

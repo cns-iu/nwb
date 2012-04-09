@@ -12,15 +12,16 @@ import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class Patent extends Entity<Patent> {
 	public static enum Field implements DBField {
-		PATENT_NUMBER(TEXT);
+		NUMBER(TEXT);
 
 		private final DerbyFieldType type;
 		private Field(DerbyFieldType type) {
 			this.type = type;
 		}
 		
+		@Override
 		public DerbyFieldType type() {
-			return type;
+			return this.type;
 		}
 	}
 	
@@ -36,6 +37,9 @@ public class Patent extends Entity<Patent> {
 		return getPrimaryKey();
 	}
 
+	/**
+	 * Warning!  Unimplemented!!
+	 */
 	@Override
 	public void merge(Patent otherItem) {
 	}

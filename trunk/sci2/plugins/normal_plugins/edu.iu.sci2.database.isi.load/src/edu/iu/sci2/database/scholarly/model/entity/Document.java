@@ -11,21 +11,19 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Document extends Entity<Document> {
 	public static enum Field implements DBField {
-		ABSTRACT_TEXT(DerbyFieldType.TEXT),
-		ARTICLE_NUMBER(DerbyFieldType.TEXT),
+		ABSTRACT(DerbyFieldType.TEXT),
 		BEGINNING_PAGE(DerbyFieldType.INTEGER),
+		CITE_AS(DerbyFieldType.TEXT),
 		CITED_REFERENCE_COUNT(DerbyFieldType.INTEGER),
-		CITED_YEAR(DerbyFieldType.INTEGER),
 		DIGITAL_OBJECT_IDENTIFIER(DerbyFieldType.TEXT),
-		DOCUMENT_SOURCE_FK(DerbyFieldType.FOREIGN_KEY), // FK
-		DOCUMENT_TYPE(DerbyFieldType.TEXT),
-		DOCUMENT_VOLUME(DerbyFieldType.INTEGER),
+		DOCUMENT_NUMBER(DerbyFieldType.TEXT),
 		ENDING_PAGE(DerbyFieldType.INTEGER),
-		FIRST_AUTHOR_FK(DerbyFieldType.FOREIGN_KEY),    // FK
+		FIRST_AUTHOR_ID(DerbyFieldType.FOREIGN_KEY),    // FK
 		FUNDING_AGENCY_AND_GRANT_NUMBER(DerbyFieldType.TEXT),
 		FUNDING_TEXT(DerbyFieldType.TEXT),
 		ISBN(DerbyFieldType.TEXT),
 		ISI_DOCUMENT_DELIVERY_NUMBER(DerbyFieldType.TEXT),
+		ISI_TYPE(DerbyFieldType.TEXT),
 		ISI_UNIQUE_ARTICLE_IDENTIFIER(DerbyFieldType.TEXT),
 		ISSUE(DerbyFieldType.TEXT),
 		LANGUAGE(DerbyFieldType.TEXT),
@@ -33,11 +31,13 @@ public class Document extends Entity<Document> {
 		PART_NUMBER(DerbyFieldType.TEXT),
 		PUBLICATION_DATE(DerbyFieldType.TEXT),
 		PUBLICATION_YEAR(DerbyFieldType.INTEGER),
+		SOURCE_ID(DerbyFieldType.FOREIGN_KEY), // FK
 		SPECIAL_ISSUE(DerbyFieldType.TEXT),
 		SUBJECT_CATEGORY(DerbyFieldType.TEXT),
 		SUPPLEMENT(DerbyFieldType.TEXT),
 		TIMES_CITED(DerbyFieldType.INTEGER),
-		TITLE(DerbyFieldType.TEXT);
+		TITLE(DerbyFieldType.TEXT),
+		VOLUME(DerbyFieldType.INTEGER);
 		
 		private final DerbyFieldType fieldType;
 
@@ -45,6 +45,7 @@ public class Document extends Entity<Document> {
 			this.fieldType = type;
 		}
 
+		@Override
 		public DerbyFieldType type() {
 			return this.fieldType;
 		}
@@ -55,8 +56,8 @@ public class Document extends Entity<Document> {
 			true, // autogen primary key
 			Field.values())
 			.FOREIGN_KEYS(
-					Field.DOCUMENT_SOURCE_FK.toString(), ISI.SOURCE_TABLE_NAME,
-					Field.FIRST_AUTHOR_FK.toString(), ISI.PERSON_TABLE_NAME);
+					Field.SOURCE_ID.toString(), ISI.SOURCE_TABLE_NAME,
+					Field.FIRST_AUTHOR_ID.toString(), ISI.PERSON_TABLE_NAME);
 
 	public Document(DatabaseTableKeyGenerator keyGenerator,
 			Dictionary<String, Object> attributes) {
@@ -68,6 +69,9 @@ public class Document extends Entity<Document> {
 		return getAttributes().get("PK");
 	}
 
+	/**
+	 * Warning! Unimplemented!!
+	 */
 	@Override
 	public void merge(Document otherItem) {
 	}

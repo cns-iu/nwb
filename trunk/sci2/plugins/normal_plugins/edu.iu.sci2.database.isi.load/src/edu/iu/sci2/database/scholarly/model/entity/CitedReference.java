@@ -16,9 +16,10 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class CitedReference extends RowItem<CitedReference> {
 	public static enum Field implements DBField {
-		CITED_REFERENCES_DOCUMENT_FK,
-		CITED_REFERENCES_REFERENCE_FK;
+		DOCUMENT_ID,
+		REFERENCE_ID;
 
+		@Override
 		public DerbyFieldType type() {
 			return DerbyFieldType.FOREIGN_KEY;
 		}
@@ -26,8 +27,8 @@ public class CitedReference extends RowItem<CitedReference> {
 	
 	public static final Schema<CitedReference> SCHEMA = new Schema<CitedReference>(false, Field.values())
 			.FOREIGN_KEYS(
-					Field.CITED_REFERENCES_DOCUMENT_FK.name(), ISI.DOCUMENT_TABLE_NAME,
-					Field.CITED_REFERENCES_REFERENCE_FK.name(), ISI.REFERENCE_TABLE_NAME);
+					Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
+					Field.REFERENCE_ID.name(), ISI.REFERENCE_TABLE_NAME);
 
 	public CitedReference(Dictionary<String, Object> attributes) {
 		super(attributes);
@@ -39,8 +40,8 @@ public class CitedReference extends RowItem<CitedReference> {
 		
 		for (Reference r: references) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
-			putPK(attribs, Field.CITED_REFERENCES_DOCUMENT_FK, document);
-			putPK(attribs, Field.CITED_REFERENCES_REFERENCE_FK, r);
+			putPK(attribs, Field.DOCUMENT_ID, document);
+			putPK(attribs, Field.REFERENCE_ID, r);
 			
 			citedReferences.add(new CitedReference(attribs));
 		}

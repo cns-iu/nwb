@@ -48,6 +48,7 @@ public enum ScopusField implements FileField {
 		this.fieldName = name;
 	}
 	
+	@Override
 	public String toString() {
 		return this.fieldName;
 	}
@@ -55,6 +56,7 @@ public enum ScopusField implements FileField {
 	/* (non-Javadoc)
 	 * @see edu.iu.sci2.database.scopus.load.FileField#getName()
 	 */
+	@Override
 	public String getName() {
 		return this.fieldName;
 	}

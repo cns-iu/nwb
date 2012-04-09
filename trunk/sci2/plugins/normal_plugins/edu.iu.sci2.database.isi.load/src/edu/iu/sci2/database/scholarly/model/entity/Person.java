@@ -15,9 +15,10 @@ public class Person extends Entity<Person> {
 		FIRST_INITIAL,
 		FULL_NAME,
 		MIDDLE_INITIAL,
-		PERSONAL_NAME,
-		UNSPLIT_NAME;
+		FIRST_NAME,
+		RAW_NAME;
 
+		@Override
 		public DerbyFieldType type() {
 			return DerbyFieldType.TEXT;
 		}
@@ -37,6 +38,9 @@ public class Person extends Entity<Person> {
 		return getPrimaryKey();
 	}
 
+	/**
+	 * Warning!  Unimplemented!!
+	 */
 	@Override
 	public void merge(Person otherPerson) {
 	}

@@ -13,9 +13,10 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class PublisherAddress extends RowItem<PublisherAddress> {
 	public static enum Field implements DBField {
-		PUBLISHER_ADDRESS_ADDRESS_FK,
-		PUBLISHER_ADDRESS_PUBLISHER_FK;
+		ADDRESS_ID,
+		PUBLISHER_ID;
 
+		@Override
 		public DerbyFieldType type() {
 			return DerbyFieldType.FOREIGN_KEY;
 		}
@@ -23,8 +24,8 @@ public class PublisherAddress extends RowItem<PublisherAddress> {
 	
 	public static final Schema<PublisherAddress> SCHEMA = new Schema<PublisherAddress>(false, Field.values())
 			.FOREIGN_KEYS(
-					Field.PUBLISHER_ADDRESS_ADDRESS_FK.name(), ISI.ADDRESS_TABLE_NAME,
-					Field.PUBLISHER_ADDRESS_PUBLISHER_FK.name(), ISI.PUBLISHER_TABLE_NAME);
+					Field.ADDRESS_ID.name(), ISI.ADDRESS_TABLE_NAME,
+					Field.PUBLISHER_ID.name(), ISI.PUBLISHER_TABLE_NAME);
 
 	public PublisherAddress(Dictionary<String, Object> attributes) {
 		super(attributes);
@@ -34,8 +35,8 @@ public class PublisherAddress extends RowItem<PublisherAddress> {
 			Publisher publisher, Address address) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
-		putPK(attribs, Field.PUBLISHER_ADDRESS_ADDRESS_FK, publisher);
-		putPK(attribs, Field.PUBLISHER_ADDRESS_PUBLISHER_FK, address);
+		putPK(attribs, Field.ADDRESS_ID, publisher);
+		putPK(attribs, Field.PUBLISHER_ID, address);
 		
 		return new PublisherAddress(attribs);
 	}

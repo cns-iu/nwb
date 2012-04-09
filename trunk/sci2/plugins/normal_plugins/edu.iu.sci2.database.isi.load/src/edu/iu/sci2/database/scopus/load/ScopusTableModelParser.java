@@ -52,18 +52,7 @@ public class ScopusTableModelParser {
 	public ScopusTableModelParser(ProgressMonitor progressMonitor) {
 		// TODO Auto-generated constructor stub
 	}
-	
 
-	
-	// ?
-//	private Map<Class<?>, RowItemContainer<?>> containers = Maps.newHashMap();
-//	private <T extends RowItem<T>> RowItemContainer<T> getContainer(Class<T> clazz) {
-//		return RowItemContainer.class.cast(containers.get(clazz));
-//	}
-//	
-//	private <T extends RowItem<T>> void addToContainer(T item) {
-//		RowItemContainer c = containers.get(item.getClass());
-//	}
 
 	private static <T extends Entity<T>> EntityContainer<T> createEntityContainer(String tableName, Schema<T> schema) {
 		return new EntityContainer<T>(tableName, schema);
@@ -72,7 +61,7 @@ public class ScopusTableModelParser {
 		return new RelationshipContainer<T>(tableName, schema);
 	}
 	
-	public DatabaseModel parseModel(Table table) {
+	public static DatabaseModel parseModel(Table table) {
 		List<RowItemContainer<? extends RowItem<?>>> dbTables = Lists.newArrayList();
 		
 		// Entities (things that mostly hold data themselves)
@@ -187,13 +176,13 @@ public class ScopusTableModelParser {
 		}
 	}
 	
-	private List<Keyword> splitKeywords(FileTuple<ScopusField> row,
+	private static List<Keyword> splitKeywords(FileTuple<ScopusField> row,
 			ScopusField fieldToSplit, DatabaseTableKeyGenerator keyGenerator) {
 		List<Keyword> keywords = Lists.newArrayList();
 		
 		for (String keyword : row.getStringField(fieldToSplit).split(";")) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
-			putValue(attribs, Keyword.Field.KEYWORD, keyword.trim());
+			putValue(attribs, Keyword.Field.NAME, keyword.trim());
 			putValue(attribs, Keyword.Field.TYPE, fieldToSplit.toString());
 			keywords.add(new Keyword(keyGenerator, attribs));
 		}
@@ -201,7 +190,7 @@ public class ScopusTableModelParser {
 		return keywords;
 	}
 
-	private Source getSource(FileTuple<ScopusField> row,
+	private static Source getSource(FileTuple<ScopusField> row,
 			DatabaseTableKeyGenerator keyGenerator) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
@@ -213,6 +202,7 @@ public class ScopusTableModelParser {
 		
 		putField(attribs, Source.Field.CONFERENCE_TITLE, row, ScopusField.CONFERENCE_NAME);
 		putField(attribs, Source.Field.CONFERENCE_LOCATION, row, ScopusField.CONFERENCE_LOCATION);
+		putField(attribs, Source.Field.CONFERENCE_DATES, row, ScopusField.CONFERENCE_DATE);
 		
 		// You might think that ScopusField.ABBREVIATED_SOURCE_TITLE would be shorter than
 		// ScopusField.SOURCE_TITLE, but you'd be wrong.  :-/
@@ -223,14 +213,14 @@ public class ScopusTableModelParser {
 		return new Source(keyGenerator, attribs);
 	}
 
-	public Address getReprintAddrAddr(FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
+	public static Address getReprintAddrAddr(FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
-		EntityUtils.putField(attribs, Address.Field.RAW_ADDRESS_STRING, row, ScopusField.CORRESPONDENCE_ADDRESS);
+		EntityUtils.putField(attribs, Address.Field.RAW_ADDRESS, row, ScopusField.CORRESPONDENCE_ADDRESS);
 		return new Address(keyGenerator, attribs);
 	}
 
-	private List<Person> splitAndParsePersonList(FileTuple<ScopusField> row,
+	private static List<Person> splitAndParsePersonList(FileTuple<ScopusField> row,
 			ScopusField fieldToExtract,
 			DatabaseTableKeyGenerator keyGenerator) {
 		List<Person> people = new ArrayList<Person>();
@@ -239,7 +229,7 @@ public class ScopusTableModelParser {
 		
 		for (String name : row.getStringField(fieldToExtract).split("\\|")) {
 			attribs = new Hashtable<String, Object>();
-			putValue(attribs, Person.Field.UNSPLIT_NAME, name);
+			putValue(attribs, Person.Field.RAW_NAME, name);
 			
 			try {
 				nameParser = new AbbreviatedNameParser(name);
@@ -256,24 +246,23 @@ public class ScopusTableModelParser {
 		return people;
 	}
 	
-	private Dictionary<String, Object> getDocumentAttribs(FileTuple<ScopusField> row, Source source, Person firstAuthor) {
+	private static Dictionary<String, Object> getDocumentAttribs(FileTuple<ScopusField> row, Source source, Person firstAuthor) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
-		putPK(attribs, Document.Field.DOCUMENT_SOURCE_FK, source);
-		putPK(attribs, Document.Field.FIRST_AUTHOR_FK, firstAuthor);
+		putPK(attribs, Document.Field.SOURCE_ID, source);
+		putPK(attribs, Document.Field.FIRST_AUTHOR_ID, firstAuthor);
 		
-		putField(attribs, Document.Field.ABSTRACT_TEXT, row, ScopusField.ABSTRACT);
-		putField(attribs, Document.Field.ARTICLE_NUMBER, row, ScopusField.ART_NO);
+		putField(attribs, Document.Field.ABSTRACT, row, ScopusField.ABSTRACT);
+		putField(attribs, Document.Field.DOCUMENT_NUMBER, row, ScopusField.ART_NO);
 		putField(attribs, Document.Field.DIGITAL_OBJECT_IDENTIFIER, row, ScopusField.DOI);
 		putField(attribs, Document.Field.TITLE, row, ScopusField.TITLE);
 		putField(attribs, Document.Field.PUBLICATION_YEAR, row, ScopusField.YEAR);
 		putField(attribs, Document.Field.PUBLICATION_DATE, row, ScopusField.YEAR);
-		putField(attribs, Document.Field.CITED_YEAR, row, ScopusField.YEAR);
 		putField(attribs, Document.Field.TIMES_CITED, row, ScopusField.CITED_BY);
 		putField(attribs, Document.Field.ISBN, row, ScopusField.ISBN);
 		putField(attribs, Document.Field.ISSUE, row, ScopusField.ISSUE);
 		putField(attribs, Document.Field.LANGUAGE, row, ScopusField.LANGUAGE_OF_ORIGINAL_DOCUMENT);
-		putField(attribs, Document.Field.DOCUMENT_VOLUME, row, ScopusField.VOLUME);
+		putField(attribs, Document.Field.VOLUME, row, ScopusField.VOLUME);
 		
 		
 		// Make our own Page Count, since it's often missing from the file.

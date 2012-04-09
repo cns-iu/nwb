@@ -10,22 +10,23 @@ import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class Address extends Entity<Address> {
 	public static enum Field implements DBField {
-		ADDRESS_CITY(DerbyFieldType.TEXT),
-		ADDRESS_COUNTRY(DerbyFieldType.TEXT),
-		ADDRESS_POSTAL_CODE(DerbyFieldType.TEXT),
-		RAW_ADDRESS_STRING(DerbyFieldType.TEXT),
-		ADDRESS_STATE_OR_PROVINCE(DerbyFieldType.TEXT),
+		CITY(DerbyFieldType.TEXT),
+		COUNTRY(DerbyFieldType.TEXT),
+		POSTAL_CODE(DerbyFieldType.TEXT),
+		RAW_ADDRESS(DerbyFieldType.TEXT),
+		STATE_OR_PROVINCE(DerbyFieldType.TEXT),
 		STREET_ADDRESS(DerbyFieldType.TEXT);
 		
 
 		private final DerbyFieldType fieldType;
 
 		private Field(DerbyFieldType type) {
-			fieldType = type;
+			this.fieldType = type;
 		}
 
+		@Override
 		public DerbyFieldType type() {
-			return fieldType;
+			return this.fieldType;
 		}
 	}
 	
@@ -44,6 +45,9 @@ public class Address extends Entity<Address> {
 		return getAttributes().get("PK");
 	}
 
+	/**
+	 * Warning!  Unimplemented!!
+	 */
 	@Override
 	public void merge(Address otherItem) {
 	}

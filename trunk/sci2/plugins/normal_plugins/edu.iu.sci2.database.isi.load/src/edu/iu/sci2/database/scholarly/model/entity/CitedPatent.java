@@ -16,9 +16,10 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class CitedPatent extends RowItem<CitedPatent> {
 	public static enum Field implements DBField {
-		CITED_PATENTS_DOCUMENT_FK,
-		CITED_PATENTS_PATENT_FK;
+		DOCUMENT_ID,
+		PATENT_ID;
 
+		@Override
 		public DerbyFieldType type() {
 			return DerbyFieldType.FOREIGN_KEY;
 		}
@@ -26,8 +27,8 @@ public class CitedPatent extends RowItem<CitedPatent> {
 	
 	public static final Schema<CitedPatent> SCHEMA = new Schema<CitedPatent>(false, Field.values())
 			.FOREIGN_KEYS(
-					Field.CITED_PATENTS_DOCUMENT_FK.name(), ISI.DOCUMENT_TABLE_NAME,
-					Field.CITED_PATENTS_PATENT_FK.name(), ISI.PATENT_TABLE_NAME);
+					Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
+					Field.PATENT_ID.name(), ISI.PATENT_TABLE_NAME);
 
 	public CitedPatent(Dictionary<String, Object> attributes) {
 		super(attributes);
@@ -39,8 +40,8 @@ public class CitedPatent extends RowItem<CitedPatent> {
 		
 		for (Patent p: patents) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
-			putPK(attribs, Field.CITED_PATENTS_DOCUMENT_FK, document);
-			putPK(attribs, Field.CITED_PATENTS_PATENT_FK, p);
+			putPK(attribs, Field.DOCUMENT_ID, document);
+			putPK(attribs, Field.PATENT_ID, p);
 			
 			citedPatents.add(new CitedPatent(attribs));
 		}

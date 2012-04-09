@@ -15,8 +15,8 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 	}
 
 	public static enum Field implements DBField {
-		REPRINT_ADDRESS_DOCUMENT_FK(DerbyFieldType.FOREIGN_KEY),
-		REPRINT_ADDRESS_ADDRESS_FK(DerbyFieldType.FOREIGN_KEY);
+		DOCUMENT_ID(DerbyFieldType.FOREIGN_KEY),
+		ADDRESS_ID(DerbyFieldType.FOREIGN_KEY);
 		
 		private Field(DerbyFieldType type) {
 			this.type = type;
@@ -24,6 +24,7 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 
 		private final DerbyFieldType type;
 		
+		@Override
 		public DerbyFieldType type() {
 			return this.type;
 		}
@@ -31,13 +32,13 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 
 	public static final Schema<ReprintAddress> SCHEMA = new Schema<ReprintAddress>(
 			false, Field.values()).FOREIGN_KEYS(
-			Field.REPRINT_ADDRESS_DOCUMENT_FK.name(), ISI.DOCUMENT_TABLE_NAME,
-			Field.REPRINT_ADDRESS_ADDRESS_FK.name(), ISI.ADDRESS_TABLE_NAME);
+			Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
+			Field.ADDRESS_ID.name(), ISI.ADDRESS_TABLE_NAME);
 	
 	public static ReprintAddress link(Document doc, Address address) {
 		Dictionary<String, Object> attribs = newDictionary();
-		putPK(attribs, Field.REPRINT_ADDRESS_ADDRESS_FK, address);
-		putPK(attribs, Field.REPRINT_ADDRESS_DOCUMENT_FK, doc);
+		putPK(attribs, Field.ADDRESS_ID, address);
+		putPK(attribs, Field.DOCUMENT_ID, doc);
 		
 		return new ReprintAddress(attribs);
 	}

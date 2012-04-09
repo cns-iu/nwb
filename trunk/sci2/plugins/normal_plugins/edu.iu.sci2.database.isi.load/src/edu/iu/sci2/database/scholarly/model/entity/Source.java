@@ -16,6 +16,7 @@ public class Source extends Entity<Source> {
 		CONFERENCE_LOCATION(DerbyFieldType.TEXT),
 		CONFERENCE_SPONSORS(DerbyFieldType.TEXT),
 		CONFERENCE_TITLE(DerbyFieldType.TEXT),
+		CONFERENCE_DATES(DerbyFieldType.TEXT),
 		FULL_TITLE(DerbyFieldType.TEXT),
 		ISO_TITLE_ABBREVIATION(DerbyFieldType.TEXT),
 		ISSN(DerbyFieldType.TEXT),
@@ -27,8 +28,9 @@ public class Source extends Entity<Source> {
 			this.fieldType = fieldType;
 		}
 		
+		@Override
 		public DerbyFieldType type() {
-			return fieldType;
+			return this.fieldType;
 		}
 	}
 	
@@ -39,7 +41,6 @@ public class Source extends Entity<Source> {
 	public Source(DatabaseTableKeyGenerator keyGenerator,
 			Dictionary<String, Object> attributes) {
 		super(keyGenerator, attributes);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -47,6 +48,9 @@ public class Source extends Entity<Source> {
 		return getAttributes().get("PK");
 	}
 
+	/**
+	 * Warning!  Unimplemented!!
+	 */
 	@Override
 	public void merge(Source otherItem) {
 	}

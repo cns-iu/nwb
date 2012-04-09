@@ -12,8 +12,8 @@ import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class ISIFile extends Entity<ISIFile> {
 	public static enum Field implements DBField {
-		FILE_FORMAT_VERSION_NUMBER(TEXT),
-		FILE_NAME(TEXT),
+		FORMAT_VERSION_NUMBER(TEXT),
+		NAME(TEXT),
 		FILE_TYPE(TEXT);
 
 		private final DerbyFieldType type;
@@ -21,8 +21,9 @@ public class ISIFile extends Entity<ISIFile> {
 			this.type = type;
 		}
 		
+		@Override
 		public DerbyFieldType type() {
-			return type;
+			return this.type;
 		}
 	}
 	
@@ -38,6 +39,9 @@ public class ISIFile extends Entity<ISIFile> {
 		return getPrimaryKey();
 	}
 
+	/**
+	 * Warning! Unimplemented!!
+	 */
 	@Override
 	public void merge(ISIFile otherItem) {
 	}

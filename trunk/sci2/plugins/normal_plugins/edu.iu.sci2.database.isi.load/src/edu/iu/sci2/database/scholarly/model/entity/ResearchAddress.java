@@ -21,8 +21,8 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	}
 
 	public static enum Field implements DBField {
-		RESEARCH_ADDRESS_DOCUMENT_FK(DerbyFieldType.FOREIGN_KEY),
-		RESEARCH_ADDRESS_ADDRESS_FK(DerbyFieldType.FOREIGN_KEY),
+		DOCUMENT_ID(DerbyFieldType.FOREIGN_KEY),
+		ADDRESS_ID(DerbyFieldType.FOREIGN_KEY),
 		ORDER_LISTED(DerbyFieldType.INTEGER);
 		
 		private Field(DerbyFieldType type) {
@@ -31,6 +31,7 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 
 		private final DerbyFieldType type;
 		
+		@Override
 		public DerbyFieldType type() {
 			return this.type;
 		}
@@ -38,8 +39,8 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 
 	public static final Schema<ResearchAddress> SCHEMA = new Schema<ResearchAddress>(
 			false, Field.values()).FOREIGN_KEYS(
-			Field.RESEARCH_ADDRESS_DOCUMENT_FK.name(), ISI.DOCUMENT_TABLE_NAME,
-			Field.RESEARCH_ADDRESS_ADDRESS_FK.name(), ISI.ADDRESS_TABLE_NAME);
+			Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
+			Field.ADDRESS_ID.name(), ISI.ADDRESS_TABLE_NAME);
 	
 	public static List<ResearchAddress> link(Document doc, List<Address> addresses) {
 		List<ResearchAddress> researchAddresses = Lists.newArrayList();
@@ -47,8 +48,8 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 		
 		for (Address address : addresses) {
 			Dictionary<String, Object> attribs = newDictionary();
-			putPK(attribs, Field.RESEARCH_ADDRESS_ADDRESS_FK, address);
-			putPK(attribs, Field.RESEARCH_ADDRESS_DOCUMENT_FK, doc);
+			putPK(attribs, Field.ADDRESS_ID, address);
+			putPK(attribs, Field.DOCUMENT_ID, doc);
 			putValue(attribs, Field.ORDER_LISTED, sequence++);
 			
 			researchAddresses.add(new ResearchAddress(attribs));

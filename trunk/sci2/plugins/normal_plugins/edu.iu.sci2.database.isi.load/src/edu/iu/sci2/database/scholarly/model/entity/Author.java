@@ -16,8 +16,8 @@ import static edu.iu.sci2.database.scopus.load.EntityUtils.*;
 
 public class Author extends RowItem<Author> {
 	public static enum Field implements DBField {
-		AUTHORS_DOCUMENT_FK(DerbyFieldType.FOREIGN_KEY),
-		AUTHORS_PERSON_FK(DerbyFieldType.FOREIGN_KEY),
+		DOCUMENT_ID(DerbyFieldType.FOREIGN_KEY),
+		PERSON_ID(DerbyFieldType.FOREIGN_KEY),
 		EMAIL_ADDRESS(DerbyFieldType.TEXT),
 		ORDER_LISTED(DerbyFieldType.INTEGER);
 
@@ -27,6 +27,7 @@ public class Author extends RowItem<Author> {
 			this.type = type;
 		}
 
+		@Override
 		public DerbyFieldType type() {
 			return this.type;
 		}
@@ -36,23 +37,23 @@ public class Author extends RowItem<Author> {
 			false,
 			Field.values()).
 			FOREIGN_KEYS(
-					Field.AUTHORS_DOCUMENT_FK.name(), ISI.DOCUMENT_TABLE_NAME,
-					Field.AUTHORS_PERSON_FK.name(), ISI.PERSON_TABLE_NAME);
+					Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
+					Field.PERSON_ID.name(), ISI.PERSON_TABLE_NAME);
 	
 	public Author(Dictionary<String, Object> attributes) {
 		super(attributes);
 	}
 
 	
-	// ? what to do about email address?
+	// TODO ? what to do about email address?
 	public static Collection<Author> makeAuthors(Document doc, List<Person> people) {
 		List<Author> authors = new LinkedList<Author>();
 
 		int authorOrder = 1;
 		for (Person p : people) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
-			putPK(attribs, Field.AUTHORS_DOCUMENT_FK, doc);
-			putPK(attribs, Field.AUTHORS_PERSON_FK, p);
+			putPK(attribs, Field.DOCUMENT_ID, doc);
+			putPK(attribs, Field.PERSON_ID, p);
 			attribs.put(Field.ORDER_LISTED.name(), authorOrder++);
 			
 			authors.add(new Author(attribs));
