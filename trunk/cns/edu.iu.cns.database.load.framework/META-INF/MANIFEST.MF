@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Database Loader Framework
 Bundle-SymbolicName: edu.iu.cns.database.load.framework
-Bundle-Version: 1.1.0
+Bundle-Version: 1.1.1
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: edu.iu.cns.database.load.framework,
  edu.iu.cns.database.load.framework.exception,

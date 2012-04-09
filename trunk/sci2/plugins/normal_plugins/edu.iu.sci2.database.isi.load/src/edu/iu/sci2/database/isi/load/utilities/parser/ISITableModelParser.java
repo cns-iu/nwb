@@ -20,6 +20,7 @@ import edu.iu.cns.database.load.framework.EntityContainer;
 import edu.iu.cns.database.load.framework.RelationshipContainer;
 import edu.iu.cns.database.load.framework.RowItemContainer;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
+import edu.iu.nwb.shared.isiutil.ISICitationExtractionPreparer;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.nwb.shared.isiutil.database.ISI;
@@ -164,7 +165,7 @@ public class ISITableModelParser {
 		double unitsWorked = 0;
 
 		for (Integer rowIndex : rows) {
-			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
+			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(this.progressMonitor);
 
 			Tuple row = table.getTuple(rowIndex.intValue());
 
@@ -245,7 +246,7 @@ public class ISITableModelParser {
 
 			if (document != null) {
 				linkDocumentToPeople_AsAuthors(document, currentAuthorPeople, row);
-				linkDocumentToPeople_AsEditors(document, currentEditorPeople, row);
+				linkDocumentToPeople_AsEditors(document, currentEditorPeople);
 			}
 
 			if ((document != null) && (isiFile != null)) {
@@ -351,9 +352,8 @@ public class ISITableModelParser {
 				this.people.getKeyGenerator(),
 				cleanedAuthorString,
 				cleanedAuthorFullNameString);
-		} else {
-			return new Person(this.people.getKeyGenerator(), cleanedAuthorString, "");
 		}
+		return new Person(this.people.getKeyGenerator(), cleanedAuthorString, "");
 	}
 
 	private List<Person> parseEditorPeople(Tuple row) {
@@ -386,19 +386,18 @@ public class ISITableModelParser {
 		String fileType =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.FILE_TYPE.getColumnName()));
 
-		if (!StringUtilities.allAreEmptyOrWhitespace(formatVersionNumber, fileName, fileType)) {
-			ISIFile isiFile = new ISIFile(
-					this.isiFiles.getKeyGenerator(), formatVersionNumber, fileName, fileType);
-
-			return this.isiFiles.add(isiFile);
-		} else {
+		if (StringUtilities.allAreEmptyOrWhitespace(formatVersionNumber, fileName, fileType)) {
 			return null;
 		}
+		ISIFile isiFile = new ISIFile(
+				this.isiFiles.getKeyGenerator(), formatVersionNumber, fileName, fileType);
+		
+		return this.isiFiles.add(isiFile);
 	}
 
 	private List<Keyword> parseKeywords(
 			Tuple row, String keywordType, ISITag sourceTag) {
-		List<Keyword> keywords = new ArrayList<Keyword>();
+		List<Keyword> parsedKeywords = new ArrayList<Keyword>();
 
 		String rawKeywordsString =
 			StringUtilities.simpleClean(row.getString(sourceTag.getColumnName()));
@@ -410,36 +409,34 @@ public class ISITableModelParser {
 			if (!StringUtilities.isNull_Empty_OrWhitespace(keywordString)) {
 				Keyword keyword = this.keywords.add(new Keyword(
 						this.keywords.getKeyGenerator(), cleanedKeywordString, keywordType));
-				keywords.add(keyword);
+				parsedKeywords.add(keyword);
 			}
 		}
 
-		return keywords;
+		return parsedKeywords;
 	}
 
 	private Patent parsePatent(Tuple row) {
 		String patentNumber =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.CITED_PATENT.getColumnName()));
 
-		if (!StringUtilities.isNull_Empty_OrWhitespace(patentNumber)) {
-			return this.patents.add(
-					new Patent(this.patents.getKeyGenerator(), patentNumber));
-		} else {
+		if (StringUtilities.isNull_Empty_OrWhitespace(patentNumber)) {
 			return null;
 		}
+		return this.patents.add(
+				new Patent(this.patents.getKeyGenerator(), patentNumber));
 	}
 
 	private Address parseAddressForReprinting(Tuple row) {
 		String addressForReprintingString =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.REPRINT_ADDRESS.getColumnName()));
 
-		if (!StringUtilities.isNull_Empty_OrWhitespace(addressForReprintingString)) {
-			// TODO: AddressParser?
-			return this.addresses.add(
-					new Address(this.addresses.getKeyGenerator(), addressForReprintingString));
-		} else {
+		if (StringUtilities.isNull_Empty_OrWhitespace(addressForReprintingString)) {
 			return null;
 		}
+		// TODO: AddressParser?
+		return this.addresses.add(
+				new Address(this.addresses.getKeyGenerator(), addressForReprintingString));
 	}
 
 	private List<Address> parseAddressesOfResearch(Tuple row) {
@@ -535,8 +532,6 @@ public class ISITableModelParser {
 
 		Integer citedReferenceCount = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
 			row.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
-		Integer citedYear = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
-			row.getString(ISITag.CITED_YEAR.getColumnName())));
 
 		String digitalObjectidentifier =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOI.getColumnName()));
@@ -582,11 +577,11 @@ public class ISITableModelParser {
 		Integer timesCited = IntegerParserWithDefault.parse(
 			StringUtilities.trimIfNotNull(row.getString(ISITag.TIMES_CITED.getColumnName())));
 		String title = StringUtilities.trimIfNotNull(row.getString(ISITag.TITLE.getColumnName()));
+		String citeAs = StringUtilities.trimIfNotNull(row.getString(ISICitationExtractionPreparer.SELF_REFERENCE_COLUMN_NAME));
 
-		if (!ArrayUtilities.allAreNull(
+		if (ArrayUtilities.allAreNull(
 				beginningPage,
 				citedReferenceCount,
-				citedYear,
 				documentVolume,
 				endingPage,
 				firstAuthor,
@@ -594,7 +589,7 @@ public class ISITableModelParser {
 				publicationYear,
 				source,
 				timesCited) &&
-				!StringUtilities.allAreNull_Empty_OrWhitespace(
+				StringUtilities.allAreNull_Empty_OrWhitespace(
 						documentAbstract,
 						articleNumber,
 						digitalObjectidentifier,
@@ -612,27 +607,28 @@ public class ISITableModelParser {
 						subjectCategory,
 						supplement,
 						title)) {
-			Document document = new Document(
+			return null;
+		}
+
+		Document document = new Document(
 				this.documentKeywords.getKeyGenerator(),
 				articleNumber,
 				digitalObjectidentifier,
 				firstAuthor,
 				source,
-				row);
-
-			for (int ii = 0; ii < row.getColumnCount(); ii++) {
-				String columnName = row.getColumnName(ii);
-
-				if (ISITag.getArbitraryTag(columnName) != null) {
-					String value = row.getString(ii);
-					document.addArbitraryAttribute(columnName, value);
-				}
+				row,
+				citeAs);
+		
+		for (int ii = 0; ii < row.getColumnCount(); ii++) {
+			String columnName = row.getColumnName(ii);
+			
+			if (ISITag.getArbitraryTag(columnName) != null) {
+				String value = row.getString(ii);
+				document.addArbitraryAttribute(columnName, value);
 			}
-
-			return this.documents.add(document);
-		} else {
-			return null;
 		}
+		
+		return this.documents.add(document);
 	}
 
 	private void linkDocumentToPeople_AsAuthors(
@@ -668,7 +664,7 @@ public class ISITableModelParser {
 	}
 
 	private void linkDocumentToPeople_AsEditors(
-			Document document, List<Person> editorPeople, Tuple row) {
+			Document document, List<Person> editorPeople) {
 		Iterator<Person> personIterator = editorPeople.iterator();
 
 		for (int ii = 0; ii < editorPeople.size(); ii++) {
@@ -713,6 +709,9 @@ public class ISITableModelParser {
 				row.getString(ISITag.CONFERENCE_SPONSORS.getColumnName()));
 		String conferenceTitle =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.CONFERENCE_TITLE.getColumnName()));
+		
+		String conferenceDates = StringUtilities.trimIfNotNull(row
+				.getString(ISITag.CONFERENCE_DATES.getColumnName()));
 
 		String fullTitle = StringUtilities.trimIfNotNull(
 				row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
@@ -728,39 +727,38 @@ public class ISITableModelParser {
 		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.trimIfNotNull(
 				row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
 
-		if (!StringUtilities.allAreNull_Empty_OrWhitespace(
+		if (StringUtilities.allAreNull_Empty_OrWhitespace(
 				bookSeriesTitle,
 				bookSeriesSubtitle,
 				conferenceHost,
 				conferenceLocation,
 				conferenceSponsors,
 				conferenceTitle,
+				conferenceDates,
 				fullTitle,
 				isoTitleAbbreviation,
 				issn,
 				publicationType,
 				twentyNineCharacterSourceTitleAbbreviation)) {
-			Source source = new Source(
+			return null;
+		}
+		Source source = new Source(
 				this.sources.getKeyGenerator(),
 				twentyNineCharacterSourceTitleAbbreviation,
 				row);
-
-			return this.sources.add(source);
-		} else {
-			return null;
-		}
+		
+		return this.sources.add(source);
 	}
 
 	private Address parseAddressOfPublisher(Tuple row) {
 		String addressOfPublisherString =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.PUBLISHER_ADDRESS.getColumnName()));
 
-		if (!StringUtilities.isNull_Empty_OrWhitespace(addressOfPublisherString)) {
-			return this.addresses.add(
-					new Address(this.addresses.getKeyGenerator(), addressOfPublisherString));
-		} else {
+		if (StringUtilities.isNull_Empty_OrWhitespace(addressOfPublisherString)) {
 			return null;
 		}
+		return this.addresses.add(
+				new Address(this.addresses.getKeyGenerator(), addressOfPublisherString));
 	}
 
 	private Publisher parsePublisher(Tuple row) {
@@ -771,14 +769,13 @@ public class ISITableModelParser {
 		String webAddress = StringUtilities.trimIfNotNull(
 				row.getString(ISITag.PUBLISHER_WEB_ADDRESS.getColumnName()));
 
-		if (!StringUtilities.allAreNull_Empty_OrWhitespace(city, name, webAddress)) {
-			Publisher publisher =
-				new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
-
-			return this.publishers.add(publisher);
-		} else {
+		if (StringUtilities.allAreNull_Empty_OrWhitespace(city, name, webAddress)) {
 			return null;
 		}
+		Publisher publisher =
+				new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
+		
+		return this.publishers.add(publisher);
 	}
 
 	private void linkReferencesToDocuments() {

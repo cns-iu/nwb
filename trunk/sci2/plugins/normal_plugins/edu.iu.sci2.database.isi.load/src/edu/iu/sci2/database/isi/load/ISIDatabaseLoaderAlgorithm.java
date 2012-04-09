@@ -57,6 +57,7 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		this.mergeIdentical = mergeIdentical;
 	}
 
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
 			// Convert input ISI data to an ISI table.
@@ -134,10 +135,12 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	}
 
 	
+	@Override
 	public void setProgressMonitor(ProgressMonitor progressMonitor) {
 		this.progressMonitor = progressMonitor;
 	}
 
+	@Override
 	public ProgressMonitor getProgressMonitor() {
 		return this.progressMonitor;
 	}

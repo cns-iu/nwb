@@ -23,7 +23,6 @@ public class Document extends Entity<Document> {
 		ISI.ARTICLE_NUMBER, DerbyFieldType.TEXT,
 		ISI.BEGINNING_PAGE, DerbyFieldType.INTEGER,
 		ISI.CITED_REFERENCE_COUNT, DerbyFieldType.INTEGER,
-		ISI.CITED_YEAR, DerbyFieldType.INTEGER,
 		ISI.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
 		ISI.DOCUMENT_TYPE, DerbyFieldType.TEXT,
 		ISI.DOCUMENT_VOLUME, DerbyFieldType.INTEGER,
@@ -45,130 +44,37 @@ public class Document extends Entity<Document> {
 		ISI.SUBJECT_CATEGORY, DerbyFieldType.TEXT,
 		ISI.SUPPLEMENT, DerbyFieldType.TEXT,
 		ISI.TIMES_CITED, DerbyFieldType.INTEGER,
-		ISI.TITLE, DerbyFieldType.TEXT).
+		ISI.TITLE, DerbyFieldType.TEXT, 
+		ISI.CITE_AS, DerbyFieldType.TEXT).
 		FOREIGN_KEYS(
 			ISI.FIRST_AUTHOR, ISI.PERSON_TABLE_NAME,
 			ISI.DOCUMENT_SOURCE, ISI.SOURCE_TABLE_NAME);
 
-	//private String abstractText;
+	
 	private String articleNumber;
-	/*private Integer beginningPage;
-	private Integer citedReferenceCount;
-	private Integer citedYear;*/
 	private String digitalObjectIdentifier;
-	/*private String documentType;
-	private Integer documentVolume;
-	private Integer endingPage;*/
 	private Person firstAuthorPerson;
-	/*private String fundingAgencyAndGrantNumber;
-	private String fundingText;
-	private String isbn;
-	private String isiDocumentDeliveryNumber;
-	private String isiUniqueArticleIdentifier;
-	private String issue;
-	private String language;
-	private Integer pageCount;
-	private String partNumber;
-	private String publicationDate;
-	private Integer publicationYear;*/
 	private Source source;
-	/*private String specialIssue;
-	private String subjectCategory;
-	private String supplement;
-	private Integer timesCited;
-	private String title;*/
 	private Tuple originalRow;
 	private Dictionary<String, String> arbitraryAttributes = new Hashtable<String, String>();
-
+	private String citeAs;
+	
 	public Document(
 			DatabaseTableKeyGenerator keyGenerator,
-			//String abstractText,
 			String articleNumber,
-			/*Integer beginningPage,
-			Integer citedReferenceCount,
-			Integer citedYear,*/
 			String digitalObjectIdentifier,
-			/*String documentType,
-			Integer documentVolume,
-			Integer endingPage,*/
 			Person firstAuthorPerson,
-			/*String fundingAgencyAndGrantNumber,
-			String fundingText,
-			String isbn,
-			String isiDocumentDeliveryNumber,
-			String isiUniqueArticleIdentifier,
-			String issue,
-			String language,
-			Integer pageCount,
-			String partNumber,
-			String publicationDate,
-			Integer publicationYear,*/
 			Source source,
-			/*String specialIssue,
-			String subjectCategory,
-			String supplement,
-			Integer timesCited,
-			String title*/
-			Tuple originalRow) {
+			Tuple originalRow,
+			String citeAs) {
 		super(
 			keyGenerator,
 			createInitialAttributes(articleNumber, digitalObjectIdentifier, firstAuthorPerson, source));
-			/*createAttributes(
-				abstractText,
-				articleNumber,
-				beginningPage,
-				citedReferenceCount,
-				citedYear,
-				digitalObjectIdentifier,
-				documentType,
-				documentVolume,
-				endingPage,
-				firstAuthorPerson,
-				fundingAgencyAndGrantNumber,
-				fundingText,
-				isbn,
-				isiDocumentDeliveryNumber,
-				isiUniqueArticleIdentifier,
-				issue,
-				language,
-				pageCount,
-				partNumber,
-				publicationDate,
-				publicationYear,
-				source,
-				specialIssue,
-				subjectCategory,
-				supplement,
-				timesCited,
-				title));*/
-		//this.abstractText = abstractText;
 		this.articleNumber = articleNumber;
-		/*this.beginningPage = beginningPage;
-		this.citedReferenceCount = citedReferenceCount;
-		this.citedYear = citedYear;*/
 		this.digitalObjectIdentifier = digitalObjectIdentifier;
-		/*this.documentType = documentType;
-		this.documentVolume = documentVolume;
-		this.endingPage = endingPage;*/
 		this.firstAuthorPerson = firstAuthorPerson;
-		/*this.fundingAgencyAndGrantNumber = fundingAgencyAndGrantNumber;
-		this.fundingText = fundingText;
-		this.isbn = isbn;
-		this.isiDocumentDeliveryNumber = isiDocumentDeliveryNumber;
-		this.isiUniqueArticleIdentifier = isiUniqueArticleIdentifier;
-		this.issue = issue;
-		this.language = language;
-		this.pageCount = pageCount;
-		this.partNumber = partNumber;
-		this.publicationDate = publicationDate;
-		this.publicationYear = publicationYear;
-		this.source = source;
-		this.specialIssue = specialIssue;
-		this.subjectCategory = subjectCategory;
-		this.supplement = supplement;
-		this.timesCited = timesCited;
-		this.title = title;*/
 		this.originalRow = originalRow;
+		this.citeAs = citeAs;
 	}
 
 	public String getDigitalObjectIdentifier() {
@@ -176,10 +82,6 @@ public class Document extends Entity<Document> {
 	}
 
 	public String getAbstractText() {
-		/*String a = StringUtilities.trimIfNotNull(
-			this.originalRow.getString(ISITag.ABSTRACT.getColumnName()));
-		System.err.println("abstract: \"" + a + "\"");
-		return a;*/
 		return StringUtilities.trimIfNotNull(
 			this.originalRow.getString(ISITag.ABSTRACT.getColumnName()));
 	}
@@ -196,11 +98,6 @@ public class Document extends Entity<Document> {
 	public Integer getCitedReferenceCount() {
 		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
 			this.originalRow.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
-	}
-
-	public Integer getCitedYear() {
-		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
-			this.originalRow.getString(ISITag.CITED_YEAR.getColumnName())));
 	}
 
 	public String getDocumentType() {
@@ -302,6 +199,10 @@ public class Document extends Entity<Document> {
 			this.originalRow.getString(ISITag.TITLE.getColumnName()));
 	}
 
+	public String getCiteAs() {
+		return this.citeAs;
+	}
+	
 	public Integer getVolume() {
 		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
 			this.originalRow.getString(ISITag.VOLUME.getColumnName())));
@@ -343,7 +244,6 @@ public class Document extends Entity<Document> {
 			getAbstractText(),
 			getBeginningPage(),
 			getCitedReferenceCount(),
-			getCitedYear(),
 			getDocumentType(),
 			getVolume(),
 			getEndingPage(),
@@ -362,7 +262,8 @@ public class Document extends Entity<Document> {
 			getSubjectCategory(),
 			getSupplement(),
 			getTimesCited(),
-			getTitle());
+			getTitle(),
+			getCiteAs());
 
 		return attributes;
 	}
@@ -372,6 +273,9 @@ public class Document extends Entity<Document> {
 		return getPrimaryKey();
 	}
 
+	/**
+	 * Warning!  Unimplemented!
+	 */
 	@Override
 	public void merge(Document otherDocument) {
 	}
@@ -399,7 +303,6 @@ public class Document extends Entity<Document> {
 			String abstractText,
 			Integer beginningPage,
 			Integer citedReferenceCount,
-			Integer citedYear,
 			String documentType,
 			Integer documentVolume,
 			Integer endingPage,
@@ -418,13 +321,13 @@ public class Document extends Entity<Document> {
 			String subjectCategory,
 			String supplement,
 			Integer timesCited,
-			String title) {
+			String title,
+			String citeAs) {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ABSTRACT_TEXT, abstractText),
 			new DictionaryEntry<String, Object>(ISI.BEGINNING_PAGE, beginningPage),
 			new DictionaryEntry<String, Object>(ISI.CITED_REFERENCE_COUNT, citedReferenceCount),
-			new DictionaryEntry<String, Object>(ISI.CITED_YEAR, citedYear),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_TYPE, documentType),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_VOLUME, documentVolume),
 			new DictionaryEntry<String, Object>(ISI.ENDING_PAGE, endingPage),
@@ -446,6 +349,7 @@ public class Document extends Entity<Document> {
 			new DictionaryEntry<String, Object>(ISI.SUBJECT_CATEGORY, subjectCategory),
 			new DictionaryEntry<String, Object>(ISI.SUPPLEMENT, supplement),
 			new DictionaryEntry<String, Object>(ISI.TIMES_CITED, timesCited),
-			new DictionaryEntry<String, Object>(ISI.TITLE, title));
+			new DictionaryEntry<String, Object>(ISI.TITLE, title),
+			new DictionaryEntry<String, Object>(ISI.CITE_AS, citeAs));
 	}
 }

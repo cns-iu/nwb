@@ -6,6 +6,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
+import com.google.common.collect.Ordering;
+
 public final class ISITag {
 	/*
 	 * IMPORTANT: If you add a tag here, make sure to add it in the isiTagArray below as well.
@@ -36,8 +38,8 @@ public final class ISITag {
 		new ISITag("NR", "Cited Reference Count", ContentType.INTEGER);
 	public static final ISITag CITED_REFERENCES =
 		new ISITag("CR", "Cited References", ContentType.MULTI_VALUE_TEXT, "\n");
-	public static final ISITag CITED_YEAR =
-		new ISITag("CY", "Cited Year", ContentType.TEXT);
+	public static final ISITag CONFERENCE_DATES =
+		new ISITag("CY", "Conference Dates", ContentType.TEXT);
 	public static final ISITag CONFERENCE_HOST =
 		new ISITag("HO", "Conference Host", ContentType.TEXT);
 	public static final ISITag CONFERENCE_LOCATION =
@@ -141,7 +143,7 @@ public final class ISITag {
 		CITED_PATENT,
 		CITED_REFERENCE_COUNT,
 		CITED_REFERENCES,
-		CITED_YEAR,
+		CONFERENCE_DATES,
 		CONFERENCE_HOST,
 		CONFERENCE_LOCATION,
 		CONFERENCE_SPONSORS,
@@ -203,15 +205,15 @@ public final class ISITag {
 		VOLUME, 
 	};
 	
-	private static List isiTags = new ArrayList();
-	private static Dictionary tagNameToTag = new Hashtable();
-	private static Dictionary typeToTags = new Hashtable();
-	private static Dictionary tagNameToColumnName = new Hashtable();
+	private static List<ISITag> isiTags = new ArrayList<ISITag>();
+	private static Dictionary<String, ISITag> tagNameToTag = new Hashtable<String, ISITag>();
+	private static Dictionary<ContentType, List<ISITag>> typeToTags = new Hashtable<ContentType, List<ISITag>>();
+	private static Dictionary<String, String> tagNameToColumnName = new Hashtable<String, String>();
 
-	private static List arbitraryISITags = new ArrayList();
-	private static Dictionary arbitraryTagNameToTag = new Hashtable();
-	private static Dictionary arbitraryTypeToTags = new Hashtable();
-	private static Dictionary arbitraryTagNameToColumnName = new Hashtable();
+	private static List<ISITag> arbitraryISITags = new ArrayList<ISITag>();
+	private static Dictionary<String, ISITag> arbitraryTagNameToTag = new Hashtable<String, ISITag>();
+	private static Dictionary<ContentType, List<ISITag>> arbitraryTypeToTags = new Hashtable<ContentType, List<ISITag>>();
+	private static Dictionary<String, String> arbitraryTagNameToColumnName = new Hashtable<String, String>();
 
 	static {
 		for (int ii = 0; ii < isiTagArray.length; ii++) {
@@ -224,7 +226,7 @@ public final class ISITag {
 	private static void addTagInternal(ISITag newTag, boolean checkForDuplicates) {
 		if (checkForDuplicates) {
 			for (int ii = 0; ii < isiTags.size(); ii++) {	
-				ISITag tag = (ISITag) isiTags.get(ii);
+				ISITag tag = isiTags.get(ii);
 				
 				if (newTag.tagName.equals(tag.tagName)) {
 					System.err.println(
@@ -250,24 +252,20 @@ public final class ISITag {
 		tagNameToColumnName.put(newTag.tagName, newTag.columnName);
 		
 		//add to typeToTags
-		
+
 		ContentType tagType = newTag.type;
-		Object typeToTagsResult = typeToTags.get(tagType);
-		List tagsWithThisType;
-		if (typeToTagsResult == null) {
-			tagsWithThisType = new ArrayList();
-		} else {
-			tagsWithThisType = (List) typeToTagsResult;
+		List<ISITag> tags = typeToTags.get(tagType);
+		if (tags == null) {
+			tags = new ArrayList<ISITag>();
 		}
-		
-		tagsWithThisType.add(newTag);
-		typeToTags.put(tagType, tagsWithThisType);
+		tags.add(newTag);
+		typeToTags.put(tagType, tags);
 	}
 
 	private static void addArbitraryTagInternal(ISITag newTag, boolean checkForDuplicates) {
 		if (checkForDuplicates) {
 			for (int ii = 0; ii < arbitraryISITags.size(); ii++) {	
-				ISITag tag = (ISITag) arbitraryISITags.get(ii);
+				ISITag tag = arbitraryISITags.get(ii);
 				
 				if (newTag.tagName.equals(tag.tagName)) {
 					System.err
@@ -294,19 +292,15 @@ public final class ISITag {
 		arbitraryTagNameToColumnName.put(newTag.tagName, newTag.columnName);
 		
 		//add to typeToTags
-		
 		ContentType tagType = newTag.type;
-		Object typeToTagsResult = arbitraryTypeToTags.get(tagType);
-		List tagsWithThisType;
+		List<ISITag> tags = arbitraryTypeToTags.get(tagType);
 
-		if (typeToTagsResult == null) {
-			tagsWithThisType = new ArrayList();
-		} else {
-			tagsWithThisType = (List) typeToTagsResult;
+		if (tags == null) {
+			tags = new ArrayList<ISITag>();
 		}
 		
-		tagsWithThisType.add(newTag);
-		arbitraryTypeToTags.put(tagType, tagsWithThisType);
+		tags.add(newTag);
+		arbitraryTypeToTags.put(tagType, tags);
 	}
 
 	public final String tagName;
@@ -342,6 +336,7 @@ public final class ISITag {
 		return this.columnName;
 	}
 
+	@Override
 	public String toString() {
 		return this.tagName;
 	}
@@ -378,12 +373,7 @@ public final class ISITag {
 			return null;
 		}
 		
-		Object result = tagNameToTag.get(tagName);
-		if (result != null) {
-			return (ISITag) result;
-		} else {
-			return null;
-		}
+		return tagNameToTag.get(tagName);
 	}
 
 	public static ISITag getArbitraryTag(String tagName) {
@@ -391,17 +381,12 @@ public final class ISITag {
 			return null;
 		}
 		
-		Object result = arbitraryTagNameToTag.get(tagName);
-		if (result != null) {
-			return (ISITag) result;
-		} else {
-			return null;
-		}
+		return arbitraryTagNameToTag.get(tagName);
 	}
 	
 	public static ISITag[] getTagsAlphabetically() {
-		Collections.sort(isiTags, new ISITagAlphabeticalComparator());
-		return (ISITag[]) isiTags.toArray(new ISITag[0]);
+		Collections.sort(isiTags, ISITagAlphabeticalOrdering);
+		return isiTags.toArray(new ISITag[0]);
 	}
 	
 	public static ISITag[] getTagsWithContentType(ContentType tagType) {
@@ -409,26 +394,31 @@ public final class ISITag {
 			return new ISITag[0];
 		}
 		
-		Object typeToTagsResult = typeToTags.get(tagType);
-		if (typeToTagsResult != null) {
-			List tags = (List) typeToTagsResult;
-			
-			return (ISITag[]) tags.toArray(new ISITag[0]);
-		} else {
+		List<ISITag> tags = typeToTags.get(tagType);
+		if (tags == null) {
 			return new ISITag[0];
 		}
+		return tags.toArray(new ISITag[0]);
 	}
 	
 	public static String getColumnName(String tagName) {
-		String columnName = (String) tagNameToColumnName.get(tagName);
-		if (columnName != null) {
-			return columnName;
-		} else {
-			System.err
-					.println("Unable to find column name for tag name '"
-							+ tagName
-							+ "' in class ISITag, in package edu.iu.nwb.shared.isiutil");
-			return "";
+		String columnName = tagNameToColumnName.get(tagName);
+		if (columnName == null) {
+			throw new AssertionError("The column name returned 'null' which should be impossible for tags already added.");
 		}
+		return columnName;
 	}
+	
+	/**
+	 * This is an Alphabetical Ordering based on the column name (ignoring the
+	 * case) where nulls will come last.
+	 */
+	public static Ordering<ISITag> ISITagAlphabeticalOrdering = new Ordering<ISITag>() {
+
+		@Override
+		public int compare(ISITag left, ISITag right) {
+			return left.getColumnName().compareToIgnoreCase(
+					right.getColumnName());
+		}
+	}.nullsLast();
 }

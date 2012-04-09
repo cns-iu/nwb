@@ -2,16 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ISI Utility Plugin
 Bundle-SymbolicName: edu.iu.nwb.shared.isiutil
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-ClassPath: .
 X-AutoStart: true
 Export-Package: edu.iu.nwb.shared.isiutil,
  edu.iu.nwb.shared.isiutil.database,
  edu.iu.nwb.shared.isiutil.exception
-Import-Package: edu.iu.nwb.shared.isiutil,
+Import-Package: com.google.common.collect;version="11.0.1",
+ edu.iu.nwb.shared.isiutil,
  org.cishell.utilities,
  org.osgi.framework;version="1.4.0",
  org.osgi.service.log;version="1.3.0",
  prefuse.data,
  prefuse.util,
  prefuse.util.collections
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.cishell.framework.algorithm.AlgorithmCanceledException;
 import org.cishell.framework.algorithm.ProgressMonitor;
@@ -16,16 +17,13 @@ import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.DatabaseUtilities;
-import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.ProgressMonitorUtilities;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.load.framework.DBField;
-import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.RowItemContainer;
 import edu.iu.cns.database.load.framework.Schema;
-import edu.iu.cns.database.load.framework.Schema.Field;
 
 public class DerbyDatabaseCreator {
 	public static final int MAX_VARCHAR_LENGTH = 32000;
@@ -70,7 +68,7 @@ public class DerbyDatabaseCreator {
 			for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
 				ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
 
-				createEmptyTable(databaseConnection, itemContainer, createTableStatement);
+				createEmptyTable(itemContainer, createTableStatement);
 			}
 		} catch (SQLException e) {
 			throw e;
@@ -99,7 +97,7 @@ public class DerbyDatabaseCreator {
 			}
 
 			double workPercentageForThisTable =
-				((double) itemContainer.getItems().size() / totalRowItemCount);
+				(itemContainer.getItems().size() / totalRowItemCount);
 			double unitsOfWorkForThisTable = (workPercentageForThisTable * totalFillTablesWork);
 			fillTable(
 				databaseConnection,
@@ -120,15 +118,13 @@ public class DerbyDatabaseCreator {
 		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
 			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
 
-			addForeignKeysToTable(databaseConnection, itemContainer, addForeignKeysStatement);
+			addForeignKeysToTable(itemContainer, addForeignKeysStatement);
 		}
 	}
 
 	private static void createEmptyTable(
-			Connection connection,
 			RowItemContainer<? extends RowItem<?>> itemContainer,
-			Statement createTableStatement)
-			throws SQLException {
+			Statement createTableStatement) throws SQLException {
 		String tableName = itemContainer.getDatabaseTableName();
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
@@ -142,19 +138,18 @@ public class DerbyDatabaseCreator {
 	}
 
 	private static void addForeignKeysToTable(
-			Connection connection,
 			RowItemContainer<? extends RowItem<?>> itemContainer,
-			Statement addForeignKeysStatement)
-			throws SQLException {
+			Statement addForeignKeysStatement) throws SQLException {
 		String tableName = itemContainer.getDatabaseTableName();
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
 		for (Schema.ForeignKey foreignKey : schema.getForeignKeys()) {
 			String addForeignKeyQuery = String.format(
-				"ALTER TABLE \"%s\" ADD CONSTRAINT \"%s_CONSTRAINT\" FOREIGN KEY (\"%s\") " +
+				"ALTER TABLE \"%s\" ADD CONSTRAINT \"%s_CONSTRAINT_%s\" FOREIGN KEY (\"%s\") " +
 					"REFERENCES \"%s\" (\"%s\")",
 				tableName,
 				foreignKey.getFieldName(),
+				UUID.randomUUID(),
 				foreignKey.getFieldName(),
 				foreignKey.getReferenceTo_TableName(),
 				Schema.PRIMARY_KEY);
@@ -163,13 +158,13 @@ public class DerbyDatabaseCreator {
 	}
 
 	private static double calculateTotalRowItemCount(DatabaseModel model) {
-		long totalRowItemCount = 0;
+		double totalRowItemCount = 0;
 
 		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
 			totalRowItemCount += itemContainer.getItems().size();
 		}
 
-		return (double) totalRowItemCount;
+		return totalRowItemCount;
 	}
 
 	/**
@@ -319,8 +314,7 @@ public class DerbyDatabaseCreator {
 	}
 
 
-	// TODO: New name.
-	public static String schemaToFieldsForCreateTableQueryString(
+	private static String schemaToFieldsForCreateTableQueryString(
 			Schema<? extends RowItem<?>> schema) {
 		int fieldCount = schema.getFields().size();
 
@@ -341,7 +335,7 @@ public class DerbyDatabaseCreator {
 		return StringUtilities.implodeItems(fieldsForSchema, ", ");
 	}
 
-	public static String schemaToPrimaryKeysForCreateTableQueryString(
+	private static String schemaToPrimaryKeysForCreateTableQueryString(
 			Schema<? extends RowItem<?>> schema) {
 		List<Schema.PrimaryKey> primaryKeys = schema.getPrimaryKeys();
 
@@ -361,58 +355,4 @@ public class DerbyDatabaseCreator {
 		return primaryKeysForQuery;
 	}
 
-	public static String schemaToFieldsForInsertQueryString(Schema<? extends RowItem<?>> schema) {
-		List<String> fieldNames = new ArrayList<String>();
-
-		for (DBField field : schema.getFields()) {
-			fieldNames.add(field.name());
-		}
-
-		return StringUtilities.implodeItems(fieldNames, ", ");
-	}
-
-	public static String createAttributesStringAccordingToSchemaForInsertQuery(
-			Schema<? extends RowItem<?>> schema, Dictionary<String, Comparable<?>> attributes) {
-		List<String> attributeValues = new ArrayList<String>();
-
-		for (DBField field : schema.getFields()) {
-			attributeValues.add(valueFormattingForField(attributes.get(field.name()), field));
-		}
-
-		return "(" + StringUtilities.implodeItems(attributeValues, ", ") + ")";
-	}
-
-	public static String valueFormattingForField(Object toString, DBField field) {
-		String value = StringUtilities.emptyStringIfNull(toString);
-		DerbyFieldType type = field.type();
-
-		if (type == DerbyFieldType.PRIMARY_KEY) {
-			return "" + IntegerParserWithDefault.parse(value);
-		} else if (type == DerbyFieldType.FOREIGN_KEY) {
-			if ("".equals(value)) {
-				return NULL_VALUE;
-			} else {
-				return "" + IntegerParserWithDefault.parse(value);
-			}
-		} else if (type == DerbyFieldType.TEXT) {
-			if (value == null) {
-				return NULL_VALUE;
-			} else {
-				return "\'" + value + "\'";
-			}
-		} else if (type == DerbyFieldType.INTEGER) {
-			if ("".equals(value)) {
-				return NULL_VALUE;
-			} else {
-				return "" + IntegerParserWithDefault.parse(value);
-			}
-		} else {
-			// TODO: Error?  Just default to INT for now.
-			if ("".equals(value)) {
-				return NULL_VALUE;
-			} else {
-				return "" + IntegerParserWithDefault.parse(value);
-			}
-		}
-	}
 }

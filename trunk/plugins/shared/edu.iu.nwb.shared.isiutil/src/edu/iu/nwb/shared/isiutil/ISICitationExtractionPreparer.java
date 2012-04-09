@@ -18,7 +18,7 @@ import prefuse.util.collections.IntIterator;
 import edu.iu.nwb.shared.isiutil.exception.CitationExtractionPreparationException;
 
 public class ISICitationExtractionPreparer {
-	private static final String SELF_REFERENCE_COLUMN_NAME = "Cite Me As";
+	public static final String SELF_REFERENCE_COLUMN_NAME = "Cite Me As";
 	private static final String ISI_AUTHOR_SEPARATOR = "|";
 	private static final String ISI_CITATION_SEPARATOR = "|";
 	private static final String ISI_FIELD_SEPARATOR = ", ";
@@ -29,6 +29,9 @@ public class ISICitationExtractionPreparer {
 		this.log = log;
 	}
 
+	/**
+	 * This will side effect isiTable.
+	 */
 	public Table prepareForCitationExtraction(Table isiTable, boolean shouldCleanReferences)
 			throws CitationExtractionPreparationException {
 		if (shouldCleanReferences) {
