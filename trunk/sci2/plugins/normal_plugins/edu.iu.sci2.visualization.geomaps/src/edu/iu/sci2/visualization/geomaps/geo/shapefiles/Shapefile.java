@@ -46,13 +46,13 @@ public enum Shapefile implements NicelyNamed {
 	UNITED_STATES(Resources.getResource(Shapefile.class, "st99_d00.shp"), "United States",
 			"%d U.S. states and other jurisdictions", "U.S. State", "U.S. state",
 			"NAME",
-			KnownProjectedCRSDescriptor.ALBERS, // TODO was Lambert
+			KnownProjectedCRSDescriptor.LAMBERT,
 			ImmutableSet.of(Inset.Request.ALASKA, Inset.Request.HAWAII, Inset.Request.PUERTO_RICO),
 			ImmutableSet.of(AnchorPoint.NEAR_ALEUTIAN_ISLANDS, AnchorPoint.NEAR_PUERTO_RICO)),
 	WORLD(
 			Resources.getResource(Shapefile.class, "countries.shp"), "World",
 			"%d countries of the world", "Country", "country", "NAME",
-			KnownProjectedCRSDescriptor.MERCATOR, // TODO was Eckert IV
+			KnownProjectedCRSDescriptor.ECKERT_IV,
 			ImmutableSet.<Inset.Request> of(), ImmutableSet.of(AnchorPoint.NEAR_ALASKA,
 					AnchorPoint.NEAR_ANTARCTICA));
 
