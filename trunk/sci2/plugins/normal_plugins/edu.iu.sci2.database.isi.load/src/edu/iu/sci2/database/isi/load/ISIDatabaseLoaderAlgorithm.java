@@ -89,8 +89,9 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 			returnData.addAll(Arrays.asList(annotatedOutputData));
 			
 			// Automatically merge identical documents and add them to the return data.
-			Data[] mergedData = getMergedData(annotatedOutputData[0]);
-			returnData.addAll(Arrays.asList(mergedData));
+//FIXME XXX uncomment below.
+			//			Data[] mergedData = getMergedData(annotatedOutputData[0]);
+//			returnData.addAll(Arrays.asList(mergedData));
 			
 			return returnData.toArray(new Data[0]);
 		} catch (AlgorithmCanceledException e) {

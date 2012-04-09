@@ -16,8 +16,8 @@ public class ISI {
 	public static final String SOURCE_DISPLAY_NAME = "Sources";
 	public static final String SOURCE_TABLE_NAME = "SOURCES";
 
-	public static final String REFERENCE_DISPLAY_NAME = "References";
-	public static final String REFERENCE_TABLE_NAME = "REFERENCES";
+	public static final String REFERENCE_DISPLAY_NAME = "Citations";
+	public static final String REFERENCE_TABLE_NAME = "CITATIONS";
 
 	public static final String ADDRESS_DISPLAY_NAME = "Addresses";
 	public static final String ADDRESS_TABLE_NAME = "ADDRESSES";
@@ -113,7 +113,7 @@ public class ISI {
 	public static final String REFERENCE_OTHER_INFORMATION = "OTHER_INFORMATION";
 	public static final String PAGE_NUMBER = "PAGE_NUMBER";
 	public static final String PAPER = "DOCUMENT_ID";
-	public static final String REFERENCE_STRING = "RAW_REFERENCE";
+	public static final String REFERENCE_STRING = "RAW_CITATION";
 	public static final String SOURCE = "SOURCE_ID";
 	public static final String YEAR = "YEAR";
 	public static final String REFERENCE_WAS_STARRED = "STARRED";
@@ -187,7 +187,7 @@ public class ISI {
 	public static final String ABSTRACT_TEXT = "ABSTRACT";
 	public static final String ARTICLE_NUMBER = "DOCUMENT_NUMBER";
 	public static final String BEGINNING_PAGE = "BEGINNING_PAGE";
-	public static final String CITED_REFERENCE_COUNT = "CITED_REFERENCE_COUNT";
+	public static final String CITED_REFERENCE_COUNT = "CITED_CITATION_COUNT";
 	public static final String DIGITAL_OBJECT_IDENTIFIER = "DIGITAL_OBJECT_IDENTIFIER";
 	public static final String DOCUMENT_TYPE = "ISI_TYPE";
 	public static final String DOCUMENT_VOLUME = "VOLUME";
@@ -268,8 +268,8 @@ public class ISI {
 	public static final String DOCUMENT_OCCURRENCES_DISPLAY_NAME = "Document Occurrences";
 	public static final String DOCUMENT_OCCURRENCES_TABLE_NAME = "DOCUMENT_OCCURRENCES";
 
-	public static final String CITED_REFERENCES_DISPLAY_NAME = "Cited References";
-	public static final String CITED_REFERENCES_TABLE_NAME = "CITED_REFERENCES";
+	public static final String CITED_REFERENCES_DISPLAY_NAME = "Cited Citations";
+	public static final String CITED_REFERENCES_TABLE_NAME = "CITED_CITATIONS";
 
 	public static final String[] RELATIONSHIP_TABLE_DISPLAY_NAMES = new String[] {
 		PUBLISHER_ADDRESSES_DISPLAY_NAME,
@@ -399,7 +399,7 @@ public class ISI {
 	public static final String CITED_REFERENCES_DOCUMENT_FOREIGN_KEY =
 		"DOCUMENT_ID";
 	public static final String CITED_REFERENCES_REFERENCE_FOREIGN_KEY =
-		"REFERENCE_ID";
+		"CITATION_ID";
 
 	public static final String[] CITED_REFERENCES_FIELD_NAMES = new String[] {
 		CITED_REFERENCES_DOCUMENT_FOREIGN_KEY,

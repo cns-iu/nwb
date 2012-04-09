@@ -14,7 +14,7 @@ public class Document extends Entity<Document> {
 		ABSTRACT(DerbyFieldType.TEXT),
 		BEGINNING_PAGE(DerbyFieldType.INTEGER),
 		CITE_AS(DerbyFieldType.TEXT),
-		CITED_REFERENCE_COUNT(DerbyFieldType.INTEGER),
+		CITED_CITATION_COUNT(DerbyFieldType.INTEGER),
 		DIGITAL_OBJECT_IDENTIFIER(DerbyFieldType.TEXT),
 		DOCUMENT_NUMBER(DerbyFieldType.TEXT),
 		ENDING_PAGE(DerbyFieldType.INTEGER),
