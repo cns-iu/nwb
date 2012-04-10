@@ -2,6 +2,7 @@
 <project name="addAntBuiltPlugins" default="build">
 	<property name="input.dir" relative="true">${basedir}/target/products</property>
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
+	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/sci2</property>
 
 	<target name="build">
 		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
@@ -13,6 +14,13 @@
 				<fileset dir="${input.dir}" includes="*.zip" />
 			</path>
 		</foreach>
+	</target>
+	
+	<target name="deploy">
+		<tstamp/>
+		<copy todir="${deploy.dir}/${product.version}.${DSTAMP}${TSTAMP}">
+			<fileset dir="${output.dir}"></fileset>
+		</copy>
 	</target>
 
 	<target name="each-product-zip">
