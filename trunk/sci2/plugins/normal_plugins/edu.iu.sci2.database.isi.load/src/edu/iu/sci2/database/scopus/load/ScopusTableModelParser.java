@@ -15,6 +15,8 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import prefuse.data.Table;
 import prefuse.data.util.TableIterator;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import edu.iu.cns.database.load.framework.Entity;
@@ -88,8 +90,7 @@ public class ScopusTableModelParser {
 		// Not filled with data, but here to complete the table model
 		dbTables.add(createEntityContainer(ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA));
 		dbTables.add(createEntityContainer(ISI.PATENT_TABLE_NAME, Patent.SCHEMA));
-		dbTables.add(createEntityContainer(
-				ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA));
+		dbTables.add(createEntityContainer(ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA));
 		dbTables.add(createEntityContainer(ISI.PUBLISHER_TABLE_NAME, Publisher.SCHEMA));
 		
 		
@@ -109,13 +110,17 @@ public class ScopusTableModelParser {
 		RowItemContainer<DocumentKeyword> documentKeywords = createRelationshipContainer(
 				ISI.DOCUMENT_KEYWORDS_TABLE_NAME, DocumentKeyword.SCHEMA);
 		dbTables.add(documentKeywords);
+		
+		RowItemContainer<ResearchAddress> researchAddresses = createRelationshipContainer(
+				ISI.RESEARCH_ADDRESSES_TABLE_NAME, ResearchAddress.SCHEMA);
+		dbTables.add(researchAddresses);
+		
 
 		// Not filled with data, but here to complete the table model.
 		dbTables.add(createRelationshipContainer(ISI.CITED_REFERENCES_TABLE_NAME, CitedReference.SCHEMA));
 		dbTables.add(createRelationshipContainer(ISI.CITED_PATENTS_TABLE_NAME, CitedPatent.SCHEMA));
 		dbTables.add(createRelationshipContainer(ISI.DOCUMENT_OCCURRENCES_TABLE_NAME, DocumentOccurrence.SCHEMA));
 		dbTables.add(createRelationshipContainer(ISI.PUBLISHER_ADDRESSES_TABLE_NAME, PublisherAddress.SCHEMA));
-		dbTables.add(createRelationshipContainer(ISI.RESEARCH_ADDRESSES_TABLE_NAME, ResearchAddress.SCHEMA));
 		
 		TableIterator rowNumbers = table.iterator();
 		while (rowNumbers.hasNext()) {
@@ -159,28 +164,52 @@ public class ScopusTableModelParser {
 			// TODO: make sure nothing depends on the ISI *values* for Keyword.Field.TYPE
 			// ISITag.NEW_KEYWORDS_GIVEN_BY_ISI, ISITag.ORIGINAL_KEYWORDS
 			
+			List<Address> researchAddrAddrs = splitResearchAddresses(row, addresses.getKeyGenerator());
+			addAll(addresses, researchAddrAddrs);
+			addAll(researchAddresses, ResearchAddress.makeResearchAddresses(document, researchAddrAddrs));
 			
 			Address reprintAddrAddr = getReprintAddrAddr(row, addresses.getKeyGenerator());
 			addresses.add(reprintAddrAddr);
-			ReprintAddress reprintAddr = ReprintAddress.link(document, reprintAddrAddr);
-			reprintAddresses.add(reprintAddr);
+			reprintAddresses.add(ReprintAddress.link(document, reprintAddrAddr));
 		}
 		
 		
 		return new DatabaseModel(dbTables);
 	}
 	
+	private static List<Address> splitResearchAddresses(
+			FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
+		List<Address> addresses = Lists.newArrayList();
+		
+		for (String address : getSplitField(row, ScopusField.AFFILIATIONS)) {
+			Dictionary<String, Object> attribs = EntityUtils.newDictionary();
+			
+			putValue(attribs, Address.Field.RAW_ADDRESS, address.trim());
+			addresses.add(new Address(keyGenerator, attribs));
+		}
+		
+		return addresses;
+	}
+
+
 	private static <T extends RowItem<T>> void addAll(RowItemContainer<T> container, Iterable<T> items) {
 		for (T item : items) {
 			container.add(item);
 		}
 	}
 	
+	private static Iterable<String> getSplitField(FileTuple<ScopusField> row, 
+			ScopusField fieldToSplit) {
+		Splitter splitter = ScopusField.splitter.get(fieldToSplit);
+		Preconditions.checkNotNull(splitter, "No splitter available for field %s", fieldToSplit);
+		return splitter.split(row.getStringField(fieldToSplit));
+	}
+	
 	private static List<Keyword> splitKeywords(FileTuple<ScopusField> row,
 			ScopusField fieldToSplit, DatabaseTableKeyGenerator keyGenerator) {
 		List<Keyword> keywords = Lists.newArrayList();
 		
-		for (String keyword : row.getStringField(fieldToSplit).split(";")) {
+		for (String keyword : getSplitField(row, fieldToSplit)) {
 			Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 			putValue(attribs, Keyword.Field.NAME, keyword.trim());
 			putValue(attribs, Keyword.Field.TYPE, fieldToSplit.toString());
@@ -227,7 +256,7 @@ public class ScopusTableModelParser {
 		Dictionary<String, Object> attribs;
 		AbbreviatedNameParser nameParser;
 		
-		for (String name : row.getStringField(fieldToExtract).split("\\|")) {
+		for (String name : getSplitField(row, fieldToExtract)) {
 			attribs = new Hashtable<String, Object>();
 			putValue(attribs, Person.Field.RAW_NAME, name);
 			

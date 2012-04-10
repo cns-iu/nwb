@@ -42,7 +42,7 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 			Field.DOCUMENT_ID.name(), ISI.DOCUMENT_TABLE_NAME,
 			Field.ADDRESS_ID.name(), ISI.ADDRESS_TABLE_NAME);
 	
-	public static List<ResearchAddress> link(Document doc, List<Address> addresses) {
+	public static List<ResearchAddress> makeResearchAddresses(Document doc, List<Address> addresses) {
 		List<ResearchAddress> researchAddresses = Lists.newArrayList();
 		int sequence = 1;
 		
