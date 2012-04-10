@@ -46,7 +46,8 @@ public class NicelyNamedEnums {
 	 */
 	public static <T extends Enum<T> & NicelyNamed> T getConstantNamed(
 			Class<T> clazz, String niceName) {
-		T enumConstant = mapNiceNamesToConstants(clazz).get(niceName); // Fails fast for *any* non-unique name
+		// Fails fast for *any* non-unique name
+		T enumConstant = mapNiceNamesToConstants(clazz).get(niceName);
 		
 		if (enumConstant == null) {
 			throw new IllegalArgumentException(String.format(
@@ -61,13 +62,13 @@ public class NicelyNamedEnums {
 	 */
 	private static <T extends Enum<T> & NicelyNamed> ImmutableBiMap<String, T> mapNiceNamesToConstants(
 			Class<T> enumClass) {
-		return ImmutableBiMap.copyOf(Maps.uniqueIndex(EnumSet.allOf(enumClass), NICE_NAME_GETTER));
+		return ImmutableBiMap.copyOf(Maps.uniqueIndex(
+				EnumSet.allOf(enumClass),
+				new Function<NicelyNamed, String>() {
+					@Override
+					public String apply(NicelyNamed n) {
+						return n.getNiceName();
+					}
+				}));
 	}
-	private static final Function<NicelyNamed, String> NICE_NAME_GETTER =
-			new Function<NicelyNamed, String>() {
-				@Override
-				public String apply(NicelyNamed n) {
-					return n.getNiceName();
-				}
-			};
 }

@@ -1,11 +1,9 @@
 package edu.iu.sci2.visualization.geomaps.data;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Iterator;
 
-import org.cishell.utilities.NumberUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -23,6 +21,7 @@ import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.data.GeoDatum.GeoDatumValueInterpretationException;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
@@ -37,37 +36,35 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		this.geoData = ImmutableSet.copyOf(geoData);
 		this.bindings = ImmutableSet.copyOf(bindings);
 	}
+
 	public static <G, D extends Enum<D> & VizDimension> GeoDataset<G, D> fromTable(
 			final Table table,
 			final Collection<? extends Binding<D>> bindings,
 			final Class<D> dimensionClass,
-			final Function<Tuple, G> geoMaker) {		
-		final ImmutableMap<D, ? extends Binding<D>> dimensionToBinding = mapDimensionToBinding(bindings);
-		
+			final Function<Tuple, G> geoMaker) {
+		ImmutableMap<D, ? extends Binding<D>> dimensionToBinding =
+				mapDimensionsToBindings(bindings);
+
 		ImmutableSet<Tuple> tuples = ImmutableSet.copyOf((Iterator<Tuple>) table.tuples());
 
-		ImmutableSet<GeoDatum<G, D>> geoData = ImmutableSet.copyOf(Collections2.transform(
-				tuples,
-				new Function<Tuple, GeoDatum<G, D>>() {
-					@Override
-					public GeoDatum<G, D> apply(final Tuple tuple) {						
-						EnumMap<D, Double> dimensionToValue =
-								readValues(tuple, dimensionClass, dimensionToBinding);
-						
-						return GeoDatum.of(geoMaker.apply(tuple), dimensionToValue);				
-					}					
-				}));
-		
+		ImmutableSet.Builder<GeoDatum<G, D>> builder = ImmutableSet.builder();
+		for (Tuple tuple : tuples) {
+			try {
+				builder.add(GeoDatum.forTuple(tuple, dimensionToBinding, dimensionClass, geoMaker));
+			} catch (GeoDatumValueInterpretationException e) {
+				// Skip tuples we can't use.  The presence and number of these is reported below.
+			}
+		}
+		ImmutableSet<GeoDatum<G, D>> geoData = builder.build();
+
 		if (geoData.size() < tuples.size()) {
-			int incompleteSpecificationCount = tuples.size() - geoData.size();		
-			String warning = String.format(
+			int incompleteSpecificationCount = tuples.size() - geoData.size();
+			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, String.format(
 					"%d rows of the table did not specify all required values and were skipped.",
-					incompleteSpecificationCount);
-			
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING,	warning);
+					incompleteSpecificationCount));
 		}
 
-		return new GeoDataset<G, D>(ImmutableSet.copyOf(geoData), ImmutableSet.copyOf(bindings));
+		return new GeoDataset<G, D>(geoData, bindings);
 	}
 	
 	/**
@@ -173,7 +170,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		}));
 	}
 	
-	private static <D extends Enum<D> & VizDimension> ImmutableMap<D, ? extends Binding<D>> mapDimensionToBinding(
+	private static <D extends Enum<D> & VizDimension> ImmutableMap<D, ? extends Binding<D>> mapDimensionsToBindings(
 			Collection<? extends Binding<D>> bindings) {
 		return Maps.uniqueIndex(
 				bindings,
@@ -183,24 +180,5 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 						return binding.dimension();
 					}
 				});
-	}
-	
-	private static <D extends Enum<D> & VizDimension> EnumMap<D, Double> readValues(
-			final Tuple tuple,
-			final Class<D> dimensionClass,
-			final ImmutableMap<D, ? extends Binding<D>> dimensionToBinding) {			
-		if (dimensionToBinding.isEmpty()) {
-			return Maps.newEnumMap(dimensionClass);
-		}
-		
-		return Maps.newEnumMap(Maps.transformValues(
-					dimensionToBinding,
-					new Function<Binding<D>, Double>() {
-						@Override
-						public Double apply(Binding<D> binding) {
-							return NumberUtilities.interpretObjectAsDouble(
-									tuple.get(binding.columnName()));
-						}
-					}));
 	}
 }
