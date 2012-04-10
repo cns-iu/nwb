@@ -11,7 +11,7 @@ import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.Alp
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.HasColumnValue;
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.LongerColumn;
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.ShorterColumn;
-import edu.iu.nwb.shared.isiutil.database.ISI;
+import edu.iu.sci2.database.scholarly.model.entity.Source;
 
 public class DocumentSourceComparator implements Comparator<Tuple> {
 	/* First, prefer having a source
@@ -27,33 +27,33 @@ public class DocumentSourceComparator implements Comparator<Tuple> {
 	public static final Ordering<Tuple> ordering =
 		Ordering.compound(
 				Lists.newArrayList(
-					new HasColumnValue(ISI.FULL_TITLE),
-					new ShorterColumn(ISI.FULL_TITLE),
-					new AlphabeticalColumn(ISI.FULL_TITLE),
-					new HasColumnValue(ISI.ISO_TITLE_ABBREVIATION),
-					new HasColumnValue(ISI.BOOK_SERIES_TITLE),
-					new HasColumnValue(ISI.BOOK_SERIES_SUBTITLE),
-					new HasColumnValue(ISI.CONFERENCE_TITLE),
-					new HasColumnValue(ISI.CONFERENCE_HOST),
-					new HasColumnValue(ISI.CONFERENCE_LOCATION),
-					new HasColumnValue(ISI.ISSN),
-					new LongerColumn(ISI.ISO_TITLE_ABBREVIATION),
-					new LongerColumn(ISI.BOOK_SERIES_TITLE),
-					new LongerColumn(ISI.BOOK_SERIES_SUBTITLE),
-					new LongerColumn(ISI.CONFERENCE_TITLE),
-					new LongerColumn(ISI.CONFERENCE_HOST),
-					new LongerColumn(ISI.CONFERENCE_LOCATION),
-					new LongerColumn(ISI.ISSN),
-					new AlphabeticalColumn(ISI.ISO_TITLE_ABBREVIATION),
-					new AlphabeticalColumn(ISI.BOOK_SERIES_TITLE),
-					new AlphabeticalColumn(ISI.BOOK_SERIES_SUBTITLE),
-					new AlphabeticalColumn(ISI.CONFERENCE_TITLE),
-					new AlphabeticalColumn(ISI.CONFERENCE_HOST),
-					new AlphabeticalColumn(ISI.CONFERENCE_LOCATION),
-					new AlphabeticalColumn(ISI.ISSN),
-					new HasColumnValue(ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION),
-					new LongerColumn(ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION),
-					new AlphabeticalColumn(ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION)));
+					new HasColumnValue(Source.Field.FULL_TITLE.name()),
+					new ShorterColumn(Source.Field.FULL_TITLE.name()),
+					new AlphabeticalColumn(Source.Field.FULL_TITLE.name()),
+					new HasColumnValue(Source.Field.ISO_TITLE_ABBREVIATION.name()),
+					new HasColumnValue(Source.Field.BOOK_SERIES_TITLE.name()),
+					new HasColumnValue(Source.Field.BOOK_SERIES_SUBTITLE.name()),
+					new HasColumnValue(Source.Field.CONFERENCE_TITLE.name()),
+					new HasColumnValue(Source.Field.CONFERENCE_HOST.name()),
+					new HasColumnValue(Source.Field.CONFERENCE_LOCATION.name()),
+					new HasColumnValue(Source.Field.ISSN.name()),
+					new LongerColumn(Source.Field.ISO_TITLE_ABBREVIATION.name()),
+					new LongerColumn(Source.Field.BOOK_SERIES_TITLE.name()),
+					new LongerColumn(Source.Field.BOOK_SERIES_SUBTITLE.name()),
+					new LongerColumn(Source.Field.CONFERENCE_TITLE.name()),
+					new LongerColumn(Source.Field.CONFERENCE_HOST.name()),
+					new LongerColumn(Source.Field.CONFERENCE_LOCATION.name()),
+					new LongerColumn(Source.Field.ISSN.name()),
+					new AlphabeticalColumn(Source.Field.ISO_TITLE_ABBREVIATION.name()),
+					new AlphabeticalColumn(Source.Field.BOOK_SERIES_TITLE.name()),
+					new AlphabeticalColumn(Source.Field.BOOK_SERIES_SUBTITLE.name()),
+					new AlphabeticalColumn(Source.Field.CONFERENCE_TITLE.name()),
+					new AlphabeticalColumn(Source.Field.CONFERENCE_HOST.name()),
+					new AlphabeticalColumn(Source.Field.CONFERENCE_LOCATION.name()),
+					new AlphabeticalColumn(Source.Field.ISSN.name()),
+					new HasColumnValue(Source.Field.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION.name()),
+					new LongerColumn(Source.Field.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION.name()),
+					new AlphabeticalColumn(Source.Field.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION.name())));
 	
 
 	public int compare(Tuple tuple1, Tuple tuple2) {

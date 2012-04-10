@@ -8,18 +8,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.LongerColumn;
-import edu.iu.nwb.shared.isiutil.database.ISI;
+import edu.iu.sci2.database.scholarly.model.entity.Person;
 
 public class IsiPersonPriorities implements Comparator<Tuple> {	
 	private Ordering<Tuple> ordering =
 			Ordering.compound(Lists.newArrayList(
-					new LongerColumn(ISI.FULL_NAME),
-					new LongerColumn(ISI.PERSONAL_NAME),
-					new LongerColumn(ISI.UNSPLIT_ABBREVIATED_NAME),
-					new LongerColumn(ISI.MIDDLE_INITIAL)));
+					new LongerColumn(Person.Field.FULL_NAME.name()),
+					new LongerColumn(Person.Field.FIRST_NAME.name()),
+					new LongerColumn(Person.Field.RAW_NAME.name()),
+					new LongerColumn(Person.Field.MIDDLE_INITIAL.name())));
 	
 	
 	public int compare(Tuple o1, Tuple o2) {
-		return ordering.compare(o1, o2);
+		return this.ordering.compare(o1, o2);
 	}
 }

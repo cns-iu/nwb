@@ -29,9 +29,10 @@ import edu.iu.cns.database.merge.generic.prepare.marked.grouping.KeyBasedGroupin
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.stringbased.StringSimilarityMergeCheck;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.sci2.database.isi.merge.people.IsiPersonPriorities;
+import edu.iu.sci2.database.scholarly.model.entity.Person;
 
 public class SuggestPeopleMerges implements Algorithm {
-	public static final String PERSON_TABLE_NAME = "APP.PERSON";
+	public static final String PERSON_TABLE_NAME = "APP" + "." + ISI.PERSON_TABLE_NAME;
 	
     private static final String METRIC = "metric";
 	private static final String SIMILARITY = "similarity";
@@ -53,7 +54,7 @@ public class SuggestPeopleMerges implements Algorithm {
         this.prefixLength = (Integer) parameters.get(NUM_PREFIX_LETTERS);
         this.similarityCutoff = (Float) parameters.get(SIMILARITY);
         this.metricName = (String) parameters.get(METRIC);
-		this.metric = metrics.get(metricName);
+		this.metric = metrics.get(this.metricName);
     }
 
     private static Map<String, InterfaceStringMetric> loadMetrics() {
@@ -72,25 +73,25 @@ public class SuggestPeopleMerges implements Algorithm {
     			new MergeMarker(
     					CompoundGroupingStrategy.compound(
     							new KeyBasedGroupingStrategy<String>(
-    									new IsiFirstLettersFamilyName(prefixLength)),
+    									new IsiFirstLettersFamilyName(this.prefixLength)),
     							new CheckBasedGroupingStrategy(
     	    							new StringSimilarityMergeCheck(
-    	    									ISI.UNSPLIT_ABBREVIATED_NAME,
+    	    									Person.Field.RAW_NAME.name(),
     	    									ToCaseFunction.LOWER,
-    	    									metric,
-    	    									similarityCutoff))),
+    	    									this.metric,
+    	    									this.similarityCutoff))),
     					new IsiPersonPriorities());
     	
     	Table mergingTable = mergeMarker.createMarkedMergingTable(
-    			PERSON_TABLE_NAME, (Database) data[0].getData(), context);
+    			PERSON_TABLE_NAME, (Database) this.data[0].getData(), this.context);
     	
     	return new Data[]{ DataFactory.withClassNameAsFormat(
     			mergingTable,
 				DataProperty.TABLE_TYPE,
-				data[0],
+				this.data[0],
 				String.format(
 						"suggested people merges (%s similarity >= %f, prefix %d)",
-						metricName, similarityCutoff, prefixLength)) };
+						this.metricName, this.similarityCutoff, this.prefixLength)) };
     }
 	
 	public static void main(String[] args) {

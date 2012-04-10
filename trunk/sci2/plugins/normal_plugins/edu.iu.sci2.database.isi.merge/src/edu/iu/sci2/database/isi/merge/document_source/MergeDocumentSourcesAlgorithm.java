@@ -32,6 +32,7 @@ import edu.iu.cns.database.merge.generic.analyze.mergetable.MergeTableAnalyzer.A
 import edu.iu.cns.database.merge.generic.prepare.marked.MergeMarker;
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.KeyBasedGroupingStrategy;
 import edu.iu.nwb.shared.isiutil.database.ISI;
+import edu.iu.sci2.database.scholarly.model.entity.Source;
 
 /* Each source in the given ISI database may specify a "J9", a canonical journal identifier
  * like "nature" or "science". References also specify a journal identification string, which
@@ -101,8 +102,8 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
 			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
 			ColumnProjection columnFilter = new NamedColumnProjection(
 					new String[] {
-							"TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION",
-							"FULL_TITLE" }, true);
+							Source.Field.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION.name(),
+							Source.Field.FULL_TITLE.name()}, true);
 
 			MergeTableAnalyzer.writeAnalysis(new FileOutputStream(mergeReportFile), mergeTable,
 					columnFilter);

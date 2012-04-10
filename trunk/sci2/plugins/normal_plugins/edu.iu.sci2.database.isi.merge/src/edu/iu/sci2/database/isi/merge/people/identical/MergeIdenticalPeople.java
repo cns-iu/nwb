@@ -1,6 +1,5 @@
 package edu.iu.sci2.database.isi.merge.people.identical;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +17,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DataFactory;
-import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -29,27 +27,31 @@ import edu.iu.cns.database.merge.generic.detect.redundant_author.MergeGroup.Dupl
 import edu.iu.cns.database.merge.generic.detect.redundant_author.MergeGroupSettings;
 import edu.iu.cns.database.merge.generic.prepare.marked.MergeMarker;
 import edu.iu.cns.database.merge.generic.prepare.marked.grouping.KeyBasedGroupingStrategy;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.sci2.database.isi.merge.people.IsiPersonPriorities;
-
+import edu.iu.sci2.database.scholarly.model.entity.Author;
+import edu.iu.sci2.database.scholarly.model.entity.Person;
+import edu.iu.sci2.database.scholarly.model.entity.Document;
+import edu.iu.cns.database.load.framework.Schema;
 
 public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 	public static final MergeGroupSettings MERGE_GROUP_SETTINGS;
 	static {
 		
-		final String MERGE_GROUP_PK_IDENTIFIER = "PK";
+		final String MERGE_GROUP_PK_IDENTIFIER = Schema.PRIMARY_KEY;
 		final String MERGE_GROUP_IDENTIFIER = "Merge Group Identifier";
 		
-		final String AUTHORS_TABLE = "APP.AUTHORS";
-		final String AUTHORS_DOCUMENT_FK = AUTHORS_TABLE + ".AUTHORS_DOCUMENT_FK";
-		final String AUTHORS_PERSON_FK = AUTHORS_TABLE + ".AUTHORS_PERSON_FK";
+		final String AUTHORS_TABLE = "APP." + ISI.AUTHORS_TABLE_NAME;
+		final String AUTHORS_DOCUMENT_FK = AUTHORS_TABLE + "." + Author.Field.DOCUMENT_ID.name();
+		final String AUTHORS_PERSON_FK = AUTHORS_TABLE + "." + Author.Field.PERSON_ID.name();
 		
-		final String PERSON_TABLE = "APP.PERSON";
-		final String PERSON_ID = PERSON_TABLE + ".UNSPLIT_NAME";
-		final String PERSON_PK = PERSON_TABLE + ".PK";
+		final String PERSON_TABLE = "APP." + ISI.PERSON_TABLE_NAME;
+		final String PERSON_ID = PERSON_TABLE + "." + Person.Field.RAW_NAME.name();
+		final String PERSON_PK = PERSON_TABLE + "." + Schema.PRIMARY_KEY;
 		
-		final String DOCUMENT_TABLE = "APP.DOCUMENT";
-		final String DOCUMENT_ID = DOCUMENT_TABLE + ".ISI_UNIQUE_ARTICLE_IDENTIFIER";
-		final String DOCUMENT_PK = DOCUMENT_TABLE + ".PK";
+		final String DOCUMENT_TABLE = "APP." + ISI.DOCUMENT_TABLE_NAME;
+		final String DOCUMENT_ID = DOCUMENT_TABLE + "." + Document.Field.ISI_UNIQUE_ARTICLE_IDENTIFIER.name();
+		final String DOCUMENT_PK = DOCUMENT_TABLE + "." + Schema.PRIMARY_KEY;
 		
 		MERGE_GROUP_SETTINGS = new MergeGroupSettings(
 				MERGE_GROUP_PK_IDENTIFIER, MERGE_GROUP_IDENTIFIER,
@@ -112,7 +114,7 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
 		try {
 			File mergeReportFile = File.createTempFile("Merge Report", ".txt");
 			MergeTableAnalyzer.writeAnalysis(new FileOutputStream(mergeReportFile), mergeTable,
-					"UNSPLIT_NAME");
+					Person.Field.RAW_NAME.name());
 
 			Data mergeReportData = DataFactory.withClassNameAsFormat(
 					mergeReportFile, DataProperty.TEXT_TYPE, this.data[0],
