@@ -65,7 +65,7 @@ public class TryIntegrationTest {
 	@Test
 	public void test() throws Exception {
 		Statement s = connection.createStatement();
-		s.execute("select * from document");
+		s.execute("select * from documents");
 		ResultSet rs = s.getResultSet();
 		ResultSetMetaData md = rs.getMetaData();
 		rs.next();
@@ -81,7 +81,7 @@ public class TryIntegrationTest {
 	public void testFirstPaperAuthors() throws Exception {
 		Statement s = connection.createStatement();
 		
-		s.execute("select pk, first_author_fk from document where title like 'Synthesis of carbon%'");
+		s.execute("select pk, first_author_id from documents where title like 'Synthesis of carbon%'");
 		ResultSet rs = s.getResultSet();
 		rs.next();
 		int documentPK = rs.getInt("PK");
@@ -89,7 +89,7 @@ public class TryIntegrationTest {
 		int firstAuthorPK = rs.getInt(Document.Field.FIRST_AUTHOR_ID.toString());
 		assertTrue(firstAuthorPK != 0);
 		
-		s.execute("select * from authors join person on (authors.AUTHORS_PERSON_FK = person.PK) WHERE authors.AUTHORS_DOCUMENT_FK = " + documentPK + " order by ORDER_LISTED");
+		s.execute("select * from authors join people on (authors.person_id = people.PK) WHERE authors.document_id = " + documentPK + " order by ORDER_LISTED");
 		rs = s.getResultSet();
 		rs.next();
 		assertEquals(rs.getString(Person.Field.RAW_NAME.name()), "Gao M.");
@@ -176,9 +176,9 @@ public class TryIntegrationTest {
 	public void testJoinOnKeywords() throws SQLException {
 		Statement s = connection.createStatement();
 		
-		s.execute("select * from keyword join document_keywords on (keyword.PK = document_keywords.document_keywords_keyword_fk) "
-				+ "join document on (document.PK = document_keywords.document_keywords_document_fk) "
-				+ "WHERE keyword.keyword = 'Rib number'");
+		s.execute("select * from keywords join document_keywords on (keywords.PK = document_keywords.keyword_id) "
+				+ "join documents on (documents.PK = document_keywords.document_id) "
+				+ "WHERE keywords.name = 'Rib number'");
 		ResultSet rs = s.getResultSet();
 		assertTrue("No results!  Expected something!", rs.next());
 		String documentTitle = rs.getString("title");
