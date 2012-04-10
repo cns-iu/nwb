@@ -1,5 +1,8 @@
 package edu.iu.sci2.database.scopus.load;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Splitter;
+
 import edu.iu.sci2.database.scholarly.FileField;
 
 public enum ScopusField implements FileField {
@@ -41,6 +44,14 @@ public enum ScopusField implements FileField {
 	DOCUMENT_TYPE("Document Type"),
 	SOURCE("Source"),
 	SELF_REFERENCE("Self Reference");
+	
+	public static final ImmutableMap<ScopusField,Splitter> splitter = ImmutableMap.of(
+			AFFILIATIONS, Splitter.on(';'),
+			AUTHOR_KEYWORDS, Splitter.on(';'),
+			INDEX_KEYWORDS, Splitter.on(';'),
+			AUTHORS, Splitter.on('|'),
+			EDITORS, Splitter.on('|'));
+	
 	
 	private String fieldName;
 
