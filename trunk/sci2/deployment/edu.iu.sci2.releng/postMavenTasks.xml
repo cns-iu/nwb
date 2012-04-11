@@ -3,6 +3,7 @@
 	<property name="input.dir" relative="true">${basedir}/target/products</property>
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/sci2</property>
+	<property name="product.version">1.0.0</property>
 
 	<target name="build">
 		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
