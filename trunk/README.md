@@ -82,8 +82,13 @@ sci2/deployment/edu.iu.sci2.releng/target/products-final/. The script also makes
 a change to the configuration/config.ini file in each product, so that the tools
 will notice the newly-added plug-ins. To run the step, run
 
-    ant -f sci2/deployment/edu.iu.sci2.releng/addAntBuiltPlugins.xml
+    ant -f sci2/deployment/edu.iu.sci2.releng/postMavenTasks.xml
 
 So now you should have a complete build of Sci2!  Yay!
 
--Thomas Smith, January 12 2012
+If you're on one of IU's Cyberinfrastructure for Network Science Center's
+servers, you can take it one step further with
+
+    ant -f sci2/deployment/edu.iu.sci2.releng/postMavenTasks.xml deploy
+    
+to deploy a nightly build.
