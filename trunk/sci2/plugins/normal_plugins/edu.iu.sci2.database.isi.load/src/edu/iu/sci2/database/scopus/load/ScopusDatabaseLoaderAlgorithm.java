@@ -118,7 +118,7 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
 	    	// Create an in-memory ISI model based off of the table.
 
     		DatabaseModel model =
-    			ScopusTableModelParser.parseModel(table);
+    			new ScopusTableModelParser(this.logger).parseModel(table);
 
 	    	// Use the ISI model to create an ISI database.
 

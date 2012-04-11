@@ -10,7 +10,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.cishell.framework.algorithm.ProgressMonitor;
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.util.TableIterator;
@@ -51,19 +51,14 @@ import edu.iu.sci2.database.scholarly.model.entity.Source;
 
 public class ScopusTableModelParser {
 
-	public ScopusTableModelParser(ProgressMonitor progressMonitor) {
-		// TODO Auto-generated constructor stub
+	private final LogService logger;
+
+	public ScopusTableModelParser(LogService logger) {
+		this.logger = logger;
 	}
 
 
-	private static <T extends Entity<T>> EntityContainer<T> createEntityContainer(String tableName, Schema<T> schema) {
-		return new EntityContainer<T>(tableName, schema);
-	}
-	private static <T extends RowItem<T>> RowItemContainer<T> createRelationshipContainer(String tableName, Schema<T> schema) {
-		return new RelationshipContainer<T>(tableName, schema);
-	}
-	
-	public static DatabaseModel parseModel(Table table) {
+	public DatabaseModel parseModel(Table table) {
 		List<RowItemContainer<? extends RowItem<?>>> dbTables = Lists.newArrayList();
 		
 		// Entities (things that mostly hold data themselves)
@@ -176,6 +171,44 @@ public class ScopusTableModelParser {
 		
 		return new DatabaseModel(dbTables);
 	}
+
+
+	private List<Person> splitAndParsePersonList(FileTuple<ScopusField> row,
+			ScopusField fieldToExtract,
+			DatabaseTableKeyGenerator keyGenerator) {
+		List<Person> people = new ArrayList<Person>();
+		Dictionary<String, Object> attribs;
+		AbbreviatedNameParser nameParser;
+		
+		for (String name : getSplitField(row, fieldToExtract)) {
+			attribs = new Hashtable<String, Object>();
+			putValue(attribs, Person.Field.RAW_NAME, name);
+			
+			try {
+				nameParser = new AbbreviatedNameParser(name);
+				putValue(attribs, Person.Field.FIRST_INITIAL, nameParser.firstInitial);
+				putValue(attribs, Person.Field.FAMILY_NAME, nameParser.familyName);
+				putValue(attribs, Person.Field.MIDDLE_INITIAL, nameParser.middleInitials);
+			} catch (PersonParsingException e) {
+				String toLog = String.format("Couldn't parse name %s", name);
+				if (this.logger != null) {
+					this.logger.log(LogService.LOG_INFO, toLog);
+				}
+			}
+		
+			people.add(new Person(keyGenerator, attribs));
+		}
+		
+		return people;
+	}
+
+
+	private static <T extends Entity<T>> EntityContainer<T> createEntityContainer(String tableName, Schema<T> schema) {
+		return new EntityContainer<T>(tableName, schema);
+	}
+	private static <T extends RowItem<T>> RowItemContainer<T> createRelationshipContainer(String tableName, Schema<T> schema) {
+		return new RelationshipContainer<T>(tableName, schema);
+	}
 	
 	private static List<Address> splitResearchAddresses(
 			FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
@@ -200,7 +233,7 @@ public class ScopusTableModelParser {
 	
 	private static Iterable<String> getSplitField(FileTuple<ScopusField> row, 
 			ScopusField fieldToSplit) {
-		Splitter splitter = ScopusField.splitter.get(fieldToSplit);
+		Splitter splitter = ScopusField.getSplitterFor(fieldToSplit);
 		Preconditions.checkNotNull(splitter, "No splitter available for field %s", fieldToSplit);
 		return splitter.split(row.getStringField(fieldToSplit));
 	}
@@ -242,39 +275,13 @@ public class ScopusTableModelParser {
 		return new Source(keyGenerator, attribs);
 	}
 
-	public static Address getReprintAddrAddr(FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
+	private static Address getReprintAddrAddr(FileTuple<ScopusField> row, DatabaseTableKeyGenerator keyGenerator) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
 		EntityUtils.putField(attribs, Address.Field.RAW_ADDRESS, row, ScopusField.CORRESPONDENCE_ADDRESS);
 		return new Address(keyGenerator, attribs);
 	}
 
-	private static List<Person> splitAndParsePersonList(FileTuple<ScopusField> row,
-			ScopusField fieldToExtract,
-			DatabaseTableKeyGenerator keyGenerator) {
-		List<Person> people = new ArrayList<Person>();
-		Dictionary<String, Object> attribs;
-		AbbreviatedNameParser nameParser;
-		
-		for (String name : getSplitField(row, fieldToExtract)) {
-			attribs = new Hashtable<String, Object>();
-			putValue(attribs, Person.Field.RAW_NAME, name);
-			
-			try {
-				nameParser = new AbbreviatedNameParser(name);
-				putValue(attribs, Person.Field.FIRST_INITIAL, nameParser.firstInitial);
-				putValue(attribs, Person.Field.FAMILY_NAME, nameParser.familyName);
-				putValue(attribs, Person.Field.MIDDLE_INITIAL, nameParser.middleInitials);
-			} catch (PersonParsingException e) {
-				// TODO: log something
-			}
-		
-			people.add(new Person(keyGenerator, attribs));
-		}
-		
-		return people;
-	}
-	
 	private static Dictionary<String, Object> getDocumentAttribs(FileTuple<ScopusField> row, Source source, Person firstAuthor) {
 		Dictionary<String, Object> attribs = new Hashtable<String, Object>();
 		
