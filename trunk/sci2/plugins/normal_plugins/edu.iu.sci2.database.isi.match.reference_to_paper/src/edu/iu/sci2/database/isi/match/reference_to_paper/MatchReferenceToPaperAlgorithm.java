@@ -22,10 +22,11 @@ import org.cishell.utilities.DatabaseUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.shared.isiutil.database.ISI;
+import edu.iu.sci2.database.scholarly.model.entity.Document;
+import edu.iu.sci2.database.scholarly.model.entity.Reference;
+import edu.iu.cns.database.load.framework.Schema;
 
 public class MatchReferenceToPaperAlgorithm implements Algorithm {
-	public static final String PRIMARY_KEY = "PK";
-
 	public static final String BASE_EXCEPTION_MESSAGE =
 		"An error occurred when attempting to match references to papers: ";
 
@@ -35,7 +36,9 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
 		STRING_TEMPLATE_BASE_FILE_PATH + "MatchReferenceToPaperQuery.st";
 
 	public static final StringTemplateGroup matchReferencesToPapersGroup = loadTemplates();
-
+	
+	// Print debug messages?
+	private static final boolean debug = false;
     private Data inData;
     private Database originalDatabase;
     private LogService logger;
@@ -62,8 +65,8 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
     			BASE_EXCEPTION_MESSAGE + "Unable to interface with the selected database.");
 
     		try {
-    			matchReferencesToPapers(newDatabase, statement);
-    			reportOvermatchedReferences(newDatabase, statement);
+    			matchReferencesToPapers(statement);
+    			reportOvermatchedReferences(statement);
     		} catch (SQLException e) {
     			String exceptionMessage = BASE_EXCEPTION_MESSAGE + e.getMessage();
 
@@ -84,50 +87,64 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
     	}
     }
 
-    private void reportOvermatchedReferences(Database newDatabase,
-			Statement statement) throws SQLException {
+    public static void logDebug(String debugMessage) {
+    	if(!debug) {
+    		return;
+    	} 
+    	
+    	System.err.println(debugMessage);
+    }
+    
+	private void reportOvermatchedReferences(Statement statement)
+			throws SQLException {
 		String query = createSelectOvermatchedReferencesQuery();
+		logDebug("Overmatched Query:\n" + query);
 		ResultSet overmatched = statement.executeQuery(query);
 		boolean firstRow = true;
-		while(overmatched.next()) {
-			if(firstRow) {
+		while (overmatched.next()) {
+			if (firstRow) {
 				firstRow = false;
-				logger.log(LogService.LOG_WARNING, "Some references matched more than one document." +
-						" This may occur because of corrections, reprints, or data errors (including duplication of records)" +
-						" None of these references will be pointed at documents." +
-						" The references with this problem are:");
+				this.logger
+						.log(LogService.LOG_WARNING,
+								"Some references matched more than one document."
+										+ " This may occur because of corrections, reprints, or data errors (including duplication of records)"
+										+ " None of these references will be pointed at documents."
+										+ " The references with this problem are:");
 			}
-			logger.log(LogService.LOG_WARNING, "  " + overmatched.getString(1) + " (" + overmatched.getInt(2) + " documents)");
+			this.logger.log(
+					LogService.LOG_WARNING,
+					"  " + overmatched.getString(1) + " ("
+							+ overmatched.getInt(2) + " documents)");
 		}
 	}
 
-	private String createSelectOvermatchedReferencesQuery() {
+	private static String createSelectOvermatchedReferencesQuery() {
 		StringTemplate queryTemplate = matchReferencesToPapersGroup.getInstanceOf(
 		"selectOvermatchedReferencesQuery");
 		queryTemplate.setAttribute("referenceTableName", ISI.REFERENCE_TABLE_NAME);
-		queryTemplate.setAttribute("referencePK", PRIMARY_KEY);
-		queryTemplate.setAttribute("referenceRaw", ISI.REFERENCE_STRING);
-		queryTemplate.setAttribute("referenceAuthorFK", ISI.REFERENCE_AUTHOR);
-		queryTemplate.setAttribute("referencePageNumber", ISI.PAGE_NUMBER);
-		queryTemplate.setAttribute("referencePaperFK", ISI.PAPER);
-		queryTemplate.setAttribute("referenceSource", ISI.SOURCE);
-		queryTemplate.setAttribute("referenceVolume", ISI.REFERENCE_VOLUME);
-		queryTemplate.setAttribute("referenceYear", ISI.YEAR);
+		queryTemplate.setAttribute("referencePK", Schema.PRIMARY_KEY);
+		queryTemplate.setAttribute("referenceRaw", Reference.Field.RAW_CITATION);
+		queryTemplate.setAttribute("referenceAuthorFK", Reference.Field.AUTHOR_ID);
+		queryTemplate.setAttribute("referencePageNumber", Reference.Field.PAGE_NUMBER);
+		queryTemplate.setAttribute("referencePaperFK", Reference.Field.DOCUMENT_ID);
+		queryTemplate.setAttribute("referenceSource", Reference.Field.SOURCE_ID);
+		queryTemplate.setAttribute("referenceVolume", Reference.Field.VOLUME);
+		queryTemplate.setAttribute("referenceYear", Reference.Field.YEAR);
 		queryTemplate.setAttribute("documentTableName", ISI.DOCUMENT_TABLE_NAME);
-		queryTemplate.setAttribute("documentPK", PRIMARY_KEY);
-		queryTemplate.setAttribute("documentBeginningPage", ISI.BEGINNING_PAGE);
-		queryTemplate.setAttribute("documentFirstAuthorFK", ISI.FIRST_AUTHOR);
-		queryTemplate.setAttribute("documentSource", ISI.DOCUMENT_SOURCE);
-		queryTemplate.setAttribute("documentVolume", ISI.DOCUMENT_VOLUME);
-		queryTemplate.setAttribute("documentYear", ISI.PUBLICATION_YEAR);
+		queryTemplate.setAttribute("documentPK", Schema.PRIMARY_KEY);
+		queryTemplate.setAttribute("documentBeginningPage", Document.Field.BEGINNING_PAGE);
+		queryTemplate.setAttribute("documentFirstAuthorFK", Document.Field.FIRST_AUTHOR_ID);
+		queryTemplate.setAttribute("documentSource", Document.Field.SOURCE_ID);
+		queryTemplate.setAttribute("documentVolume", Document.Field.VOLUME);
+		queryTemplate.setAttribute("documentYear", Document.Field.PUBLICATION_YEAR);
 
 	return queryTemplate.toString();
 	}
 
-	private void matchReferencesToPapers(Database database, Statement statement)
+	private void matchReferencesToPapers(Statement statement)
     		throws SQLException {
     	String query = createMatchReferencesToDocumentsQuery();
-
+    	logDebug("Match References to Documents Query:\n" + query);
     	if (!statement.execute(query)) {
     		int updateCount = statement.getUpdateCount();
 
@@ -150,20 +167,20 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
     	StringTemplate queryTemplate = matchReferencesToPapersGroup.getInstanceOf(
     		"matchReferenceToPaperQuery");
     	queryTemplate.setAttribute("referenceTableName", ISI.REFERENCE_TABLE_NAME);
-    	queryTemplate.setAttribute("referencePK", PRIMARY_KEY);
-    	queryTemplate.setAttribute("referenceAuthorFK", ISI.REFERENCE_AUTHOR);
-    	queryTemplate.setAttribute("referencePageNumber", ISI.PAGE_NUMBER);
-    	queryTemplate.setAttribute("referencePaperFK", ISI.PAPER);
-    	queryTemplate.setAttribute("referenceSource", ISI.SOURCE);
-    	queryTemplate.setAttribute("referenceVolume", ISI.REFERENCE_VOLUME);
-    	queryTemplate.setAttribute("referenceYear", ISI.YEAR);
+    	queryTemplate.setAttribute("referencePK", Schema.PRIMARY_KEY);
+    	queryTemplate.setAttribute("referenceAuthorFK", Reference.Field.AUTHOR_ID);
+    	queryTemplate.setAttribute("referencePageNumber", Reference.Field.PAGE_NUMBER);
+    	queryTemplate.setAttribute("referencePaperFK", Reference.Field.DOCUMENT_ID);
+    	queryTemplate.setAttribute("referenceSource", Reference.Field.SOURCE_ID);
+    	queryTemplate.setAttribute("referenceVolume", Reference.Field.VOLUME);
+    	queryTemplate.setAttribute("referenceYear", Reference.Field.YEAR);
     	queryTemplate.setAttribute("documentTableName", ISI.DOCUMENT_TABLE_NAME);
-    	queryTemplate.setAttribute("documentPK", PRIMARY_KEY);
-    	queryTemplate.setAttribute("documentBeginningPage", ISI.BEGINNING_PAGE);
-    	queryTemplate.setAttribute("documentFirstAuthorFK", ISI.FIRST_AUTHOR);
-    	queryTemplate.setAttribute("documentSource", ISI.DOCUMENT_SOURCE);
-    	queryTemplate.setAttribute("documentVolume", ISI.DOCUMENT_VOLUME);
-    	queryTemplate.setAttribute("documentYear", ISI.PUBLICATION_YEAR);
+    	queryTemplate.setAttribute("documentPK", Schema.PRIMARY_KEY);
+    	queryTemplate.setAttribute("documentBeginningPage", Document.Field.BEGINNING_PAGE);
+    	queryTemplate.setAttribute("documentFirstAuthorFK", Document.Field.FIRST_AUTHOR_ID);
+    	queryTemplate.setAttribute("documentSource", Document.Field.SOURCE_ID);
+    	queryTemplate.setAttribute("documentVolume", Document.Field.VOLUME);
+    	queryTemplate.setAttribute("documentYear", Document.Field.PUBLICATION_YEAR);
 
     	return queryTemplate.toString();
     }
