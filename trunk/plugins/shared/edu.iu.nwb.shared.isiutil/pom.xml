@@ -9,6 +9,6 @@
   </parent>
   <groupId>edu.iu.nwb.shared</groupId>
   <artifactId>edu.iu.nwb.shared.isiutil</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <packaging>eclipse-plugin</packaging>
 </project>

@@ -3,11 +3,7 @@ package edu.iu.nwb.shared.isiutil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.regex.Pattern;
 
 import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
@@ -36,13 +32,13 @@ public class ISITableReader {
 	 * in the semantics of the author address field, so we need to know what
 	 * version we are dealing with.
 	 */
-	public static enum ISI_VERSION {
+	public static enum FileVersion {
 		OLD,      // Until September of 2011.
 		NEW_2011, // September of 2011, until...
 		UNKNOWN   // Whenever they decide they hate us, again. 
 	}
 	private String versionNumber = "";
-	private ISI_VERSION isiVersion = ISI_VERSION.UNKNOWN; // may handle this differently later...
+	private FileVersion isiVersion = FileVersion.UNKNOWN; // may handle this differently later...
 
 	
 	private LogService log;
@@ -52,7 +48,7 @@ public class ISITableReader {
 	public ISITableReader(LogService log, boolean normalizeAuthorNames) {
 		this.log = log;
 		
-		setNormalizeAuthorNames(normalizeAuthorNames);
+		this.normalizeAuthorNames = normalizeAuthorNames;
 	}
 	
 	public String getFileType() {
@@ -61,10 +57,6 @@ public class ISITableReader {
 
 	public String getVersionNumber() {
 		return this.versionNumber;
-	}
-
-	public void setNormalizeAuthorNames(boolean normalizeAuthorNames) {
-		this.normalizeAuthorNames = normalizeAuthorNames;
 	}
 
 	public Table readTable(String originalFileName, File file) throws IOException, ReadTableException {
@@ -124,7 +116,7 @@ public class ISITableReader {
 					"No case in ISITableReader to handle the tag " +
 					currentTag.columnName +
 					".  Moving on to next tag.";
-				log.log(LogService.LOG_WARNING, logMessage);
+				this.log.log(LogService.LOG_WARNING, logMessage);
 				currentLine = moveToNextLineWithTag(reader);
 			}
 		}
@@ -144,15 +136,15 @@ public class ISITableReader {
 		this.fileType = fileType;
 		
 		if (this.fileType.toLowerCase().contains("isi")) {
-			this.isiVersion = ISI_VERSION.OLD;
+			this.isiVersion = FileVersion.OLD;
 			this.log.log(LogService.LOG_INFO,
 					"Found old-style ISI/Web Of Knowledge file.");
 		} else if (this.fileType.toLowerCase().contains("web of knowledge")) {
-			this.isiVersion = ISI_VERSION.NEW_2011;
+			this.isiVersion = FileVersion.NEW_2011;
 			this.log.log(LogService.LOG_INFO,
 					"Found new-style ISI/Web Of Knowledge file.");
 		} else {
-			this.isiVersion = ISI_VERSION.UNKNOWN;
+			this.isiVersion = FileVersion.UNKNOWN;
 			this.log.log(LogService.LOG_WARNING,
 					"New ISI/Web of Knowledge file type?  " + fileType);
 		}
@@ -177,7 +169,7 @@ public class ISITableReader {
 				"WARNING: Tag '" + currentTag + "' " + "with data '" +
 				tagValue + "' could not be parsed as an integer.  " +
 				"Treating the data as text instead";
-			log.log(LogService.LOG_WARNING, logMessage, e);
+			this.log.log(LogService.LOG_WARNING, logMessage, e);
 
 			return addMultivalueTagData(currentTag, tagValue, reader, tableData, shouldClean);
 		}
@@ -203,7 +195,7 @@ public class ISITableReader {
 		String nextLine;
 		
 		if (separator == null) {
-			log.log(LogService.LOG_WARNING,
+			this.log.log(LogService.LOG_WARNING,
 				"Programmer error: multi-value text tag not provided with separator");
 			nextLine = moveToNextLineWithTag(reader);
 		} else if (separator.equals("\n")) {
@@ -251,6 +243,9 @@ public class ISITableReader {
 	//DOIs all start with the DOI directory code, 10, followed by a dot.
 	private static final String LOOKS_LIKE_A_DOI = "10\\..*";
 
+	/**
+	 * Side-effects {@code currentLine} variable!
+	 */
 	private String processMultilineTagData(
 			ISITag currentTag,
 			String currentLine,
@@ -307,7 +302,7 @@ public class ISITableReader {
 		try {
 			tableData.setString(currentTag.columnName, allTagDataString);
 		} catch (Exception e) {
-			log.log(LogService.LOG_INFO,
+			this.log.log(LogService.LOG_INFO,
 					"currentTag name: " + currentTag.columnName + "\n"
 					+ "currentTag type: " + currentTag.type + "\n"
 					+ "allTagDataString: " + allTagDataString, e);
@@ -325,7 +320,7 @@ public class ISITableReader {
 		if (line != null && line.length() >= MIN_TAG_LENGTH) {
 			lineParts = line.split(" ", 2);
 		} else {
-			log.log(LogService.LOG_WARNING,
+			this.log.log(LogService.LOG_WARNING,
 					"Invalid line in isi file. Could not extract tag from line \r\n"
 					+ line + "\nSkipping line...");
 		}
@@ -343,7 +338,7 @@ public class ISITableReader {
 		return lineWithoutTag.trim();
 	}
 
-	private String moveToNextLineWithTag(BufferedReader reader) throws IOException {
+	private static String moveToNextLineWithTag(BufferedReader reader) throws IOException {
 		String nextNonEmptyLine;
 		while ((nextNonEmptyLine = moveToNextNonEmptyLine(reader)) != null) {
 			if (startsWithTag(nextNonEmptyLine)) {
@@ -354,7 +349,7 @@ public class ISITableReader {
 		return null;
 	}
 	
-	private String moveToNextNonEmptyLine(BufferedReader reader) throws IOException {
+	private static String moveToNextNonEmptyLine(BufferedReader reader) throws IOException {
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			if (! (line.equals("") ||
@@ -374,34 +369,29 @@ public class ISITableReader {
 	
 	private ISITag getOrCreateNewTag(String tagName, TableData tableData) {
 		
-		Object getTagResult = ISITag.getTag(tagName);
+		ISITag getTagResult = ISITag.getTag(tagName);
 
 		if (getTagResult != null) {
-			return (ISITag) getTagResult;
-		} else {
-			//since we have no stored information on this tag...
-			//we attempt to parse the tag data in the most general way possible.
-				
-			log.log(LogService.LOG_WARNING,
-					"Unrecognized tag '" + tagName + "'.  Treating tag as if "
-					+ "it held single-value text data");
-				
-			ContentType currentTagContentType = ContentType.TEXT;
-			ISITag.addArbitraryTag(tagName, tagName, currentTagContentType);
-			tableData.addColumn(ISITag.getColumnName(tagName), currentTagContentType.getTableDataType());
-			
-			return ISITag.getTag(tagName);
+			return getTagResult;
 		}
+		this.log.log(LogService.LOG_WARNING,
+				"Unrecognized tag '" + tagName + "'.  Treating tag as if "
+				+ "it held single-value text data");
+			
+		ContentType currentTagContentType = ContentType.TEXT;
+		ISITag.addArbitraryTag(tagName, tagName, currentTagContentType);
+		tableData.addColumn(ISITag.getColumnName(tagName), currentTagContentType.getTableDataType());
+		
+		return ISITag.getTag(tagName);
 	}
 	
-	private boolean startsWithTag(String potentialTag) {
+	private static boolean startsWithTag(String potentialTag) {
 		if (potentialTag.length() >= 2 &&
 				(! Character.isWhitespace(potentialTag.charAt(0))) &&
 				(! Character.isWhitespace(potentialTag.charAt(1)))) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 				
 	}
 	
@@ -409,13 +399,13 @@ public class ISITableReader {
 		String processedLine;
 		
 		if (tag.equals(ISITag.AUTHORS)) {
-			if (normalizeAuthorNames) {
+			if (this.normalizeAuthorNames) {
 				processedLine = processAuthorLine(line);
 			} else {
 				processedLine = line;
 			}
 		} else if (tag.equals(ISITag.CITED_REFERENCES)) {
-			if (normalizeAuthorNames) {
+			if (this.normalizeAuthorNames) {
 				/*
 				 * Same basic idea as authors tag, except each line of  cited references contains
 				 *  more than just the author name.
@@ -427,7 +417,7 @@ public class ISITableReader {
 
 				if (fields.length == 0) {
 					String logMessage = "Skipping this line because no fields were found: " + line;
-					log.log(LogService.LOG_WARNING, logMessage);
+					this.log.log(LogService.LOG_WARNING, logMessage);
 
 					return line;
 				}
@@ -447,7 +437,7 @@ public class ISITableReader {
 		return processedLine;
 	}
 	
-	private String processAuthorLine(String line) {
+	private static String processAuthorLine(String line) {
 		/*
 		 * Capitalize every word in the author name, except the last (which is most likely an
 		 *  abbreviation of the authors first and/or middle name).
@@ -462,15 +452,14 @@ public class ISITableReader {
 		return joinOver(words, " ");
 	}
 	
-	private String capitalizeOnlyFirstLetter(String s) {
+	private static String capitalizeOnlyFirstLetter(String s) {
 		if (s.length() > 0) {
 			return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
-		} else {
-			return s;
 		}
+		return s;
 	}
 	
-	private String joinOver(String[] parts, String joiner) {
+	private static String joinOver(String[] parts, String joiner) {
 		StringBuffer joinBuilder = new StringBuffer();
 		for (int ii = 0; ii < parts.length; ii++) {
 			joinBuilder.append(parts[ii]);
@@ -496,7 +485,7 @@ public class ISITableReader {
 			 * Add that tag to the table schema, with the table storage data type associated with
 			 *  the tags content type (e.g. Text -> String, Multi-value Text -> String).
 			 */
-			Class tagTableDataType = tag.type.getTableDataType();
+			Class<?> tagTableDataType = tag.type.getTableDataType();
 			
 			if (tagTableDataType != null) {
 				isiTableSchema.addColumn(tag.columnName, tagTableDataType);
@@ -528,38 +517,38 @@ public class ISITableReader {
 		private boolean currentRowIsFinished;
 		
 		public TableData(Schema schema) {
-			table = schema.instantiate();
-			currentRowIsFinished = true; //will cause first row to be created
+			this.table = schema.instantiate();
+			this.currentRowIsFinished = true; //will cause first row to be created
 		}
 		
 		public void moveOnToNextRow() {
-			currentRowIsFinished = true;
+			this.currentRowIsFinished = true;
 		}
 		
 		public void setInt(String columnTag, int value) {
 			ensureRowNotFinishedYet();
 			
-			table.setInt(currentRow, columnTag, value);
+			this.table.setInt(this.currentRow, columnTag, value);
 		}
 		
 		public void setString(String columnTag, String value) {
 			ensureRowNotFinishedYet();
 			
-			table.setString(currentRow, columnTag, value);
+			this.table.setString(this.currentRow, columnTag, value);
 		}
 		
-		public void addColumn(String columnName, Class columnType) {
-			table.addColumn(columnName, columnType);
+		public void addColumn(String columnName, Class<?> columnType) {
+			this.table.addColumn(columnName, columnType);
 		}
 		
 		public Table getTable() {
-			return table;
+			return this.table;
 		}
 		
 		private void ensureRowNotFinishedYet() {
-			if (currentRowIsFinished) {
-				currentRow = table.addRow();
-				currentRowIsFinished = false;
+			if (this.currentRowIsFinished) {
+				this.currentRow = this.table.addRow();
+				this.currentRowIsFinished = false;
 			}
 		}
 	}

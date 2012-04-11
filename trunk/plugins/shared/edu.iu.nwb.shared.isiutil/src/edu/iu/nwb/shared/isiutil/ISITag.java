@@ -326,7 +326,7 @@ public final class ISITag {
 	private ISITag(String tagName, String name, ContentType type,
 			String separator, boolean isFileUnique) {
 		this.tagName = tagName;
-	this.columnName = name;
+		this.columnName = name;
 		this.type = type;
 		this.separator = separator;
 		this.isFileUnique = isFileUnique;

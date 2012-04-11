@@ -1,13 +1,12 @@
 package edu.iu.nwb.shared.isiutil;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.cishell.utilities.SetMap;
 import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
@@ -15,6 +14,10 @@ import prefuse.data.DataTypeException;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 import edu.iu.nwb.shared.isiutil.exception.CitationExtractionPreparationException;
 
 public class ISICitationExtractionPreparer {
@@ -30,7 +33,8 @@ public class ISICitationExtractionPreparer {
 	}
 
 	/**
-	 * This will side effect isiTable.
+	 * Prepare the table for citation extraction.  This will side effect isiTable.
+	 * @param isiTable This table will be side-effected! 
 	 */
 	public Table prepareForCitationExtraction(Table isiTable, boolean shouldCleanReferences)
 			throws CitationExtractionPreparationException {
@@ -68,7 +72,7 @@ public class ISICitationExtractionPreparer {
 	}
 
 	private String createSelfReference(Tuple isiRow) throws CitationExtractionPreparationException {
-		List selfReferenceTokenList = new ArrayList();
+		List<String> selfReferenceTokenList = new ArrayList<String>();
 		try {
 			// standard elements
 			String author = extractFirstAndLastNameOfFirstAuthor(isiRow);
@@ -122,14 +126,14 @@ public class ISICitationExtractionPreparer {
 		}
 		// construct self reference from tokens we just collected
 		String[] selfReferenceTokens =
-			(String[])selfReferenceTokenList.toArray(new String[selfReferenceTokenList.size()]);
+			selfReferenceTokenList.toArray(new String[selfReferenceTokenList.size()]);
 		String selfReference =
 			StringUtilities.implodeStringArray(selfReferenceTokens, ISI_FIELD_SEPARATOR);
 
 		return selfReference;
 	}
 
-	private Table replaceJournalNamesWithCitedJournalNames(Table isiTable, Map journalNameToCitedJournalName) {
+	private static Table replaceJournalNamesWithCitedJournalNames(Table isiTable, Map<String, String> journalNameToCitedJournalName) {
 		// for each paper in the isi table...
 		for (IntIterator tableIt = isiTable.rows(); tableIt.hasNext();) {
 			int rowIndex = tableIt.nextInt();
@@ -141,7 +145,7 @@ public class ISICitationExtractionPreparer {
 			}
 			
 			// replace it with the cited journal name, it there is a known replacement
-			String citedJournalName = (String) journalNameToCitedJournalName.get(journalName);
+			String citedJournalName = journalNameToCitedJournalName.get(journalName);
 			if (citedJournalName != null) {
 				row.setString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.columnName, citedJournalName);
 			}
@@ -149,8 +153,9 @@ public class ISICitationExtractionPreparer {
 		return isiTable;
 	}
 
-	private SetMap extractCitedJournalNames(Table isiTable) {
-		SetMap citedJournalNames = new SetMap();
+	private SetMultimap<String, String> extractCitedJournalNames(Table isiTable) {
+		SetMultimap<String, String> citedJournalNames = HashMultimap.create();
+		
 		// for each paper in the isi table...
 		for (IntIterator tableIt = isiTable.rows(); tableIt.hasNext();) {
 			int rowIndex = tableIt.nextInt();
@@ -178,8 +183,8 @@ public class ISICitationExtractionPreparer {
 		return citedJournalNames;
 	}
 
-	private SetMap extractJournalNames(Table isiTable) {
-		SetMap journalNames = new SetMap();
+	private SetMultimap<String, String> extractJournalNames(Table isiTable) {
+		SetMultimap<String, String> journalNames = HashMultimap.create();
 		// for each paper in the isi table...
 		for (IntIterator tableIt = isiTable.rows(); tableIt.hasNext();) {
 			int rowIndex = tableIt.nextInt();
@@ -198,17 +203,17 @@ public class ISICitationExtractionPreparer {
 		return journalNames;
 	}
 
-	private Map linkJournalNamesToCitedJournalNames(SetMap journalNamesByFirstLetter,
-			SetMap citedJournalNamesByFirstLetter) {
-		Map journalNameToCitedJournalName = new Hashtable();
+	private static Map<String, String> linkJournalNamesToCitedJournalNames(SetMultimap<String, String> journalNamesByFirstLetter,
+			SetMultimap<String, String> citedJournalNamesByFirstLetter) {
+		Map<String, String> journalNameToCitedJournalName = new HashMap<String, String>();
 		// for each first letter of a journal name...
-		Set journalNameKeys = journalNamesByFirstLetter.keySet();
-		for (Iterator firstLetterKeyIt = journalNameKeys.iterator(); firstLetterKeyIt.hasNext();) {
-			String firstLetterKey = (String) firstLetterKeyIt.next();
+		Set<String> journalNameKeys = journalNamesByFirstLetter.keySet();
+		for (Iterator<String> firstLetterKeyIt = journalNameKeys.iterator(); firstLetterKeyIt.hasNext();) {
+			String firstLetterKey = firstLetterKeyIt.next();
 			// get the journal names that start with that letter
-			Set journalNamesStartingWithLetter = journalNamesByFirstLetter.get(firstLetterKey);
+			Set<String> journalNamesStartingWithLetter = journalNamesByFirstLetter.get(firstLetterKey);
 			// and get the cited journals that start with that letter
-			Set citedJournalNamesStartingWithLetter = citedJournalNamesByFirstLetter.get(firstLetterKey);
+			Set<String> citedJournalNamesStartingWithLetter = citedJournalNamesByFirstLetter.get(firstLetterKey);
 			// link the journal names to the best matching cited journal names, if they exist.
 			linkJournalNamesOfSameFirstLetter(journalNameToCitedJournalName, journalNamesStartingWithLetter,
 					citedJournalNamesStartingWithLetter);
@@ -216,19 +221,21 @@ public class ISICitationExtractionPreparer {
 		return journalNameToCitedJournalName;
 	}
 
-	private Map linkJournalNamesOfSameFirstLetter(Map links, Set journalNames, Set citedJournalNames) {
+	private static Map<String, String> linkJournalNamesOfSameFirstLetter(
+			Map<String, String> links, Set<String> journalNames,
+			Set<String> citedJournalNames) {
 		if (journalNames == null || citedJournalNames == null) {
 			return links;
 		}
 
 		// for each journal name...
-		for (Iterator journalNameIt = journalNames.iterator(); journalNameIt.hasNext();) {
-			String journalName = (String) journalNameIt.next();
+		for (Iterator<String> journalNameIt = journalNames.iterator(); journalNameIt.hasNext();) {
+			String journalName = journalNameIt.next();
 			String bestCitedJournalName = null;
 			float NO_CHANGE_THRESHOLD = .1f;
 			float bestCitedJournalSimilarity = NO_CHANGE_THRESHOLD;
-			for (Iterator citedJournalNameIt = citedJournalNames.iterator(); citedJournalNameIt.hasNext();) {
-				String citedJournalName = (String) citedJournalNameIt.next();
+			for (Iterator<String> citedJournalNameIt = citedJournalNames.iterator(); citedJournalNameIt.hasNext();) {
+				String citedJournalName = citedJournalNameIt.next();
 				// compare it to each cited journal name, and
 				float similarity = calculateNameSimilarity(journalName, citedJournalName);
 				if (similarity > bestCitedJournalSimilarity) {
@@ -243,26 +250,28 @@ public class ISICitationExtractionPreparer {
 		return links;
 	}
 
-	/*
+	/**
 	 * This method solves the following problem: The name ISI used for a journal when a paper cites another paper is
 	 * similar but different from the journal name each paper claims that it was cited in. This makes it impossible to
 	 * construct a self-reference for a paper, given only the information present in that paper itself. Solution: Change
 	 * the names of journals as they appear in papers to the name that journals are cited with.
+	 * 
+	 * @param isiTable This table will be side-effected!
 	 */
 	private Table cleanReferences(Table isiTable) {
 		// record the cited journal names for each citation reference of each paper, categorized by first letter
-		SetMap citedJournalNamesByFirstLetter = extractCitedJournalNames(isiTable);
+		SetMultimap<String, String> citedJournalNamesByFirstLetter = extractCitedJournalNames(isiTable);
 		// record the normal journal names for each paper, categorized by first letter
-		SetMap journalNamesByFirstLetter = extractJournalNames(isiTable);
+		SetMultimap<String, String> journalNamesByFirstLetter = extractJournalNames(isiTable);
 		// create a map where journal names correspond to their cited journal names
-		Map journalNameToCitedJournalName = linkJournalNamesToCitedJournalNames(citedJournalNamesByFirstLetter,
+		Map<String, String> journalNameToCitedJournalName = linkJournalNamesToCitedJournalNames(citedJournalNamesByFirstLetter,
 				journalNamesByFirstLetter);
 		// go through each paper, and replace the journal name with the cited journal name
 		isiTable = replaceJournalNamesWithCitedJournalNames(isiTable, journalNameToCitedJournalName);
 		return isiTable;
 	}
 
-	private float calculateNameSimilarity(String jn, String cjn) {
+	private static float calculateNameSimilarity(String jn, String cjn) {
 		StringBuffer bufferLog = new StringBuffer();
 		bufferLog.append("Calculating '" + jn + "' and '" + cjn + "'.\r\n");
 		String whitespace = "\\s";
@@ -299,7 +308,7 @@ public class ISICitationExtractionPreparer {
 	private static final String ALL_NUMBERS = "^[0-9]+$";
 
 	//TODO: Maybe expose some of these through preferences.
-	private float calculateWordSimilarity(String word1, String word2, StringBuffer wordSimilarityCalculationLog) {
+	private static float calculateWordSimilarity(String word1, String word2, StringBuffer wordSimilarityCalculationLog) {
 		// TODO: This needs to be refactored, a.k.a this code is horrible and I know it.
 		wordSimilarityCalculationLog.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
 		if (word1 == null && word2 == null) {
@@ -393,28 +402,25 @@ public class ISICitationExtractionPreparer {
 		}
 	}
 
-	private String[] getLongest(String[] sa1, String[] sa2) {
+	private static String[] getLongest(String[] sa1, String[] sa2) {
 		if (sa1.length >= sa2.length) {
 			return sa1;
-		} else {
-			return sa2;
 		}
+		return sa2;
 	}
 
-	private String getLongWord(String w1, String w2) {
+	private static String getLongWord(String w1, String w2) {
 		if (w1.length() >= w2.length()) {
 			return w1;
-		} else {
-			return w2;
 		}
+		return w2;
 	}
 
-	private String getShortWord(String w1, String w2) {
+	private static String getShortWord(String w1, String w2) {
 		if (w1.length() >= w2.length()) {
 			return w2;
-		} else {
-			return w1;
 		}
+		return w1;
 	}
 
 	private String extractCitedJournalName(String citedReference) {
@@ -441,7 +447,7 @@ public class ISICitationExtractionPreparer {
 		return firstLetter;
 	}
 
-	private String extractFirstAndLastNameOfFirstAuthor(Tuple isiRow) {
+	private static String extractFirstAndLastNameOfFirstAuthor(Tuple isiRow) {
 		String authors = isiRow.getString(ISITag.AUTHORS.columnName);
 		if (authors == null)
 			return null;
@@ -456,18 +462,18 @@ public class ISICitationExtractionPreparer {
 		return firstAndLastNameOfFirstAuthor;
 	}
 
-	private String extractPublicationYear(Tuple isiRow) {
+	private static String extractPublicationYear(Tuple isiRow) {
 		String publicationYear = isiRow.getString(ISITag.PUBLICATION_YEAR.columnName);
 		return publicationYear;
 	}
 
-	private String extractAbbreviatedJournalName(Tuple isiRow) {
+	private static String extractAbbreviatedJournalName(Tuple isiRow) {
 		String abbreviatedJournalName = isiRow.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.columnName);
 		return abbreviatedJournalName;
 
 	}
 
-	private String extractVolume(Tuple isiRow) {
+	private static String extractVolume(Tuple isiRow) {
 		String volume = isiRow.getString(ISITag.VOLUME.columnName);
 		if (volume == null) {
 			return null;
@@ -475,20 +481,21 @@ public class ISICitationExtractionPreparer {
 		return "V" + volume;
 	}
 
-	private String extractFirstPage(Tuple isiRow) {
+	private static String extractFirstPage(Tuple isiRow) {
 		String firstPage = isiRow.getString(ISITag.BEGINNING_PAGE.columnName);
 		if (firstPage == null) {
 			return null;
 		}
+		
 		String startsWithALetter = "^[a-zA-Z].*$";
 		if (firstPage.matches(startsWithALetter)) {
 			return firstPage;
-		} else {
-			return "P" + firstPage;
 		}
+		
+		return "P" + firstPage;
 	}
 	
-	private String extractDOI(Tuple isiRow) {
+	private static String extractDOI(Tuple isiRow) {
 		String doi = isiRow.getString(ISITag.DOI.columnName);
 		if (doi == null) {
 			return null;
@@ -496,12 +503,12 @@ public class ISICitationExtractionPreparer {
 		return "DOI " + doi;
 	}
 
-	private String handleNoAuthors() {
+	private static String handleNoAuthors() {
 		return null;
 	}
 
-	private String[] trimAfterEmpties(String[] s) {
-		List sList = new ArrayList();
+	private static String[] trimAfterEmpties(String[] s) {
+		List<String> sList = new ArrayList<String>();
 		for (int i = 0; i < s.length; i++) {
 			if (!s[i].equals("")) {
 				sList.add(s[i]);
@@ -510,7 +517,7 @@ public class ISICitationExtractionPreparer {
 			}
 		}
 
-		return (String[]) sList.toArray(new String[sList.size()]);
+		return sList.toArray(new String[sList.size()]);
 	}
 
 	private void handleNoAuthor(Tuple isiRow) {

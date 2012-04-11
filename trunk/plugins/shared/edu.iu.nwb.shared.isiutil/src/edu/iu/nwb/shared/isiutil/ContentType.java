@@ -19,19 +19,24 @@ public class ContentType {
 
 	private String name;
 
-	private Class tableDataType;
+	private Class<?> tableDataType;
 
-	private ContentType(String name, Class tableDataType) {
+	private ContentType(String name, Class<?> tableDataType) {
 		this.name = name;
 		this.tableDataType = tableDataType;
 	}
 
 	public String toString() {
-		return name;
+		return this.name;
 	}
 
-	//returns null if the contentType is null (that is, the tag has no contents)
-	public Class getTableDataType() {
+	/**
+	 * Get the Table DataType.
+	 * 
+	 * @return {@code null} if the contentType is {@code null} (that is, the tag
+	 *         has no contents), otherwise returns the {@code tableDataType}.
+	 */
+	public Class<?> getTableDataType() {
 		return this.tableDataType;
 	}
 
