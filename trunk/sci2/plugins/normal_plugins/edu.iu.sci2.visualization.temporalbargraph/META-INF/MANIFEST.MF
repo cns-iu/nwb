@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Temporal Bar Graph Visualization
 Bundle-SymbolicName: edu.iu.sci2.visualization.temporalbargraph
-Bundle-Version: 0.0.4
+Bundle-Version: 0.0.5
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
  com.google.common.base;version="8.0.0",

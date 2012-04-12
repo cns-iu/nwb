@@ -40,7 +40,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 
 		this.size = size;
 		DoubleDimension visualizationSize = new DoubleDimension(size.getWidth()
-				- (3 * inchToPoint(0.5)),
+				- (inchToPoint(3.0)),
 				(size.getHeight() - (size.getHeight() * .35)));
 
 		this.visualizations = new Visualization(csvWriter, records,
@@ -76,7 +76,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		for (int ii = 0; ii < this.visualizations.numberOfVisualizations(); ii++) {
 			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
-			double visualizationLeft = inchToPoint(0.5);
+			double visualizationLeft = inchToPoint(0.75);
 			double visualizationBottom = inchToPoint(1.75);
 			PageElement visualizationElement = new PageElement("visualization",
 					visualizationLeft, visualizationBottom, visualization,
