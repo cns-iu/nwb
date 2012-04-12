@@ -69,7 +69,7 @@ public abstract class AbstractVisualization {
 		int endYear = endDate.toLocalDate().getYear() + 1;
 		
 		int difference = (endYear - startYear);
-		double yearsPerStep = difference / maxDates;
+		double yearsPerStep = (double) difference / (double) maxDates;
 		if (yearsPerStep < 1) {
 			// All the dates will fit
 
