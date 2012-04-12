@@ -37,26 +37,26 @@ public class StringSimilarityMergeCheckTest extends TestCase {
 		
 		// Hank
 		int hankRow = table.addRow();
-		hankTuple = table.getTuple(hankRow);		
-		hankTuple.set(COLUMN_NAME, "hank");
-		table.addTuple(hankTuple);
+		this.hankTuple = table.getTuple(hankRow);		
+		this.hankTuple.set(COLUMN_NAME, "hank");
+		table.addTuple(this.hankTuple);
 		
 		// Frank
 		int frankRow = table.addRow();
-		frankTuple = table.getTuple(frankRow);
-		frankTuple.set(COLUMN_NAME, "frank");
-		table.addTuple(frankTuple);		
+		this.frankTuple = table.getTuple(frankRow);
+		this.frankTuple.set(COLUMN_NAME, "frank");
+		table.addTuple(this.frankTuple);		
 	}
 
 	public void testEasiestThresholdSucceeds() {
 		for (StringSimilarityMergeCheck check : simpleMergeChecksForThreshold(0.0f)) {
-			assertTrue(check.toString(), check.shouldMerge(hankTuple, frankTuple));
+			assertTrue(check.toString(), check.shouldMerge(this.hankTuple, this.frankTuple));
 		}
 	}
 	
 	public void testHardestThresholdFails() {
 		for (StringSimilarityMergeCheck check : simpleMergeChecksForThreshold(1.0f)) {
-			assertFalse(check.toString(), check.shouldMerge(hankTuple, frankTuple));
+			assertFalse(check.toString(), check.shouldMerge(this.hankTuple, this.frankTuple));
 		}
 	}
 	

@@ -50,28 +50,26 @@ public class CheckBasedGroupingStrategy implements GroupingStrategy {
  		for (T tuple : tuples) {
  			if (visited.contains(tuple)) {
  				continue;
- 			} else {
- 				Collection<T> group = Sets.newHashSet();
- 				
- 				/* Depth-first exploration of the "MergeCheck graph".
- 				 * Doesn't follow previously visited tuples.				
- 				 */
- 				Stack<T> toCheck = new Stack<T>();
- 				toCheck.add(tuple); 				
- 				while (toCheck.size() > 0) {
- 					T candidate = toCheck.pop();
- 					if (visited.contains(candidate)) {
- 						continue;
- 					} else {
- 						visited.add(candidate);
- 						group.add(candidate);
- 						
- 						toCheck.addAll(neighbors.get(candidate));
- 					}
- 				}
- 				
- 				groups.add(group);
  			}
+			Collection<T> group = Sets.newHashSet();
+			
+			/* Depth-first exploration of the "MergeCheck graph".
+			 * Doesn't follow previously visited tuples.				
+			 */
+			Stack<T> toCheck = new Stack<T>();
+			toCheck.add(tuple); 				
+			while (toCheck.size() > 0) {
+				T candidate = toCheck.pop();
+				if (visited.contains(candidate)) {
+					continue;
+				}
+				visited.add(candidate);
+				group.add(candidate);
+				
+				toCheck.addAll(neighbors.get(candidate));
+			}
+			
+			groups.add(group);
  		}
  		
  		return ImmutableSet.copyOf(groups);
@@ -89,7 +87,7 @@ public class CheckBasedGroupingStrategy implements GroupingStrategy {
 			for (int jj = ii + 1; jj < tupleList.size(); jj++) {
 				Tuple second = tupleList.get(jj);
 				
-				if (mergeCheck.shouldMerge(first, second)) {
+				if (this.mergeCheck.shouldMerge(first, second)) {
 					// Forced symmetry
 					neighbors.put(first, second);
 					neighbors.put(second, first);
@@ -103,7 +101,7 @@ public class CheckBasedGroupingStrategy implements GroupingStrategy {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
-						.add("mergeCheck", mergeCheck)
+						.add("mergeCheck", this.mergeCheck)
 						.toString();
 	}
 }

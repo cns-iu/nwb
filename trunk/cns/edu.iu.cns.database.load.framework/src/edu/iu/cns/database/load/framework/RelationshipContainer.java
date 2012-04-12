@@ -26,11 +26,11 @@ public class RelationshipContainer<T extends RowItem<T>> extends RowItemContaine
 	}
 
 	public Collection<T> getItems() {
-		return items;
+		return this.items;
 	}
 
 	public T add(T newItem) {
-		items.add(newItem);
+		this.items.add(newItem);
 
 		return newItem;
 	}

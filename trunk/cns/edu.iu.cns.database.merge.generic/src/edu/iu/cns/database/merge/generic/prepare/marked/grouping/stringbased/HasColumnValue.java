@@ -13,20 +13,20 @@ public class HasColumnValue implements Comparator<Tuple> {
 		this.column = column;
 	}
 	
-	public int compare(Tuple o1, Tuple o2) {
-		Object v1 = o1.get(column);
-		Object v2 = o2.get(column);
+	public int compare(Tuple t1, Tuple t2) {
+		Object o1 = t1.get(this.column);
+		Object o2 = t2.get(this.column);
 		
-		if (valuePresent(v1) && !valuePresent(v2)) {
+		if (hasValue(o1) && !hasValue(o2)) {
 			return 1;
-		} else if (valuePresent(v2) && !valuePresent(v1)) {
+		} else if (hasValue(o2) && !hasValue(o1)) {
 			return -1;
 		}
-		
+
 		return 0;
 	}
 
-	private static boolean valuePresent(Object value) {
+	private static boolean hasValue(Object value) {
 		return !StringUtilities.emptyStringIfNull(value).isEmpty();
 	}
 }

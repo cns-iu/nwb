@@ -54,11 +54,11 @@ public class CompoundGroupingStrategy implements GroupingStrategy {
 	 */
 	public ImmutableCollection<Collection<Tuple>> splitIntoGroups(Iterable<Tuple> tuples) {
 		ImmutableCollection<Collection<Tuple>> firstGroups =
-				firstStrategy.splitIntoGroups(tuples);
+				this.firstStrategy.splitIntoGroups(tuples);
 
 		Collection<Collection<Tuple>> secondGroups = Sets.newHashSet();
 		for (Collection<Tuple> firstGroup : firstGroups) {
-			secondGroups.addAll(secondStrategy.splitIntoGroups(firstGroup));
+			secondGroups.addAll(this.secondStrategy.splitIntoGroups(firstGroup));
 		}
 
 		return ImmutableSet.copyOf(secondGroups);
@@ -67,8 +67,8 @@ public class CompoundGroupingStrategy implements GroupingStrategy {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
-						.add("firstStrategy", firstStrategy)
-						.add("secondStrategy", secondStrategy)
+						.add("firstStrategy", this.firstStrategy)
+						.add("secondStrategy", this.secondStrategy)
 						.toString();
 	}
 }

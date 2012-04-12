@@ -13,10 +13,10 @@ public class AlphabeticalColumn implements Comparator<Tuple> {
 		this.column = column;
 	}
 	
-	public int compare(Tuple o1, Tuple o2) {
-		String v1 = StringUtilities.emptyStringIfNull(o1.get(column));
-		String v2 = StringUtilities.emptyStringIfNull(o2.get(column));
+	public int compare(Tuple t1, Tuple t2) {
+		String s1 = StringUtilities.emptyStringIfNull(t1.get(this.column));
+		String s2 = StringUtilities.emptyStringIfNull(t2.get(this.column));
 		
-		return String.CASE_INSENSITIVE_ORDER.compare(v1, v2);
+		return String.CASE_INSENSITIVE_ORDER.compare(s1, s2);
 	}
 }

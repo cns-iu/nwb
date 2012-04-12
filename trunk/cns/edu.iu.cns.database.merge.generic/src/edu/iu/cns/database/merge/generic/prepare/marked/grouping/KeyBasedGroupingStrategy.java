@@ -24,13 +24,13 @@ public class KeyBasedGroupingStrategy<K> implements GroupingStrategy {
 	/** Divides {@code tuples} into groups with matching keys */
 	public ImmutableCollection<Collection<Tuple>> splitIntoGroups(Iterable<Tuple> tuples) {
 		// Map each key to the list of tuples having that key, then discard the keys.
-		return Multimaps.index(tuples, keyFunction).asMap().values();
+		return Multimaps.index(tuples, this.keyFunction).asMap().values();
 	}
 	
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
-						.add("keyFunction", keyFunction)
+						.add("keyFunction", this.keyFunction)
 						.toString();
 	}
 }

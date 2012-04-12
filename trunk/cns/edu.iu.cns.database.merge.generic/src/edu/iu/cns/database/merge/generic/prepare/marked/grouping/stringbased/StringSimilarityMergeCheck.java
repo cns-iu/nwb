@@ -56,24 +56,24 @@ public class StringSimilarityMergeCheck implements MergeCheck {
 	 * 			{@code threshold}.
 	 */
 	public boolean shouldMerge(Tuple leftTuple, Tuple rightTuple) {
-		final String leftRawValue = leftTuple.getString(columnName);
-		final String rightRawValue = rightTuple.getString(columnName);
+		final String leftRawValue = leftTuple.getString(this.columnName);
+		final String rightRawValue = rightTuple.getString(this.columnName);
 		
-		final String leftValue = function.apply(leftRawValue);
-		final String rightValue = function.apply(rightRawValue);
+		final String leftValue = this.function.apply(leftRawValue);
+		final String rightValue = this.function.apply(rightRawValue);
 		
-		final float similarity = metric.getSimilarity(leftValue, rightValue);
+		final float similarity = this.metric.getSimilarity(leftValue, rightValue);
 		
-		return similarity >= threshold;
+		return similarity >= this.threshold;
 	}
 	
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
-						.add("columnName", columnName)
-						.add("function", function)
-						.add("metric", metric.getShortDescriptionString())
-						.add("threshold", threshold)
+						.add("columnName", this.columnName)
+						.add("function", this.function)
+						.add("metric", this.metric.getShortDescriptionString())
+						.add("threshold", this.threshold)
 						.toString();
 	}
 }

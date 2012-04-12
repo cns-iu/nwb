@@ -58,8 +58,8 @@ public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {    	
-    	Table mergingTable = (Table) data[0].getData();
-    	Database originalDatabase = (Database) data[1].getData();
+    	Table mergingTable = (Table) this.data[0].getData();
+    	Database originalDatabase = (Database) this.data[1].getData();
     	/* TODO: it would really be nice to have a way to clean up the output database
     	 * if there is an error related to it.
     	 */
@@ -72,29 +72,28 @@ public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
     	
     	try {
 			if (toBeMerged.presentInDatabase(originalConnection)) {
-				outputDatabase = databaseService.copyDatabase(originalDatabase);
+				outputDatabase = this.databaseService.copyDatabase(originalDatabase);
 				outputConnection = outputDatabase.getConnection();
 				Merger merger = collectMerges(mergingTable, toBeMerged, outputConnection);
-				problems.addAll(merger.merge(outputConnection));
-				if (problems.size() > 0) {
+				this.problems.addAll(merger.merge(outputConnection));
+				if (this.problems.size() > 0) {
 					throw new AlgorithmExecutionException(
 							"The following problems were encountered while trying to merge: "
-							+ formatProblems(problems));
+							+ formatProblems(this.problems));
 				}
 				
-				logger.log(LogService.LOG_INFO,
+				this.logger.log(LogService.LOG_INFO,
 						"Successfully merged " + merger.getEntitiesMergedAway()
 						+ " entities into other entities, leaving "
 						+ merger.getRemainingEntities() + " entities in the database.");
 				Data outputData = wrapWithMetadata(
 						outputDatabase, "with merged " + toBeMerged.toString());
-				monitor.done();
+				this.monitor.done();
 				return new Data[]{ outputData };
 				
-			} else {
-				throw new AlgorithmExecutionException(
-						"The table this merge data is for is not in the database.");
 			}
+			throw new AlgorithmExecutionException(
+					"The table this merge data is for is not in the database.");
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException(
 					"There was a problem communicating with the database.", e);
@@ -111,7 +110,7 @@ public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
 	private Merger collectMerges(Table mergingTable,
 			DatabaseTable toBeMerged, Connection connection) throws AlgorithmExecutionException {
 			
-		Merger merger = new Merger(toBeMerged, monitor);
+		Merger merger = new Merger(toBeMerged, this.monitor);
 		try {			
 			String[] primaryKeyColumns = toBeMerged.getPrimaryKeyColumns(connection);
 			ColumnProjection primaryKeyColumnFilter =
@@ -140,7 +139,7 @@ public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
 				try {
 					group.addRecord(tuple);
 				} catch (MergingErrorException e) {
-					problems.add(e.getMessage());
+					this.problems.add(e.getMessage());
 				}
 			}
 			
@@ -170,22 +169,21 @@ public class MergeTableAlgorithm implements Algorithm, ProgressTrackable {
 	private static String extractNameFromHeader(String header) throws AlgorithmExecutionException {
 		if(header.indexOf(CreateMergingTable.FROM_TABLE) == 0) {
 			return header.substring(CreateMergingTable.FROM_TABLE.length());
-		} else {
-			throw new AlgorithmExecutionException(INVALID_TABLE_NAME_HEADER_MESSAGE);
 		}
+		throw new AlgorithmExecutionException(INVALID_TABLE_NAME_HEADER_MESSAGE);
 	}
 	
 	private Data wrapWithMetadata(Database database, String label) {
 		Data outputData = new BasicData(database, this.data[1].getFormat());
 		Dictionary<String, Object> metadata = outputData.getMetadata();
 		metadata.put(DataProperty.LABEL, label);
-		metadata.put(DataProperty.PARENT, data[1]);
+		metadata.put(DataProperty.PARENT, this.data[1]);
 		metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
 		return outputData;
 	}
 
 	public ProgressMonitor getProgressMonitor() {
-		return monitor;
+		return this.monitor;
 	}
 
 	public void setProgressMonitor(ProgressMonitor monitor) {

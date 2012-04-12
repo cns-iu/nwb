@@ -47,7 +47,7 @@ public class Schema <T extends RowItem<T>> {
 	}
 
 	public List<DBField> getFields() {
-		return fields;
+		return this.fields;
 	}
 
 	public List<PrimaryKey> getPrimaryKeys() {
@@ -157,8 +157,4 @@ public class Schema <T extends RowItem<T>> {
 			return this.referenceTo_TableName;
 		}
 	}
-
-	private static class PrimaryKeyType {}
-
-	private static class ForeignKeyType {}
 }

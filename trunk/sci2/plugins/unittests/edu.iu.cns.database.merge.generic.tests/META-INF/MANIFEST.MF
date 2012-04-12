@@ -4,5 +4,5 @@ Bundle-Name: Tests
 Bundle-SymbolicName: edu.iu.cns.database.merge.generic.tests
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: edu.iu.cns.database.merge.generic;bundle-version="0.0.1"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4"

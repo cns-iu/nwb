@@ -34,11 +34,11 @@ public class Merger {
 
 	public List<String> merge(Connection outputConnection) {
 		// The number of foreign keys to be repointed, + 1 for the deletion of entities merged away
-		int work_units = foreignKeyMergers.size() + 1;
+		int work_units = this.foreignKeyMergers.size() + 1;
 		int current_work_unit = 1;
-    	monitor.start(ProgressMonitor.WORK_TRACKABLE, work_units);
+    	this.monitor.start(ProgressMonitor.WORK_TRACKABLE, work_units);
 		List<String> problems = Lists.newArrayList();
-		for (EntityGroup group : groups.values()) {
+		for (EntityGroup group : this.groups.values()) {
 			try {
 				// Right now this means, do they all have primary entities
 				group.verify();
@@ -47,12 +47,12 @@ public class Merger {
 				return problems;
 			}
 		}
-		for (ForeignKeyMerger merger : foreignKeyMergers) {
+		for (ForeignKeyMerger merger : this.foreignKeyMergers) {
 			try {
-				monitor.describeWork(
+				this.monitor.describeWork(
 						"Repointing members of the table " + merger.getTable().toString() + "...");
-				merger.merge(outputConnection, groups.values());
-				monitor.worked(current_work_unit++);
+				merger.merge(outputConnection, this.groups.values());
+				this.monitor.worked(current_work_unit++);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				problems.add("There was a problem repointing members of the table "
@@ -60,13 +60,13 @@ public class Merger {
 			}
 		}
 		try {
-			monitor.describeWork("Removing entities that were merged away...");
-			Remover remover = databaseTable.constructRemover(outputConnection);
-			for (EntityGroup group : groups.values()) {
+			this.monitor.describeWork("Removing entities that were merged away...");
+			Remover remover = this.databaseTable.constructRemover(outputConnection);
+			for (EntityGroup group : this.groups.values()) {
 				group.removeOtherEntities(remover);
 			}
 			this.entitiesMergedAway = remover.apply();
-			monitor.worked(current_work_unit++);
+			this.monitor.worked(current_work_unit++);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			problems.add("After repointing, it was not possible to successfully remove all the entities that were merged away.");
@@ -75,29 +75,29 @@ public class Merger {
 	}
 
 	public int getEntitiesMergedAway() {
-		return entitiesMergedAway;
+		return this.entitiesMergedAway;
 	}
 
 	public int getRemainingEntities() {
-		return groups.size();
+		return this.groups.size();
 	}
 
 	public void addForeignKeyMerger(ForeignKeyMerger foreignKeyMerger) {
-		foreignKeyMergers.add(foreignKeyMerger);
+		this.foreignKeyMergers.add(foreignKeyMerger);
 	}
 
 	public Collection<ForeignKeyMerger> getMergeUnits() {
-		return foreignKeyMergers;
+		return this.foreignKeyMergers;
 	}
 
 	public EntityGroup getOrCreateEntityGroup(
 			String groupIdentifier, ColumnProjection primaryKeyColumnFilter) {
-		if(!groups.containsKey(groupIdentifier)) {
+		if(!this.groups.containsKey(groupIdentifier)) {
 			EntityGroup newGroup = new EntityGroup(groupIdentifier, primaryKeyColumnFilter);
-			groups.put(groupIdentifier, newGroup);
+			this.groups.put(groupIdentifier, newGroup);
 		}
 		
-		return groups.get(groupIdentifier);
+		return this.groups.get(groupIdentifier);
 	}
 
 }

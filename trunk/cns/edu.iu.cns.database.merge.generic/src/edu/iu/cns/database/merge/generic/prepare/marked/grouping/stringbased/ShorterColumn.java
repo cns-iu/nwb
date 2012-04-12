@@ -14,8 +14,8 @@ public class ShorterColumn implements Comparator<Tuple> {
 	}
 	
 	public int compare(Tuple o1, Tuple o2) {
-		Integer firstValue = StringUtilities.emptyStringIfNull(o1.get(column)).length();
-		Integer secondValue = StringUtilities.emptyStringIfNull(o2.get(column)).length();
+		Integer firstValue = StringUtilities.emptyStringIfNull(o1.get(this.column)).length();
+		Integer secondValue = StringUtilities.emptyStringIfNull(o2.get(this.column)).length();
 		
 		return secondValue.compareTo(firstValue);
 	}

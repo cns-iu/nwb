@@ -32,7 +32,7 @@ public class CheckBasedGroupingStrategyTest extends TestCase {
 							new StringSimilarityMergeCheck(
 									COLUMN_NAME, StringMetric.JARO.metric(), 0.5f)));
 	
-	private static Table table;
+	protected static Table table;
 	private static Collection<Integer> expectedTupleGroupSizes;
 
 	@Override

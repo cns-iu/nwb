@@ -21,7 +21,7 @@ public class ForeignKeyMerger {
 	}
 
 	public void merge(Connection connection, Collection<EntityGroup> groups) throws SQLException {
-		Repointer repointer = foreignKey.constructRepointer(connection);
+		Repointer repointer = this.foreignKey.constructRepointer(connection);
 		for(EntityGroup group : groups) {
 			group.repoint(repointer);
 		}
@@ -29,6 +29,6 @@ public class ForeignKeyMerger {
 	}
 
 	public DatabaseTable getTable() {
-		return foreignKey.otherTable;
+		return this.foreignKey.otherTable;
 	}
 }

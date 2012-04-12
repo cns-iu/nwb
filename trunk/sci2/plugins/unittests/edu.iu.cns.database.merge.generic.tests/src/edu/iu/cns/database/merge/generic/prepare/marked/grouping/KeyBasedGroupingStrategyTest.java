@@ -18,7 +18,7 @@ import com.google.common.collect.Ordering;
 
 
 public class KeyBasedGroupingStrategyTest extends TestCase {
-	private static Table table;
+	protected static Table table;
 	private static Collection<Integer> expectedTupleGroupSizes;
 
 	@Override

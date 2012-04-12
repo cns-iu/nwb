@@ -1,6 +1,5 @@
 package edu.iu.cns.database.load.framework;
 
-import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.Collections;
 import java.util.HashMap;
@@ -129,22 +128,20 @@ public enum DerbyFieldType {
 	public String createDerbyQueryStringRepresentation(String specificationsString) {
 		if (this.shouldAppendSpecifications) {
 			return this.derbyQueryStringRepresentation + "(" + specificationsString + ")";
-		} else {
-			return getDerbyQueryStringRepresentation();
 		}
+		return getDerbyQueryStringRepresentation();
 	}
 
 	public static DerbyFieldType getFieldTypeByHumanReadableName(String humanReadableName)
 			throws InvalidDerbyFieldTypeException {
 		if (TYPES_BY_HUMAN_READABLE_NAME.containsKey(humanReadableName)) {
 			return TYPES_BY_HUMAN_READABLE_NAME.get(humanReadableName);
-		} else {
-			String exceptionMessage =
-				"No DerbyFieldType could be found for the human-readable name \"" +
-				humanReadableName +
-				"\".";
-			throw new InvalidDerbyFieldTypeException(exceptionMessage);
 		}
+		String exceptionMessage =
+			"No DerbyFieldType could be found for the human-readable name \"" +
+			humanReadableName +
+			"\".";
+		throw new InvalidDerbyFieldTypeException(exceptionMessage);
 	}
 
 	private static Map<String, DerbyFieldType> constructTypesByHumanReadableName() {

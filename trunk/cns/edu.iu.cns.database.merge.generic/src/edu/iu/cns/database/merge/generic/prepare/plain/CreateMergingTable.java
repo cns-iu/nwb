@@ -43,9 +43,9 @@ public class CreateMergingTable implements Algorithm {
     	 * add the two extra columns, with the appropriate values
     	 * add one more extra column, identifying which database table the prefuse table is from
     	 */
-    	Database database = (Database) data[0].getData();
+    	Database database = (Database) this.data[0].getData();
     	String tableRepresentation =
-    			(String) parameters.get(CreateMergingTableFactory.TABLE_PARAMETER);
+    			(String) this.parameters.get(CreateMergingTableFactory.TABLE_PARAMETER);
     	
 		try {
 			Table extractedTable = extractMergingTable(database, tableRepresentation);
@@ -106,7 +106,7 @@ public class CreateMergingTable implements Algorithm {
 		Data outputData = new BasicData(extractedTable, Table.class.getName());
 		Dictionary<String, Object> metadata = outputData.getMetadata();
 		metadata.put(DataProperty.LABEL, label);
-		metadata.put(DataProperty.PARENT, data[0]);
+		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		return outputData;
 	}

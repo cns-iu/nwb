@@ -61,7 +61,7 @@ public class MergeMarker {
 	public Table markTable(Table table) {
  		final Table workingTable = TableUtilities.copyTable(table);
  		
- 		markGroups(groupingStrategy.splitIntoGroups(new Iterable<Tuple>() {
+ 		markGroups(this.groupingStrategy.splitIntoGroups(new Iterable<Tuple>() {
 			@SuppressWarnings("unchecked")
 			public Iterator<Tuple> iterator() {
 				return workingTable.tuples();
@@ -138,7 +138,7 @@ public class MergeMarker {
 	 */
 	private void markGroups(ImmutableCollection<Collection<Tuple>> groups) {
  		for (Collection<Tuple> group : groups) { 			
-			Tuple mostPreferredTuple = Collections.max(group, preferredFormComparator);
+			Tuple mostPreferredTuple = Collections.max(group, this.preferredFormComparator);
 			Object clusterIdentifier = currentIdentifier(mostPreferredTuple);
 			
 			for (Tuple tuple : group) {
@@ -188,8 +188,8 @@ public class MergeMarker {
   	@Override
   	public String toString() {
   		return Objects.toStringHelper(this)
-  						.add("groupingStrategy", groupingStrategy)
-  						.add("preferredFormComparator", preferredFormComparator)
+  						.add("groupingStrategy", this.groupingStrategy)
+  						.add("preferredFormComparator", this.preferredFormComparator)
   						.toString();
   	}
 }

@@ -36,10 +36,9 @@ public class EntityContainer<T extends Entity<T>> extends RowItemContainer<T> {
 			originalItem.merge(newItem);
 
 			return originalItem;
-		} else {
-			this.items.put(newItemMergeKey, newItem);
-
-			return newItem;
 		}
+		this.items.put(newItemMergeKey, newItem);
+
+		return newItem;
 	}
 }

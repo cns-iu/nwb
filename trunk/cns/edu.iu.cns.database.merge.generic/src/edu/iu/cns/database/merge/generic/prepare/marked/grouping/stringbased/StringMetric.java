@@ -30,11 +30,11 @@ public enum StringMetric {
 	}
 	
 	public InterfaceStringMetric metric() {
-		return metric;
+		return this.metric;
 	}
 	
 	public String prettyName() {
-		return prettyName;
+		return this.prettyName;
 	}
 	
 	public static ImmutableMap<String, InterfaceStringMetric> prettyNameToMetric() {
