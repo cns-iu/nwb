@@ -148,4 +148,26 @@ public class WithCategory {
 			fail("Algorithm failed.");
 		}
 	}
+	
+	@Test
+	public void testSingleCategory() {
+		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
+				WithCategory.commonParameters);
+		parameters
+				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
+						true);
+		parameters.put(
+				AbstractTemporalBarGraphAlgorithmFactory.CATEGORY_FIELD_ID,
+				"Single Category");
+
+		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
+
+		try {
+			testTBGAlgorithm(algorithmFactory, parameters,
+					WithCategory.convertedData, this.openFiles);
+		} catch (AlgorithmExecutionException e) {
+			e.printStackTrace();
+			fail("Algorithm failed.");
+		}
+	}
 }
