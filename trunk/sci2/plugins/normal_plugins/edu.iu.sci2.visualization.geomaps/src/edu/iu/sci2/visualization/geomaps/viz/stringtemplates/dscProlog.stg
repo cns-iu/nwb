@@ -1,0 +1,21 @@
+group dscProlog;
+
+dscProlog(title, width, height) ::= <<
+%!PS-Adobe-3.0
+%%Creator: Geospatial Visualization; Sci² Tool; Cyberinfrastructure for Network Science Center; Indiana University
+%%Title: <title>
+%%Pages: 1
+%%DocumentMedia: CustomPageMedia <width> <height> 0 () ()
+%%EndComments
+%%BeginProlog
+%%EndProlog
+%%BeginSetup
+%%EndSetup
+%%Page: Map 1
+%%PageMedia: CustomPageMedia
+%%BeginPageSetup
+%%EndPageSetup
+
+/setpagedevice where { pop 1 dict dup /PageSize [ <width> <height> ] put setpagedevice } if
+
+>>

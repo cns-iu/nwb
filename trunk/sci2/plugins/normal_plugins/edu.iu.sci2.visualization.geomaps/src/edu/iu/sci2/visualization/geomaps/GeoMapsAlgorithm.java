@@ -29,6 +29,7 @@ import prefuse.data.Table;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
@@ -169,7 +170,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 //		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
 		Example.US_REGIONS.run(PageLayout.PRINT);
-//		Example.US_REGIONS.run(PageLayout.WEB);
+		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
 
@@ -286,7 +287,18 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				File outFile = (File) outData[0].getData();
 				System.out.println(outFile.getAbsolutePath());
 				System.out.println(".. Done.");
-				Desktop.getDesktop().open(outFile);
+
+				// Test with Ghostscript
+				File copy = File.createTempFile("geo-viz-copy-", ".ps");
+				Files.copy(outFile, copy);
+				final String FULL_PATH_TO_GSVIEW_EXECUTABLE =
+						"C:\\Users\\jrbibers\\Applications\\Ghostscript\\gsview\\gsview32.exe";
+				ProcessBuilder gsProcess =new ProcessBuilder(
+						FULL_PATH_TO_GSVIEW_EXECUTABLE, outFile.getAbsolutePath());
+				gsProcess.start();
+				
+				// Test with your system's default PS handler
+				Desktop.getDesktop().open(copy);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(-1);

@@ -60,7 +60,7 @@ public class GeoMapViewPS {
 
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 		
-		out.write((new DSCProlog(psFile.getName(), pageLayout.pageDimensions()).toPostScript()));
+		out.write((new DSCProlog(geoMap.getTitle(), pageLayout.pageDimensions()).toPostScript()));
 		
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 		out.write("\n");

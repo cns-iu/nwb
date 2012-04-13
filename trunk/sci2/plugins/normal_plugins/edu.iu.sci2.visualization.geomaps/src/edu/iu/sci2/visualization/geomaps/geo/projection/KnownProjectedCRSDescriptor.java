@@ -87,7 +87,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, Nicel
 			return CRS.getProjectedCRS(CRS.decode(code));
 		}
 	}
-
+	
 	
 //	private static final class WKT implements ProjectedCRSDescriptor {
 //		private final String wkt;
