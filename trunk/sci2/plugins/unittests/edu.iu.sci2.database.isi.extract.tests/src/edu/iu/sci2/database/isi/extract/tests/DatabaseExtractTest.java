@@ -67,9 +67,11 @@ public class DatabaseExtractTest {
 		databaseData = new BasicData(database, "db:isi");
 	}
 	
+	// Annoying that the test name doesn't include the PID of the algorithm under test.
 	// The first release of JUnit after April 9, 2012 will support this:
 	// @Parameters(name="DatabaseExtractTest({0})")
 	// See https://github.com/KentBeck/junit/commit/3a5c9f2731462e36dd1c173ea8840d7b9b34b0ab
+	// and http://stackoverflow.com/a/10143872/88198
 	@Parameters
 	public static Collection<Object[]> data() throws Exception {
 		makeDB();
