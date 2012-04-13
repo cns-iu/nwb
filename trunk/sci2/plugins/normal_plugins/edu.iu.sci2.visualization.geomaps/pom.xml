@@ -7,7 +7,6 @@
     <groupId>edu.iu.sci2.normal_plugins</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>edu.iu.sci2.normal_plugins</groupId>
   <artifactId>edu.iu.sci2.visualization.geomaps</artifactId>
   <version>0.1.0</version>
   <packaging>eclipse-plugin</packaging>

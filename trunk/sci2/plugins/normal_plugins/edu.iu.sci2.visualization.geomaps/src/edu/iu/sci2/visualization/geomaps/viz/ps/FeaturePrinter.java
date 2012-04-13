@@ -170,7 +170,7 @@ public class FeaturePrinter {
 				throws IOException, TransformException {
 		String featureName = geoMap.getShapefile().extractFeatureName(feature);
 		
-		for (Geometry geometry : geoMap.project((Geometry) feature.getDefaultGeometry())) {
+		for (Geometry geometry : geoMap.projectAndInset((Geometry) feature.getDefaultGeometry())) {
 			for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
 				out.write(INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
 				Geometry subgeometry = geometry.getGeometryN(gg);

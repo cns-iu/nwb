@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
@@ -79,10 +80,22 @@ public class GeoMapViewPS {
 		
 		FeaturePrinter featurePrinter = new FeaturePrinter(geoMap, geoMapViewPageArea);
 		featurePrinter.printFeatures(out, geoMap.getFeatureViews());
+		
+		// Label insets
+		for (Inset inset : geoMap.getInsets()) {
+			Coordinate labelLowerLeftCoordinate = inset.getLabelLowerLeft();
+			Coordinate projectedAndInset = geoMap.projectUsingInset(labelLowerLeftCoordinate, inset);
+			Point2D.Double labelLowerLeftPoint = geoMapViewPageArea.displayPointFor(projectedAndInset);
+			out.write(" gsave ");
+			out.write(PSUtility.findscalesetfont(pageLayout.contentFont()));
+			out.write(PSUtility.xy(labelLowerLeftPoint) + " moveto ");
+			out.write(String.format(" (%s) show ", inset.getFeatureName()));
+			out.write(" grestore ");
+		}
+		
 
 		out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circlePrinterDefinitions").toString());
-		
-		
+
 		out.write("% Circle annotations" + "\n");		
 		out.write("gsave" + "\n");
 		out.write("\n");
@@ -138,7 +151,7 @@ public class GeoMapViewPS {
 	 * @throws TransformException	When the underlying transform fails.
 	 */
 	public Point2D.Double coordinateToPagePoint(Coordinate coordinate) throws TransformException {
-		Collection<Coordinate> projectedCoordinates = geoMap.project(coordinate);
+		Collection<Coordinate> projectedCoordinates = geoMap.projectAndInset(coordinate);
 		
 		if (projectedCoordinates.isEmpty()) {
 			throw new RuntimeException(String.format(
@@ -173,7 +186,7 @@ public class GeoMapViewPS {
 			String featureName = geoMap.getShapefile().extractFeatureName(feature);
 			Collection<Geometry> geometries;
 			try {
-				geometries = geoMap.project((Geometry) feature.getDefaultGeometry());
+				geometries = geoMap.projectAndInset((Geometry) feature.getDefaultGeometry());
 			} catch (IllegalArgumentException e) { // TODO Still necessary?
 				/* This seems to happen intermittently with version 2.7.4 of geolibs/Geotools for
 				 * one subgeometry of Minnesota in Shapefile.UNITED_STATES. */

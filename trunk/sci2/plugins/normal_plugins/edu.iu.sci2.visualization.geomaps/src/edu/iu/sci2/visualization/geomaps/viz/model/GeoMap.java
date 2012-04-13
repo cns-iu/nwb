@@ -111,18 +111,35 @@ public class GeoMap {
 		return title;
 	}
 
-	public Collection<Coordinate> project(Coordinate naturalCoordinate) throws TransformException {
+	/**
+	 * All applicable insets are applied.
+	 */
+	public Collection<Coordinate> projectAndInset(Coordinate naturalCoordinate) throws TransformException {
 		Geometry coordinatePointGeometry = geometryFactory.createPoint(naturalCoordinate);
 		
 		Collection<Coordinate> projectedCoordinates = Sets.newHashSet();
-		for (Geometry geometry : project(coordinatePointGeometry)) {
+		for (Geometry geometry : projectAndInset(coordinatePointGeometry)) {
 			projectedCoordinates.add(geometry.getCoordinate());
 		}
 		
 		return projectedCoordinates;
 	}
+	
+	/**
+	 * The provided inset (and only that inset) is applied.
+	 */
+	public Coordinate projectUsingInset(Coordinate naturalCoordinate, Inset inset) throws TransformException {
+		Geometry naturalCoordinatePointGeometry = geometryFactory.createPoint(naturalCoordinate);
+		Geometry projectedCoordinatePointGeometry =
+				geometryProjector.projectGeometry(naturalCoordinatePointGeometry);
+		
+		return inset.inset(projectedCoordinatePointGeometry).getCoordinate();
+	}
 
-	public Collection<Geometry> project(Geometry naturalGeometry) throws TransformException {
+	/**
+	 * All applicable insets are applied.
+	 */
+	public Collection<Geometry> projectAndInset(Geometry naturalGeometry) throws TransformException {
 		return inset(naturalGeometry, geometryProjector.projectGeometry(naturalGeometry));
 	}
 	
@@ -145,4 +162,8 @@ public class GeoMap {
 		
 		return geometries;
 	}
+
+	public Collection<Inset> getInsets() {
+		return insets;
+	}	
 }

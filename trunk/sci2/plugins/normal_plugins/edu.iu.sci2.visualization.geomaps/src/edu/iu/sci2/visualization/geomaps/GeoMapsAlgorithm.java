@@ -167,8 +167,8 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	public static void main(String[] args) {
 //		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
-//		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
-//		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+		Example.WORLD_CIRCLES.run(PageLayout.WEB);
 		Example.US_REGIONS.run(PageLayout.PRINT);
 		Example.US_REGIONS.run(PageLayout.WEB);
 	}
@@ -294,11 +294,11 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				final String FULL_PATH_TO_GSVIEW_EXECUTABLE =
 						"C:\\Users\\jrbibers\\Applications\\Ghostscript\\gsview\\gsview32.exe";
 				ProcessBuilder gsProcess =new ProcessBuilder(
-						FULL_PATH_TO_GSVIEW_EXECUTABLE, outFile.getAbsolutePath());
+						FULL_PATH_TO_GSVIEW_EXECUTABLE, copy.getAbsolutePath());
 				gsProcess.start();
 				
-				// Test with your system's default PS handler
-				Desktop.getDesktop().open(copy);
+				// Test with system's default PS handler
+				Desktop.getDesktop().open(outFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(-1);

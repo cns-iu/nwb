@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.geotools.data.DefaultQuery;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -97,7 +96,7 @@ public enum Shapefile implements NicelyNamed {
 	public ReferencedEnvelope boundsForFeatureName(String featureName)
 			throws FeatureBoundsDetectionException {
 		try {
-			Query query = new DefaultQuery(shapefileTypeName, CQL.toFilter(String.format(
+			Query query = new Query(shapefileTypeName, CQL.toFilter(String.format(
 					"NAME = '%s'", featureName)));
 
 			return featureSource.getFeatures(query).getBounds();
@@ -226,10 +225,15 @@ public enum Shapefile implements NicelyNamed {
 	 * projected xy space.
 	 */
 	public static class Inset {
+		private final String featureName;
+		private final Coordinate labelLowerLeft;
 		private final ReferencedEnvelope bounds;
 		private final AffineTransform2D transform;
 
-		private Inset(ReferencedEnvelope bounds, AffineTransform2D transform) {
+		private Inset(String featureName, Coordinate labelLowerLeft, ReferencedEnvelope bounds,
+				AffineTransform2D transform) {
+			this.featureName = featureName;
+			this.labelLowerLeft = labelLowerLeft;
 			this.bounds = bounds;
 			this.transform = transform;
 		}
@@ -237,8 +241,9 @@ public enum Shapefile implements NicelyNamed {
 		public static Inset forRequest(Request request, Shapefile shapefile,
 				GeometryProjector projector) throws InsetCreationException {
 			try {
-				return new Inset(shapefile.boundsForFeatureName(request.getFeatureName()),
-						createTransform(request, projector));
+				return new Inset(request.getFeatureName(), request.getLabelLowerLeft(),
+						shapefile.boundsForFeatureName(request.getFeatureName()), createTransform(
+								request, projector));
 			} catch (FeatureBoundsDetectionException e) {
 				throw new InsetCreationException(String.format(
 						"Failed to detect bounding box of the \"%s\" inset.",
@@ -294,6 +299,10 @@ public enum Shapefile implements NicelyNamed {
 				throw new RuntimeException("Inset transform failed.", e);
 			}
 		}
+		
+		public String getFeatureName() {
+			return featureName;
+		}
 
 		private static AffineTransform preConcatenate(AffineTransform first,
 				AffineTransform... rest) {
@@ -319,21 +328,23 @@ public enum Shapefile implements NicelyNamed {
 		 * @see Inset#forRequest(Request, Shapefile, GeometryProjector)
 		 */
 		public static class Request {
-			public static final Request ALASKA = new Request("Alaska", 0.3, new Coordinate(-141.0,
-					69.7), new Coordinate(-109.5, 28.1));
-			public static final Request HAWAII = new Request("Hawaii", 0.5, new Coordinate(-155.7,
-					18.9), new Coordinate(-102.7, 25.0));
-			public static final Request PUERTO_RICO = new Request("Puerto Rico", 1, new Coordinate(
-					-67.3, 18.3), new Coordinate(-88.9, 24.2));
+			public static final Request ALASKA = new Request("Alaska", new Coordinate(-150, 52),
+					0.3, new Coordinate(-131, 55), new Coordinate(-127, 42));
+			public static final Request HAWAII = new Request("Hawaii", new Coordinate(-156, 16),
+					0.5, new Coordinate(-155, 20), new Coordinate(-126, 30));
+			public static final Request PUERTO_RICO = new Request("Puerto Rico", new Coordinate(
+					-68.7, 17), 1, new Coordinate(-66, 18), new Coordinate(-129, 37));
 
 			private final String featureName;
+			private final Coordinate labelLowerLeft;
 			private final double scaling;
 			private final Coordinate naturalAnchor;
 			private final Coordinate insetAnchor;
 
-			public Request(String featureName, double scaling, Coordinate naturalAnchor,
+			public Request(String featureName, Coordinate labelLowerLeft, double scaling, Coordinate naturalAnchor,
 					Coordinate insetAnchor) {
 				this.featureName = featureName;
+				this.labelLowerLeft = labelLowerLeft;
 				this.scaling = scaling;
 				this.naturalAnchor = naturalAnchor;
 				this.insetAnchor = insetAnchor;
@@ -341,6 +352,10 @@ public enum Shapefile implements NicelyNamed {
 
 			public String getFeatureName() {
 				return featureName;
+			}			
+
+			public Coordinate getLabelLowerLeft() {
+				return labelLowerLeft;
 			}
 
 			public double getScaling() {
@@ -354,6 +369,10 @@ public enum Shapefile implements NicelyNamed {
 			public Coordinate getInsetAnchor() {
 				return insetAnchor;
 			}
+		}
+
+		public Coordinate getLabelLowerLeft() {
+			return labelLowerLeft;
 		}
 	}
 

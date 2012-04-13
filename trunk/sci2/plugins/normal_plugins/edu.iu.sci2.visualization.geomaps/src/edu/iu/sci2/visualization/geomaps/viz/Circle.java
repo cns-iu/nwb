@@ -56,7 +56,7 @@ public class Circle {
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		StringBuilder builder = new StringBuilder();
-		for (Geometry projectedPoint : geoMap.project(coordinatePoint)) {
+		for (Geometry projectedPoint : geoMap.projectAndInset(coordinatePoint)) {
 			Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint.getCoordinate());
 			
 			double outlineRadius = radius + Circle.OUTLINE_ADDITIONAL_RADIUS;
