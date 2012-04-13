@@ -33,10 +33,17 @@ import com.google.common.collect.Lists;
 
 @RunWith(Parameterized.class)
 public class DatabaseExtractTest {
+	
 	private static Data databaseData;
 	private static BundleContext bundleContext;
 	private static CIShellContext ciContext;
 	
+	/**
+	 * Sets the bundleContext, ciContext, and databaseData variables.  Not a {@code @BeforeClass}
+	 * because apparently BeforeClass happens *after* {@code @Parameters}, but that method needs
+	 * these values.  So it's called from there instead.
+	 * @throws Exception
+	 */
 	public static void makeDB() throws Exception {
 		bundleContext = Activator.getContext();
 		ciContext = new LocalCIShellContext(bundleContext);
@@ -67,6 +74,14 @@ public class DatabaseExtractTest {
 		databaseData = new BasicData(database, "db:isi");
 	}
 	
+	/**
+	 * Finds all of the isi.extract.* algorithms in the current OSGi context.  To get more of them,
+	 * edit MANIFEST.MF and add them to Require-Bundle:.  Weighted document-document network is
+	 * intentionally left out of there, because it requires a parameter (the rest don't).
+	 * <p>
+	 * The list of Strings is used to run the test() method.
+	 * @throws Exception
+	 */
 	// Annoying that the test name doesn't include the PID of the algorithm under test.
 	// The first release of JUnit after April 9, 2012 will support this:
 	// @Parameters(name="DatabaseExtractTest({0})")
@@ -81,7 +96,6 @@ public class DatabaseExtractTest {
 		for (ServiceReference<?> r : refs) {
 			String thisPid = (String) r.getProperty("service.pid");
 			// this is the only one that takes parameters, so skip it for now
-			if (thisPid.contains("weighted_document")) continue;
 			listOfObjArrays.add(new Object[] { thisPid });
 		}
 		return listOfObjArrays;
@@ -93,6 +107,10 @@ public class DatabaseExtractTest {
 		this.pid = pid;
 	}
 	
+	/**
+	 * Try to run a database algorithm
+	 * @throws Exception
+	 */
 	@Test
 	public void test() throws Exception {
 		System.out.println(this.toString());
@@ -108,7 +126,4 @@ public class DatabaseExtractTest {
 		}
 	}
 
-	public String toString() {
-		return String.format("Test of %s", pid);
-	}
 }
