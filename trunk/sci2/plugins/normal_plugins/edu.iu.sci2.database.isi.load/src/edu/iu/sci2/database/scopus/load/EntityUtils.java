@@ -43,10 +43,11 @@ public class EntityUtils {
 				} else if (length == 1) {
 					toInsert = Array.get(o, 0);
 				} else {
-					throw new AssertionError("Bleh.");
+					throw new AssertionError(
+							String.format("Expected array of length 0 or 1, got %d", length));
 				}
-			} catch (Exception e) {
-				throw new RuntimeException(
+			} catch (IllegalArgumentException e) {
+				throw new AssertionError(
 						"Should be array, but doesn't have length", e);
 			}
 		} else {
