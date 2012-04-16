@@ -12,8 +12,9 @@ Import-Package: com.google.common.base;version="11.0.1",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.service.database,
- org.cishell.utilities,
- org.osgi.framework;version="1.3.0"
+ org.cishell.utilities;bundle-version="1.0.1",
+ org.osgi.framework;version="1.3.0",
+ prefuse.data
 Require-Bundle: org.junit,
  edu.iu.sci2.database.isi.extract.network.cocitation.document.core;bundle-version="0.1.0",
  edu.iu.cns.database.extract.generic;bundle-version="0.0.2",
@@ -33,4 +34,6 @@ Require-Bundle: org.junit,
  edu.iu.sci2.database.isi.extract.table.core_entities,
  edu.iu.sci2.database.isi.extract.table.entities_by_year,
  edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst,
- edu.iu.sci2.database.isi.extract.table.longitudinalsummary
+ edu.iu.sci2.database.isi.extract.table.longitudinalsummary,
+ edu.iu.sci2.database.isi.merge;bundle-version="0.0.2",
+ edu.iu.sci2.database.isi.match.reference_to_paper;bundle-version="0.0.2"
