@@ -2,25 +2,18 @@ package edu.iu.sci2.database.isi.extract.tests;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 
 import org.cishell.framework.CIShellContext;
-import org.cishell.framework.LocalCIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.database.Database;
-import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.AlgorithmUtilities;
-import org.cishell.utilities.FileUtilities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,51 +21,14 @@ import org.junit.runners.Parameterized.Parameters;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 @RunWith(Parameterized.class)
 public class DatabaseExtractTest {
 	
 	private static Data databaseData;
-	private static BundleContext bundleContext;
-	private static CIShellContext ciContext;
-	
-	/**
-	 * Sets the bundleContext, ciContext, and databaseData variables.  Not a {@code @BeforeClass}
-	 * because apparently BeforeClass happens *after* {@code @Parameters}, but that method needs
-	 * these values.  So it's called from there instead.
-	 * @throws Exception
-	 */
-	public static void makeDB() throws Exception {
-		bundleContext = Activator.getContext();
-		ciContext = new LocalCIShellContext(bundleContext);
-		File sqlFile =
-				FileUtilities.safeLoadFileFromClasspath(DatabaseExtractTest.class, 
-						"/edu/iu/sci2/database/isi/extract/tests/FivePapersISIDb.sql");
-		String dbCreationSQL = FileUtilities.readEntireTextFile(sqlFile);
-		
-		DatabaseService databaseProvider = (DatabaseService) ciContext.getService(DatabaseService.class.getName());
-		Database database = databaseProvider.createNewDatabase();
-		Connection c = database.getConnection();
-		Statement s = null;
-		String currentStatement = "";
-		try {
-			s = c.createStatement();
-			// we're lucky that the data doesn't contain semicolons :-/
-			for (String statement : Splitter.on(";").trimResults().omitEmptyStrings().split(dbCreationSQL)) {
-				currentStatement = statement;
-				s.execute(statement);
-			}
-		} catch (SQLException e) {
-			throw new Exception("Exception while running " + currentStatement, e);
-		} finally {
-			if (s != null) s.close();
-			c.close();
-		}
-		
-		databaseData = new BasicData(database, "db:isi");
-	}
+	private static BundleContext bundleContext = Activator.getContext();
+	private static CIShellContext ciContext = Activator.getCiContext();
 	
 	/**
 	 * Finds all of the isi.extract.* algorithms in the current OSGi context.  To get more of them,
@@ -89,7 +45,9 @@ public class DatabaseExtractTest {
 	// and http://stackoverflow.com/a/10143872/88198
 	@Parameters
 	public static Collection<Object[]> data() throws Exception {
-		makeDB();
+		Database db = FivePapersHelper.createDatabase();
+		databaseData = new BasicData(db, FivePapersHelper.DATA_FORMAT);
+		
 		ServiceReference<?>[] refs = bundleContext.getServiceReferences(AlgorithmFactory.class.getName(),
 				"(service.pid=*isi.extract.*)");
 		ArrayList<Object[]> listOfObjArrays = Lists.newArrayList();
@@ -101,19 +59,18 @@ public class DatabaseExtractTest {
 		return listOfObjArrays;
 	}
 	
-	
 	private String pid;
 	public DatabaseExtractTest(String pid) {
 		this.pid = pid;
 	}
 	
 	/**
-	 * Try to run a database algorithm
+	 * Try to run a database algorithm (specified by this.pid)
 	 * @throws Exception
 	 */
 	@Test
 	public void test() throws Exception {
-		System.out.println(this.toString());
+		System.err.println("RUNNING THIS: " + pid);
 		AlgorithmFactory fact = AlgorithmUtilities.getAlgorithmFactoryByPID(
 				pid, bundleContext);
 		
@@ -125,5 +82,5 @@ public class DatabaseExtractTest {
 			throw new AssertionError("Error when running " + pid, e);
 		}
 	}
-
+	
 }
