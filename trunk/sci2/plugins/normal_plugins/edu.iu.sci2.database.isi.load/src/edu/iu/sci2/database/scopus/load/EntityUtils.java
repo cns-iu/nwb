@@ -29,18 +29,27 @@ public class EntityUtils {
 	 * sometimes not, it will wrap that field in an array. So instead of Integer
 	 * objects and nulls, you get one-element int arrays and empty int arrays.
 	 * <p>
-	 * If the Object is not an array, it is returned unmodified.  If it is an array with
-	 * exactly one element, that element is returned.  If it is an empty array, {@code ifEmpty}
-	 * is returned.  If it is an array with more than one element, an exception is thrown
+	 * If the Object is not an array and is not null, it is returned unmodified;
+	 * if it is null, {@code ifEmpty} is returned. If it is an array with
+	 * exactly one element, that element is returned. If it is an empty array,
+	 * {@code ifEmpty} is returned. If it is an array with more than one
+	 * element, an exception is thrown
 	 * 
-	 * @param o an array with 0 or 1 elements
-	 * @param ifEmpty the value to return if the array is empty
-	 * @return {@code o}, {@code o}'s only element, or {@code ifEmpty} (see rules above)
-	 * @throws IllegalArgumentException if the object is an array and has more than 1 element.
+	 * @param o
+	 *            an array with 0 or 1 elements
+	 * @param ifEmpty
+	 *            the value to return if the array is empty
+	 * @return {@code o}, {@code o}'s only element, or {@code ifEmpty} (see
+	 *         rules above)
+	 * @throws IllegalArgumentException
+	 *             if the object is an array and has more than 1 element.
 	 */
 	public static Object removeArrayWrapper(Object o, Object ifEmpty) {
+		if (o == null) {
+			return ifEmpty;
+		}
+		
 		Object toInsert;
-	
 		if (o.getClass().isArray()) {
 			int length = Array.getLength(o);
 			if (length == 0) {
