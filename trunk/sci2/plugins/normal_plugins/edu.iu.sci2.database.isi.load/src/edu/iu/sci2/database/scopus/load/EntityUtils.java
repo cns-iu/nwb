@@ -28,27 +28,28 @@ public class EntityUtils {
 	 * Prefuse Tables are annoying because if a field is sometimes present and
 	 * sometimes not, it will wrap that field in an array. So instead of Integer
 	 * objects and nulls, you get one-element int arrays and empty int arrays.
+	 * <p>
+	 * If the Object is not an array, it is returned unmodified.  If it is an array with
+	 * exactly one element, that element is returned.  If it is an empty array, {@code ifEmpty}
+	 * is returned.  If it is an array with more than one element, an exception is thrown
 	 * 
-	 * @param o
-	 * @return
+	 * @param o an array with 0 or 1 elements
+	 * @param ifEmpty the value to return if the array is empty
+	 * @return {@code o}, {@code o}'s only element, or {@code ifEmpty} (see rules above)
+	 * @throws IllegalArgumentException if the object is an array and has more than 1 element.
 	 */
-	static Object removeArrayWrapper(Object o, Object ifEmpty) {
+	public static Object removeArrayWrapper(Object o, Object ifEmpty) {
 		Object toInsert;
 	
 		if (o.getClass().isArray()) {
-			try {
-				int length = Array.getLength(o);
-				if (length == 0) {
-					toInsert = ifEmpty;
-				} else if (length == 1) {
-					toInsert = Array.get(o, 0);
-				} else {
-					throw new AssertionError(
-							String.format("Expected array of length 0 or 1, got %d", length));
-				}
-			} catch (IllegalArgumentException e) {
-				throw new AssertionError(
-						"Should be array, but doesn't have length", e);
+			int length = Array.getLength(o);
+			if (length == 0) {
+				toInsert = ifEmpty;
+			} else if (length == 1) {
+				toInsert = Array.get(o, 0);
+			} else {
+				throw new IllegalArgumentException(
+						String.format("Expected array of length 0 or 1, got %d", length));
 			}
 		} else {
 			toInsert = o;
@@ -64,7 +65,7 @@ public class EntityUtils {
 	 * @param source
 	 * @param sourceKey
 	 */
-	static <S extends FileField> void putField(Dictionary<String, Object> dest,
+	public static <S extends FileField> void putField(Dictionary<String, Object> dest,
 			DBField destKey, FileTuple<S> source, S sourceKey) {
 		if (destKey.type() == DerbyFieldType.TEXT) {
 			putStringField(dest, destKey, source, sourceKey);
@@ -82,7 +83,7 @@ public class EntityUtils {
 	}
 
 	// TODO: do better handling if the object is wrong?
-	static <S extends FileField> Integer getNullableInteger(FileTuple<S> source,
+	public static <S extends FileField> Integer getNullableInteger(FileTuple<S> source,
 			S sourceKey) {
 		Object contents = removeArrayWrapper(source.get(sourceKey.getName()), null);
 		if (contents instanceof Integer) {
@@ -108,7 +109,7 @@ public class EntityUtils {
 				cleanString(removeArrayWrapper(source.get(sourceKey.getName()), "")));
 	}
 
-	private static String cleanString(Object obj) {
+	public static String cleanString(Object obj) {
 		String raw = obj.toString();
 		return StringUtilities.simpleClean(raw);
 	}
