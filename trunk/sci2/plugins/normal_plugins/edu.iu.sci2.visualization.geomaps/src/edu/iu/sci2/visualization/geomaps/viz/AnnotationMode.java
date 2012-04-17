@@ -55,11 +55,12 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 		Shapefile shapefile = NicelyNamedEnums.getConstantNamed(
 				Shapefile.class, (String) parameters.get(Parameters.SHAPEFILE_ID));
 		
-		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor = shapefile.getDefaultProjectedCrs();
-		if (Parameters.LET_USER_CHOOSE_PROJECTION) {
+		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor =
+				shapefile.getDefaultProjectedCrs();
+		String projection = (String) parameters.get(Parameters.PROJECTION_ID);
+		if (projection != null) {
 			knownProjectedCRSDescriptor = NicelyNamedEnums.getConstantNamed(
-					KnownProjectedCRSDescriptor.class,
-					(String) parameters.get(Parameters.PROJECTION_ID));
+					KnownProjectedCRSDescriptor.class, projection);
 		}
 		
 		Collection<Binding<D>> enabledBindings = bindTo(parameters);
