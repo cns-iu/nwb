@@ -26,7 +26,9 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, Nicel
 //					"UNIT[\"Meter\",1.0]]")),
 	MERCATOR("Mercator", "Mercator", new EPSGCode("EPSG:3395")),
 	ALBERS("Albers Equal-Area Conic", "Albers equal-area conic", new EPSGCode("EPSG:3083")),
-	LAMBERT("Lambert Conformal Conic", "Lambert conformal conic", new EPSGCode("EPSG:102004"));
+	LAMBERT("Lambert Conformal Conic", "Lambert conformal conic", new EPSGCode("EPSG:102004")),
+//	WORLD_EQUIDISTANT_CYLINDRICAL_SPHERE("World Equidistant Cylindrical (Sphere)", "World Equidistant Cylindrical (Sphere)", new EPSGCode("EPSG:3786"))
+	;
 	
 	/* "if the math transform should be created even when there is no information available for a
 	 * datum shift."

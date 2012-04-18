@@ -89,7 +89,7 @@ public class GeoMapViewPS {
 			out.write(" gsave ");
 			out.write(PSUtility.findscalesetfont(pageLayout.contentFont()));
 			out.write(PSUtility.xy(labelLowerLeftPoint) + " moveto ");
-			out.write(String.format(" (%s) show ", inset.getFeatureName()));
+			out.write(String.format(" (%s) show ", inset.makeLabel()));
 			out.write(" grestore ");
 		}
 		

@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Dictionary;
+import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -33,6 +35,7 @@ import com.google.common.io.Files;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.geomaps.data.scaling.Scaling;
+import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.metatype.Parameters;
 import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode;
@@ -166,11 +169,19 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 	
 	public static void main(String[] args) {
+		Set<KnownProjectedCRSDescriptor> projections =
+				EnumSet.of(
+//						KnownProjectedCRSDescriptor.WORLD_EQUIDISTANT_CYLINDRICAL_SPHERE
+						KnownProjectedCRSDescriptor.ALBERS
+						);
+		KnownProjectedCRSDescriptor[] projectionsArray =
+				projections.toArray(new KnownProjectedCRSDescriptor[0]);
+		
 //		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
-		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
-		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-		Example.US_REGIONS.run(PageLayout.PRINT);
-		Example.US_REGIONS.run(PageLayout.WEB);
+//		Example.WORLD_CIRCLES.run(PageLayout.PRINT, projectionsArray);
+//		Example.WORLD_CIRCLES.run(PageLayout.WEB);
+		Example.US_REGIONS.run(PageLayout.PRINT, projectionsArray);
+//		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
 
@@ -270,10 +281,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 			this.baseParameters = baseParameters;
 		}
 		
-		private void run(PageLayout pageLayout) {
+		private void run(String outputFilenamePrefix, PageLayout pageLayout,
+				Dictionary<String, Object> parameters) {
 			try {
-				Dictionary<String, Object> parameters =
-						assembleParameters(shapefile, this.baseParameters);	
 				System.out.println("parameters are " + parameters);
 				Algorithm algorithm =
 						createAlgorithm(
@@ -284,24 +294,43 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	
 				System.out.println("Executing.. ");
 				Data[] outData = algorithm.execute();
-				File outFile = (File) outData[0].getData();
+				File outFileWithRawName = (File) outData[0].getData();
+				File outFile = File.createTempFile(outputFilenamePrefix, ".ps");
+				Files.copy(outFileWithRawName, outFile);
+				
 				System.out.println(outFile.getAbsolutePath());
 				System.out.println(".. Done.");
-
-				// Test with Ghostscript
-				File copy = File.createTempFile("geo-viz-copy-", ".ps");
-				Files.copy(outFile, copy);
-				final String FULL_PATH_TO_GSVIEW_EXECUTABLE =
-						"C:\\Users\\jrbibers\\Applications\\Ghostscript\\gsview\\gsview32.exe";
-				ProcessBuilder gsProcess =new ProcessBuilder(
-						FULL_PATH_TO_GSVIEW_EXECUTABLE, copy.getAbsolutePath());
-				gsProcess.start();
+	
+	//			// Test with Ghostscript
+	//			File copy = File.createTempFile("geo-viz-copy-", ".ps");
+	//			Files.copy(outFile, copy);
+	//			final String FULL_PATH_TO_GSVIEW_EXECUTABLE =
+	//					"C:\\Users\\jrbibers\\Applications\\Ghostscript\\gsview\\gsview32.exe";
+	//			ProcessBuilder gsProcess =new ProcessBuilder(
+	//					FULL_PATH_TO_GSVIEW_EXECUTABLE, copy.getAbsolutePath());
+	//			gsProcess.start();
 				
 				// Test with system's default PS handler
 				Desktop.getDesktop().open(outFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(-1);
+			}
+		}
+		
+		private void run(PageLayout pageLayout, KnownProjectedCRSDescriptor... explicitProjections) {
+			Dictionary<String, Object> parameters =
+					assembleParameters(shapefile, this.baseParameters);
+			
+			if (explicitProjections.length == 0) {
+				run("geo-viz-", pageLayout, parameters);
+			} else {
+				for (KnownProjectedCRSDescriptor projection : explicitProjections) {
+					Dictionary<String, Object> freshParameters = 
+							new Hashtable<String, Object>((Hashtable<String, Object>) parameters);
+					freshParameters.put(Parameters.PROJECTION_ID, projection.getNiceName());
+					run("geo-viz-" + projection.getNiceName() + "-", pageLayout, freshParameters);
+				}
 			}
 		}
 

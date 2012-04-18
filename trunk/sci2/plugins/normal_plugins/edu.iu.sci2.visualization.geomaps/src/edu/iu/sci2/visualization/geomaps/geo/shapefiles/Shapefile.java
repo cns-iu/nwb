@@ -210,12 +210,12 @@ public enum Shapefile implements NicelyNamed {
 
 	/**
 	 * A special region to inset when projecting the features in this shapefile.
-	 * A given InsetRequest dictates a feature name, a scaling, a "natural"
+	 * A given InsetRequest dictates a feature name, an area scaling, a "natural"
 	 * anchor coordinate, and an "inset" anchor coordinate. The inset calculates
 	 * the bounding box for all features having the given name. Then all offered
 	 * geometries, when they fall in this latlong region, are inset by (1)
 	 * translating the "natural" anchor coordinate to the latlong space origin,
-	 * (2) applying the scaling factor, and (3) translating everything such that
+	 * (2) applying the area scaling factor, and (3) translating everything such that
 	 * the "natural" anchor coordinate is now position at the "inset" anchor
 	 * coordinate. When an offered coordinate does not fall into the box it is
 	 * returned unchanged.
@@ -225,15 +225,12 @@ public enum Shapefile implements NicelyNamed {
 	 * projected xy space.
 	 */
 	public static class Inset {
-		private final String featureName;
-		private final Coordinate labelLowerLeft;
+		private final Request request;
 		private final ReferencedEnvelope bounds;
 		private final AffineTransform2D transform;
 
-		private Inset(String featureName, Coordinate labelLowerLeft, ReferencedEnvelope bounds,
-				AffineTransform2D transform) {
-			this.featureName = featureName;
-			this.labelLowerLeft = labelLowerLeft;
+		private Inset(Request request, ReferencedEnvelope bounds, AffineTransform2D transform) {
+			this.request = request;
 			this.bounds = bounds;
 			this.transform = transform;
 		}
@@ -241,9 +238,8 @@ public enum Shapefile implements NicelyNamed {
 		public static Inset forRequest(Request request, Shapefile shapefile,
 				GeometryProjector projector) throws InsetCreationException {
 			try {
-				return new Inset(request.getFeatureName(), request.getLabelLowerLeft(),
-						shapefile.boundsForFeatureName(request.getFeatureName()), createTransform(
-								request, projector));
+				return new Inset(request, shapefile.boundsForFeatureName(request.getFeatureName()),
+						createTransform(request, projector));
 			} catch (FeatureBoundsDetectionException e) {
 				throw new InsetCreationException(String.format(
 						"Failed to detect bounding box of the \"%s\" inset.",
@@ -264,8 +260,9 @@ public enum Shapefile implements NicelyNamed {
 					-naturalAnchorDisplayCoordinate.x, -naturalAnchorDisplayCoordinate.y);
 
 			// Second, scale
-			AffineTransform scale = AffineTransform.getScaleInstance(request.getScaling(),
-					request.getScaling());
+			AffineTransform scale = AffineTransform.getScaleInstance(
+					request.calculateDimensionScaling(),
+					request.calculateDimensionScaling());
 
 			// Third, move so that the natural anchor is now at the inset anchor
 			Coordinate insetAnchorDisplayCoordinate = displayCoordinate(
@@ -300,8 +297,19 @@ public enum Shapefile implements NicelyNamed {
 			}
 		}
 		
-		public String getFeatureName() {
-			return featureName;
+		public String makeLabel() {
+			if (Math.abs(request.getAreaScaling() - 1.0) < 1E-3) {
+				// Showing at 100% actual size so just report name.
+				return request.getFeatureName();
+			} else {
+				return String.format("%s (%d%% actual size)",
+						request.getFeatureName(),
+						(int) (100 * request.getAreaScaling()));
+			}
+		}
+
+		public Coordinate getLabelLowerLeft() {
+			return request.getLabelLowerLeft();
 		}
 
 		private static AffineTransform preConcatenate(AffineTransform first,
@@ -328,24 +336,24 @@ public enum Shapefile implements NicelyNamed {
 		 * @see Inset#forRequest(Request, Shapefile, GeometryProjector)
 		 */
 		public static class Request {
-			public static final Request ALASKA = new Request("Alaska", new Coordinate(-150, 52),
-					0.3, new Coordinate(-131, 55), new Coordinate(-127, 42));
-			public static final Request HAWAII = new Request("Hawaii", new Coordinate(-156, 16),
+			public static final Request ALASKA = new Request("Alaska", new Coordinate(-160, 41),
+					0.1, new Coordinate(-131, 55), new Coordinate(-127, 42));
+			public static final Request HAWAII = new Request("Hawaii", new Coordinate(-159, 14),
 					0.5, new Coordinate(-155, 20), new Coordinate(-126, 30));
 			public static final Request PUERTO_RICO = new Request("Puerto Rico", new Coordinate(
 					-68.7, 17), 1, new Coordinate(-66, 18), new Coordinate(-129, 37));
 
 			private final String featureName;
 			private final Coordinate labelLowerLeft;
-			private final double scaling;
+			private final double areaScaling;
 			private final Coordinate naturalAnchor;
 			private final Coordinate insetAnchor;
 
-			public Request(String featureName, Coordinate labelLowerLeft, double scaling, Coordinate naturalAnchor,
-					Coordinate insetAnchor) {
+			public Request(String featureName, Coordinate labelLowerLeft, double areaScaling,
+					Coordinate naturalAnchor, Coordinate insetAnchor) {
 				this.featureName = featureName;
 				this.labelLowerLeft = labelLowerLeft;
-				this.scaling = scaling;
+				this.areaScaling = areaScaling;
 				this.naturalAnchor = naturalAnchor;
 				this.insetAnchor = insetAnchor;
 			}
@@ -358,8 +366,12 @@ public enum Shapefile implements NicelyNamed {
 				return labelLowerLeft;
 			}
 
-			public double getScaling() {
-				return scaling;
+			public double getAreaScaling() {
+				return areaScaling;
+			}
+			
+			public double calculateDimensionScaling() {
+				return Math.sqrt(areaScaling);
 			}
 
 			public Coordinate getNaturalAnchor() {
@@ -369,10 +381,6 @@ public enum Shapefile implements NicelyNamed {
 			public Coordinate getInsetAnchor() {
 				return insetAnchor;
 			}
-		}
-
-		public Coordinate getLabelLowerLeft() {
-			return labelLowerLeft;
 		}
 	}
 
