@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: edu.iu.sci2.medline.test
+Bundle-Version: 1.0.0
+Fragment-Host: edu.iu.sci2.medline;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit
+Import-Package: edu.iu.sci2.testutilities,
+ org.osgi.framework;version="1.6.0"

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.medline.converter.medline_to_medlinetable_converter.Converter.component" immediate="false">
+	<implementation class="edu.iu.sci2.medline.converter.medline_to_medlinetable_converter.Converter$Factory"/>
+	<properties entry="OSGI-INF/converter/medline-to-medlinetable-converter.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

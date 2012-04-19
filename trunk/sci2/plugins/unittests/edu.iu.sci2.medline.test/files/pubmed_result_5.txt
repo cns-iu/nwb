@@ -1,0 +1,282 @@
+
+PMID- 22508310
+OWN - NLM
+STAT- Publisher
+DA  - 20120417
+IS  - 1098-6596 (Electronic)
+IS  - 0066-4804 (Linking)
+DP  - 2012 Apr 16
+TI  - The Antidepressant Sertraline Provides a Promising Therapeutic Option for
+      Neurotropic Cryptococcal Infections.
+AB  - Therapeutic treatment for systemic mycoses is severely hampered by the extremely 
+      limited number of antifungals. Treatment for fungal infections in the central
+      nervous system is further compounded by the poor CNS penetration of most
+      antifungals due to the blood-brain barrier. Only a few fungistatic azole drugs,
+      such as fluconazole, show reasonable CNS penetration. Here we demonstrate that
+      sertraline (brand name Zoloft), the most prescribed antidepressant, displays
+      potent antifungal activity against Cryptococcus neoformans, the major causative
+      agent of fungal meningitis. In the in vitro assays, this neurotrophic drug is
+      fungicidal to all natural Cryptococcus isolates tested at clinically relevant
+      concentrations. Furthermore, sertraline interacts synergistically or additively
+      with fluconazole against Cryptococcus. Importantly, consistent with our in vitro 
+      observations, sertraline alone reduces the brain fungal burden at a comparable
+      efficacy as fluconazole in a murine model of systemic cryptococcosis. It works
+      synergistically with fluconazole in reducing the fungal burden in brain, kidney, 
+      and spleen. In contrast to its potency against Cryptococcus, sertraline is less
+      effective against strains of Candida species and its interactions with
+      fluconazole against Candida strains are often antagonistic. Therefore, our data
+      suggest the unique application of sertraline against cryptococcosis. To
+      understand the antifungal mechanisms of sertraline, we screened the whole genome 
+      deletion collection of Saccharomyces cerevisiae for altered sertraline
+      susceptibility. Gene ontology analyses of selected mutations suggest that
+      sertraline perturbs translation. In vitro translation assays using fungal cell
+      extracts show that sertraline inhibits protein synthesis. Taken together, our
+      findings indicate the potential of adopting this antidepressant in treating
+      cryptococcal meningitis.
+AD  - Department of Biology, Texas A&M University, College Station, Texas, USA.
+AU  - Zhai B
+AU  - Wu C
+AU  - Wang L
+AU  - Sachs MS
+AU  - Lin X
+LA  - ENG
+PT  - JOURNAL ARTICLE
+DEP - 20120416
+TA  - Antimicrob Agents Chemother
+JT  - Antimicrobial agents and chemotherapy
+JID - 0315061
+EDAT- 2012/04/18 06:00
+MHDA- 2012/04/18 06:00
+CRDT- 2012/04/18 06:00
+AID - AAC.00212-12 [pii]
+AID - 10.1128/AAC.00212-12 [doi]
+PST - aheadofprint
+SO  - Antimicrob Agents Chemother. 2012 Apr 16.
+
+PMID- 22507479
+OWN - NLM
+STAT- In-Data-Review
+DA  - 20120417
+IS  - 1330-027X (Print)
+IS  - 1330-027X (Linking)
+VI  - 20
+IP  - 1
+DP  - 2012 Apr
+TI  - Five years of sucsessful prevention of malignant epidermal tumors: data from the 
+      referral center of dermatologic oncology, ministry of health and social welfare, 
+      croatia.
+PG  - 57
+AB  - The main goals of the Referral Center of Dermatologic Oncology, Ministry of
+      Health and Social Welfare, Republic of Croatia, set in 2006 included collection
+      and processing of epidemiological data on malignant epidermal tumors in Croatia, 
+      improved diagnosis and treatment of malignant epidermal tumors, promotion of
+      diagnosis and treatment of primary skin lymphomas, prevention of malignant skin
+      tumors, education of dermatovenereologists in the field of dermatologic oncology,
+      and collaboration and team approach in the field of dermatologic oncology. In
+      line with the conditions stated by the Ministry Rule Book, the Referral Center
+      had successfully performed the tasks and achieved good scientific and
+      professional results in upgrading prevention of various skin tumors. A total of
+      8174 minor surgical procedures were performed, including operative removal of
+      various pigment lesions, epidermal malignant tumors and deep biopsy for
+      inflammatory dermatoses. Superficial radiotherapy was performed in 820 patients. 
+      Photodynamic therapy with aminolevulinic acid (5-ALA) was used in 171 patients
+      with actinic keratoses, Bowen disease and broad superficial basal cell
+      carcinomas. The diagnosis of skin lymphoma was made in 114 patients. T-cell
+      primary skin lymphoma accounted for the majority of cases (77.5%), whereas the
+      diagnosis of B-cell primary skin lymphoma was made in ten (12.5%) patients.
+      Mycosis fungoides was the most common primary skin lymphoma, diagnosed in 94
+      patients, i.e. 90% of all T immunophenotype primary skin lymphomas. Excellent
+      collaboration and team approach has been established with pathologists,
+      hematologists and oncologists as necessary. Primary prevention included education
+      of the population at large, young people in particular, on the measures of
+      protection from excessive sun exposure. In the scope of secondary prevention, we 
+      invested all our knowledge and efforts in early diagnosis and early therapy of
+      malignant skin tumors, which is closely related to better prognosis and lower
+      treatment cost. Members of the Referral Center have regularly participated in the
+      project of skin tumor prevention, Euromelanoma Day Croatia since 2008, when the
+      Croatian Dermatovenereological Society joined this project launched by the
+      European Academy of Dermatology and Venereology.
+FAU - Ceovic, Romana
+AU  - Ceovic R
+LA  - eng
+PT  - Journal Article
+PL  - Croatia
+TA  - Acta Dermatovenerol Croat
+JT  - Acta dermatovenerologica Croatica : ADC
+JID - 9433781
+SB  - IM
+EDAT- 2012/04/18 06:00
+MHDA- 2012/04/18 06:00
+CRDT- 2012/04/18 06:00
+PST - ppublish
+SO  - Acta Dermatovenerol Croat. 2012 Apr;20(1):57.
+
+PMID- 22507002
+OWN - NLM
+STAT- In-Data-Review
+DA  - 20120417
+IS  - 1938-2936 (Electronic)
+IS  - 0046-225X (Linking)
+VI  - 41
+IP  - 2
+DP  - 2012 Apr
+TI  - Cumulative Impact of a Clover Cover Crop on the Persistence and Efficacy of
+      Beauveria bassiana in Suppressing the Pecan Weevil (Coleoptera: Curculionidae).
+PG  - 298-307
+AB  - The pecan weevil, Curculio caryae (Horn), is a key pest of pecan. Endemic levels 
+      of the entomopathogenic fungus Beauveria bassiana (Balsamo) Vuillemin can occur
+      in pecan orchards and contribute to natural control of C. caryae. Commercial
+      formulations of the fungus can also be applied for suppression of C. caryae. We
+      hypothesized that a clover cover crop enhances B. bassiana efficacy and
+      persistence (e.g., by protecting the fungus against abiotic environmental
+      stresses). The hypothesis was tested by conducting field trials in a pecan
+      orchard in Byron, GA, in 2009 and 2010. The study included four treatments
+      arranged in a factorial with two levels of fungus (endemic fungus only, and
+      application of a commercial B. bassiana product), and two levels of clover (white
+      clover, Trifolium repens L., and no clover). Fungal persistence was measured by
+      determining the number of CFUs per gram of soil over time (during 42 d
+      postapplication of B. bassiana in 2009 and 29 d in 2010). Efficacy was measured
+      by capturing naturally emerging C. caryae and subsequently determining mortality 
+      and mycosis (over 24 d in 2009 and 17 d in 2010). In 2009, greater prevalence of 
+      B. bassiana conidia was detected in plots receiving fungal applications compared 
+      with no fungus applications, and no clear effect of clover was observed in plots 
+      receiving B. bassiana applications in either year. In 2010, B. bassiana
+      prevalence in the endemic fungus plus clover treatment was higher than fungus
+      without clover, and was similar to plots receiving additional B. bassiana
+      applications. Given that we observed enhanced persistence of endemic B. bassiana 
+      in 2010 but not 2009, the impact of clover appears to be a cumulative effect.
+      Mortality of C. caryae (averaged over the sampling periods) ranged between 68-74%
+      in plots receiving B. bassiana applications and 51-56% in plots with endemic
+      fungus only. C. caryae mortality and mycosis data also provided evidence that
+      endemic B. bassiana efficacy was enhanced by clover relative to plots without
+      clover (with no clear clover effect on plots receiving fungus applications).
+      Thus, we conclude that natural control of C. caryae can increase when clover is
+      grown in pecan orchards with endemic populations of B. bassiana.
+AD  - USDA-ARS, Southeastern Fruit and Tree Nut Research Laboratory, Byron, GA 31008,
+      USA.
+FAU - Shapiro-Ilan, David I
+AU  - Shapiro-Ilan DI
+FAU - Gardner, Wayne A
+AU  - Gardner WA
+FAU - Wells, Lenny
+AU  - Wells L
+FAU - Wood, Bruce W
+AU  - Wood BW
+LA  - eng
+PT  - Journal Article
+PL  - United States
+TA  - Environ Entomol
+JT  - Environmental entomology
+JID - 7502320
+SB  - IM
+EDAT- 2012/04/18 06:00
+MHDA- 2012/04/18 06:00
+CRDT- 2012/04/18 06:00
+AID - 10.1603/EN11229 [doi]
+PST - ppublish
+SO  - Environ Entomol. 2012 Apr;41(2):298-307.
+
+PMID- 22506900
+OWN - NLM
+STAT- Publisher
+DA  - 20120417
+IS  - 1543-8392 (Electronic)
+IS  - 1543-8384 (Linking)
+DP  - 2012 Apr 16
+TI  - Towards understanding of toxic side effects of a polyene antibiotic amphotericin 
+      B: Fluorescence spectroscopy reveals widespread formation of the specific
+      supramolecular structures of the drug.
+AB  - Amphotericin B (AmB) is a lifesaving polyene antibiotic used widely to treat
+      deep-seated mycoses. Both the pharmaceutical effectiveness as well as toxic side 
+      effects depend on molecular organization of the drug. In the present study we
+      analyzed steady-state fluorescence, fluorescence anisotropy spectra, fluorescence
+      lifetimes and fluorescence anisotropy decays of AmB in the systems believed to
+      assure monomeric organization of the drug and in model lipid membranes. The
+      results of the analyses show that in all of the systems studied, the drug appears
+      in, at least, two spectral forms, interpreted as monomeric and aggregated.
+      Spectroscopic and fluorescence lifetime characteristics of both forms are
+      provided. Interpretation of the fluorescence anisotropy spectra of AmB
+      incorporated into liposomes formed with dipalmitoylphosphatidylcholine let
+      conclude that monomers of the drug are more tightly bound to the lipid membranes 
+      as compared to the aggregates and that AmB aggregates destabilize the membrane
+      structure. Structural model analysis, compared to the analysis of spectral
+      shifts, leads to the conclusion that basic constituents of AmB aggregated
+      structure is a tetramer composed of two hydrogen-bond-stabilized dimers, each
+      dimer formed by molecules twisted by ca. 170 deg. The tetramer itself can span
+      lipid bilayers and can act as a transmembrane ion channel. Specific aggregate
+      formation of AmB has been concluded as an universal and ubiquitous form of
+      molecular organization of the drug. This process is discussed in terms of toxic
+      side effects of AmB.
+AU  - Wasko P
+AU  - Luchowski R
+AU  - Tutaj K
+AU  - Grudzinski W
+AU  - Adamkiewicz P
+AU  - Gruszecki WI
+LA  - ENG
+PT  - JOURNAL ARTICLE
+DEP - 20120416
+TA  - Mol Pharm
+JT  - Molecular pharmaceutics
+JID - 101197791
+EDAT- 2012/04/18 06:00
+MHDA- 2012/04/18 06:00
+CRDT- 2012/04/18 06:00
+AID - 10.1021/mp300143n [doi]
+PST - aheadofprint
+SO  - Mol Pharm. 2012 Apr 16.
+
+PMID- 22499997
+OWN - NLM
+STAT- Publisher
+DA  - 20120413
+IS  - 1460-2091 (Electronic)
+IS  - 0305-7453 (Linking)
+DP  - 2012 Apr 11
+TI  - Pharmacokinetics, tissue distribution and immunomodulatory effect of intralipid
+      formulation of nystatin in mice.
+AB  - OBJECTIVES: We developed a novel lipid formulation of nystatin suitable for
+      parenteral administration, nystatin-intralipid (NYT-IL), with antifungal activity
+      and reduced toxicity in mice. We investigated the pharmacokinetics, tissue
+      distribution and immunomodulatory effect of NYT-IL in mice. METHODS: Nystatin
+      levels in serum and organs were determined using HPLC after NYT-IL or nystatin
+      administration in mice. The levels of the pro-inflammatory cytokines tumour
+      necrosis factor-alpha (TNF-alpha) and interferon-gamma (IFN-gamma) and the
+      anti-inflammatory cytokine interleukin 10 (IL-10) produced by splenocytes from
+      mice injected with NYT-IL or nystatin were evaluated by an ELISA assay. RESULTS: 
+      Injection of NYT-IL resulted in similar levels and similar kinetics of nystatin
+      in serum, higher concentrations in the liver and lower concentrations in the
+      kidneys, in comparison with nystatin injection. Injection of mice with NYT-IL
+      yielded higher levels of IL-10 than that of nystatin, whereas the levels of
+      TNF-alpha and IFN-gamma induced by NYT-IL were lower than those elicited by
+      nystatin. CONCLUSIONS: Since polyene treatment is associated with nephrotoxicity,
+      lower levels of nystatin in the kidneys following NYT-IL injection suggest the
+      possibility of reduced toxicity. As the acute infusion-related adverse effects
+      associated with polyene treatment are considered to be induced by
+      pro-inflammatory cytokines, a higher level of anti-inflammatory and lower levels 
+      of pro-inflammatory cytokines elicited by NYT-IL administration suggest the
+      possibility of amelioration of such effects. In summary, the altered
+      pharmacokinetics, tissue distribution and immune response due to the use of this 
+      intralipid formulation of nystatin merit further research towards the development
+      of a therapeutic agent against invasive mycoses.
+AD  - Department of Clinical Microbiology and Immunology, Sackler School of Medicine,
+      Tel-Aviv University, Tel-Aviv, Israel.
+AU  - Semis R
+AU  - Nili SS
+AU  - Munitz A
+AU  - Zaslavsky Z
+AU  - Polacheck I
+AU  - Segal E
+LA  - ENG
+PT  - JOURNAL ARTICLE
+DEP - 20120411
+TA  - J Antimicrob Chemother
+JT  - The Journal of antimicrobial chemotherapy
+JID - 7513617
+EDAT- 2012/04/14 06:00
+MHDA- 2012/04/14 06:00
+CRDT- 2012/04/14 06:00
+AID - dks117 [pii]
+AID - 10.1093/jac/dks117 [doi]
+PST - aheadofprint
+SO  - J Antimicrob Chemother. 2012 Apr 11.

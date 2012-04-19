@@ -95,13 +95,17 @@ public class EntityUtils {
 	public static <S extends FileField> Integer getNullableInteger(FileTuple<S> source,
 			S sourceKey) {
 		Object contents = removeArrayWrapper(source.get(sourceKey.getName()), null);
-		if (contents instanceof Integer) {
-			return (Integer) contents;
-		} else if (contents instanceof Number) {
-			return ((Number) contents).intValue();
-		} else if (contents instanceof String) {
+		return forceConvert(contents);
+	}
+	
+	private static Integer forceConvert(Object integerWannaBe) {
+		if (integerWannaBe instanceof Integer) {
+			return (Integer) integerWannaBe;
+		} else if (integerWannaBe instanceof Number) {
+			return ((Number) integerWannaBe).intValue();
+		} else if (integerWannaBe instanceof String) {
 			try {
-				return Integer.valueOf((String) contents);
+				return Integer.valueOf((String) integerWannaBe);
 			} catch (NumberFormatException e) {
 				// TODO: throw something?  log?
 				// For example: the volume "number" might be "105 PEDIATRICS"
