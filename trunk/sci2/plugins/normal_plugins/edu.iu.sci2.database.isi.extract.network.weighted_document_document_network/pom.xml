@@ -11,4 +11,10 @@
   <artifactId>edu.iu.sci2.database.isi.extract.network.weighted_document_document_network</artifactId>
   <version>0.0.1</version>
   <packaging>eclipse-plugin</packaging>
+  <properties>
+	  <!-- Only the first of these two properties should be required, but it's a Tycho bug.
+	  https://bugs.eclipse.org/bugs/show_bug.cgi?id=373759 -->
+	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	  <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+  </properties>
 </project>
