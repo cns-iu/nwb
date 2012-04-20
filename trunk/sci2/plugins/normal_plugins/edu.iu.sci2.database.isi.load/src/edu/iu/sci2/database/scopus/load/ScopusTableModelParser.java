@@ -109,7 +109,6 @@ public class ScopusTableModelParser {
 		RowItemContainer<ResearchAddress> researchAddresses = createRelationshipContainer(
 				ISI.RESEARCH_ADDRESSES_TABLE_NAME, ResearchAddress.SCHEMA);
 		dbTables.add(researchAddresses);
-		
 
 		// Not filled with data, but here to complete the table model.
 		dbTables.add(createRelationshipContainer(ISI.CITED_REFERENCES_TABLE_NAME, CitedReference.SCHEMA));
@@ -204,10 +203,10 @@ public class ScopusTableModelParser {
 
 
 	private static <T extends Entity<T>> EntityContainer<T> createEntityContainer(String tableName, Schema<T> schema) {
-		return new EntityContainer<T>(tableName, schema);
+		return new EntityContainer<T>(tableName, schema, 100);
 	}
 	private static <T extends RowItem<T>> RowItemContainer<T> createRelationshipContainer(String tableName, Schema<T> schema) {
-		return new RelationshipContainer<T>(tableName, schema);
+		return new RelationshipContainer<T>(tableName, schema, 100);
 	}
 	
 	private static List<Address> splitResearchAddresses(
