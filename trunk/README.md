@@ -6,7 +6,7 @@ Bench, the Science of Science (Sci2) tool, and Epidemiology Cyberinfrastructure
 
 You can build Sci2 using a combination of Ant and Maven. The other two tools
 have not been converted to use Maven yet, and have a fairly tricky build
-process.
+process, which is not covered here.
 
 The build is done using Tycho, which requires Maven version 3.
 
@@ -76,7 +76,7 @@ Now all the plugins should be present in the ant-parent/plugins directory.
 
 The second script processes the Maven-built, runnable versions of Sci2, which
 lack these plugins. This ant script,
-sci2/deployment/edu.iu.sci2.releng/addAntBuiltPlugins.xml, consults a file
+sci2/deployment/edu.iu.sci2.releng/postMavenTasks.xml, consults a file
 (sci2-nonpde-plugins.txt in that same directory) and adds all the plugins named
 there into the zip files produced by the Maven build. The resulting complete
 runnable tools are then placed in
@@ -87,10 +87,3 @@ will notice the newly-added plug-ins. To run the step, run
     ant -f sci2/deployment/edu.iu.sci2.releng/postMavenTasks.xml
 
 So now you should have a complete build of Sci2!  Yay!
-
-If you're on one of IU's Cyberinfrastructure for Network Science Center's
-servers, you can take it one step further with
-
-    ant -f sci2/deployment/edu.iu.sci2.releng/postMavenTasks.xml deploy
-    
-to deploy a nightly build.
