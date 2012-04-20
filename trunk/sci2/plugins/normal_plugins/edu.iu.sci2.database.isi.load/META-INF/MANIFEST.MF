@@ -5,7 +5,8 @@ Bundle-SymbolicName: edu.iu.sci2.database.isi.load
 Bundle-Version: 0.0.5
 Bundle-ClassPath: .
 Import-Package: com.google.common.base,
- com.google.common.collect;version="8.0.0",
+ com.google.common.collect,
+ com.google.common.hash;version="11.0.1",
  edu.iu.cns.database.load.framework,
  edu.iu.cns.database.load.framework.utilities,
  edu.iu.nwb.converter.prefusecsv.reader,

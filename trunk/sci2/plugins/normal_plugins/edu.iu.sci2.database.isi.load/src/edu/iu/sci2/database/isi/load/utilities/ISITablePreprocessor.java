@@ -1,7 +1,5 @@
 package edu.iu.sci2.database.isi.load.utilities;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,10 +10,14 @@ import org.cishell.utilities.StringUtilities;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
+
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
+
 import edu.iu.nwb.shared.isiutil.ISITag;
 
 public class ISITablePreprocessor {
-	public static final String HASING_ALGORITHM = "SHA-512";
+	public static final String NON_ISI_UNIQUE_ID_PREFIX = "sci2-generated-id:";
 
 	/// Side-effects originalTable.
 	public static void generateMissingUniqueIDs(Table table) {
@@ -59,28 +61,24 @@ public class ISITablePreprocessor {
     	return isiUniqueArticleIdentifiersToRows.values();
     }
 
-	private static String hashRow(Tuple row) {
-		try {
-			MessageDigest hasher = MessageDigest.getInstance(HASING_ALGORITHM);
+	// default visibility just for testing
+	static String hashRow(Tuple row) {
+		Hasher hasher = Hashing.md5().newHasher();
 
-			for (int ii = 0; ii < row.getColumnCount(); ii++) {
-				String cellValue = StringUtilities.emptyStringIfNull(row.get(ii));
-				hasher.update(cellValue.getBytes());
-			}
-
-			return new String(hasher.digest());
-		} catch (NoSuchAlgorithmException e) {
-			StringBuffer fakeHash = new StringBuffer();
-
-			for (int ii = 0; ii < row.getColumnCount(); ii++) {
-				String cellValue = StringUtilities.simpleClean(row.getString(ii));
-				fakeHash.append(cellValue);
-			}
-
-			return fakeHash.toString();
+		for (int ii = 0; ii < row.getColumnCount(); ii++) {
+			// Need to put column name so that a record that's just
+			// title:"SomeRandomData"
+			// is different from one that's just
+			// abstract:"SomeRandomData"
+			hasher.putString(row.getColumnName(ii));
+			
+			String cellValue = StringUtilities.emptyStringIfNull(row.get(ii));
+			hasher.putString(cellValue);
 		}
-	}
 
+		return NON_ISI_UNIQUE_ID_PREFIX + hasher.hash().toString();
+	}
+	
 	private static boolean duplicateDocumentExists(
 			String isiUniqueArticleIdentifier,
 			Map<String, Integer> isiUniqueArticleIdentifiersToRows) {
