@@ -26,6 +26,6 @@ public class ISIDatabaseLoaderAlgorithmFactory implements AlgorithmFactory {
     
     private static AlgorithmFactory getMergeIdentical(BundleContext bundleContext) {
     	return AlgorithmUtilities.getAlgorithmFactoryByPID(
-        		"edu.iu.sci2.medline.validator.Validator", bundleContext);
+    			"edu.iu.sci2.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm", bundleContext);
     }
 }
