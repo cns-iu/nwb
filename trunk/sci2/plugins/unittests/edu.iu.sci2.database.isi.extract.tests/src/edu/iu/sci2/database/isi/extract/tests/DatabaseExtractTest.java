@@ -8,7 +8,6 @@ import java.util.Hashtable;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -75,12 +74,8 @@ public class DatabaseExtractTest {
 				pid, bundleContext);
 		
 		Algorithm algo = fact.createAlgorithm(new Data[] {databaseData}, new Hashtable<String, Object>(), ciContext);
-		try {
-			Data[] results = algo.execute();
-			assertTrue(pid + " didn't generate any Data results", results.length > 0);
-		} catch (AlgorithmExecutionException e) {
-			throw new AssertionError("Error when running " + pid, e);
-		}
+		Data[] results = algo.execute(); // may throw AlgorithmExecutionException
+		assertTrue(pid + " didn't generate any Data results", results.length > 0);
 	}
 	
 }

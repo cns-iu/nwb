@@ -33,7 +33,7 @@ public class ExtractCoCitationDocumentsAllTest {
 	private static Graph resultGraph;
 	
 	@BeforeClass
-	public static void runAlgorithm() throws IOException, SQLException, DatabaseCreationException {
+	public static void runAlgorithm() throws IOException, SQLException, DatabaseCreationException, AlgorithmExecutionException {
 		database = FivePapersHelper.createDatabase();
 		
 		// Set to output of each step in the process
@@ -47,13 +47,9 @@ public class ExtractCoCitationDocumentsAllTest {
 			Algorithm algo = fact.createAlgorithm(new Data[] {dbData}, 
 					new Hashtable<String, Object>(), Activator.getCiContext());
 			
-			try {
-				Data[] results = algo.execute();
-				assertTrue(pid + " didn't generate any Data results", results.length > 0);
-				dbData = results[0];
-			} catch (AlgorithmExecutionException e) {
-				throw new AssertionError("Error when running " + pid, e);
-			}
+			Data[] results = algo.execute();
+			assertTrue(pid + " didn't generate any Data results", results.length > 0);
+			dbData = results[0];
 		}
 		
 		resultGraph = (Graph) dbData.getData();
