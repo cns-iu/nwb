@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/edu.iu.sci2.future.feature_0.0.1.qualifier.jar" id="edu.iu.sci2.future.feature" version="0.0.1.qualifier">
+      <category name="edu.iu.sci2.future"/>
+   </feature>
+   <category-def name="edu.iu.sci2.future" label="Future plug-ins of sci2"/>
+</site>

@@ -13,6 +13,8 @@
     <module>edu.iu.sci2.gui.brand.welcometext</module>
     <module>edu.iu.sci2.javaalgorithms.feature</module>
     <module>edu.iu.sci2.releng</module>
+    <module>edu.iu.sci2.future.feature</module>
+    <module>edu.iu.sci2.future.p2</module>
   </modules>
   <parent>
   	<groupId>edu.iu.sci2</groupId>
