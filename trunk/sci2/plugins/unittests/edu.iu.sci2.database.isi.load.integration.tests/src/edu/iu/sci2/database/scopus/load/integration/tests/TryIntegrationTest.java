@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.isi.load.integration.tests;
+package edu.iu.sci2.database.scopus.load.integration.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

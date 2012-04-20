@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.database.isi.load.integration.tests
 Bundle-SymbolicName: edu.iu.sci2.database.isi.load.integration.tests
 Bundle-Version: 1.0.1
-Bundle-Activator: edu.iu.sci2.database.isi.load.integration.tests.Activator
+Bundle-Activator: edu.iu.sci2.database.scopus.load.integration.tests.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: edu.iu.cns.database.load.framework,
