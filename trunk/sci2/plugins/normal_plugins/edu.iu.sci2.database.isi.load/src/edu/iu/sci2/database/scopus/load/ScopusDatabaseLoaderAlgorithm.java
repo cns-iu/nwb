@@ -148,7 +148,7 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
 				ProgressMonitor.CANCELLABLE |
 				ProgressMonitor.PAUSEABLE),
 			totalWork);
-		this.progressMonitor.describeWork("Loading ISI data into a database.");
+		this.progressMonitor.describeWork("Loading Scopus data into a database.");
     }
 
     private void stopProgressMonitor() {
@@ -160,7 +160,7 @@ public class ScopusDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackab
     	Dictionary<String, Object> metadata = data.getMetadata();
     	metadata.put(
     		DataProperty.LABEL,
-    		"ISI Database From " +
+    		"Publication Database From " +
     			FileUtilities.extractFileNameWithExtension(parentData.getData().toString()));
     	metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
     	metadata.put(DataProperty.PARENT, parentData);
