@@ -230,7 +230,6 @@ public class PageDirector implements Paintable {
 			painter.add(
 					new ComplexLabelPainter.Builder(headerPosition, layout.getFont(TextType.LEGEND), Color.BLACK)
 					.addLine(TITLE, layout.getFont(TextType.TITLE))
-					.addLine("Generated from Cornell NSF Data")
 					.addLine(getTimeStamp())
 					.withLineSpacing(LINE_SPACING)
 					.build());
