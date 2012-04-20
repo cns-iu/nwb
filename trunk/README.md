@@ -8,6 +8,8 @@ You can build Sci2 using a combination of Ant and Maven. The other two tools
 have not been converted to use Maven yet, and have a fairly tricky build
 process.
 
+The build is done using Tycho, which requires Maven version 3.
+
 ## Building CIShell (prerequisite)
 
 To build Sci2 from source, you will first need to build CIShell. CIShell is
