@@ -50,6 +50,6 @@
 	</target>
 
 	<target name="clean" description="Clean build directory">
-		<delete dir="${build.dir}"/>
+		<delete dir="${build.dir}" failonerror="false"/>
 	</target>
 </project>
