@@ -229,16 +229,25 @@ public abstract class AbstractPubmedTableModelParser {
 			fullName.append(parsedName.getForeName());
 			if (!parsedName.getInitials().isEmpty()) {
 				if (parsedName.getInitials().length() > 1) {
+					if (! fullName.toString().isEmpty()) {
+						fullName.append(" ");
+					}
 					fullName.append(parsedName.getInitials().charAt(1));
 				}
 			}
 		} else {
 			if (!parsedName.getInitials().isEmpty()) {
+				if (! fullName.toString().isEmpty()) {
+					fullName.append(" ");
+				}
 				fullName.append(parsedName.getInitials());
 			}
 		}
 
 		if (!parsedName.getLastName().isEmpty()) {
+			if (! fullName.toString().isEmpty()) {
+				fullName.append(" ");
+			}
 			fullName.append(parsedName.getLastName());
 		}
 		return fullName.toString();
