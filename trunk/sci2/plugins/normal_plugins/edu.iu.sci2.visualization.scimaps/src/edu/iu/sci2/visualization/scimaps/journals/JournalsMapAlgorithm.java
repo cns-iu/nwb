@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.scimaps.journals;
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -253,6 +254,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		psProperties.setProperty(PSGraphics2D.FIT_TO_PAGE, false);
 		psProperties.setProperty(PSGraphics2D.PAGE_SIZE, PSGraphics2D.CUSTOM_PAGE_SIZE);
 		psProperties.setProperty(PSGraphics2D.CUSTOM_PAGE_SIZE, pageManger.pageDimensions());
+		psProperties.setProperty(PSGraphics2D.PAGE_MARGINS, new Insets(0, 0, 0, 0));
 		
 		PSGraphics2D psGraphic = new PSGraphics2D(out, pageManger.pageDimensions());
 		psGraphic.setProperties(psProperties);
