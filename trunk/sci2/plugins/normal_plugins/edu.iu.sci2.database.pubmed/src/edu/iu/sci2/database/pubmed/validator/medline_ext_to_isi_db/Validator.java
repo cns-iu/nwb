@@ -26,6 +26,7 @@ import com.google.common.base.Preconditions;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
+import edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db.PubmedFileTableModelParser.TableModelParsingException;
 
 /**
  * This 'validates' a pubmed file to an isi:db. It is designed to load the
@@ -94,20 +95,20 @@ public class Validator implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
+		
+		Data[] validMedlineFileData = this.validator.execute();
+		Data rootData = getData(validMedlineFileData);
+		File validMedlineFile = getFile(rootData);
+		DatabaseModel model;
 		try {
-			System.out.println("Trying");
-			Data[] validMedlineFileData = this.validator.execute();
-			Data rootData = getData(validMedlineFileData);
-			File validMedlineFile = getFile(rootData);
-			DatabaseModel model = new PubmedFileTableModelParser(
+			model = new PubmedFileTableModelParser(
 					validMedlineFile, this.logger).getModel();
-			Database database = getDatabase(model);
-			return createOutputData(database, rootData);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			System.out.println("Caught an e");
-			return null;
+		} catch (TableModelParsingException e) {
+			throw new AlgorithmExecutionException(e);
 		}
+		Database database = getDatabase(model);
+		return createOutputData(database, rootData);
+	
 	}
 
 	private File getFile(Data validMedlineFileData)
