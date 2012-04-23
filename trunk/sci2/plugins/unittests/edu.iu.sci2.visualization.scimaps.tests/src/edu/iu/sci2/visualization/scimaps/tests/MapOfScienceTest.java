@@ -72,8 +72,8 @@ public class MapOfScienceTest {
 
 	
 	@Test
-	public void testCountOfMappedSubdiciplines() {
-		assertTrue(this.mapOfScience.countOfMappedSubdiciplines() == 83);
+	public void testCountOfMappedSubdisciplines() {
+		assertTrue(this.mapOfScience.countOfMappedSubdisciplines() == 83);
 	}
 	
 	@Test

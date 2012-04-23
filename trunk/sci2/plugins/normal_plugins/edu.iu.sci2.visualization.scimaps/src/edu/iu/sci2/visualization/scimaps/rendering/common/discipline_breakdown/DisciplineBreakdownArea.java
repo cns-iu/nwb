@@ -7,6 +7,8 @@ import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
@@ -114,7 +116,18 @@ public class DisciplineBreakdownArea implements PageElement{
 							formatter.format(journal.getJournalHitCount())
 									+ " " + journal.getJournalName(),
 							state.current, columnWidth);
-					state.drawStringAndTranslate(journalName);
+					// Bold the journal hit count.  The size trimming from above might be a bit off because of the bold, but the margin should safeguard any errors.
+					Pattern journalCountNamePattern = Pattern.compile("^(\\S+) (.+)$", Pattern.MULTILINE);
+					Matcher matcher = journalCountNamePattern.matcher(journalName);
+					if (matcher.matches() && matcher.groupCount() == 2) {
+						String journalHits = matcher.group(1);
+						String journalShortenedName = matcher.group(2);
+						drawJournalHitsAndName(state, journalHits,
+								journalShortenedName);
+					} else {
+						state.drawStringAndTranslate(journalName);
+					}
+					
 					if (!journalSizeSanityChecked) {
 						journalSizeSanityChecked = true;
 						int journalSpace = state.current.getFontMetrics()
@@ -135,6 +148,19 @@ public class DisciplineBreakdownArea implements PageElement{
 			state.restore();
 		}
 		state.restore();
+	}
+
+	private static void drawJournalHitsAndName(GraphicsState state,
+			String journalHits, String journalName) {
+		state.setBoldFont(journalFont, journalFontSize);
+		state.current.drawString(journalHits, 0, 0);
+		double journalHitsWrittenWidth = state.current.getFontMetrics().getStringBounds(journalHits, state.current).getWidth();
+		state.current.translate(journalHitsWrittenWidth, 0.0);
+		state.setFont(journalFont, journalFontSize);
+		state.drawStringAndTranslate(" " + journalName);
+		
+		// Translate back to the start for the next line to begin
+		state.current.translate(-journalHitsWrittenWidth, 0.0);
 	}
 
 	private static String shortenIfNeeded(String string, Graphics2D g2d,

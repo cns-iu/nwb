@@ -109,21 +109,21 @@ public class MapOfScience {
 	}
 
 	/**
-	 * Return a float representing the number of found subdiciplines.
+	 * Return a float representing the number of found subdisciplines.
 	 * 
 	 * @return
 	 */
-	public float countOfMappedSubdiciplines() {
+	public float countOfMappedSubdisciplines() {
 		return this.mappingResult.getMappedResult().size();
 	}
 
 	/**
-	 * Return a string representing a pretty version of the found subdiciplines.
+	 * Return a string representing a pretty version of the found subdisciplines.
 	 * 
 	 * @return
 	 */
-	public String prettyCountOfMappedSubdiciplines() {
-		float count = countOfMappedSubdiciplines();
+	public String prettyCountOfMappedSubdisciplines() {
+		float count = countOfMappedSubdisciplines();
 		return formatter.format(count);
 	}
 

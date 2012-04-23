@@ -49,7 +49,7 @@ public class PageLegend implements PageElement{
 		state.current.translate(this.leftBoundary, this.topBoundary);
 
 		String title = "Legend";
-		String area = "Circle Area: Fractional Journal Count";
+		String area = "Circle area: Fractional Journal Count";
 		String unclassified = "Unclassified = " + this.numberOfUnclassified;
 		String minimum = "Minimum = " + formatter.format(this.minimumValue);
 		String maximum = "Maximum = " + formatter.format(this.maximumValue);

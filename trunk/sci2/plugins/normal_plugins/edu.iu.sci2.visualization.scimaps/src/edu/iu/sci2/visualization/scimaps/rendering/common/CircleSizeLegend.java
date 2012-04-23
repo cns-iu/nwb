@@ -81,7 +81,7 @@ public class CircleSizeLegend implements PageElement {
 		state.current.drawString(this.minLabel, labelX, minLabelY);
 		state.drawCircle((int) circleX, (int) midCircleY, (int) midRadius);
 		state.current.drawString(this.midLabel, labelX, midLabelY);
-		state.drawCircle((int) circleX, (int) maxCircleY, (int) maxRadius, 2);
+		state.drawCircle((int) circleX, (int) maxCircleY, (int) maxRadius);
 		state.current.drawString(this.maxLabel, labelX, maxLabelY);
 
 		state.restore();

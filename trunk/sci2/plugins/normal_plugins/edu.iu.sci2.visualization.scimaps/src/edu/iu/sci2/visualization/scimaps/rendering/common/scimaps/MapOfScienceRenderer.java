@@ -92,7 +92,7 @@ public class MapOfScienceRenderer implements PageElement{
 		state.current.translate(0, inch(.33f));
 
 		// SOMEDAY fix the whole map of science so that the x and y in the
-		// dicipline can be used to render it.
+		// discipline can be used to render it.
 
 		renderDisciplineLabel(state, "Social Sciences",
 				Disciplines.getDisciplineById("13"), inch(6.2f), inch(-1));

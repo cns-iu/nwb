@@ -25,10 +25,10 @@ public class Header implements PageElement{
 		this.generatedFrom = "Generated from " + generatedFrom;
 
 		this.publicationMapping = String
-				.format("%s out of %s publications were mapped to %s subdiciplines and %s diciplines.",
+				.format("%s out of %s publications were mapped to %s subdisciplines and %s disciplines.",
 						mapOfScience.prettyCountOfMappedPublications(),
 						mapOfScience.prettyCountOfPublications(),
-						mapOfScience.prettyCountOfMappedSubdiciplines(),
+						mapOfScience.prettyCountOfMappedSubdisciplines(),
 						mapOfScience.prettyCountOfDisciplinesUsed());
 		DateTime dateTime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
