@@ -21,6 +21,7 @@
 		<module>edu.iu.sci2.database.isi.load.tests</module>
 		<module>edu.iu.sci2.database.isi.load.integration.tests</module>
 		<module>edu.iu.sci2.visualization.temporalbargraph.tests</module>
+		<module>edu.iu.sci2.medline.test</module>
 		<module>edu.iu.sci2.database.isi.extract.tests</module>
 	</modules>
 
