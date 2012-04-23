@@ -253,9 +253,7 @@ public abstract class AbstractPubmedTableModelParser {
 
 			MedlineField medlineField = DOCUMENT_TO_MEDLINE.get(documentField);
 
-			if (medlineField.getFieldType() == String.class) {
-				// TODO Better type checking
-				if (documentField.type() != DerbyFieldType.TEXT) {
+			if (! DerbyFieldType.typesAreCompatible(medlineField.getFieldType(), documentField.type())) {
 					logger.log(
 							LogService.LOG_WARNING,
 							"The medline field "
@@ -264,12 +262,7 @@ public abstract class AbstractPubmedTableModelParser {
 									+ documentField
 									+ ".\nThe created database table might have errors as a result of skipping this field.");
 					continue;
-				}
-			} else {
-				logger.log(LogService.LOG_ERROR,
-						"Currently, only String medline fields are supported.");
 			}
-
 			Object medlineValue = medlineValues.get(medlineField);
 			if (medlineValue != null) {
 				attributes.put(documentField.name(), medlineValue);

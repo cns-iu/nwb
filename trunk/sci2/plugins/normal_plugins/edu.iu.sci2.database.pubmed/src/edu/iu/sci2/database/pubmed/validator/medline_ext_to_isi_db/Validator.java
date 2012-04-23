@@ -95,6 +95,7 @@ public class Validator implements Algorithm {
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
+			System.out.println("Trying");
 			Data[] validMedlineFileData = this.validator.execute();
 			Data rootData = getData(validMedlineFileData);
 			File validMedlineFile = getFile(rootData);
@@ -102,8 +103,9 @@ public class Validator implements Algorithm {
 					validMedlineFile, this.logger).getModel();
 			Database database = getDatabase(model);
 			return createOutputData(database, rootData);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
+			System.out.println("Caught an e");
 			return null;
 		}
 	}

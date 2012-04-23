@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cishell.utilities.NumberUtilities;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -84,6 +86,9 @@ public class MedlineRecord {
 	 * {@code fields} that can't be matched to a {@linkplain MedlineField} are skipped.
 	 */
 	private void add(String field, String value) {
+		Preconditions.checkArgument(field != null, "The field must not be null.");
+		Preconditions.checkArgument(value != null, "The value must not be null.");
+		
 		MedlineField medlineField = MedlineField
 				.getMedlineFieldFromField(field);
 		if (medlineField == null) {
@@ -91,17 +96,28 @@ public class MedlineRecord {
 			return;
 		}
 
-		// TODO better type checking
 		if (medlineField.getFieldType() != value.getClass()) {
 			if (medlineField.getFieldType().isAssignableFrom(value.getClass())) {
 				Object checkedValue = medlineField.getFieldType().cast(value);
 				this.appendFieldValue(medlineField, checkedValue);
+			} else if (medlineField.getFieldType() == Integer.class) {
+				Integer parsedValue = NumberUtilities.interpretObjectAsInteger(value);
+				if (parsedValue != null) {
+					this.appendFieldValue(medlineField, parsedValue);
+				} else {
+					this.appendFieldValue(medlineField, value);
+				}
+			} else {
+				System.err.print(medlineField + "'s type '" + medlineField.getFieldType() + "' is an unsupported type.\n");
 			}
+		} else {
+			this.appendFieldValue(medlineField, value);
 		}
-		this.appendFieldValue(medlineField, value);
 	}
 
 	private void appendFieldValue(MedlineField field, Object value) {
+		Preconditions.checkArgument(field != null, "The field must not be null.");
+		Preconditions.checkArgument(value != null, "The value must not be null.");
 		Preconditions.checkArgument(
 				field.getFieldType().isAssignableFrom(value.getClass()),
 				"The object provided's class '" + value.getClass().getName()

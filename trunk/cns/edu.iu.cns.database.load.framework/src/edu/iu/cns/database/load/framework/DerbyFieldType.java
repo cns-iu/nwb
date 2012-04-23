@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMultimap;
+
 import edu.iu.cns.database.load.framework.exception.InvalidDerbyFieldTypeException;
 
 public enum DerbyFieldType {
@@ -17,11 +19,10 @@ public enum DerbyFieldType {
 			return super.getDerbyQueryStringRepresentation() + " FOR BIT DATA";
 		}
 
-		public String createDerbyQueryStringRepresentation(String specificationsString) {
-			return
-				super.getDerbyQueryStringRepresentation() +
-				"(" + specificationsString + ")" +
-				" FOR BIT DATA";
+		public String createDerbyQueryStringRepresentation(
+				String specificationsString) {
+			return super.getDerbyQueryStringRepresentation() + "("
+					+ specificationsString + ")" + " FOR BIT DATA";
 		}
 	},
 	// BIT(Types.BIT, "NOT VALID"),
@@ -35,9 +36,11 @@ public enum DerbyFieldType {
 	DECIMAL(Types.DECIMAL, "Decimal", "DECIMAL") {
 		// TODO: Override original createDerbyQueryStringRepresentation?
 		@SuppressWarnings("unused")
-		public String createDerbyQueryStringRepresentation(int precision, int scale) {
+		public String createDerbyQueryStringRepresentation(int precision,
+				int scale) {
 			// TODO: Add error checking for constraints?
-			return createDerbyQueryStringRepresentation(precision + ", " + scale);
+			return createDerbyQueryStringRepresentation(precision + ", "
+					+ scale);
 		}
 	},
 	// DISTINCT(Types.DISTINCT, "NOT VALID"),
@@ -45,15 +48,18 @@ public enum DerbyFieldType {
 	FLOAT(Types.FLOAT, "Float", "FLOAT", false),
 	INTEGER(Types.INTEGER, "Integer", "INTEGER", false),
 	// JAVA_OBJECT(Types.JAVA_OBJECT, "NOT VALID"),
-	LONGVARBINARY(Types.LONGVARBINARY, "Long Bit String", "LONG VARCHAR FOR BIT DATA", false),
+	LONGVARBINARY(Types.LONGVARBINARY, "Long Bit String",
+			"LONG VARCHAR FOR BIT DATA", false),
 	LONGVARCHAR(Types.LONGVARCHAR, "Long String", "LONG VARCHAR", false),
 	// NULL(Types.NULL, "NOT VALID"),
 	NUMERIC(Types.NUMERIC, "Number", "NUMERIC") {
 		// TODO: Override original createDerbyQueryStringRepresentation?
 		@SuppressWarnings("unused")
-		public String createDerbyQueryStringRepresentation(int precision, int scale) {
+		public String createDerbyQueryStringRepresentation(int precision,
+				int scale) {
 			// TODO: Add error checking for constraints?
-			return createDerbyQueryStringRepresentation(precision + ", " + scale);
+			return createDerbyQueryStringRepresentation(precision + ", "
+					+ scale);
 		}
 	},
 	// OTHER(Types.OTHER, "NOT VALID"),
@@ -61,11 +67,8 @@ public enum DerbyFieldType {
 	// REF(Types.REF, "NOT VALID"),
 	SMALLINT(Types.SMALLINT, "Small Integer", "SMALLINT", false),
 	// STRUCT(Types.STRUCT, "NOT VALID"),
-	TEXT(
-		Types.VARCHAR,
-		"Maximum-Lengthed String",
-		"VARCHAR(" + 32000 + ")",
-		false),
+	TEXT(Types.VARCHAR, "Maximum-Lengthed String", "VARCHAR(" + 32000 + ")",
+			false),
 	TIME(Types.TIME, "Time", "TIME", false),
 	TIMESTAMP(Types.TIMESTAMP, "Time Stamp", "TIMESTAMP", false),
 	// TINYINT(Types.TINYINT, "NOT VALID"),
@@ -74,33 +77,29 @@ public enum DerbyFieldType {
 			return super.getDerbyQueryStringRepresentation() + " FOR BIT DATA";
 		}
 
-		public String createDerbyQueryStringRepresentation(String specificationsString) {
-			return
-				super.getDerbyQueryStringRepresentation() +
-				"(" + specificationsString + ")" +
-				" FOR BIT DATA";
+		public String createDerbyQueryStringRepresentation(
+				String specificationsString) {
+			return super.getDerbyQueryStringRepresentation() + "("
+					+ specificationsString + ")" + " FOR BIT DATA";
 		}
 	},
 	VARCHAR(Types.VARCHAR, "String", "VARCHAR(" + 32000 + ")");
 
 	public static final int MAX_VARCHAR_SIZE = 32000;
 
-	private static final Map<String, DerbyFieldType> TYPES_BY_HUMAN_READABLE_NAME =
-		constructTypesByHumanReadableName();
+	private static final Map<String, DerbyFieldType> TYPES_BY_HUMAN_READABLE_NAME = constructTypesByHumanReadableName();
 
 	private int sqlType;
 	private String humanReadableName;
 	private String derbyQueryStringRepresentation;
 	private boolean shouldAppendSpecifications;
 
-	private DerbyFieldType(
-			int sqlType, String humanReadableName, String derbyQueryStringRepresentation) {
+	private DerbyFieldType(int sqlType, String humanReadableName,
+			String derbyQueryStringRepresentation) {
 		this(sqlType, humanReadableName, derbyQueryStringRepresentation, true);
 	}
 
-	private DerbyFieldType(
-			int sqlType,
-			String humanReadableName,
+	private DerbyFieldType(int sqlType, String humanReadableName,
 			String derbyQueryStringRepresentation,
 			boolean shouldAppendSpecifications) {
 		this.sqlType = sqlType;
@@ -125,33 +124,47 @@ public enum DerbyFieldType {
 		return this.shouldAppendSpecifications;
 	}
 
-	public String createDerbyQueryStringRepresentation(String specificationsString) {
+	public String createDerbyQueryStringRepresentation(
+			String specificationsString) {
 		if (this.shouldAppendSpecifications) {
-			return this.derbyQueryStringRepresentation + "(" + specificationsString + ")";
+			return this.derbyQueryStringRepresentation + "("
+					+ specificationsString + ")";
 		}
 		return getDerbyQueryStringRepresentation();
 	}
 
-	public static DerbyFieldType getFieldTypeByHumanReadableName(String humanReadableName)
-			throws InvalidDerbyFieldTypeException {
+	public static DerbyFieldType getFieldTypeByHumanReadableName(
+			String humanReadableName) throws InvalidDerbyFieldTypeException {
 		if (TYPES_BY_HUMAN_READABLE_NAME.containsKey(humanReadableName)) {
 			return TYPES_BY_HUMAN_READABLE_NAME.get(humanReadableName);
 		}
-		String exceptionMessage =
-			"No DerbyFieldType could be found for the human-readable name \"" +
-			humanReadableName +
-			"\".";
+		String exceptionMessage = "No DerbyFieldType could be found for the human-readable name \""
+				+ humanReadableName + "\".";
 		throw new InvalidDerbyFieldTypeException(exceptionMessage);
 	}
 
 	private static Map<String, DerbyFieldType> constructTypesByHumanReadableName() {
-		Map<String, DerbyFieldType> typesByHumanReadableName =
-			new HashMap<String, DerbyFieldType>();
+		Map<String, DerbyFieldType> typesByHumanReadableName = new HashMap<String, DerbyFieldType>();
 
 		for (DerbyFieldType fieldType : DerbyFieldType.values()) {
-			typesByHumanReadableName.put(fieldType.humanReadableName, fieldType);
+			typesByHumanReadableName
+					.put(fieldType.humanReadableName, fieldType);
 		}
 
 		return Collections.unmodifiableMap(typesByHumanReadableName);
+	}
+
+	public static final ImmutableMultimap<Class<?>, DerbyFieldType> JAVA_TYPE_TO_DERBY_TYPE = ImmutableMultimap
+			.of((Class<?>) String.class, DerbyFieldType.TEXT,
+				(Class<?>) String.class, DerbyFieldType.VARCHAR,
+				(Class<?>) Integer.class, DerbyFieldType.INTEGER,
+				(Class<?>) int.class, DerbyFieldType.INTEGER);
+
+	/** 
+	 * Check to see if the java type and the derby type are compatible.
+	 */
+	public static boolean typesAreCompatible(Class<?> javaType,
+			DerbyFieldType derbyType) {
+		return JAVA_TYPE_TO_DERBY_TYPE.get(javaType).contains(derbyType);
 	}
 }

@@ -10,6 +10,7 @@ import edu.iu.cns.database.load.framework.DBField;
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.sci2.database.scholarly.FileField;
+import org.cishell.utilities.NumberUtilities;
 
 public class EntityUtils {
 
@@ -91,29 +92,10 @@ public class EntityUtils {
 		}
 	}
 
-	// TODO: do better handling if the object is wrong?
 	public static <S extends FileField> Integer getNullableInteger(FileTuple<S> source,
 			S sourceKey) {
 		Object contents = removeArrayWrapper(source.get(sourceKey.getName()), null);
-		return forceConvert(contents);
-	}
-	
-	private static Integer forceConvert(Object integerWannaBe) {
-		if (integerWannaBe instanceof Integer) {
-			return (Integer) integerWannaBe;
-		} else if (integerWannaBe instanceof Number) {
-			return ((Number) integerWannaBe).intValue();
-		} else if (integerWannaBe instanceof String) {
-			try {
-				return Integer.valueOf((String) integerWannaBe);
-			} catch (NumberFormatException e) {
-				// TODO: throw something?  log?
-				// For example: the volume "number" might be "105 PEDIATRICS"
-				return null;
-			}
-		} else {
-			return null;
-		}
+		return NumberUtilities.interpretObjectAsInteger(contents);
 	}
 
 	private static <S extends FileField> void putStringField(Dictionary<String, Object> dest,

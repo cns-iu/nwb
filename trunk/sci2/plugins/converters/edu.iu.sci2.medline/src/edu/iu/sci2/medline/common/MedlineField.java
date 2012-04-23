@@ -147,7 +147,7 @@ public enum MedlineField {
 	SUBSET("Subset", "SB", String.class, ""),
 	TITLE("Title", "TI", String.class, ""),
 	TRANSLITERATED_TITLE("Transliterated Title", "TT", String.class, ""),
-	VOLUME("Volume", "VI", String.class, ""),
+	VOLUME("Volume", "VI", Integer.class, ""),
 	VOLUME_TITLE("Volume Title", "VTI", String.class, "");
 
 	/**

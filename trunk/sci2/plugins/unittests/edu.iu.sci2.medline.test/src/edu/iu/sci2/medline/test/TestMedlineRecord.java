@@ -13,6 +13,7 @@ import java.util.Random;
 import org.junit.Test;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.medline.common.MedlineField;
 import edu.iu.sci2.medline.common.MedlineRecord;
@@ -70,10 +71,10 @@ public class TestMedlineRecord {
 	}
 
 	
-	@SuppressWarnings({ "static-method", "serial" })
+	@SuppressWarnings({ "static-method"})
 	@Test
 	public void testTagParsingField() {
-		List<MedlineField> fields = new ArrayList<MedlineField>() {{ add(MedlineField.ABSTRACT); add(MedlineField.BOOK_TITLE); add(MedlineField.VOLUME); }};
+		List<MedlineField> fields = ImmutableList.of(MedlineField.ABSTRACT, MedlineField.BOOK_TITLE, MedlineField.AUTHOR);
 		for (MedlineField medlineField : fields) {
 			String tag = medlineField.getField();
 			String value = Long.toString(Math.abs(new Random().nextLong()));
@@ -87,7 +88,7 @@ public class TestMedlineRecord {
 	@SuppressWarnings({ "static-method", "serial" })
 	@Test
 	public void testTagParsingFields() {
-		List<MedlineField> fields = new ArrayList<MedlineField>() {{ add(MedlineField.ABSTRACT); add(MedlineField.BOOK_TITLE); add(MedlineField.VOLUME); }};
+		List<MedlineField> fields = new ArrayList<MedlineField>() {{ add(MedlineField.ABSTRACT); add(MedlineField.BOOK_TITLE); add(MedlineField.AUTHOR); }};
 		Map<MedlineField, String> fieldValue = new HashMap<MedlineField, String>();
 		
 		StringBuilder recordString = new StringBuilder();
