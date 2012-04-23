@@ -55,7 +55,7 @@
 			<fileset dir="${dir.to.build}/build" includes="*.jar" />
 		</copy>
 
-		<ant dir="${dir.to.build}" target="clean" />
+		<!-- <ant dir="${dir.to.build}" target="clean" /> -->
 	</target>
 
 	<target name="clean">
