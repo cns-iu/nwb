@@ -1,7 +1,7 @@
 group document;
 
 header(numberOfPages, date) ::= <<
-%!PS-Adobe-3.0 EPSF-3.0
+%!PS-Adobe-3.0
 %%Pages: <numberOfPages>
 %%Title: (Temporal Bar Graph)
 %%Creator: (Sci2)
@@ -39,7 +39,7 @@ documentTrailer() ::= <<
 
 pageSetup(pageNumber) ::= <<
 
-%Page: <pageNumber> <pageNumber>
+%%Page: <pageNumber> <pageNumber>
 
 >>
 
