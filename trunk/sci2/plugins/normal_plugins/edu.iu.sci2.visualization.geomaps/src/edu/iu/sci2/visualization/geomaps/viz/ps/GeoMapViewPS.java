@@ -142,7 +142,7 @@ public class GeoMapViewPS {
 	}
 	
 	private static String timestamp() {
-		return DateTimeFormat.forPattern("MMM dd, yyyy | hh:mm:ss aa").print(new DateTime());
+		return DateTimeFormat.forPattern("MMM dd, yyyy | hh:mm:ss aa z").print(new DateTime());
 	}
 
 	/**

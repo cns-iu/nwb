@@ -22,7 +22,7 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
  */
 public class LabeledReferenceCircles implements LabeledReference {
 	// Brightness for PostScript's setgray command. 0 is black, 1 is white.
-	public static final double CIRCLE_BRIGHTNESS = 0.5;
+	public static final double CIRCLE_BRIGHTNESS = 0.0;
 	
 	public static final double EXTREMA_LABEL_BRIGHTNESS = 0.0;
 	public static final double TYPE_LABEL_BRIGHTNESS = 0.0;

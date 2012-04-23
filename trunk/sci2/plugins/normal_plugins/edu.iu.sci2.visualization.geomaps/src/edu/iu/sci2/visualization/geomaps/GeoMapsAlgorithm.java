@@ -178,9 +178,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				projections.toArray(new KnownProjectedCRSDescriptor[0]);
 		
 //		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
-//		Example.WORLD_CIRCLES.run(PageLayout.PRINT, projectionsArray);
+		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-		Example.US_REGIONS.run(PageLayout.PRINT, projectionsArray);
+		Example.US_REGIONS.run(PageLayout.PRINT);//, projectionsArray);
 //		Example.US_REGIONS.run(PageLayout.WEB);
 	}
 
@@ -223,7 +223,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		US_REGIONS(
 				Shapefile.UNITED_STATES,
 				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "us-state-populations.csv"),
-				"US state populations",
+				"U.S. state populations",
 				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
 						PageLayout.PRINT, GeoMapsRegionsFactory.Print.class,
 						PageLayout.WEB, GeoMapsRegionsFactory.Web.class),
