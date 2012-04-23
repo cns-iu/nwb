@@ -65,27 +65,27 @@ public class PubmedTableTableModelParser extends
 			/*
 			 * Sources Table
 			 */
-			Source source = getSource(this.sources.getKeyGenerator(), row,
+			Source source = getSource(this.sourcesTable.getKeyGenerator(), row,
 					this.logger);
-			this.sources.add(source);
+			this.sourcesTable.add(source);
 
 			/*
 			 * Documents Table
 			 */
 
-			Document document = getDocument(this.documents.getKeyGenerator(),
+			Document document = getDocument(this.documentsTable.getKeyGenerator(),
 					row, this.logger);
-			this.documents.add(document);
+			this.documentsTable.add(document);
 
 			/*
 			 * People Table - add investigators
 			 */
 			ImmutableList<String> investigatorNames = getCleanSplitValues(row, MedlineField.INVESTIGATOR_NAME, this.logger);
 			List<Person> investigators = getPeople(
-					this.people.getKeyGenerator(), investigatorNames, this.logger,
+					this.peopleTable.getKeyGenerator(), investigatorNames, this.logger,
 					MedlineField.INVESTIGATOR_NAME);
 			ImmutableList<String> fullInvestigatorNames = getCleanSplitValues(row, MedlineField.FULL_INVESTIGATOR_NAME, this.logger);
-			investigators.addAll(getPeople(this.people.getKeyGenerator(), fullInvestigatorNames,
+			investigators.addAll(getPeople(this.peopleTable.getKeyGenerator(), fullInvestigatorNames,
 					this.logger, MedlineField.FULL_INVESTIGATOR_NAME));
 
 			/*
@@ -93,20 +93,20 @@ public class PubmedTableTableModelParser extends
 			 */
 			ImmutableList<String> authorNames = getCleanSplitValues(row, MedlineField.AUTHOR, this.logger);
 			ImmutableList<String> fullAuthorNames = getCleanSplitValues(row, MedlineField.FULL_AUTHOR, this.logger);
-			List<Person> authorz = getPeople(this.people.getKeyGenerator(),
+			List<Person> authors = getPeople(this.peopleTable.getKeyGenerator(),
 					authorNames, this.logger, MedlineField.AUTHOR);
-			authorz.addAll(getPeople(this.people.getKeyGenerator(), fullAuthorNames,
+			authors.addAll(getPeople(this.peopleTable.getKeyGenerator(), fullAuthorNames,
 					this.logger, MedlineField.FULL_AUTHOR));
-			for (Person person : authorz) {
-				this.people.add(person);
+			for (Person person : authors) {
+				this.peopleTable.add(person);
 			}
 
 			/*
 			 * Authors Table
 			 */
 
-			for (Author author : Author.makeAuthors(document, authorz)) {
-				this.authors.add(author);
+			for (Author author : Author.makeAuthors(document, authors)) {
+				this.authorsTable.add(author);
 			}
 
 			/*
@@ -114,54 +114,54 @@ public class PubmedTableTableModelParser extends
 			 */
 			ImmutableList<String> editorNames = getCleanSplitValues(row, MedlineField.EDITOR_NAME, this.logger);
 			ImmutableList<String> fullEditorNames = getCleanSplitValues(row, MedlineField.FULL_EDITOR_NAME, this.logger);
-			List<Person> editorz = getPeople(this.people.getKeyGenerator(),
+			List<Person> editors = getPeople(this.peopleTable.getKeyGenerator(),
 					editorNames, this.logger, MedlineField.EDITOR_NAME);
-			editorz.addAll(getPeople(this.people.getKeyGenerator(), fullEditorNames,
+			editors.addAll(getPeople(this.peopleTable.getKeyGenerator(), fullEditorNames,
 					this.logger, MedlineField.FULL_EDITOR_NAME));
-			for (Person editor : editorz) {
-				this.people.add(editor);
+			for (Person editor : editors) {
+				this.peopleTable.add(editor);
 			}
 
 			/*
 			 * Editors Table
 			 */
 
-			for (Editor editor : Editor.makeEditors(document, editorz)) {
-				this.editors.add(editor);
+			for (Editor editor : Editor.makeEditors(document, editors)) {
+				this.editorsTable.add(editor);
 			}
 
 			/*
 			 * Keywords Table
 			 */
-			List<Keyword> keywordz = getKeywords(
-					this.keywords.getKeyGenerator(), row, this.logger);
-			for (Keyword keyword : keywordz) {
-				this.keywords.add(keyword);
+			List<Keyword> keywords = getKeywords(
+					this.keywordsTable.getKeyGenerator(), row, this.logger);
+			for (Keyword keyword : keywords) {
+				this.keywordsTable.add(keyword);
 			}
 
 			/*
 			 * Document Keywords
 			 */
 			for (DocumentKeyword documentKeyword : DocumentKeyword
-					.makeDocumentKeywords(document, keywordz)) {
-				this.documentKeywords.add(documentKeyword);
+					.makeDocumentKeywords(document, keywords)) {
+				this.documentKeywordsTable.add(documentKeyword);
 			}
 
 			/*
 			 * Addresses
 			 */
-			List<Address> addressez = getAddresses(
-					this.addresses.getKeyGenerator(), row, this.logger);
-			for (Address address : addressez) {
-				this.addresses.add(address);
+			List<Address> addresses = getAddresses(
+					this.addressesTable.getKeyGenerator(), row, this.logger);
+			for (Address address : addresses) {
+				this.addressesTable.add(address);
 			}
 
 			/*
 			 * Research Addresses
 			 */
 			for (ResearchAddress researchAddress : ResearchAddress
-					.makeResearchAddresses(document, addressez)) {
-				this.researchAddresses.add(researchAddress);
+					.makeResearchAddresses(document, addresses)) {
+				this.researchAddressesTable.add(researchAddress);
 			}
 		}
 

@@ -50,17 +50,17 @@ public class PubmedRecordsTableModelParser extends AbstractPubmedTableModelParse
 	}
 	
 	private DatabaseModel parseModel() {
-		Preconditions.checkState(this.addresses != null, "addresses should be been made by the super class.");
-		Preconditions.checkState(this.authors != null, "authors should be been made by the super class.");
+		Preconditions.checkState(this.addressesTable != null, "addresses should be been made by the super class.");
+		Preconditions.checkState(this.authorsTable != null, "authors should be been made by the super class.");
 		Preconditions.checkState(this.dbTables != null, "dbTables should be been made by the super class.");
-		Preconditions.checkState(this.documentKeywords != null, "documentKeywords should be been made by the super class.");
-		Preconditions.checkState(this.documents != null, "documents should be been made by the super class.");
-		Preconditions.checkState(this.editors != null, "editors should be been made by the super class.");
-		Preconditions.checkState(this.keywords != null, "keywords should be been made by the super class.");
-		Preconditions.checkState(this.people != null, "people should be been made by the super class.");
-		Preconditions.checkState(this.reprintAddresses != null, "reprintAddresses should be been made by the super class.");
-		Preconditions.checkState(this.researchAddresses != null, "researchAddresses should be been made by the super class.");
-		Preconditions.checkState(this.sources != null, "sources should be been made by the super class.");
+		Preconditions.checkState(this.documentKeywordsTable != null, "documentKeywords should be been made by the super class.");
+		Preconditions.checkState(this.documentsTable != null, "documents should be been made by the super class.");
+		Preconditions.checkState(this.editorsTable != null, "editors should be been made by the super class.");
+		Preconditions.checkState(this.keywordsTable != null, "keywords should be been made by the super class.");
+		Preconditions.checkState(this.peopleTable != null, "people should be been made by the super class.");
+		Preconditions.checkState(this.reprintAddressesTable != null, "reprintAddresses should be been made by the super class.");
+		Preconditions.checkState(this.researchAddressesTable != null, "researchAddresses should be been made by the super class.");
+		Preconditions.checkState(this.sourcesTable != null, "sources should be been made by the super class.");
 		
 		
 		if (this.model != null) {
@@ -71,104 +71,104 @@ public class PubmedRecordsTableModelParser extends AbstractPubmedTableModelParse
 			/*
 			 * Sources Table
 			 */
-			Source source = getSource(this.sources.getKeyGenerator(), record,
+			Source source = getSource(this.sourcesTable.getKeyGenerator(), record,
 					this.logger);
-			this.sources.add(source);
+			this.sourcesTable.add(source);
 
 			/*
 			 * Documents Table
 			 */
-			Document document = getDocument(this.documents.getKeyGenerator(),
+			Document document = getDocument(this.documentsTable.getKeyGenerator(),
 					record, this.logger);
-			this.documents.add(document);
+			this.documentsTable.add(document);
 
 			/*
 			 * People Table - add investigators
 			 */
 			ImmutableList<String> investigatorNames = record.getValues(MedlineField.INVESTIGATOR_NAME);
 			List<Person> investigators = getPeople(
-					this.people.getKeyGenerator(), investigatorNames, this.logger,
+					this.peopleTable.getKeyGenerator(), investigatorNames, this.logger,
 					MedlineField.INVESTIGATOR_NAME);
 			
 			ImmutableList<String> fullInvestigatorNames = record.getValues(MedlineField.FULL_INVESTIGATOR_NAME);
-			investigators.addAll(getPeople(this.people.getKeyGenerator(), fullInvestigatorNames,
+			investigators.addAll(getPeople(this.peopleTable.getKeyGenerator(), fullInvestigatorNames,
 					this.logger, MedlineField.FULL_INVESTIGATOR_NAME));
 
 			/*
 			 * People Table - add authors
 			 */
 			ImmutableList<String> authorNames = record.getValues(MedlineField.AUTHOR);
-			List<Person> authorz = getPeople(this.people.getKeyGenerator(),
+			List<Person> authorz = getPeople(this.peopleTable.getKeyGenerator(),
 					authorNames, this.logger, MedlineField.AUTHOR);
 			
 			ImmutableList<String> fullAuthorNames = record.getValues(MedlineField.FULL_AUTHOR);
-			authorz.addAll(getPeople(this.people.getKeyGenerator(), fullAuthorNames,
+			authorz.addAll(getPeople(this.peopleTable.getKeyGenerator(), fullAuthorNames,
 					this.logger, MedlineField.FULL_AUTHOR));
 			for (Person person : authorz) {
-				this.people.add(person);
+				this.peopleTable.add(person);
 			}
 
 			/*
 			 * Authors Table
 			 */
 			for (Author author : Author.makeAuthors(document, authorz)) {
-				this.authors.add(author);
+				this.authorsTable.add(author);
 			}
 
 			/*
 			 * People Table - add editors
 			 */
 			ImmutableList<String> editorNames = record.getValues(MedlineField.EDITOR_NAME);
-			List<Person> editorz = getPeople(this.people.getKeyGenerator(),
+			List<Person> editors = getPeople(this.peopleTable.getKeyGenerator(),
 					editorNames, this.logger, MedlineField.EDITOR_NAME);
 
 			ImmutableList<String> fullEditorNames = record.getValues(MedlineField.FULL_EDITOR_NAME);
-			editorz.addAll(getPeople(this.people.getKeyGenerator(), fullEditorNames,
+			editors.addAll(getPeople(this.peopleTable.getKeyGenerator(), fullEditorNames,
 					this.logger, MedlineField.FULL_EDITOR_NAME));
 			
-			for (Person editor : editorz) {
-				this.people.add(editor);
+			for (Person editor : editors) {
+				this.peopleTable.add(editor);
 			}
 
 			/*
 			 * Editors Table
 			 */
-			for (Editor editor : Editor.makeEditors(document, editorz)) {
-				this.editors.add(editor);
+			for (Editor editor : Editor.makeEditors(document, editors)) {
+				this.editorsTable.add(editor);
 			}
 
 			/*
 			 * Keywords Table
 			 */
-			List<Keyword> keywordz = getKeywords(
-					this.keywords.getKeyGenerator(), record);
-			for (Keyword keyword : keywordz) {
-				this.keywords.add(keyword);
+			List<Keyword> keywords = getKeywords(
+					this.keywordsTable.getKeyGenerator(), record);
+			for (Keyword keyword : keywords) {
+				this.keywordsTable.add(keyword);
 			}
 
 			/*
 			 * Document Keywords
 			 */
 			for (DocumentKeyword documentKeyword : DocumentKeyword
-					.makeDocumentKeywords(document, keywordz)) {
-				this.documentKeywords.add(documentKeyword);
+					.makeDocumentKeywords(document, keywords)) {
+				this.documentKeywordsTable.add(documentKeyword);
 			}
 
 			/*
 			 * Addresses
 			 */
-			List<Address> addressez = getAddresses(
-					this.addresses.getKeyGenerator(), record);
-			for (Address address : addressez) {
-				this.addresses.add(address);
+			List<Address> addresses = getAddresses(
+					this.addressesTable.getKeyGenerator(), record);
+			for (Address address : addresses) {
+				this.addressesTable.add(address);
 			}
 
 			/*
 			 * Research Addresses
 			 */
 			for (ResearchAddress researchAddress : ResearchAddress
-					.makeResearchAddresses(document, addressez)) {
-				this.researchAddresses.add(researchAddress);
+					.makeResearchAddresses(document, addresses)) {
+				this.researchAddressesTable.add(researchAddress);
 			}
 		}
 

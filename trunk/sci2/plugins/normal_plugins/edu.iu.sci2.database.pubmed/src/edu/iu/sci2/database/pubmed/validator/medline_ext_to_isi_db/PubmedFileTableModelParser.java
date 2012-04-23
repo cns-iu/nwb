@@ -80,27 +80,27 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 	}
 
 	private DatabaseModel parseModel() {
-		Preconditions.checkState(this.addresses != null,
+		Preconditions.checkState(this.addressesTable != null,
 				"addresses should be been made by the super class.");
-		Preconditions.checkState(this.authors != null,
+		Preconditions.checkState(this.authorsTable != null,
 				"authors should be been made by the super class.");
 		Preconditions.checkState(this.dbTables != null,
 				"dbTables should be been made by the super class.");
-		Preconditions.checkState(this.documentKeywords != null,
+		Preconditions.checkState(this.documentKeywordsTable != null,
 				"documentKeywords should be been made by the super class.");
-		Preconditions.checkState(this.documents != null,
+		Preconditions.checkState(this.documentsTable != null,
 				"documents should be been made by the super class.");
-		Preconditions.checkState(this.editors != null,
+		Preconditions.checkState(this.editorsTable != null,
 				"editors should be been made by the super class.");
-		Preconditions.checkState(this.keywords != null,
+		Preconditions.checkState(this.keywordsTable != null,
 				"keywords should be been made by the super class.");
-		Preconditions.checkState(this.people != null,
+		Preconditions.checkState(this.peopleTable != null,
 				"people should be been made by the super class.");
-		Preconditions.checkState(this.reprintAddresses != null,
+		Preconditions.checkState(this.reprintAddressesTable != null,
 				"reprintAddresses should be been made by the super class.");
-		Preconditions.checkState(this.researchAddresses != null,
+		Preconditions.checkState(this.researchAddressesTable != null,
 				"researchAddresses should be been made by the super class.");
-		Preconditions.checkState(this.sources != null,
+		Preconditions.checkState(this.sourcesTable != null,
 				"sources should be been made by the super class.");
 
 		if (this.model != null) {
@@ -112,16 +112,16 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			/*
 			 * Sources Table
 			 */
-			Source source = getSource(this.sources.getKeyGenerator(), record,
+			Source source = getSource(this.sourcesTable.getKeyGenerator(), record,
 					this.logger);
-			this.sources.add(source);
+			this.sourcesTable.add(source);
 
 			/*
 			 * Documents Table
 			 */
-			Document document = getDocument(this.documents.getKeyGenerator(),
+			Document document = getDocument(this.documentsTable.getKeyGenerator(),
 					record, this.logger);
-			this.documents.add(document);
+			this.documentsTable.add(document);
 
 			/*
 			 * People Table - add investigators
@@ -129,12 +129,12 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			ImmutableList<String> investigatorNames = record
 					.getValues(MedlineField.INVESTIGATOR_NAME);
 			List<Person> investigators = getPeople(
-					this.people.getKeyGenerator(), investigatorNames,
+					this.peopleTable.getKeyGenerator(), investigatorNames,
 					this.logger, MedlineField.INVESTIGATOR_NAME);
 
 			ImmutableList<String> fullInvestigatorNames = record
 					.getValues(MedlineField.FULL_INVESTIGATOR_NAME);
-			investigators.addAll(getPeople(this.people.getKeyGenerator(),
+			investigators.addAll(getPeople(this.peopleTable.getKeyGenerator(),
 					fullInvestigatorNames, this.logger,
 					MedlineField.FULL_INVESTIGATOR_NAME));
 
@@ -143,22 +143,22 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			 */
 			ImmutableList<String> authorNames = record
 					.getValues(MedlineField.AUTHOR);
-			List<Person> authorz = getPeople(this.people.getKeyGenerator(),
+			List<Person> authorz = getPeople(this.peopleTable.getKeyGenerator(),
 					authorNames, this.logger, MedlineField.AUTHOR);
 
 			ImmutableList<String> fullAuthorNames = record
 					.getValues(MedlineField.FULL_AUTHOR);
-			authorz.addAll(getPeople(this.people.getKeyGenerator(),
+			authorz.addAll(getPeople(this.peopleTable.getKeyGenerator(),
 					fullAuthorNames, this.logger, MedlineField.FULL_AUTHOR));
 			for (Person person : authorz) {
-				this.people.add(person);
+				this.peopleTable.add(person);
 			}
 
 			/*
 			 * Authors Table
 			 */
 			for (Author author : Author.makeAuthors(document, authorz)) {
-				this.authors.add(author);
+				this.authorsTable.add(author);
 			}
 
 			/*
@@ -166,32 +166,32 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			 */
 			ImmutableList<String> editorNames = record
 					.getValues(MedlineField.EDITOR_NAME);
-			List<Person> editorz = getPeople(this.people.getKeyGenerator(),
+			List<Person> editorz = getPeople(this.peopleTable.getKeyGenerator(),
 					editorNames, this.logger, MedlineField.EDITOR_NAME);
 
 			ImmutableList<String> fullEditorNames = record
 					.getValues(MedlineField.FULL_EDITOR_NAME);
-			editorz.addAll(getPeople(this.people.getKeyGenerator(),
+			editorz.addAll(getPeople(this.peopleTable.getKeyGenerator(),
 					fullEditorNames, this.logger, MedlineField.FULL_EDITOR_NAME));
 
 			for (Person editor : editorz) {
-				this.people.add(editor);
+				this.peopleTable.add(editor);
 			}
 
 			/*
 			 * Editors Table
 			 */
 			for (Editor editor : Editor.makeEditors(document, editorz)) {
-				this.editors.add(editor);
+				this.editorsTable.add(editor);
 			}
 
 			/*
 			 * Keywords Table
 			 */
 			List<Keyword> keywordz = getKeywords(
-					this.keywords.getKeyGenerator(), record);
+					this.keywordsTable.getKeyGenerator(), record);
 			for (Keyword keyword : keywordz) {
-				this.keywords.add(keyword);
+				this.keywordsTable.add(keyword);
 			}
 
 			/*
@@ -199,16 +199,16 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			 */
 			for (DocumentKeyword documentKeyword : DocumentKeyword
 					.makeDocumentKeywords(document, keywordz)) {
-				this.documentKeywords.add(documentKeyword);
+				this.documentKeywordsTable.add(documentKeyword);
 			}
 
 			/*
 			 * Addresses
 			 */
 			List<Address> addressez = getAddresses(
-					this.addresses.getKeyGenerator(), record);
+					this.addressesTable.getKeyGenerator(), record);
 			for (Address address : addressez) {
-				this.addresses.add(address);
+				this.addressesTable.add(address);
 			}
 
 			/*
@@ -216,7 +216,7 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			 */
 			for (ResearchAddress researchAddress : ResearchAddress
 					.makeResearchAddresses(document, addressez)) {
-				this.researchAddresses.add(researchAddress);
+				this.researchAddressesTable.add(researchAddress);
 			}
 		}
 

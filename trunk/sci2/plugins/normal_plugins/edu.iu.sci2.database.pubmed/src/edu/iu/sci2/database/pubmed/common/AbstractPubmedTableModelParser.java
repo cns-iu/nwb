@@ -52,16 +52,16 @@ import edu.iu.sci2.medline.common.MedlineUtilities.ParsedName;
  */
 public abstract class AbstractPubmedTableModelParser {
 	protected List<RowItemContainer<? extends RowItem<?>>> dbTables;
-	protected RowItemContainer<Document> documents;
-	protected RowItemContainer<Person> people;
-	protected RowItemContainer<Address> addresses;
-	protected RowItemContainer<Source> sources;
-	protected RowItemContainer<Keyword> keywords;
-	protected RowItemContainer<Author> authors;
-	protected RowItemContainer<ReprintAddress> reprintAddresses;
-	protected RowItemContainer<Editor> editors;
-	protected RowItemContainer<DocumentKeyword> documentKeywords;
-	protected RowItemContainer<ResearchAddress> researchAddresses;
+	protected RowItemContainer<Document> documentsTable;
+	protected RowItemContainer<Person> peopleTable;
+	protected RowItemContainer<Address> addressesTable;
+	protected RowItemContainer<Source> sourcesTable;
+	protected RowItemContainer<Keyword> keywordsTable;
+	protected RowItemContainer<Author> authorsTable;
+	protected RowItemContainer<ReprintAddress> reprintAddressesTable;
+	protected RowItemContainer<Editor> editorsTable;
+	protected RowItemContainer<DocumentKeyword> documentKeywordsTable;
+	protected RowItemContainer<ResearchAddress> researchAddressesTable;
 
 	public AbstractPubmedTableModelParser() {
 		makeTables();
@@ -71,25 +71,25 @@ public abstract class AbstractPubmedTableModelParser {
 		this.dbTables = Lists.newArrayList();
 
 		// Entities (things that mostly hold data themselves)
-		this.documents = createEntityContainer(ISI.DOCUMENT_TABLE_NAME,
+		this.documentsTable = createEntityContainer(ISI.DOCUMENT_TABLE_NAME,
 				Document.SCHEMA);
-		this.dbTables.add(this.documents);
+		this.dbTables.add(this.documentsTable);
 
-		this.people = createEntityContainer(ISI.PERSON_TABLE_NAME,
+		this.peopleTable = createEntityContainer(ISI.PERSON_TABLE_NAME,
 				Person.SCHEMA);
-		this.dbTables.add(this.people);
+		this.dbTables.add(this.peopleTable);
 
-		this.addresses = createEntityContainer(ISI.ADDRESS_TABLE_NAME,
+		this.addressesTable = createEntityContainer(ISI.ADDRESS_TABLE_NAME,
 				Address.SCHEMA);
-		this.dbTables.add(this.addresses);
+		this.dbTables.add(this.addressesTable);
 
-		this.sources = createEntityContainer(ISI.SOURCE_TABLE_NAME,
+		this.sourcesTable = createEntityContainer(ISI.SOURCE_TABLE_NAME,
 				Source.SCHEMA);
-		this.dbTables.add(this.sources);
+		this.dbTables.add(this.sourcesTable);
 
-		this.keywords = createEntityContainer(ISI.KEYWORD_TABLE_NAME,
+		this.keywordsTable = createEntityContainer(ISI.KEYWORD_TABLE_NAME,
 				Keyword.SCHEMA);
-		this.dbTables.add(this.keywords);
+		this.dbTables.add(this.keywordsTable);
 
 		// Not filled with data, but here to complete the table model
 		this.dbTables.add(createEntityContainer(ISI.REFERENCE_TABLE_NAME,
@@ -102,25 +102,25 @@ public abstract class AbstractPubmedTableModelParser {
 				Publisher.SCHEMA));
 
 		// Relationships (things that are mostly links between other things)
-		this.authors = createRelationshipContainer(ISI.AUTHORS_TABLE_NAME,
+		this.authorsTable = createRelationshipContainer(ISI.AUTHORS_TABLE_NAME,
 				Author.SCHEMA);
-		this.dbTables.add(this.authors);
+		this.dbTables.add(this.authorsTable);
 
-		this.reprintAddresses = createRelationshipContainer(
+		this.reprintAddressesTable = createRelationshipContainer(
 				ISI.REPRINT_ADDRESSES_TABLE_NAME, ReprintAddress.SCHEMA);
-		this.dbTables.add(this.reprintAddresses);
+		this.dbTables.add(this.reprintAddressesTable);
 
-		this.editors = createRelationshipContainer(ISI.EDITORS_TABLE_NAME,
+		this.editorsTable = createRelationshipContainer(ISI.EDITORS_TABLE_NAME,
 				Editor.SCHEMA);
-		this.dbTables.add(this.editors);
+		this.dbTables.add(this.editorsTable);
 
-		this.documentKeywords = createRelationshipContainer(
+		this.documentKeywordsTable = createRelationshipContainer(
 				ISI.DOCUMENT_KEYWORDS_TABLE_NAME, DocumentKeyword.SCHEMA);
-		this.dbTables.add(this.documentKeywords);
+		this.dbTables.add(this.documentKeywordsTable);
 
-		this.researchAddresses = createRelationshipContainer(
+		this.researchAddressesTable = createRelationshipContainer(
 				ISI.RESEARCH_ADDRESSES_TABLE_NAME, ResearchAddress.SCHEMA);
-		this.dbTables.add(this.researchAddresses);
+		this.dbTables.add(this.researchAddressesTable);
 
 		// Not filled with data, but here to complete the table model.
 		this.dbTables.add(createRelationshipContainer(
@@ -149,7 +149,6 @@ public abstract class AbstractPubmedTableModelParser {
 			put(Document.Field.LANGUAGE, MedlineField.LANGUAGE);
 			put(Document.Field.PUBLICATION_DATE,
 					MedlineField.DATE_OF_PUBLICATION);
-			// CODEREVIEW ?? seriously?
 			put(Document.Field.ISI_TYPE, MedlineField.PUBLICATION_TYPE);
 			put(Document.Field.TITLE, MedlineField.TITLE);
 			put(Document.Field.VOLUME, MedlineField.VOLUME);
@@ -255,9 +254,7 @@ public abstract class AbstractPubmedTableModelParser {
 			MedlineField medlineField = DOCUMENT_TO_MEDLINE.get(documentField);
 
 			if (medlineField.getFieldType() == String.class) {
-				// CODEREVIEW Should I make a mapping of java classes to derby
-				// types somewhere and verify that the class fits the field
-				// type?
+				// TODO Better type checking
 				if (documentField.type() != DerbyFieldType.TEXT) {
 					logger.log(
 							LogService.LOG_WARNING,
@@ -293,9 +290,7 @@ public abstract class AbstractPubmedTableModelParser {
 			MedlineField medlineField = SOURCE_TO_MEDLINE.get(sourceField);
 
 			if (medlineField.getFieldType() == String.class) {
-				// CODEREVIEW Should I make a mapping of java classes to derby
-				// types somewhere and verify that the class fits the field
-				// type?
+				// TODO better type checking
 				if (sourceField.type() != DerbyFieldType.TEXT) {
 					logger.log(
 							LogService.LOG_WARNING,
