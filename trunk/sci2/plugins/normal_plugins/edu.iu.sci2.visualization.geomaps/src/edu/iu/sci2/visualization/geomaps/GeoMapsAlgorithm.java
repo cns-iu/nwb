@@ -145,7 +145,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		templateForHowToRead.setAttributes(ImmutableMap.of(
 				"mapKind", mapKind,
 				"baseMapDescription", geoMap.getShapefile().makeMapDescription(),
-				"projectionName", geoMap.getKnownProjectedCRSDescriptor().getNiceNamePlain(),
+				"projectionName", geoMap.getKnownProjectedCRSDescriptor().getDescription(),
 				"hasInsets", geoMap.getShapefile().hasInsets(),
 				"partType", geoMap.getShapefile().getComponentDescriptionPlain()));		
 		String howToReadText = templateForHowToRead.toString().trim();

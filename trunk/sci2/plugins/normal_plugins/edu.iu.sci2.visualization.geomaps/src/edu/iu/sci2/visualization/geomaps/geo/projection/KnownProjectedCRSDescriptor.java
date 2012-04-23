@@ -13,7 +13,7 @@ import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
 
 public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, NicelyNamed {
-	ECKERT_IV("Eckert IV", "Eckert IV", new EPSGCode("EPSG:54012")),
+	ECKERT_IV("Eckert IV", "equal-area Eckert IV", new EPSGCode("EPSG:54012")),
 //	WINKEL_TRIPEL("Winkel Tripel", "Winkel Tripel", // TODO findCentralMeridian is broken on Winkel
 //			new WKT("PROJCS[\"World_Winkel_Tripel_NGS\"," +
 //					"GEOGCS[\"GCS_WGS_1984\"," +
@@ -37,28 +37,25 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, Nicel
 	 * distort drawing. */
 	public static final boolean REQUEST_LENIENT_TRANSFORM = true;
 
-	private final String niceNameTitleCase;
-	private final String niceNamePlain;
+	private final String niceName;
+	private final String description;
 	private final ProjectedCRSDescriptor projectedCrsDescriptor;
 
-	private KnownProjectedCRSDescriptor(String niceNameTitleCase, String niceNamePlain, ProjectedCRSDescriptor crsMaker) {
-		this.niceNameTitleCase = niceNameTitleCase;
-		this.niceNamePlain = niceNamePlain;
+	private KnownProjectedCRSDescriptor(String niceName, String description,
+			ProjectedCRSDescriptor crsMaker) {
+		this.niceName = niceName;
+		this.description = description;
 		this.projectedCrsDescriptor = crsMaker;
 	}
 	
 
 	@Override
 	public String getNiceName() {
-		return getNiceNameTitleCase();
+		return niceName;
 	}
 	
-	public String getNiceNameTitleCase() {
-		return niceNameTitleCase;
-	}
-	
-	public String getNiceNamePlain() {
-		return niceNamePlain;
+	public String getDescription() {
+		return description;
 	}
 
 	@Override
