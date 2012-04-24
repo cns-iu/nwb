@@ -149,7 +149,7 @@ public class AllRecordsAtOnceValidator implements Algorithm {
 				"The file must not be null.");
 		try {
 			return MedlineRecordParser.getAllRecords(new BufferedReader(
-					new UnicodeReader(new FileInputStream(validMedlineFile))));
+					new UnicodeReader(new FileInputStream(validMedlineFile))), this.logger);
 
 		} catch (FileNotFoundException e) {
 			String message = "File could not be found.";

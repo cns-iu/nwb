@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.medline.common.MedlineField;
 import edu.iu.sci2.medline.common.MedlineRecord;
+import edu.iu.sci2.testutilities.TestLogService;
 
 public class TestMedlineRecord {
 
@@ -24,7 +25,7 @@ public class TestMedlineRecord {
 	@Test
 	public void testNull() {
 		try {
-			new MedlineRecord(null);
+			new MedlineRecord(null, null);
 			fail("A null medline record string should throw an IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// This is the desired result
@@ -34,7 +35,7 @@ public class TestMedlineRecord {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testEmpty() {
-		MedlineRecord record = new MedlineRecord("");
+		MedlineRecord record = new MedlineRecord("", new TestLogService());
 		assertTrue("An empty record should be empty.", record.getFields()
 				.isEmpty());
 	}
@@ -55,7 +56,7 @@ public class TestMedlineRecord {
 			MedlineField medlineField = MedlineField.ABSTRACT;
 			String tag = medlineField.getField();
 			String value = "This is an value.";
-			MedlineRecord record = new MedlineRecord(tag + separation + value);
+			MedlineRecord record = new MedlineRecord(tag + separation + value, new TestLogService());
 			assertFalse(
 					"Some fields should have been found when using seperator '"
 							+ separation + "'.", record.getFields().isEmpty());
@@ -78,7 +79,7 @@ public class TestMedlineRecord {
 		for (MedlineField medlineField : fields) {
 			String tag = medlineField.getField();
 			String value = Long.toString(Math.abs(new Random().nextLong()));
-			MedlineRecord record = new MedlineRecord(tag + "-" + value);
+			MedlineRecord record = new MedlineRecord(tag + "-" + value, new TestLogService());
 			assertFalse("A field should have been found.", record.getFields().isEmpty());
 			assertTrue("The field should have been found", record.getFields().contains(medlineField));
 			assertTrue("The value should have been found.", record.getValue(medlineField).equals(value));
@@ -97,7 +98,7 @@ public class TestMedlineRecord {
 			recordString.append(field.getField() + "-" + fieldValue.get(field) + "\n");
 		}
 		
-		MedlineRecord record = new MedlineRecord(recordString.toString());
+		MedlineRecord record = new MedlineRecord(recordString.toString(), new TestLogService());
 		
 		assertFalse("A field should have been found.", record.getFields().isEmpty());
 		assertTrue("All fields should have been found.", record.getFields().containsAll(fields));
@@ -115,7 +116,7 @@ public class TestMedlineRecord {
 		recordString.append(field.getField() + "-" + values.get(0) + "\n");
 		recordString.append(field.getField() + "-" + values.get(1) + "\n");
 		
-		MedlineRecord record = new MedlineRecord(recordString.toString());
+		MedlineRecord record = new MedlineRecord(recordString.toString(), new TestLogService());
 		assertTrue("There should be multipe values in the right format.", record.getValue(field).equals(Joiner.on(MedlineField.MEDLINE_MULTI_VALUE_SEPERATOR).join(values)));
 		assertTrue("The values should be found when parsed.", record.getValues(field).containsAll(values));
 	}

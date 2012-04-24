@@ -53,7 +53,7 @@ public class MedlineFileReader {
 			BufferedReader reader = new BufferedReader(new UnicodeReader(
 					new FileInputStream(file)));
 			ImmutableList<MedlineRecord> records = MedlineRecordParser
-					.getAllRecords(reader);
+					.getAllRecords(reader, logger);
 			Table table = makeTable(records, logger);
 			return table;
 		} catch (FileNotFoundException e) {

@@ -15,6 +15,7 @@ import prefuse.data.Table;
 import edu.iu.sci2.medline.common.MedlineRecordParser;
 import edu.iu.sci2.medline.converter.medline_to_medlinetable_converter.MedlineFileReader;
 import edu.iu.sci2.medline.converter.medline_to_medlinetable_converter.MedlineFileReader.MedlineFileReaderException;
+import edu.iu.sci2.testutilities.TestLogService;
 
 public class TestReadRecord {
 	private File file;
@@ -30,7 +31,7 @@ public class TestReadRecord {
 	
 	@Test
 	public void testMedlineRecordParser() {
-		MedlineRecordParser parser = new MedlineRecordParser(this.reader);
+		MedlineRecordParser parser = new MedlineRecordParser(this.reader, new TestLogService());
 		while (parser.hasNext()){
 			System.out.println(parser.getNext());
 		}
@@ -39,7 +40,7 @@ public class TestReadRecord {
 	@Test
 	public void testTable() {
 		try {
-			Table table = MedlineFileReader.read(this.file, null);
+			Table table = MedlineFileReader.read(this.file, new TestLogService());
 			System.out.println(table);
 		} catch (MedlineFileReaderException e) {
 			e.printStackTrace();

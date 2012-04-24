@@ -57,9 +57,10 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 				"The pubmed file must not be null.");
 		Preconditions.checkArgument(logger != null,
 				"The LogService must not be null.");
+		this.logger = logger;
 		try {
 			this.recordParser = new MedlineRecordParser(new BufferedReader(
-					new UnicodeReader(new FileInputStream(pubmedFile))));
+					new UnicodeReader(new FileInputStream(pubmedFile))), this.logger);
 
 		} catch (FileNotFoundException e) {
 			String message = "File could not be found.";
@@ -67,7 +68,6 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 			throw new TableModelParsingException(message, e);
 		}
 
-		this.logger = logger;
 		this.model = null;
 	}
 

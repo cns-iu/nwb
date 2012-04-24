@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cishell.utilities.NumberUtilities;
+import org.osgi.service.log.LogService;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -21,7 +22,8 @@ import com.google.common.collect.ImmutableList;
  */
 public class MedlineRecord {
 	private Map<MedlineField, Object> record;
-
+	private LogService logger;
+	
 	/**
 	 * Generates a record from the lines in the MEDLINE®/PubMed® file associated
 	 * with a single record.
@@ -30,9 +32,10 @@ public class MedlineRecord {
 	 *            The format is
 	 *            {@code FIELD - VALUE\nFIELD - VALUE\n\tVALUE\n...}
 	 */
-	public MedlineRecord(String recordString) {
-		// TODO make a constructor that takes a logger for printing the exceptions.
-		Preconditions.checkArgument(recordString != null, "The record string cannot be null");
+	public MedlineRecord(String recordString, LogService logger) {
+		Preconditions.checkArgument(recordString != null, "The record string must not be null");
+		Preconditions.checkArgument(logger != null, "The logger must not be null.");
+		this.logger = logger;
 		this.record = new HashMap<MedlineField, Object>();
 		BufferedReader reader = new BufferedReader(new StringReader(
 				recordString));
@@ -64,7 +67,7 @@ public class MedlineRecord {
 						currentValue = foundValue;
 					}
 				} else {
-					System.err.println("A parsing error occurred with line '" + line + "'.");
+					logError("A parsing error occurred with line '" + line + "'.");
 				}
 			}
 			if (currentTag != null && currentValue != null) {
@@ -72,7 +75,7 @@ public class MedlineRecord {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.err.println("An IOException was caught while attempting to parse a MedlineRecord.\n" + e.getLocalizedMessage());
+			logError("An IOException was caught while attempting to parse a MedlineRecord.\n" + e.getLocalizedMessage());
 		}
 	}
 
@@ -92,7 +95,7 @@ public class MedlineRecord {
 		MedlineField medlineField = MedlineField
 				.getMedlineFieldFromField(field);
 		if (medlineField == null) {
-			System.err.println("A medline field value could not be found for '" + field + "'.");
+			logError("A medline field value could not be found for '" + field + "'.");
 			return;
 		}
 
@@ -108,7 +111,7 @@ public class MedlineRecord {
 					this.appendFieldValue(medlineField, value);
 				}
 			} else {
-				System.err.print(medlineField + "'s type '" + medlineField.getFieldType() + "' is an unsupported type.\n");
+				logError(medlineField + "'s type '" + medlineField.getFieldType() + "' is an unsupported type.\n");
 			}
 		} else {
 			this.appendFieldValue(medlineField, value);
@@ -118,12 +121,16 @@ public class MedlineRecord {
 	private void appendFieldValue(MedlineField field, Object value) {
 		Preconditions.checkArgument(field != null, "The field must not be null.");
 		Preconditions.checkArgument(value != null, "The value must not be null.");
-		Preconditions.checkArgument(
-				field.getFieldType().isAssignableFrom(value.getClass()),
-				"The object provided's class '" + value.getClass().getName()
-						+ "' did not match the provided MedlineField's class '"
-						+ field.getFieldType().getName() + "'.");
+		if (! field.getFieldType().isAssignableFrom(value.getClass())) {
+			String message = "'" + value + "''s class '" + value.getClass().getName()
+			+ "' did not match the provided MedlineField '" + field + "''s class '"
+			+ field.getFieldType().getName() + "' and was skipped.";
+			logError(message);
+			return;
+		}
+		
 
+		// String fields can have multivalues.  Otherwise, the value is overwritten.
 		if (field.getFieldType().isAssignableFrom(String.class)
 				&& this.record.containsKey(field)) {
 			String previousValue = (String) this.record.get(field);
@@ -171,6 +178,10 @@ public class MedlineRecord {
 				MedlineField.MEDLINE_MULTI_VALUE_SEPERATOR).split(value));
 	}
 
+	private void logError(String message) {
+		this.logger.log(LogService.LOG_ERROR, message);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
