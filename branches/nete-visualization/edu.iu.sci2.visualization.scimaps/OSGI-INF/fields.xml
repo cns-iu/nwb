@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithmFactory"/>
+	<properties entry="OSGI-INF/fields.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
