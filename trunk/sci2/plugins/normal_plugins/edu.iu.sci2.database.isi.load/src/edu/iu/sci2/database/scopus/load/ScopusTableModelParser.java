@@ -182,18 +182,19 @@ public class ScopusTableModelParser {
 		for (String name : getSplitField(row, fieldToExtract)) {
 			attribs = new Hashtable<String, Object>();
 			putValue(attribs, Person.Field.RAW_NAME, name);
+			putValue(attribs, Person.Field.FULL_NAME, name);
 			
-			try {
-				nameParser = new AbbreviatedNameParser(name);
-				putValue(attribs, Person.Field.FIRST_INITIAL, nameParser.firstInitial);
-				putValue(attribs, Person.Field.FAMILY_NAME, nameParser.familyName);
-				putValue(attribs, Person.Field.MIDDLE_INITIAL, nameParser.middleInitials);
-			} catch (PersonParsingException e) {
-				String toLog = String.format("Couldn't parse name %s", name);
-				if (this.logger != null) {
-					this.logger.log(LogService.LOG_INFO, toLog);
-				}
-			}
+//			try {
+//				nameParser = new AbbreviatedNameParser(name);
+//				putValue(attribs, Person.Field.FIRST_INITIAL, nameParser.firstInitial);
+//				putValue(attribs, Person.Field.FAMILY_NAME, nameParser.familyName);
+//				putValue(attribs, Person.Field.MIDDLE_INITIAL, nameParser.middleInitials);
+//			} catch (PersonParsingException e) {
+//				String toLog = String.format("Couldn't parse name %s", name);
+//				if (this.logger != null) {
+//					this.logger.log(LogService.LOG_INFO, toLog);
+//				}
+//			}
 		
 			people.add(new Person(keyGenerator, attribs));
 		}
