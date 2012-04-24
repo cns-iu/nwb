@@ -5,6 +5,6 @@ Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.table.core_entities
 Bundle-Version: 0.0.2
 Bundle-ClassPath: .
 X-AutoStart: true
-Service-Component: OSGI-INF/publications_alg.xml, OSGI-INF/authors_alg.xml, OSGI-INF/sources_alg.xml, OSGI-INF/keywords_alg.xml, OSGI-INF/documents_alg.xml
+Service-Component: OSGI-INF/documents_alg.xml, OSGI-INF/authors_alg.xml, OSGI-INF/sources_alg.xml, OSGI-INF/keywords_alg.xml
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: edu.iu.cns.database.extract.generic;bundle-version="0.0.1"
