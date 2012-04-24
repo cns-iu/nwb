@@ -35,6 +35,14 @@ import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScale;
 
 public class PageDirector implements Paintable {
+	private static final String EDGE_LEGEND_TITLE = "Weight";
+
+	private static final String CIRCLE_LEGEND_TITLE = "Area";
+
+	private static final String MAIN_TITLE = "Network Visualization";
+
+	private static final String FOOTER = "CNS (cns.iu.edu)";
+
 	public static final double LINE_SPACING = 1.2;
 
 	private static final Font BASE_FONT = findBasicFont(10);
@@ -183,11 +191,8 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	private static final String TITLE = "Network Visualization";
-	
 	private final Layout layout;
 	
-	private final String footer = "NIH’s Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
 
 	// This whitespace is distributed evenly among the spaces between all the node labels.
 	// Actually, the total whitespace decreases with increasing # of labels, so this is not linear.
@@ -229,7 +234,7 @@ public class PageDirector implements Paintable {
 		if (headerPosition != null) {
 			painter.add(
 					new ComplexLabelPainter.Builder(headerPosition, layout.getFont(TextType.LEGEND), Color.BLACK)
-					.addLine(TITLE, layout.getFont(TextType.TITLE))
+					.addLine(MAIN_TITLE, layout.getFont(TextType.TITLE))
 					.addLine(getTimeStamp())
 					.withLineSpacing(LINE_SPACING)
 					.build());
@@ -246,7 +251,7 @@ public class PageDirector implements Paintable {
 		// The footer
 		painter.add(SimpleLabelPainter.alignedBy(XAlignment.CENTER,  YAlignment.BASELINE)
 				.withFont(layout.getFont(TextType.FOOTER))
-				.makeLabel(layout.getFooterPosition(), footer));
+				.makeLabel(layout.getFooterPosition(), FOOTER));
 	}
 
 	private Font[] createNodeLabelFonts() {
@@ -353,7 +358,7 @@ public class PageDirector implements Paintable {
 		labels.add(1, halfway);
 		CircleRadiusLegend legend = new CircleRadiusLegend(
 				layout.getCircleLegendPosition(), 
-				ImmutableList.of(" ", "Circle Area", dataModel.getNodeValueAttribute()), 
+				ImmutableList.of(" ", CIRCLE_LEGEND_TITLE, dataModel.getNodeValueAttribute()), 
 				coding, ImmutableList.copyOf(labels),
 				layout.getFont(TextType.TITLE), layout.getFont(TextType.LEGEND));
 		return legend;
@@ -364,7 +369,7 @@ public class PageDirector implements Paintable {
 		double halfway = (labels.get(0) + labels.get(1)) / 2.0;
 		labels.add(1, halfway);
 		EdgeWeightLegend legend = new EdgeWeightLegend(layout.getEdgeLegendPosition(), 
-				ImmutableList.of(" ", "Edge Weight", dataModel.getEdgeValueAttribute()),
+				ImmutableList.of(" ", EDGE_LEGEND_TITLE, dataModel.getEdgeValueAttribute()),
 				edgeCoding, ImmutableList.copyOf(labels),
 				layout.getFont(TextType.TITLE), layout.getFont(TextType.LEGEND));
 		return legend;
