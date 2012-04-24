@@ -35,11 +35,14 @@ public class BipartiteNetAlgorithm implements Algorithm {
 	private final String leftSideTitle;
 	private final String rightSideTitle;
 	private final Layout layout;
+	private final String subtitle;
+	private final LogService log;
 
-	public BipartiteNetAlgorithm(Data parentData, File nwbFile, Layout layout, String nodeWeightColumn, String edgeWeightColumn,
+	public BipartiteNetAlgorithm(Data parentData, File nwbFile, Layout layout, String subtitle, String nodeWeightColumn, String edgeWeightColumn,
 			String leftSideType, String leftSideTitle, String rightSideType, String rightSideTitle, LogService log) {
 		this.parentData = parentData;
 		this.layout = layout;
+		this.subtitle = subtitle;
 		this.leftSideType = leftSideType;
 		this.leftSideTitle = leftSideTitle;
 		this.rightSideType = rightSideType;
@@ -47,6 +50,7 @@ public class BipartiteNetAlgorithm implements Algorithm {
 		this.importer = new NWBDataImporter("bipartitetype",
 				leftSideType, nodeWeightColumn, edgeWeightColumn, log);
 		this.nwbFile = nwbFile;
+		this.log = log;
 	}
 
 	@Override
@@ -58,7 +62,15 @@ public class BipartiteNetAlgorithm implements Algorithm {
 			if (!model.hasAnyNodes()) {
 				throw new AlgorithmExecutionException("Input graph has no nodes, can't make a meaningful graph.  Stopping.");
 			}
-			PageDirector pageDirector = new PageDirector(layout, model, leftSideType, leftSideTitle, rightSideType, rightSideTitle);
+			
+			if (( ! layout.hasTitle())
+					&& ( ! subtitle.isEmpty())) {
+				log.log(LogService.LOG_WARNING, "A subtitle was requested, but it won't be rendered " +
+						"because the chosen layout does not render titles or subtitles.");
+			}
+			
+			PageDirector pageDirector = new PageDirector(layout, subtitle, model, leftSideType, 
+					leftSideTitle, rightSideType, rightSideTitle);
 			
 			Data psData = drawToPSFile(pageDirector);
 			

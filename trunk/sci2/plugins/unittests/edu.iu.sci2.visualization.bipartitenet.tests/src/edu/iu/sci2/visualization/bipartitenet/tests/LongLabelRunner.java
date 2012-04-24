@@ -24,6 +24,8 @@ import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
 
 public class LongLabelRunner {
 
+	private static final String SUBTITLE = "Generated from copper wire, aluminum wire, and many other kinds of wire";
+
 	/**
 	 * @param args
 	 * @throws ParsingException 
@@ -36,7 +38,7 @@ public class LongLabelRunner {
 		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "totaldesirability", "linkdesirability");
 		BipartiteGraphDataModel model = importer.constructModelFromFile(LongLabelRunner.class.getResourceAsStream("long-labels.nwb"));
 		
-		PageDirector.Layout layout = PageDirector.Layout.WEB;
+		PageDirector.Layout layout = PageDirector.Layout.PRINT;
 		
 		renderOnScreen(model, layout);
 		renderToPNG(model, layout);
@@ -50,7 +52,7 @@ public class LongLabelRunner {
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title", "What", "What title");
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File("BLAH.png"));
 	}
@@ -59,7 +61,7 @@ public class LongLabelRunner {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title", "What", "What title");
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title", "What", "What title");
 		cc.add(r);
 		f.getContentPane().add(cc);
 		cc.setPreferredSize(new Dimension(layout.getWidth(), layout.getHeight()));
@@ -76,7 +78,7 @@ public class LongLabelRunner {
 				new Dimension(layout.getWidth(), layout.getHeight()));
 		g.setProperties(p);
 		g.startExport();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
 				"What", "What title");
 		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		r.paint(g);

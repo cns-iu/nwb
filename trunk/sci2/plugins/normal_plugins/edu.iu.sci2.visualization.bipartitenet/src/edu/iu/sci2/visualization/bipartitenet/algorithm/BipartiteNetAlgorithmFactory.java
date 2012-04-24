@@ -39,6 +39,7 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	private static final String LEFT_COLUMN_TITLE_ID = "leftColumnTitle";
 	private static final String RIGHT_COLUMN_TITLE_ID = "rightColumnTitle";
 	private static final String LAYOUT_TYPE_ID = "layoutType";
+	private static final String SUBTITLE_ID = "subtitle";
 	
 	private final CachedFunction<File, BipartiteNWBFileExaminer> examinerMaker =
 			new CachedFunction<File, BipartiteNWBFileExaminer>() {
@@ -85,8 +86,10 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 		
 		Layout layout = Layout.valueOf((String) parameters.get(LAYOUT_TYPE_ID));
 		
+		String subtitle = (String) parameters.get(SUBTITLE_ID);
+		
 		return new BipartiteNetAlgorithm(data[0], getNWBFile(data),
-				layout,
+				layout, subtitle,
 				nodeWeightColumn, edgeWeightColumn,
 				leftSideType, leftSideTitle, rightSideType, rightSideTitle, log);
 	}

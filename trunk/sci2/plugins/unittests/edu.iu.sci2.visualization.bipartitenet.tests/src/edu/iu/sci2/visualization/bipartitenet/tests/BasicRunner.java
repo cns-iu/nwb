@@ -24,6 +24,8 @@ import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
 
 public class BasicRunner {
 
+	private static final String SUBTITLE = "Generated from subatomic particles";
+
 	/**
 	 * @param args
 	 * @throws ParsingException
@@ -68,7 +70,7 @@ public class BasicRunner {
 				new Dimension(layout.getWidth(), layout.getHeight()));
 		g.setProperties(p);
 		g.startExport();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
 				"What", "What title");
 		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		r.paint(g);
@@ -86,7 +88,7 @@ public class BasicRunner {
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
 				"What", "What title");
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File("BLAH.png"));
@@ -97,7 +99,7 @@ public class BasicRunner {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
 				"What", "What title");
 		cc.add(r);
 		f.getContentPane().add(cc);

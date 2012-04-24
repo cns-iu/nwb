@@ -24,6 +24,8 @@ import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
 
 public class WeightedEdgeRunner {
 
+	private static final String SUBTITLE = "Generated from thoughts, ideas, and notions";
+
 	/**
 	 * @param args
 	 * @throws ParsingException 
@@ -64,7 +66,7 @@ public class WeightedEdgeRunner {
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who", "What", "What");
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File(String.format("BLAH-%s.png", layout.toString())));
 	}
@@ -73,7 +75,7 @@ public class WeightedEdgeRunner {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who", "What", "What");
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who", "What", "What");
 		cc.add(r);
 		f.getContentPane().add(cc);
 		cc.setPreferredSize(new Dimension(layout.getWidth(), layout.getHeight()));
@@ -90,7 +92,7 @@ public class WeightedEdgeRunner {
 				new Dimension(layout.getWidth(), layout.getHeight()));
 		g.setProperties(p);
 		g.startExport();
-		PageDirector r = new PageDirector(layout, model, "Who", "Who title",
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
 				"What", "What title");
 		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		r.paint(g);

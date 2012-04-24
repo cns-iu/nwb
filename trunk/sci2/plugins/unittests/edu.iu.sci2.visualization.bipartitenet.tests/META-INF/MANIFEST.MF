@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.visualization.bipartitenet.tests
 Bundle-SymbolicName: edu.iu.sci2.visualization.bipartitenet.tests
-Bundle-Version: 1.0.0
-Fragment-Host: edu.iu.sci2.visualization.bipartitenet
+Bundle-Version: 1.1.1
+Fragment-Host: edu.iu.sci2.visualization.bipartitenet;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.7"
 Import-Package: org.apache.commons.lang,
