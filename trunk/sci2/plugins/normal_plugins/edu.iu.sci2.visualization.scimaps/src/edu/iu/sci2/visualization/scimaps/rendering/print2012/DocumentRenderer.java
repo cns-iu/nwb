@@ -61,22 +61,26 @@ public class DocumentRenderer extends PageManager implements RenderableVisualiza
 	}
 
 	private void addMapOfSciencePage(int pageNumber) {
+		float pageScalingFactor = 1.3f;
+		int fontSize = 10;
+		int titleFontSize = 14;
+		
 		addToPage(pageNumber, new HowToArea(inch(5.5f), inch(7.0f)));
 		addToPage(
 				pageNumber,
 				new CenteredCopyrightInfo(
-						(float) this.dimensions.getWidth() / 2, inch(5.72f), 10));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
-				inch(3.47f), inch(7.0f), 10, 5, 50));
+						(float) this.dimensions.getWidth() / 2, inch(5.72f), fontSize));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, pageScalingFactor,
+				inch(3.47f), inch(7.0f), fontSize, titleFontSize, 5, 50));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
 						.countOfUnmappedPublications(), Collections
 						.min(this.mapOfScience.getMappedWeights()), Collections
 						.max(this.mapOfScience.getMappedWeights()), inch(0.25f),
-						inch(7.0f), 14, 10));
+						inch(7.0f), titleFontSize, fontSize));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
-				this.scalingFactor, 1.3, inch(0.0f), inch(5.0f)));
+				this.scalingFactor, pageScalingFactor, inch(0.0f), inch(5.0f)));
 
 	}
 

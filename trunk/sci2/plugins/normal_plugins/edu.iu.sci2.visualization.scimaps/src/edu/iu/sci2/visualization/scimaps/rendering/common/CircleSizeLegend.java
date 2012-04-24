@@ -13,44 +13,54 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 public class CircleSizeLegend implements PageElement {
 	private static final DecimalFormat formatter = new DecimalFormat(
 			"###,###.##");
-	private final float scalingFactor;
 
 	private float minArea;
 	private float maxArea;
 	private float midArea;
-	private String minLabel;
-	private String midLabel;
-	private String maxLabel;
 	private double leftBoundary;
 	private double topBoundary;
 	private int fontSize;
+	private int titleFontSize;
+	private float pageScalingFactor;
+	private float scalingFactor;
 
 	/**
 	 * If you scaled your {@link Node}s, you can use this constructor which will
 	 * take that into account numerically, though not graphically.
 	 * 
 	 * @param scalingFactor
-	 *            - The nodes were scaled by in the Map of Science
+	 *            The nodes were scaled by in the Map of Science
+	 * @param pageScalingFactor
+	 *            The scaling factor for the page
 	 */
-	public CircleSizeLegend(float scalingFactor, double leftBoundary,
-			double topBoundary, int fontSize, float minArea, float maxArea) {
-		this.scalingFactor = scalingFactor;
+	public CircleSizeLegend(float scalingFactor, float pageScalingFactor,
+			double leftBoundary, double topBoundary, int fontSize,
+			int titleFontSize, float minArea, float maxArea) {
 		this.leftBoundary = leftBoundary;
 		this.topBoundary = topBoundary;
 		this.fontSize = fontSize;
+		this.titleFontSize = titleFontSize;
+		
+		this.pageScalingFactor = pageScalingFactor;
+		this.scalingFactor = scalingFactor;
 
 		this.minArea = minArea;
 		this.maxArea = maxArea;
 		this.midArea = Math.round((this.minArea + this.maxArea) / 2.0);
-
-		// HACK I could calculate the radius using nodes.calculateRadius but the
-		// radius given isn't really the radius so I couldn't get the area back.
-		this.minLabel = formatter.format(this.minArea * this.scalingFactor);
-		this.midLabel = formatter.format(this.midArea * this.scalingFactor);
-		this.maxLabel = formatter.format(this.maxArea * this.scalingFactor);
 	}
 
 	public void render(GraphicsState state) {
+		// Draw the word 'Area'
+		String title = "Area";
+		state.save();
+		state.current.translate(this.leftBoundary, this.topBoundary);
+		double titleWidth = state.current.getFontMetrics()
+				.getStringBounds(title, state.current).getBounds().getWidth();
+		state.setBoldFont("Arial", this.titleFontSize);
+		state.current.drawString(title, (int) (-titleWidth), 0);
+		state.restore();
+
+		// Draw the legend
 		state.save();
 		state.setFont("Arial", this.fontSize);
 		state.current.setColor(Color.BLACK);
@@ -59,6 +69,10 @@ public class CircleSizeLegend implements PageElement {
 		float minRadius = Node.calculateRadius(this.minArea, 1.0f);
 		float midRadius = Node.calculateRadius(this.midArea, 1.0f);
 		float maxRadius = Node.calculateRadius(this.maxArea, 1.0f);
+
+		String minLabel = formatter.format(Node.calculateWeight(minRadius / this.pageScalingFactor, this.scalingFactor));
+		String midLabel = formatter.format(Node.calculateWeight(midRadius / this.pageScalingFactor, this.scalingFactor));
+		String maxLabel = formatter.format(Node.calculateWeight(maxRadius / this.pageScalingFactor, this.scalingFactor));
 
 		double circleX = maxRadius;
 
@@ -78,11 +92,11 @@ public class CircleSizeLegend implements PageElement {
 		float maxLabelY = 0 + state.current.getFontMetrics().getHeight();
 
 		state.drawCircle((int) circleX, (int) minCircleY, (int) minRadius);
-		state.current.drawString(this.minLabel, labelX, minLabelY);
+		state.current.drawString(minLabel, labelX, minLabelY);
 		state.drawCircle((int) circleX, (int) midCircleY, (int) midRadius);
-		state.current.drawString(this.midLabel, labelX, midLabelY);
+		state.current.drawString(midLabel, labelX, midLabelY);
 		state.drawCircle((int) circleX, (int) maxCircleY, (int) maxRadius);
-		state.current.drawString(this.maxLabel, labelX, maxLabelY);
+		state.current.drawString(maxLabel, labelX, maxLabelY);
 
 		state.restore();
 

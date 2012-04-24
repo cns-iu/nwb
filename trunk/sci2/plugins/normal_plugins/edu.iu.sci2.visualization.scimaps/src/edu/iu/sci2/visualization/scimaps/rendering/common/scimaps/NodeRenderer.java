@@ -19,8 +19,7 @@ public class NodeRenderer {
 
 		state.save();
 		state.current.setColor(node.getColor());
-		state.drawArc((int) node.getX(), (int) node.getY(), (int) radius, 0,
-				360);
+		state.drawCircle((int) node.getX(), (int) node.getY(), (int) radius);
 		state.restore();
 	}
 

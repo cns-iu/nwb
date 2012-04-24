@@ -49,12 +49,13 @@ public class DocumentRenderer extends PageManager implements RenderableVisualiza
 	}
 
 	private void addMapOfSciencePage(int pageNumber) {
+		float pageScalingFactor = 2.1f;
 		addToPage(
 				pageNumber,
 				new CenteredCopyrightInfo(
 						(float) this.dimensions.getWidth() / 2, inch(8.66f), 16));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
-				inch(4.96f), inch(11.0f), 16, 5, 100));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, pageScalingFactor,
+				inch(4.96f), inch(11.0f), 16, 20, 5, 100));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
@@ -63,7 +64,7 @@ public class DocumentRenderer extends PageManager implements RenderableVisualiza
 						.max(this.mapOfScience.getMappedWeights()),
 						inch(0.25f), inch(11.0f), 20, 16));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
-				this.scalingFactor, 2.1, 25, 500));
+				this.scalingFactor, pageScalingFactor, 25, 500));
 	}
 
 	private void addPageIndependentElements() {

@@ -89,7 +89,7 @@ public class MapOfScienceRenderer implements PageElement{
 
 		state.setFontSize(8);
 
-		state.current.translate(0, inch(.33f));
+		state.current.translate(0, inch(0.33f));
 
 		// SOMEDAY fix the whole map of science so that the x and y in the
 		// discipline can be used to render it.
@@ -97,11 +97,11 @@ public class MapOfScienceRenderer implements PageElement{
 		renderDisciplineLabel(state, "Social Sciences",
 				Disciplines.getDisciplineById("13"), inch(6.2f), inch(-1));
 		renderDisciplineLabel(state, "Electrical Engineering",
-				Disciplines.getDisciplineById("7"), inch(.9f), inch(-1.24f));
+				Disciplines.getDisciplineById("7"), inch(0.9f), inch(-1.24f));
 		renderDisciplineLabel(state, "& Computer Science",
-				Disciplines.getDisciplineById("7"), inch(.9f), inch(-1.12f));
+				Disciplines.getDisciplineById("7"), inch(0.9f), inch(-1.12f));
 		renderDisciplineLabel(state, "Biology",
-				Disciplines.getDisciplineById("1"), inch(3.73f), inch(-.6f));
+				Disciplines.getDisciplineById("1"), inch(3.73f), inch(-0.6f));
 		renderDisciplineLabel(state, "Biotechnology",
 				Disciplines.getDisciplineById("2"), inch(3.1f), inch(-1.45f));
 		renderDisciplineLabel(state, "Brain Research",
@@ -118,7 +118,7 @@ public class MapOfScienceRenderer implements PageElement{
 		renderDisciplineLabel(state, "Health Professionals",
 				Disciplines.getDisciplineById("12"), inch(5.3f), inch(-2.55f));
 		renderDisciplineLabel(state, "Humanities",
-				Disciplines.getDisciplineById("9"), inch(6.18f), inch(-.4f));
+				Disciplines.getDisciplineById("9"), inch(6.18f), inch(-0.4f));
 		renderDisciplineLabel(state, "Infectious Disease",
 				Disciplines.getDisciplineById("10"), inch(4.41f), inch(-1.05f));
 		renderDisciplineLabel(state, "Math & Physics",
@@ -131,15 +131,15 @@ public class MapOfScienceRenderer implements PageElement{
 		state.save();
 
 		state.setFontSize(7);
-		state.setGray(.3);
+		state.setGray(0.3);
 		FontMetrics metrics = state.current.getFontMetrics();
 		float halfWidth = metrics.stringWidth(s) / 2.0f;
 
 		state.current.draw(new Line2D.Float(-(halfWidth + inch(1)), 2,
-				inch(.8f) - (halfWidth + inch(1)), 2));
+				inch(0.8f) - (halfWidth + inch(1)), 2));
 		state.current.drawString(s, -halfWidth, 3.5f);
-		state.current.draw(new Line2D.Float(halfWidth + inch(.2f), 2, halfWidth
-				+ inch(.2f) + inch(.8f), 2));
+		state.current.draw(new Line2D.Float(halfWidth + inch(0.2f), 2, halfWidth
+				+ inch(0.2f) + inch(0.8f), 2));
 
 		state.restore();
 	}
@@ -151,17 +151,16 @@ public class MapOfScienceRenderer implements PageElement{
 		Map<Integer, Float> mapping = mapOfScience.getIdWeightMapping();
 		state.save();
 
-		state.current.translate(inch(1), inch(.3f));
-		state.setGray(.7);
+		state.current.translate(inch(1), inch(0.3f));
+		state.setGray(0.7);
 
 		EdgeRenderer.renderEdges(state, edges);
 
 		for (Integer id : mapOfScience.getMappedIdsByWeight()) {
 
-			Node node = Nodes.getNodeByID(id.intValue());
-
-			float weight = mapping.get(Integer.valueOf(node.getId()))
-					.floatValue();
+			Node node = Nodes.getNodeByID(id);
+			
+			float weight = mapping.get(id);
 
 			NodeRenderer.render(state, node, weight, scalingFactor);
 		}
@@ -179,23 +178,10 @@ public class MapOfScienceRenderer implements PageElement{
 
 	private static void renderLeftSide(GraphicsState state) {
 		state.save();
-		state.current.translate(inch(.5f), inch(-1.2f));
+		state.current.translate(inch(0.5f), inch(-1.2f));
 		state.current.rotate(-Math.PI / 2);
 		renderSideBar(state, "Map continued on right");
 		state.restore();
-	}
-
-	/**
-	 * This is the class of error that will be given if the MapOfScience cannot
-	 * be rendered.
-	 * 
-	 */
-	public static class MapOfScienceRenderingException extends Exception {
-		private static final long serialVersionUID = 7330170129647808546L;
-
-		public MapOfScienceRenderingException(String message) {
-			super(message);
-		}
 	}
 
 	public void render(GraphicsState state) throws PageElementRenderingException {
@@ -212,4 +198,17 @@ public class MapOfScienceRenderer implements PageElement{
 		}
 	}
 
+	
+	/**
+	 * This is the class of error that will be given if the MapOfScience cannot
+	 * be rendered.
+	 * 
+	 */
+	public static class MapOfScienceRenderingException extends Exception {
+		private static final long serialVersionUID = 7330170129647808546L;
+		
+		public MapOfScienceRenderingException(String message) {
+			super(message);
+		}
+	}
 }
