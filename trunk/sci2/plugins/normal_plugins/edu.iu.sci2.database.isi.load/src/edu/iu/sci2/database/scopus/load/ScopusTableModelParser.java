@@ -28,8 +28,6 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
-import edu.iu.sci2.database.isi.load.utilities.parser.AbbreviatedNameParser;
-import edu.iu.sci2.database.isi.load.utilities.parser.exception.PersonParsingException;
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.CitedPatent;
@@ -177,12 +175,11 @@ public class ScopusTableModelParser {
 			DatabaseTableKeyGenerator keyGenerator) {
 		List<Person> people = new ArrayList<Person>();
 		Dictionary<String, Object> attribs;
-		AbbreviatedNameParser nameParser;
+//		AbbreviatedNameParser nameParser;
 		
 		for (String name : getSplitField(row, fieldToExtract)) {
 			attribs = new Hashtable<String, Object>();
 			putValue(attribs, Person.Field.RAW_NAME, name);
-			putValue(attribs, Person.Field.FULL_NAME, name);
 			
 //			try {
 //				nameParser = new AbbreviatedNameParser(name);
