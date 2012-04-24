@@ -20,7 +20,8 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageManager;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
-public class DocumentRenderer extends PageManager implements RenderableVisualization {
+public class DocumentRenderer extends PageManager implements
+		RenderableVisualization {
 
 	private MapOfScience mapOfScience;
 	private String generatedFrom;
@@ -64,21 +65,22 @@ public class DocumentRenderer extends PageManager implements RenderableVisualiza
 		float pageScalingFactor = 1.3f;
 		int fontSize = 10;
 		int titleFontSize = 14;
-		
+
 		addToPage(pageNumber, new HowToArea(inch(5.5f), inch(7.0f)));
-		addToPage(
-				pageNumber,
+		addToPage(pageNumber,
 				new CenteredCopyrightInfo(
-						(float) this.dimensions.getWidth() / 2, inch(5.72f), fontSize));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, pageScalingFactor,
-				inch(3.47f), inch(7.0f), fontSize, titleFontSize, 5, 50));
+						(float) this.dimensions.getWidth() / 2, inch(5.72f),
+						fontSize));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
+				pageScalingFactor, inch(3.47f), inch(7.0f), fontSize,
+				titleFontSize, 5, 50));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
 						.countOfUnmappedPublications(), Collections
 						.min(this.mapOfScience.getMappedWeights()), Collections
-						.max(this.mapOfScience.getMappedWeights()), inch(0.25f),
-						inch(7.0f), titleFontSize, fontSize));
+						.max(this.mapOfScience.getMappedWeights()),
+						inch(0.25f), inch(7.0f), titleFontSize, fontSize));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
 				this.scalingFactor, pageScalingFactor, inch(0.0f), inch(5.0f)));
 
