@@ -19,7 +19,8 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageManager;
 import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 
-public class DocumentRenderer extends PageManager implements RenderableVisualization {
+public class DocumentRenderer extends PageManager implements
+		RenderableVisualization {
 	private MapOfScience mapOfScience;
 	private float scalingFactor;
 
@@ -54,8 +55,8 @@ public class DocumentRenderer extends PageManager implements RenderableVisualiza
 				pageNumber,
 				new CenteredCopyrightInfo(
 						(float) this.dimensions.getWidth() / 2, inch(8.66f), 16));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, pageScalingFactor,
-				inch(4.96f), inch(11.0f), 16, 20, 5, 100));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
+				pageScalingFactor, inch(4.96f), inch(11.0f), 16, 20, 5, 100));
 		addToPage(
 				pageNumber,
 				new PageLegend((int) this.mapOfScience
@@ -69,7 +70,7 @@ public class DocumentRenderer extends PageManager implements RenderableVisualiza
 
 	private void addPageIndependentElements() {
 		addToAllPages(new ItalicCenteredFooter(this.dimensions.getWidth() / 2,
-				inch(17.78f - 0.25f)));
+				this.dimensions.getHeight() - inch(0.25f)));
 	}
 
 	public String title() {

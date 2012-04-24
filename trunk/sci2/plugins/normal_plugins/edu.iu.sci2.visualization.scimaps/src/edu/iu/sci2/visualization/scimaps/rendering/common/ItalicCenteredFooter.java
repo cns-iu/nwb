@@ -15,7 +15,7 @@ public class ItalicCenteredFooter implements PageElement {
 	public ItalicCenteredFooter(double centerX, double topY) {
 		this.centerX = centerX;
 		this.topY = topY;
-		this.footerText = "NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
+		this.footerText = "CNS (cns.iu.edu)";
 	}
 
 	public void render(GraphicsState state) {
