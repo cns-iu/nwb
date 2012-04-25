@@ -273,6 +273,12 @@
 			<menu pid="nwb.visualization.lanet"/>	
 			  -->
 	    </menu>	
+	</top_menu>
+	<top_menu name="R">
+		<menu pid="edu.iu.cns.r.CreateRAlgorithm"/>
+		<menu pid="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm"/>
+		<menu pid="edu.iu.cns.r.RunRAlgorithm"/>
+		<menu pid="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm"/>
 	</top_menu>    
     <top_menu name="Help">      
 		<menu name="Documentation" pid=""/>
