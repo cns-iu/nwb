@@ -9,7 +9,7 @@
   </parent>
   <groupId>edu.iu.sci2.normal_plugins</groupId>
   <artifactId>edu.iu.sci2.database.isi.extract.network.weighted_document_document_network</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
 	  <!-- Only the first of these two properties should be required, but it's a Tycho bug.

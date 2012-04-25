@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: WeightedDocumentDocumentNetwork
 Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.network.weighted_document_document_network
-Bundle-Version: 0.0.1
+Bundle-Version: 0.0.2
 Bundle-ClassPath: .
 Import-Package: com.google.common.base,
  com.google.common.collect,

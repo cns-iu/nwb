@@ -137,25 +137,25 @@ public class WeightedDocumentDocumentNetworkAlgorithm implements Algorithm {
 			 * speed up the query.
 			 */
 			String query = 
-					"SELECT DOCUMENT.PK as DOCUMENT_ID," + newLine
-					+ "\t" + "DOCUMENT.PUBLICATION_YEAR as DOCUMENT_PUB_YEAR," + newLine
-					+ "\t" + "DOCUMENT.DOCUMENT_VOLUME as DOCUMENT_VOLUME," + newLine
-					+ "\t" + "DOCUMENT.DIGITAL_OBJECT_IDENTIFIER as DOCUMENT_DOI," + newLine
-					+ "\t" + "DOCUMENT.BEGINNING_PAGE as DOCUMENT_FIRST_PAGE," + newLine
-					+ "\t" + "SOURCE.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION " 
+					"SELECT DOCUMENTS.PK as DOCUMENT_ID," + newLine
+					+ "\t" + "DOCUMENTS.PUBLICATION_YEAR as DOCUMENT_PUB_YEAR," + newLine
+					+ "\t" + "DOCUMENTS.VOLUME as DOCUMENT_VOLUME," + newLine
+					+ "\t" + "DOCUMENTS.DIGITAL_OBJECT_IDENTIFIER as DOCUMENT_DOI," + newLine
+					+ "\t" + "DOCUMENTS.BEGINNING_PAGE as DOCUMENT_FIRST_PAGE," + newLine
+					+ "\t" + "SOURCES.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION " 
 						+ "as DOCUMENT_ABVR_JOURNAL_NAME," + newLine
-					+ "\t" + "PERSON.UNSPLIT_NAME as DOCUMENT_FIRST_AUTHOR_NAME," + newLine
-					+ "\t" + "DOCUMENT_KEYWORDS.DOCUMENT_KEYWORDS_KEYWORD_FK as KEYWORD_ID," + newLine
-					+ "\t" + "KEYWORD.KEYWORD as KEYWORD_NAME" + newLine
-				+ "FROM APP.DOCUMENT" + newLine
-				+ "LEFT JOIN APP.SOURCE" + newLine
-				+ "ON SOURCE.PK=DOCUMENT.DOCUMENT_SOURCE_FK" + newLine
-				+ "LEFT JOIN APP.PERSON" + newLine
-				+ "ON PERSON.PK=DOCUMENT.FIRST_AUTHOR_FK" + newLine
-				+ "RIGHT JOIN APP.DOCUMENT_KEYWORDS" + newLine
-				+ "ON DOCUMENT_KEYWORDS.DOCUMENT_KEYWORDS_DOCUMENT_FK=DOCUMENT.PK" + newLine
-				+ "LEFT JOIN APP.KEYWORD" + newLine
-				+ "ON KEYWORD.PK=DOCUMENT_KEYWORDS.DOCUMENT_KEYWORDS_KEYWORD_FK";
+					+ "\t" + "PEOPLE.RAW_NAME as DOCUMENT_FIRST_AUTHOR_NAME," + newLine
+					+ "\t" + "DOCUMENT_KEYWORDS.KEYWORD_ID as KEYWORD_ID," + newLine
+					+ "\t" + "KEYWORDS.NAME as KEYWORD_NAME" + newLine
+				+ "FROM DOCUMENTS" + newLine
+				+ "LEFT JOIN SOURCES" + newLine
+				+ "ON SOURCES.PK=DOCUMENTS.SOURCE_ID" + newLine
+				+ "LEFT JOIN PEOPLE" + newLine
+				+ "ON PEOPLE.PK=DOCUMENTS.FIRST_AUTHOR_ID" + newLine
+				+ "RIGHT JOIN DOCUMENT_KEYWORDS" + newLine
+				+ "ON DOCUMENT_KEYWORDS.DOCUMENT_ID=DOCUMENTS.PK" + newLine
+				+ "LEFT JOIN KEYWORDS" + newLine
+				+ "ON KEYWORDS.PK=DOCUMENT_KEYWORDS.KEYWORD_ID";
 			statement.execute(query);
 
 			ResultSet resultSet = statement.getResultSet();
@@ -256,6 +256,8 @@ public class WeightedDocumentDocumentNetworkAlgorithm implements Algorithm {
 			this.name = name;
 		}
 
+		// Unused currently but potentially useful.
+		@SuppressWarnings("unused")
 		public String getId() {
 			return this.id;
 		}
@@ -264,15 +266,17 @@ public class WeightedDocumentDocumentNetworkAlgorithm implements Algorithm {
 			return this.name;
 		}
 
+		// Unused currently but potentially useful.
+		@SuppressWarnings("unused")
 		public List<Keyword> getKeywords() {
 			return this.keywords;
 		}
 		
-		private void addKeywordID(String id) {
+		private void addKeywordID(String keywordID) {
 			if (this.keywordIDs == null) {
 				this.keywordIDs = new HashSet<String>();
 			}
-			this.keywordIDs.add(id);
+			this.keywordIDs.add(keywordID);
 		}
 		
 		public void addKeyword(Keyword keyword) {
@@ -302,6 +306,8 @@ public class WeightedDocumentDocumentNetworkAlgorithm implements Algorithm {
 			return this.id;
 		}
 
+		// Unused currently but potentially useful.
+		@SuppressWarnings("unused")
 		public String getName() {
 			return this.name;
 		}
