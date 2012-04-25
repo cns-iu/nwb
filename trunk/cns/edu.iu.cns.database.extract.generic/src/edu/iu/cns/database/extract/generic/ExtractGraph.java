@@ -6,8 +6,6 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -26,9 +24,7 @@ import prefuse.data.io.sql.ConnectionFactory;
 import prefuse.data.io.sql.DatabaseDataSource;
 
 public class ExtractGraph implements Algorithm {
-	private Data[] data;
-	private Dictionary parameters;
-	private CIShellContext context;
+	private Data parentData;
 	private LogService logger;
 	
 	private String nodeQuery;
@@ -46,32 +42,30 @@ public class ExtractGraph implements Algorithm {
 	private boolean custom;
 
 	public ExtractGraph(Data[] data, Dictionary parameters, CIShellContext context) {
-		this.data = data;
-		this.parameters = parameters;
-		this.context = context;
+		this.parentData = data[0];
 		this.logger = (LogService) context.getService(LogService.class.getName());
 
-		this.nodeQuery = (String) this.parameters.get(ExtractGraphFactory.NODE_QUERY_KEY);
-		this.edgeQuery = (String) this.parameters.get(ExtractGraphFactory.EDGE_QUERY_KEY);
-		this.idColumn = (String) this.parameters.get(ExtractGraphFactory.ID_COLUMN_KEY);
-		this.sourceColumn = (String) this.parameters.get(ExtractGraphFactory.SOURCE_COLUMN_KEY);
-		this.targetColumn = (String) this.parameters.get(ExtractGraphFactory.TARGET_COLUMN_KEY);
-		this.directed = (Boolean) this.parameters.get(ExtractGraphFactory.DIRECTED_KEY);
+		this.nodeQuery = (String) parameters.get(ExtractGraphFactory.NODE_QUERY_KEY);
+		this.edgeQuery = (String) parameters.get(ExtractGraphFactory.EDGE_QUERY_KEY);
+		this.idColumn = (String) parameters.get(ExtractGraphFactory.ID_COLUMN_KEY);
+		this.sourceColumn = (String) parameters.get(ExtractGraphFactory.SOURCE_COLUMN_KEY);
+		this.targetColumn = (String) parameters.get(ExtractGraphFactory.TARGET_COLUMN_KEY);
+		this.directed = (Boolean) parameters.get(ExtractGraphFactory.DIRECTED_KEY);
 		if(parameters.get(ExtractGraphFactory.LABEL_KEY) != null) {
 			this.label = (String) parameters.get(ExtractGraphFactory.LABEL_KEY);
 		}
-		custom = parameters.get(ExtractGraphFactory.CUSTOM_KEY) == null;
+		this.custom = (parameters.get(ExtractGraphFactory.CUSTOM_KEY) == null);
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		if(custom) {
-			logger.log(LogService.LOG_INFO, "If you see unexpected results with the resulting network from analysis algorithms or " +
+		if(this.custom) {
+			this.logger.log(LogService.LOG_INFO, "If you see unexpected results with the resulting network from analysis algorithms or " +
 				"inconsistencies between the Network Analysis Toolkit and GUESS, this is probably due to the queries including " +
 				"duplicates of nodes or edges. To verify your queries are producing exactly what you expect, " +
 				"try running each of them separately as table extractions, and looking over the results manually.");
 		}
 
-		Database database = (Database) data[0].getData();
+		Database database = (Database) this.parentData.getData();
 		Connection connection = DatabaseUtilities.connect(database, "Unable to communicate with the database.");
 		try {
 			Graph graph = extractGraph(connection);
@@ -101,11 +95,9 @@ public class ExtractGraph implements Algorithm {
 					DataIOException, AlgorithmExecutionException {
 		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(connection);
 		
-		Table nodes = tableSource.getData(nodeQuery);
-		this.logger.log(LogService.LOG_INFO, "Executed node query: \r\n" + nodeQuery);
+		Table nodes = tableSource.getData(this.nodeQuery);
 		
-		Table edges = tableSource.getData(edgeQuery);		
-		this.logger.log(LogService.LOG_INFO, "Executed edge query: \r\n" + edgeQuery);
+		Table edges = tableSource.getData(this.edgeQuery);
 		
 		addInternalColumns(nodes, edges);
 
@@ -117,12 +109,12 @@ public class ExtractGraph implements Algorithm {
 		for(int row = 0; row < nodeCount; row++) {
 			Tuple node = nodes.getTuple(row);
 			try {
-				Object originalId = node.get(idColumn);
+				Object originalId = node.get(this.idColumn);
 				newIds.put(originalId, currentId);
 				node.setInt(internalId, currentId);
 				currentId++;
 			} catch(ArrayIndexOutOfBoundsException e) {
-				throw new AlgorithmExecutionException("The node query does not include a column named " + idColumn);
+				throw new AlgorithmExecutionException("The node query does not include a column named " + this.idColumn);
 			}
 
 		}
@@ -130,15 +122,15 @@ public class ExtractGraph implements Algorithm {
 		int edgeCount = edges.getRowCount();
 		for(int row = 0; row < edgeCount; row++) {
 			Tuple edge = edges.getTuple(row);
-			internalizeId(edge, sourceColumn, internalSource, newIds);
-			internalizeId(edge, targetColumn, internalTarget, newIds);
+			internalizeId(edge, this.sourceColumn, internalSource, newIds);
+			internalizeId(edge, this.targetColumn, internalTarget, newIds);
 		}
 
-		Graph graph = new Graph(nodes, edges, directed, internalId, internalSource, internalTarget);
+		Graph graph = new Graph(nodes, edges, this.directed, internalId, internalSource, internalTarget);
 		return graph;
 	}
 
-	private void internalizeId(Tuple edge, String column, String internal, Map<Object, Integer> newIds)
+	private static void internalizeId(Tuple edge, String column, String internal, Map<Object, Integer> newIds)
 			throws AlgorithmExecutionException {
 		try {
 			Object originalSource = edge.get(column);
@@ -153,7 +145,7 @@ public class ExtractGraph implements Algorithm {
 		}
 	}
 
-	private void addInternalColumns(Table nodes, Table edges) {
+	private static void addInternalColumns(Table nodes, Table edges) {
 		nodes.addColumn(internalId, int.class);
 		edges.addColumn(internalSource, int.class);
 		edges.addColumn(internalTarget, int.class);
@@ -161,9 +153,9 @@ public class ExtractGraph implements Algorithm {
 
 	private Data wrapWithMetadata(Graph extractedGraph) {
 		Data outputData = new BasicData(extractedGraph, Graph.class.getName());
-		Dictionary metadata = outputData.getMetadata();
+		Dictionary<String, Object> metadata = outputData.getMetadata();
 		metadata.put(DataProperty.LABEL, this.label);
-		metadata.put(DataProperty.PARENT, data[0]);
+		metadata.put(DataProperty.PARENT, this.parentData);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 		return outputData;
 	}

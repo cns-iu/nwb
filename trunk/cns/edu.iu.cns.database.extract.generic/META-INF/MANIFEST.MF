@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Generic Database Extraction Algorithms
 Bundle-SymbolicName: edu.iu.cns.database.extract.generic
-Bundle-Version: 0.0.2
+Bundle-Version: 0.0.3
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
@@ -50,6 +50,7 @@ Import-Package: org.cishell.framework;version="1.0.0",
  prefuse.visual.tuple
 X-AutoStart: true
 Service-Component: OSGI-INF/extract_table.xml, OSGI-INF/extract_graph.xml
-Export-Package: edu.iu.cns.database.extract.generic,
- edu.iu.cns.database.extract.generic.service
+Export-Package: edu.iu.cns.database.extract.generic;version="0.0.3",
+ edu.iu.cns.database.extract.generic.service;version="0.0.3"
 Bundle-Activator: edu.iu.cns.database.extract.generic.Activator
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

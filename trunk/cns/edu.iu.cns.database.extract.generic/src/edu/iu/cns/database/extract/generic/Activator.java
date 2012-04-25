@@ -15,7 +15,7 @@ public class Activator implements BundleActivator {
 	
 	public void start(BundleContext context) throws Exception {
 		//Allow the database service to be found by other services/plugins
-		extractionServiceRegistration = context.registerService(
+		this.extractionServiceRegistration = context.registerService(
 				ExtractionService.class.getName(), new ExtractionService(), new Hashtable());
 	}
 

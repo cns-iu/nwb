@@ -9,7 +9,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
 public class ExtractTableWithQueryFactory implements AlgorithmFactory {
