@@ -18,3 +18,4 @@ Import-Package: com.google.common.base,
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: edu.iu.cns.database.extract.generic;bundle-version="0.0.3"
