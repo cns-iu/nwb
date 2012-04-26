@@ -94,7 +94,7 @@ public class HowToRead implements PostScriptable {
 		String beforeMapKind = Iterables.get(firstLineParts, 0);
 		String afterMapKind = Iterables.get(firstLineParts, 1);
 		
-		// Show the bits before and after the map kind in the plain face and the map kind in italics
+		// Show the bits before and after the map kind in the plain face but the map kind in italics
 		content += String.format("(%s) show ", beforeMapKind);
 		content += PSUtility.findscalesetfont(pageLayout.contentFont().deriveFont(Font.ITALIC)) +
 				" " + String.format("(%s) show", mapKind) + " " +
