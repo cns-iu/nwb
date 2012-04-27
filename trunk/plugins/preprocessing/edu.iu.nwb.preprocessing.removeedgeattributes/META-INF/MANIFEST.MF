@@ -5,7 +5,7 @@ Bundle-SymbolicName: edu.iu.nwb.preprocessing.removeedgeattributes
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.util.nwbfile,
- org.apache.commons.collections,
+ org.apache.commons.collections;version="3.1.0",
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
