@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: edu.iu.cns.visualization.tests
+Bundle-SymbolicName: edu.iu.cns.visualization.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: edu.iu.cns.visualization;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit;bundle-version="4"
