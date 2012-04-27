@@ -14,7 +14,6 @@
 		<version>1.0.0</version>
 	</parent>
 	<modules>
-		<module>edu.iu.cns.database.merge.generic.tests</module>
 		<module>edu.iu.sci2.visualization.geomaps.tests</module>
 		<module>edu.iu.sci2.visualization.bipartitenet.tests</module>
 		<module>edu.iu.sci2.visualization.scimaps.tests</module>

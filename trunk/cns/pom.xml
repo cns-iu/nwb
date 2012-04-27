@@ -20,6 +20,7 @@
     <module>edu.iu.cns.tool.metadata_report</module>
     <module>edu.iu.cns.visualization</module>
     <module>lib</module>
+    <module>unittests</module>
   </modules>
   <parent>
   	<groupId>edu.iu.nwb</groupId>
