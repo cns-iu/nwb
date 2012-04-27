@@ -11,10 +11,11 @@
 	<parent>
 		<groupId>edu.iu.cns</groupId>
 		<artifactId>cns</artifactId>
-		<version>1.0.0</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modules>
 		<module>edu.iu.cns.database.merge.generic.tests</module>
+		<module>edu.iu.cns.visualization.tests</module>
 	</modules>
 
 	<build>
