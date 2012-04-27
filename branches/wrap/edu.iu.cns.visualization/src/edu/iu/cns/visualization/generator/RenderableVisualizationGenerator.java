@@ -9,4 +9,5 @@ public interface RenderableVisualizationGenerator<
 			P extends C,
 			G extends VisualizationGUIBuilder<C, P>>
 		extends VisualizationGenerator<A> {
+	/* Alias */
 }

@@ -12,29 +12,33 @@ import edu.iu.cns.visualization.parameter.VisualizationParameter;
 
 public class AWTVisualizationGUIBuilder implements VisualizationGUIBuilder<Component, Container> {
 	private Map<String, AWTVisualizationParameter<?>> parameters =
-		new HashMap<String, AWTVisualizationParameter<?>>();
+			new HashMap<String, AWTVisualizationParameter<?>>();
 	private Container parametersContainer = new Container();
 
 	public <V> void addParameter(AWTVisualizationParameter<V> parameter) {
 		this.parameters.put(parameter.getName(), parameter);
 	}
 
+	@Override
 	public <V> VisualizationParameter<V> getParameter(String name) {
 		if (this.parameters.containsKey(name)) {
-			return (VisualizationParameter<V>)this.parameters.get(name);
+			return (VisualizationParameter<V>) this.parameters.get(name);
 		} else {
 			return null;
 		}
 	}
 
+	@Override
 	public <V> void addParameter(String name, String label, String description) {
-		addParameter(name, label, description, null, createDefaultInputComponent(name));
+		addParameter(name, label, description, null, createDefaultInputComponent());
 	}
 
+	@Override
 	public <V> void addParameter(String name, String label, String description, V defaultValue) {
-		addParameter(name, label, description, defaultValue, createDefaultInputComponent(name));
+		addParameter(name, label, description, defaultValue, createDefaultInputComponent());
 	}
 
+	@Override
 	public <V> void addParameter(
 			String name,
 			String label,
@@ -43,27 +47,24 @@ public class AWTVisualizationGUIBuilder implements VisualizationGUIBuilder<Compo
 		addParameter(name, label, description, null, inputComponent);
 	}
 
+	@Override
 	public <V> void addParameter(
 			String name,
 			String label,
 			String description,
 			V defaultValue,
 			InputComponent<V, Component> inputComponentCreator) {
-		AWTVisualizationParameter<V> parameter = new AWTVisualizationParameter<V>(
-			name, label, description, defaultValue, inputComponentCreator);
+		AWTVisualizationParameter<V> parameter =
+				new AWTVisualizationParameter<V>(name, label, description, defaultValue);
 		addParameter(parameter);
 	}
 
+	@Override
 	public Container constructGUI(Collection<VisualizationParameter<?>> parameters) {
 		return this.parametersContainer;
 	}
 
-	private <S> InputComponent<S, Component> createDefaultInputComponent(String name) {
-		return createDefaultInputComponent(name, null);
-	}
-
-	private <S> InputComponent<S, Component> createDefaultInputComponent(
-			String name, S defaultValue) {
+	private static <S> InputComponent<S, Component> createDefaultInputComponent() {
 		return null;
 	}
 }

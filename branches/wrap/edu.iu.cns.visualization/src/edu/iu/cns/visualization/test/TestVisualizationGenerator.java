@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.iu.cns.visualization.generator.VisualizationGenerator;
-import edu.iu.cns.visualization.gui.awt.AWTVisualizationGUIBuilder;
 import edu.iu.cns.visualization.gui.awt.AWTVisualizationRunner;
 import edu.iu.cns.visualization.parameter.VisualizationParameter;
 
@@ -13,19 +12,20 @@ public class TestVisualizationGenerator implements VisualizationGenerator<TestVi
 	private Map<String, VisualizationParameter<?>> parameters =
 		new HashMap<String, VisualizationParameter<?>>();
 
+	@Override
 	public Map<String, VisualizationParameter<?>> getParameters() {
 		return this.parameters;
 	}
 
+	@Override
 	public TestVisualization generateVisualization() {
 		return new TestVisualization();
 	}
 
 	public static void main(String[] arguments) {
 		TestVisualizationGenerator generator = new TestVisualizationGenerator();
-		AWTVisualizationGUIBuilder guiBuilder = new AWTVisualizationGUIBuilder();
 		AWTVisualizationRunner runner =
-			new AWTVisualizationRunner(generator, guiBuilder, new Dimension(800, 600));
+				new AWTVisualizationRunner(generator, new Dimension(800, 600));
 		runner.run();
 	}
 }

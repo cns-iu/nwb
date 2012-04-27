@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import com.google.common.base.Objects;
 
 /**
- * Common {@link LineConstraint LineConstraints}.
+ * Common {@link LineConstraint}s.
  */
 public final class LineConstraints {
 	private LineConstraints() {}
@@ -16,8 +16,6 @@ public final class LineConstraints {
 	 * TODO Change text to fit after move
 	 * A greedy line wrapper that tries to make the total {@link String#length()} of each line no
 	 * longer than {@code length}.
-	 * @param length	
-	 * @return
 	 */
 	public static LineConstraint length(int targetedLength) {
 		return new LengthLineConstraint(targetedLength);
@@ -31,7 +29,7 @@ public final class LineConstraints {
 		}
 		
 		@Override
-		public boolean apply(String s) {
+		public boolean fitsOnOneLine(String s) {
 			return s.length() <= targetedLength;
 		}
 		
@@ -93,7 +91,7 @@ public final class LineConstraints {
 		}
 	
 		@Override
-		public boolean apply(String s) {
+		public boolean fitsOnOneLine(String s) {
 			return graphics.getFontMetrics().getStringBounds(s, graphics).getWidth() <= targetedWidth;
 		}
 		

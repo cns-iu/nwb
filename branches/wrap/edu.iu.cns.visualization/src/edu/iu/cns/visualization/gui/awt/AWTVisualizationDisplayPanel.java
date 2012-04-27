@@ -8,21 +8,14 @@ import javax.swing.JPanel;
 
 import org.freehep.graphics2d.VectorGraphics;
 
-import edu.iu.cns.visualization.utility.GraphicsState;
-import edu.iu.cns.visualization.utility.VisualizationMessages;
-
 public class AWTVisualizationDisplayPanel extends JPanel {
 	private static final long serialVersionUID = 3120777501972493968L;
 
-	private Dimension size;
-	private VisualizationMessages messages;
-
-	public AWTVisualizationDisplayPanel(Dimension initialSize, VisualizationMessages messages) {
-		this.size = initialSize;
-		this.messages = messages;
+	public AWTVisualizationDisplayPanel(Dimension initialSize) {
 		setPreferredSize(initialSize);
 	}
 
+	@Override
 	public void paintComponent(Graphics graphics) {
 		if (graphics == null) {
 			return;
@@ -33,8 +26,7 @@ public class AWTVisualizationDisplayPanel extends JPanel {
 		vectorGraphics.setColor(Color.white);
 		vectorGraphics.fillRect(0, 0, currentSize.width, currentSize.height);
 		vectorGraphics.setColor(Color.black);
-
-		GraphicsState graphicsState = new GraphicsState(vectorGraphics);
+		
 //		this.visualization.renderBody(vectorGraphics, graphicsState, this.messages, currentSize);
 	}
 }

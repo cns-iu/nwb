@@ -12,11 +12,12 @@ import edu.iu.cns.visualization.utility.GraphicsState;
 import edu.iu.cns.visualization.utility.VisualizationMessages;
 
 public class TestVisualization implements RenderableVisualization {
+	@Override
 	public String title() {
 		return "Test Visualization";
 	}
 
-	public Map<String, VisualizationParameter<?>> parameters() {
+	public static Map<String, VisualizationParameter<?>> parameters() {
 		Map<String, VisualizationParameter<?>> parameters =
 			new HashMap<String, VisualizationParameter<?>>();
 		parameters.put("test", new VisualizationParameter<String>(
@@ -25,10 +26,12 @@ public class TestVisualization implements RenderableVisualization {
 		return parameters;
 	}
 
+	@Override
 	public void renderBody(
 			VectorGraphics graphics,
 			GraphicsState graphicsState,
 			VisualizationMessages messages,
 			Dimension size) {
+		/* Render nothing. */
 	}
 }

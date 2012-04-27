@@ -44,16 +44,16 @@ final class GreedyLineWrapper implements LineWrapper { // TODO where to put unit
 	private class Line {
 		private final StringBuilder text;
 
-		Line() {
+		private Line() {
 			this("");
 		}
 		
-		Line(String text) {
+		private Line(String text) {
 			this.text = new StringBuilder(text);
 		}
 		
 		boolean canAppend(String moreText) {
-			return lineConstraint.apply(text.toString() + moreText);
+			return lineConstraint.fitsOnOneLine(text.toString() + moreText);
 		}
 		
 		void append(String moreText) {
