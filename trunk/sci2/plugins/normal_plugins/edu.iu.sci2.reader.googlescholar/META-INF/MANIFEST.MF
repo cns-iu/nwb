@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Google Scholar Citation Reader
+Bundle-SymbolicName: edu.iu.sci2.reader.googlescholar
+Bundle-Version: 0.0.1
+Service-Component: OSGI-INF/CitationTableAlgorithm.xml,
+ OSGI-INF/CitationBibtexAlgorithm.xml,
+ OSGI-INF/CitationIndiciesAlgorithm.xml,
+ OSGI-INF/GoogleCitationUserIdSearchAlgorithm.xml
+X-AutoStart: true
+Import-Package: org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.reference.service.metatype,
+ org.cishell.utilities;version="1.0.1",
+ org.cishell.utilities.network;version="1.0.0",
+ org.jsoup;version="1.6.2",
+ org.jsoup.nodes;version="1.6.2",
+ org.jsoup.select;version="1.6.2",
+ org.osgi.service.log;version="1.3.0",
+ org.osgi.service.metatype;version="1.1.0",
+ prefuse.data
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

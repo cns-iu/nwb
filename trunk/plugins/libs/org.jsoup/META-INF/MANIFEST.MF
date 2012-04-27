@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jsoup Library
+Bundle-SymbolicName: org.jsoup
+Bundle-Version: 1.6.2
+Bundle-ClassPath: jsoup-1.6.2.jar
+Export-Package: org.jsoup;version="1.6.2",
+ org.jsoup.examples;version="1.6.2",
+ org.jsoup.helper;version="1.6.2",
+ org.jsoup.nodes;version="1.6.2",
+ org.jsoup.parser;version="1.6.2",
+ org.jsoup.safety;version="1.6.2",
+ org.jsoup.select;version="1.6.2"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
