@@ -1,7 +1,6 @@
 package edu.iu.sci2.preprocessing.geocoder.coders.yahoo.placefinder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -12,6 +11,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
+import org.cishell.utilities.network.DownloadHandler;
+import org.cishell.utilities.network.DownloadHandler.InvalidUrlException;
+import org.cishell.utilities.network.DownloadHandler.NetworkConnectionException;
 
 import edu.iu.sci2.preprocessing.geocoder.coders.yahoo.placefinder.beans.ResultSet;
 
@@ -28,7 +30,6 @@ import edu.iu.sci2.preprocessing.geocoder.coders.yahoo.placefinder.beans.ResultS
  */
 public final class PlaceFinderClient {
 	public static final int UTF8_ERROR_CODE = 102; /* UTF8 error code from Yahoo! */
-	public static final int NUMBER_OF_RETRIES = 3;
 	public static final int BUFFER_SIZE = 4096;
 	public static final String GET_METHOD = "GET";
 	public static final String SERVICE_EPR = "http://where.yahooapis.com/geocode?";
@@ -55,9 +56,12 @@ public final class PlaceFinderClient {
 	 * 						(XML schema for Yahoo! PlaceFinder response)
 	 * @throws IOException - Thrown while fail to generate URL or connection error
 	 * @throws JAXBException - Yahoo! schema changed
+	 * @throws NetworkConnectionException 
+	 * @throws InvalidUrlException 
 	 */
-	public static ResultSet requestAddress(String address, String applicationId) 
-												throws IOException, JAXBException {
+	public static ResultSet requestAddress(String address, String applicationId)
+			throws IOException, JAXBException, InvalidUrlException,
+			NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
 		paramToValue.put(LOCATION_PARAM, address);
 		paramToValue.put(APPID_PARAM, applicationId);
@@ -73,9 +77,12 @@ public final class PlaceFinderClient {
 	 * 						(XML schema for Yahoo! PlaceFinder response)
 	 * @throws IOException - Thrown while fail to generate URL or connection error
 	 * @throws JAXBException - Yahoo! schema changed
+	 * @throws NetworkConnectionException 
+	 * @throws InvalidUrlException 
 	 */
-	public static ResultSet requestCountry(String country, String applicationId) 
-												throws IOException, JAXBException {
+	public static ResultSet requestCountry(String country, String applicationId)
+			throws IOException, JAXBException, InvalidUrlException,
+			NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
 		paramToValue.put(COUNTRY_PARAM, country);
 		paramToValue.put(APPID_PARAM, applicationId);
@@ -92,9 +99,12 @@ public final class PlaceFinderClient {
 	 * 						(XML schema for Yahoo! PlaceFinder response)
 	 * @throws IOException - Thrown while fail to generate URL or connection error
 	 * @throws JAXBException - Yahoo! schema changed
+	 * @throws NetworkConnectionException 
+	 * @throws InvalidUrlException 
 	 */
-	public static ResultSet requestState(String state, String country, String applicationId) 
-												throws IOException, JAXBException {
+	public static ResultSet requestState(String state, String country,
+			String applicationId) throws IOException, JAXBException,
+			InvalidUrlException, NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
 		paramToValue.put(STATE_PARAM, state);
 		paramToValue.put(COUNTRY_PARAM, country);
@@ -112,9 +122,12 @@ public final class PlaceFinderClient {
 	 * 						(XML schema for Yahoo! PlaceFinder response)
 	 * @throws IOException - Thrown while fail to generate URL or connection error
 	 * @throws JAXBException - Yahoo! schema changed
+	 * @throws NetworkConnectionException 
+	 * @throws InvalidUrlException 
 	 */
 	public static ResultSet requestZipCode(String zipCode, String country, String applicationId) 
-												throws IOException, JAXBException {
+			throws IOException, JAXBException,
+			InvalidUrlException, NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
 		paramToValue.put(POSTAL_PARAM, zipCode);
 		paramToValue.put(COUNTRY_PARAM, country);
@@ -129,10 +142,13 @@ public final class PlaceFinderClient {
 	 * 						(XML schema for Yahoo PlaceFinder response)
 	 * @throws IOException - Thrown while fail to generate URL or connection error
 	 * @throws JAXBException - Yahoo! schema changed
+	 * @throws NetworkConnectionException 
+	 * @throws InvalidUrlException 
 	 */
 	private static ResultSet request(Map<String, String> paramToValue) 
-										throws IOException, JAXBException {
-	
+			throws IOException, JAXBException, InvalidUrlException,
+			NetworkConnectionException {
+
 		/* create URL */
 		URL url = createURL(paramToValue);
 		
@@ -181,38 +197,18 @@ public final class PlaceFinderClient {
 
 	/* Try to fixed unmarshaller problem with empty WOE entities */
 	private static StringReader removeWoeIdAndWoeType(String inputString) {
-		return new StringReader(inputString.replace("<woeid></woeid>", "").replace("<woetype></woetype>", ""));
+		return new StringReader(
+				inputString.replace("<woeid></woeid>", "").replace("<woetype></woetype>", ""));
 	}
     
-	private static String query(String method, URL url) throws IOException {	
-		int retry = NUMBER_OF_RETRIES;
+	private static String query(String method, URL url) 
+			throws IOException, InvalidUrlException, NetworkConnectionException {
 		
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod(method);
 		
 		/* Start connection and read from socket */
-		while (retry > 0) {
-			try {
-				connection.connect();
-				break;
-			} catch (Exception e) {
-				/* Retry */
-				connection.disconnect();
-				retry--;
-			}
-		}
-		
-		InputStream inputStream = connection.getInputStream();
-		StringBuilder response = new StringBuilder();
-		
-		int size;
-		byte[] buffer = new byte[BUFFER_SIZE];
-		while ((size = inputStream.read(buffer)) != -1) {
-		    response.append(new String(buffer, 0, size));
-		}
-		connection.disconnect();
-		
-		return response.toString();
+		return DownloadHandler.getResponse(connection);
 	}
     
 	private static URL createURL(Map<String, String> paramToValue) 

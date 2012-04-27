@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.cishell.utilities.network.DownloadHandler.InvalidUrlException;
+import org.cishell.utilities.network.DownloadHandler.NetworkConnectionException;
+
 import edu.iu.sci2.model.geocode.GeoDetail;
 import edu.iu.sci2.model.geocode.Geolocation;
 import edu.iu.sci2.model.geocode.USZipCode;
@@ -27,15 +30,21 @@ public abstract class AbstractYahooCoder implements Geocoder, DetailGeocoder {
 	}
 	
 	public abstract CODER_TYPE getLocationType();
-	public abstract ResultSet requestYahooService(String location, String applicationId) 
-																throws IOException, JAXBException;
-	
+
+	public abstract ResultSet requestYahooService(String location,
+			String applicationId) throws IOException, JAXBException,
+			InvalidUrlException, NetworkConnectionException;
+
 	public Geolocation geocodingFullForm(String fullForm) throws GeoCoderException {
 		try {
 			return extractGeoLocation(requestYahooService(fullForm, applicationId));
 		} catch (IOException e) {
 			throw new GeoCoderException("Yahoo service error", e);
 		} catch (JAXBException e) {
+			throw new GeoCoderException("Yahoo service error", e);
+		} catch (InvalidUrlException e) {
+			throw new GeoCoderException("Yahoo service error", e);
+		} catch (NetworkConnectionException e) {
 			throw new GeoCoderException("Yahoo service error", e);
 		}
 	}
@@ -50,6 +59,10 @@ public abstract class AbstractYahooCoder implements Geocoder, DetailGeocoder {
 		} catch (IOException e) {
 			throw new GeoCoderException("Yahoo service error", e);
 		} catch (JAXBException e) {
+			throw new GeoCoderException("Yahoo service error", e);
+		} catch (InvalidUrlException e) {
+			throw new GeoCoderException("Yahoo service error", e);
+		} catch (NetworkConnectionException e) {
 			throw new GeoCoderException("Yahoo service error", e);
 		}
 	}
