@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
+import edu.iu.cns.visualization.utility.linewrap.LineConstraints;
+import edu.iu.cns.visualization.utility.linewrap.LineWrapper;
 import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.io.InputStreamReader;
@@ -9,9 +11,9 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.utility.NaiveLineLengthSplitter;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 
@@ -19,8 +21,6 @@ public class HowToRead implements PostScriptable {
 	public static final String STRING_TEMPLATE_FILE_PATH =
 			"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/howToRead.stg";
 	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplateGroup();
-	
-	public static final int TARGETED_LINE_LENGTH_IN_CHARACTERS = 60;
 	
 	public static final double TITLE_FONT_GRAY = 0.0;
 	public static final double TEXT_FONT_GRAY = 0.15;
@@ -71,7 +71,9 @@ public class HowToRead implements PostScriptable {
 			Point2D.Double lowerLeft, PageLayout pageLayout, String text, String mapKind) {
 		String content = "";
 		
-		List<String> lines = NaiveLineLengthSplitter.targetingLineLength(TARGETED_LINE_LENGTH_IN_CHARACTERS).split(text);
+		List<String> lines = Lists.newArrayList(LineWrapper.greedy(
+				LineConstraints.byWidth(pageLayout.howToReadWidth().get(), pageLayout.contentFont()))
+				.wrap(text));
 		List<String> restOfLines = lines.subList(1, lines.size());
 
 		Point2D.Double firstLineStartPoint =

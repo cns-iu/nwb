@@ -3,6 +3,8 @@ package edu.iu.cns.visualization.utility.linewrap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Locale;
+
 import org.junit.Test;
 
 import com.google.common.base.Joiner;
@@ -30,6 +32,18 @@ public class WordsTest {
 	}
 	
 	@Test
+	public void testEmptyStringHasNoWords() {
+		assertTrue(Iterables.elementsEqual(ImmutableList.of(), Words.in("")));
+	}
+	
+	@Test
+	public void testStringWithNoLineBreaksIsNotBroken() {
+		String TARGET = "Unbroken.";
+		
+		assertTrue(Iterables.elementsEqual(ImmutableList.of(TARGET), Words.in(TARGET)));
+	}
+	
+	@Test
 	public void testConcatenationMatchesInputForNormalSentence() {
 		String TARGET = "It says: \"Add three-halves to 1.5, spot-checking as you go.\"";
 		
@@ -43,5 +57,20 @@ public class WordsTest {
 				LINE_SEPARATOR, LINE_SEPARATOR);
 		
 		assertEquals(TARGET, Joiner.on("").join(Words.in(TARGET)));
+	}
+	
+	@Test
+	public void testLocaleCallDoesNotModifyInstance() {
+		Words words = Words.in("Ignored.").withLocale(Locale.ENGLISH);
+		words.withLocale(Locale.GERMAN);
+		
+		assertEquals(words.getLocale(), Locale.ENGLISH);
+	}
+	
+	@Test
+	public void testLocaleChangeTakesEffectInCopy() {
+		Words words = Words.in("Ignored.").withLocale(Locale.GERMAN).withLocale(Locale.ENGLISH);
+		
+		assertEquals(words.getLocale(), Locale.ENGLISH);
 	}
 }

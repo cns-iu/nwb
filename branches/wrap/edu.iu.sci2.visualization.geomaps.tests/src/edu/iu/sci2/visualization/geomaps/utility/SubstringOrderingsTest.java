@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.utility.numberformat;
+package edu.iu.sci2.visualization.geomaps.utility;
 
 import junit.framework.TestCase;
 

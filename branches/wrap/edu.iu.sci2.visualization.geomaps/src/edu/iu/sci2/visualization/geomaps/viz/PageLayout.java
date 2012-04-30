@@ -151,4 +151,15 @@ public enum PageLayout {
 				0.8 * (legendariumReservedDimensions().getWidth() / EnumSet.allOf(CircleDimension.class).size()),
 				COLOR_GRADIENT_HEIGHT);
 	}
+	
+	public Optional<Double> howToReadWidth() {
+		if (howToReadLowerLeft().isPresent()) {
+			return Optional.of(
+					pageDimensions().getWidth()
+					- howToReadLowerLeft().get().getX()
+					- pageMargin());
+		} else {
+			return Optional.absent();
+		}
+	}
 }

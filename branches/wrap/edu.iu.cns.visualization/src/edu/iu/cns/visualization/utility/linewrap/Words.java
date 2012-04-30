@@ -4,40 +4,23 @@ import java.text.BreakIterator;
 import java.util.Iterator;
 import java.util.Locale;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Iterables;
 
 /**
  * An {@link Iterable} over the "words" in a body of text. Here a "word" means the substring between
  * each consecutive pair of line breaks yielded by an instance of
  * {@link BreakIterator#getLineInstance(Locale)}.
  * 
- * <p/>
- * For example, the words in:
- * <pre>
- * "<em>{@code It says: "Add three-halves to 1.5, spot-checking as you go."}</em>"
- * </pre>
- * are considered to be: 
- * <pre>
- * "<em>{@code It }</em>"
- * "<em>{@code says: }</em>"
- * "<em>{@code "Add }</em>"
- * "<em>{@code three-}</em>"
- * "<em>{@code halves }</em>"
- * "<em>{@code to }</em>"
- * "<em>{@code 1.5, }</em>"
- * "<em>{@code spot-}</em>"
- * "<em>{@code checking }</em>"
- * "<em>{@code as }</em>"
- * "<em>{@code you }</em>"
- * "<em>{@code go."}</em>"
- * </pre>
+ * <p/>For example, the words in <u>{@code It says: "Add three-halves to 1.5, spot-checking as you 
+ * go."} </u> are <u>{@code It }</u>, <u>{@code says: }</u>, <u>{@code "Add }</u>,
+ * <u>{@code three-}</u>, <u>{@code halves }</u>, <u>{@code to }</u>, <u>{@code 1.5, }</u>,
+ * <u>{@code spot-}</u>, <u>{@code checking }</u>, <u>{@code as }</u>, <u>{@code you }</u>, and
+ * <u>{@code go."}</u>.
  * 
- * The concatenation of the words produced must equal the input.
+ * <p/>The concatenation of the words produced must equal the input.
  */
-public final class Words implements Iterable<String> {
+public final class Words implements Iterable<String> { // TODO A less deceptive name?
 	private final String text;
 	private final Locale locale;
 
@@ -47,26 +30,25 @@ public final class Words implements Iterable<String> {
 	}
 	
 	/**
-	 * An {@link Iterable} over the "words" in {@code text} according to the default {@link Locale}.
+	 * An {@link Iterable} over the "words" in {@code text} according to {@link Locale#getDefault()}
+	 * .
 	 */
 	public static Words in(String text) {
-		return Words.in(text, Locale.getDefault());
+		return new Words(text, Locale.getDefault());
 	}
 	
 	/**
-	 * An {@link Iterable} over the "words" in {@code text} where line breaks
-	 * are found according to {@code locale}.
+	 * A copy of this Words object using this explicit {@link Locale} to find line breaks. The
+	 * called instance is <strong>not</strong> modified.
 	 */
-	public static Words in(String text, Locale locale) {
+	public Words withLocale(Locale locale) {
 		return new Words(text, locale);
 	}
-
 	
 	@Override
 	public Iterator<String> iterator() {
 		return new WordIterator(text, locale);
-	}
-	
+	}	
 	
 	private static final class WordIterator extends AbstractIterator<String> {
 		private final String text;
@@ -93,7 +75,7 @@ public final class Words implements Iterable<String> {
 				// Snapshot of "word" in current window
 				String word = text.substring(start, end);
 				
-				// Slide start point to the end of the window
+				// Slide start point to the end of the window for the next round
 				start = end;
 				
 				return word;
@@ -102,25 +84,39 @@ public final class Words implements Iterable<String> {
 			return endOfData();
 		}
 	}
+	
+	public String getText() {
+		return text;
+	}
 
+	public Locale getLocale() {
+		return locale;
+	}
 
-	public static void main(String[] args) { // TODO testing
-		Words result = Words.in("It says: \"Add three-halves to 1.5, spot-checking as you go.\"");
-		
-		System.out.println(Joiner.on("\n").join(Iterables.transform(result, new Function<String, String>() {
-			@Override
-			public String apply(String input) {
-				return String.format(" * \"<em>{@code %s}</em>\"", input);
-			}
-		})));
-		
-		System.out.println();
-		
-		System.out.println(Joiner.on(",\n").join(Iterables.transform(result, new Function<String, String>() {
-			@Override
-			public String apply(String input) {
-				return String.format("\"%s\"", input.replace("\"", "\\\""));
-			}
-		})));
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this).add("text", text).add("locale", locale).toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(text, locale);
+	}
+
+	// TODO Or should we not provide a notion of Words equality and leave it up to the results?
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof Words)) {
+			return false;
+		}
+		Words that = (Words) o;
+
+		return Objects.equal(this.text, that.text) && Objects. equal(this.locale, that.locale);
 	}
 }

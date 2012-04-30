@@ -1,39 +1,26 @@
 package edu.iu.cns.visualization.utility.linewrap; // TODO Move this entire package to some more general String utilities area?
 
-import java.text.BreakIterator;
 import java.util.Iterator;
-import java.util.Locale;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import com.google.common.base.Objects;
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 
 /**
- * Partitions a body of text or sequence of words into a sequence of lines. Breaks may occur only at
- * line breaks as determined by {@link BreakIterator#getLineInstance(java.util.Locale)}.
- * 
- * <p/>The default {@link Locale} is {@link Locale#getDefault()}.
+ * Partitions a body of text or sequence of words into a sequence of lines.
  */
 public final class LineWrapper {
 	private final Strategy strategy;
-	private final Locale locale;
 	
 	private LineWrapper(Strategy strategy) {
-		this(strategy, Locale.getDefault());
-	}
-
-	private LineWrapper(Strategy strategy, Locale locale) {
-		this.strategy = strategy;
-		this.locale = locale;		
+		this.strategy = strategy;	
 	}
 
 	/**
 	 * A LineWrapper that places as many words on each line as possible and violates its
-	 * LineConstraint only when necessary (as when a single word alone is in violation).
+	 * LineConstraint only when necessary (as when a single word alone is in violation). This
+	 * strategy minimizes line count, not raggedness.
 	 */
 	public static LineWrapper greedy(LineConstraint lineConstraint) {
 		return new LineWrapper(new Greedy(lineConstraint));
@@ -61,8 +48,8 @@ public final class LineWrapper {
 			}
 	
 			@Override
-			protected String computeNext() {
-				Line line = new Line();				
+			protected String computeNext() { // TODO add comments
+				LineBuilder line = new LineBuilder();				
 				
 				while (words.hasNext()) {
 					if (!(line.canFit(words.peek()))) {
@@ -84,14 +71,14 @@ public final class LineWrapper {
 			}
 			
 			
-			class Line { // TODO code review carefully
+			class LineBuilder { // TODO code review carefully, mutable, non-static
 				private final StringBuilder text;
 	
-				Line() {
+				LineBuilder() {
 					this("");
 				}
 				
-				Line(String text) {
+				LineBuilder(String text) {
 					this.text = new StringBuilder(text);
 				}
 				
@@ -114,22 +101,31 @@ public final class LineWrapper {
 			}
 		}		
 	}
+	
+	/**
+	 * Wrap {@code text} into lines.  Line breaks are discovered using {@link Words#in(String)}.
+	 */
+	public Iterable<String> wrap(String text) {
+		return wrap(Words.in(text));
+	}
 
 	/**
-	 * Returns a LineWrapper equivalent to this one but with the specified {@code locale} used to
-	 * determine line breaks.
+	 * Wrap {@code words} into lines. Breaks occur only between elements of {@code words}, never
+	 * within.
+	 * 
+	 * @see Words#in(String)
 	 */
-	public LineWrapper locale(Locale locale) { // TODO emphasize that this is a copy
-		Splitter.on("").omitEmptyStrings();
-		return new LineWrapper(strategy, locale);
+	public Iterable<String> wrap(Iterable<String> words) {
+		return wrap(words.iterator());
 	}
 	
-	
-	public Iterable<String> wrap(String text) { // TODO Note that this uses locale?
-		return wrap(Words.in(text, locale).iterator());
-	}
-	
-	public Iterable<String> wrap(final Iterator<String> words) { // TODO Note that this doesn't use locale?
+	/**
+	 * Wrap {@code words} into lines. Breaks occur only between elements of {@code words}, never
+	 * within.
+	 * 
+	 * @see Words#in(String)
+	 */
+	public Iterable<String> wrap(final Iterator<String> words) {
 		return new Iterable<String>() {
 			@Override
 			public Iterator<String> iterator() {
@@ -138,36 +134,28 @@ public final class LineWrapper {
 		};
 	}
 	
-	private interface Strategy { // TODO Could expose a factory taking this
-		Iterator<String> lineIteratorOver(Iterator<String> words);
-	}
-
-	public static void main(String[] args) { // TODO remove
-		String text = "Four score and seven years ago our fathers brought forth on this " +
-				"continent a new nation; conceived in liberty; and dedicated to the proposition " +
-				"that all men are created equal. Now we are engaged in a great civil war; " +
-				"testing whether that nation; or any nation; so conceived and so dedicated; " +
-				"can long endure. We are met on a great battle-field of that war. We have come " +
-				"to dedicate a portion of that field; as a final resting place for those who " +
-				"here gave their lives that that nation might live. It is altogether fitting " +
-				"and proper that we should do this.";
-		
-		System.out.println(Joiner.on("\n").join(
-				toStringInQuotes(LineWrapper.greedy(LineConstraints.length(20)).wrap(text))));
-		
-//		System.out.println();
-//		
-//		System.out.println(Joiner.on("\n").join(
-//				toStringInQuotes(LineWrapper.greedy(
-//						LineConstraints.targetWidth(-100.0, Font.decode("Arial 12"))).wrap(text))));
+	
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this).add("strategy", strategy).toString();
 	}
 	
-	private static <E> Iterable<String> toStringInQuotes(Iterable<? extends E> elements) { // TODO Remove
-		return Iterables.transform(elements, new Function<E, String>() {
-			@Override
-			public String apply(E input) {
-				return String.format("\"%s\"", input);
-			}
-		});
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(strategy);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) { return true; }
+		if (o == null) { return false; }
+		if (!(o instanceof LineWrapper)) { return false; }
+		LineWrapper that = (LineWrapper) o;
+
+		return Objects.equal(this.strategy, that.strategy);
+	}
+
+	private interface Strategy {
+		Iterator<String> lineIteratorOver(Iterator<String> words);
 	}
 }

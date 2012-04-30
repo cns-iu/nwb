@@ -299,10 +299,10 @@ public enum Shapefile implements NicelyNamed {
 		
 		public String makeLabel() {
 			if (Math.abs(request.getAreaScaling() - 1.0) < 1E-3) {
-				// Showing at 100% actual size so just report name.
+				// Showing at 100% actual area so just report name.
 				return request.getFeatureName();
 			} else {
-				return String.format("%s (%d%% actual size)",
+				return String.format("%s (%d%% actual area)",
 						request.getFeatureName(),
 						(int) (100 * request.getAreaScaling()));
 			}
