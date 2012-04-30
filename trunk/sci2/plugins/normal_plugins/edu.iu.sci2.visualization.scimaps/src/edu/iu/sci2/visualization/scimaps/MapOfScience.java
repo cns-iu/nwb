@@ -34,15 +34,9 @@ public class MapOfScience {
 	 * name to the hits for that journal.
 	 * 
 	 * @param journalNameAndHitCount
-	 * @throws NumberFormatException
 	 */
 	public MapOfScience(Map<String, Integer> journalNameAndHitCount) {
-
-		try {
-			this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
+		this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
 	}
 	
 	public MapOfScience(DetailedScienceMappingResult mappingResult){

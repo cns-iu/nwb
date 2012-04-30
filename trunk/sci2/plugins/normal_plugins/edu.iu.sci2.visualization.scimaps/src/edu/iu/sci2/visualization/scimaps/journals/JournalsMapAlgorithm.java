@@ -74,11 +74,20 @@ public class JournalsMapAlgorithm implements Algorithm {
 	public Data[] execute() throws AlgorithmExecutionException {
 		Map<String, Integer> journalNameAndHitCount = getJournalNameAndHitCount(
 				this.table, this.journalColumnName, this.logger);
+		
+		if (journalNameAndHitCount.isEmpty()) {
+			throw new AlgorithmExecutionException("No journals could be found in the data.");
+		}
+		
 		RenderableVisualization visualization = null;
 		PageManager pageManger = null;
 
 		MapOfScience mapOfScience = new MapOfScience(journalNameAndHitCount);
 
+		if (mapOfScience.getMappedResults().isEmpty()) {
+			throw new AlgorithmExecutionException("No journals could be mapped to the Map of Science.");
+		}
+		
 		if (this.webVersion) {
 			// Webversion
 			Dimension dimensions = new Dimension(1280, 960);
