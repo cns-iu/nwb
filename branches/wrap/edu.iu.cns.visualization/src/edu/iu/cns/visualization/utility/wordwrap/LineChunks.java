@@ -20,11 +20,11 @@ import com.google.common.collect.AbstractIterator;
  * <p/>
  * The concatenation of the words will always equal the input.
  */
-public final class LineBreaks implements Iterable<String> { // TODO A less deceptive name?  LineBreaks?
+public final class LineChunks implements Iterable<String> {
 	private final String text;
 	private final Locale locale;
 
-	private LineBreaks(String text, Locale locale) {
+	private LineChunks(String text, Locale locale) {
 		this.text = text;
 		this.locale = locale;
 	}
@@ -33,16 +33,16 @@ public final class LineBreaks implements Iterable<String> { // TODO A less decep
 	 * An {@link Iterable} over the "words" in {@code text} according to {@link Locale#getDefault()}
 	 * .
 	 */
-	public static LineBreaks in(String text) {
-		return new LineBreaks(text, Locale.getDefault());
+	public static LineChunks in(String text) {
+		return new LineChunks(text, Locale.getDefault());
 	}
 	
 	/**
-	 * A copy of this LineBreaks object using this explicit {@link Locale} to find line breaks. The
+	 * A copy of this LineChunks object using this explicit {@link Locale} to find line breaks. The
 	 * called instance is <strong>not</strong> modified.
 	 */
-	public LineBreaks withLocale(Locale locale) {
-		return new LineBreaks(text, locale);
+	public LineChunks withLocale(Locale locale) {
+		return new LineChunks(text, locale);
 	}
 	
 	@Override
@@ -117,10 +117,10 @@ public final class LineBreaks implements Iterable<String> { // TODO A less decep
 		if (o == null) {
 			return false;
 		}
-		if (!(o instanceof LineBreaks)) {
+		if (!(o instanceof LineChunks)) {
 			return false;
 		}
-		LineBreaks that = (LineBreaks) o;
+		LineChunks that = (LineChunks) o;
 
 		return Objects.equal(this.text, that.text) && Objects. equal(this.locale, that.locale);
 	}

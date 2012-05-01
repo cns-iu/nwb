@@ -10,7 +10,7 @@ import com.google.common.base.Objects;
 /**
  * Common implementations of {@link LineMetric}.
  */
-public final class LineMetrics { // TODO This name collides with java.awt.font.LineMetrics
+public final class LineMetrics {
 	private LineMetrics() {}
 	
 	/**
@@ -24,7 +24,12 @@ public final class LineMetrics { // TODO This name collides with java.awt.font.L
 		@Override
 		public int sizeOf(String line) {
 			return line.length();
-		}						
+		}	
+		
+		@Override
+		public String toString() {
+			return Objects.toStringHelper(this).toString();
+		}
 	}
 	
 	/**

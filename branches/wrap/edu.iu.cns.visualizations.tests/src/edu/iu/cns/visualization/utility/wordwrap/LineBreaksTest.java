@@ -11,7 +11,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import edu.iu.cns.visualization.utility.wordwrap.LineBreaks;
+import edu.iu.cns.visualization.utility.wordwrap.LineChunks;
 
 public class LineBreaksTest {
 	@Test
@@ -30,26 +30,26 @@ public class LineBreaksTest {
 						"as ",
 						"you ",
 						"go.\""),
-				LineBreaks.in("It says: \"Add three-halves to 1.5, spot-checking as you go.\"")));
+				LineChunks.in("It says: \"Add three-halves to 1.5, spot-checking as you go.\"")));
 	}
 	
 	@Test
 	public void testEmptyStringHasNoWords() {
-		assertTrue(Iterables.elementsEqual(ImmutableList.of(), LineBreaks.in("")));
+		assertTrue(Iterables.elementsEqual(ImmutableList.of(), LineChunks.in("")));
 	}
 	
 	@Test
 	public void testStringWithNoLineBreaksIsNotBroken() {
 		String TARGET = "Unbroken.";
 		
-		assertTrue(Iterables.elementsEqual(ImmutableList.of(TARGET), LineBreaks.in(TARGET)));
+		assertTrue(Iterables.elementsEqual(ImmutableList.of(TARGET), LineChunks.in(TARGET)));
 	}
 	
 	@Test
 	public void testConcatenationMatchesInputForNormalSentence() {
 		String TARGET = "It says: \"Add three-halves to 1.5, spot-checking as you go.\"";
 		
-		assertEquals(TARGET, Joiner.on("").join(LineBreaks.in(TARGET)));
+		assertEquals(TARGET, Joiner.on("").join(LineChunks.in(TARGET)));
 	}
 	
 	@Test
@@ -58,12 +58,12 @@ public class LineBreaksTest {
 		String TARGET = String.format("'--! '%s., ,!!%s!\" . ,.' . !\"%s''\"'\"", LINE_SEPARATOR,
 				LINE_SEPARATOR, LINE_SEPARATOR);
 		
-		assertEquals(TARGET, Joiner.on("").join(LineBreaks.in(TARGET)));
+		assertEquals(TARGET, Joiner.on("").join(LineChunks.in(TARGET)));
 	}
 	
 	@Test
 	public void testLocaleCallDoesNotModifyInstance() {
-		LineBreaks words = LineBreaks.in("Ignored.").withLocale(Locale.ENGLISH);
+		LineChunks words = LineChunks.in("Ignored.").withLocale(Locale.ENGLISH);
 		words.withLocale(Locale.GERMAN);
 		
 		assertEquals(words.getLocale(), Locale.ENGLISH);
@@ -71,7 +71,7 @@ public class LineBreaksTest {
 	
 	@Test
 	public void testLocaleChangeTakesEffectInCopy() {
-		LineBreaks words = LineBreaks.in("Ignored.").withLocale(Locale.GERMAN).withLocale(Locale.ENGLISH);
+		LineChunks words = LineChunks.in("Ignored.").withLocale(Locale.GERMAN).withLocale(Locale.ENGLISH);
 		
 		assertEquals(words.getLocale(), Locale.ENGLISH);
 	}

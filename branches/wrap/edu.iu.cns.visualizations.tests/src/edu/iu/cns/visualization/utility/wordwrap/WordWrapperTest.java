@@ -32,12 +32,12 @@ public class WordWrapperTest {
 	@Test
 	public void testWrapIterableOfString() {
 		assertEquals(TARGET_LINES,
-				ImmutableList.copyOf(LINE_WRAPPER.wrap(LineBreaks.in(TEXT).withLocale(Locale.US))));
+				ImmutableList.copyOf(LINE_WRAPPER.wrap(LineChunks.in(TEXT).withLocale(Locale.US))));
 	}
 
 	@Test
 	public void testWrapIteratorOfString() {
-		assertEquals(TARGET_LINES, ImmutableList.copyOf(LINE_WRAPPER.wrap(LineBreaks.in(TEXT)
+		assertEquals(TARGET_LINES, ImmutableList.copyOf(LINE_WRAPPER.wrap(LineChunks.in(TEXT)
 				.withLocale(Locale.US).iterator())));
 	}
 

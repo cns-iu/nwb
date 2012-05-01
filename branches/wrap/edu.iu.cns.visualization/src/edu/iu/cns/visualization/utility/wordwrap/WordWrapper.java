@@ -1,4 +1,4 @@
-package edu.iu.cns.visualization.utility.wordwrap; // TODO Move this entire package to some more general String utilities area?
+package edu.iu.cns.visualization.utility.wordwrap;
 
 import java.util.Iterator;
 
@@ -24,8 +24,12 @@ public final class WordWrapper {
 	 * single word alone is too big). This strategy minimizes line count, not raggedness.
 	 */
 	public static WordWrapper fewestLines(final LineMetric lineMetric, final int targetedSize) {
-		return new WordWrapper(new Greedy(new MetricAtMost(lineMetric, targetedSize)));
+		return new WordWrapper(new GreedyStrategy(new MetricAtMost(lineMetric, targetedSize)));
 	}
+	/*
+	 * TODO Add a configurator method, perhaps breakLongWords(), that permits this object to wrap at
+	 * non-line-breaks when necessary to keep each line within the targetedSize.
+	 */
 
 	private static final class MetricAtMost implements Predicate<String> {
 		private final LineMetric lineMetric;
@@ -40,12 +44,18 @@ public final class WordWrapper {
 		public boolean apply(String line) {
 			return lineMetric.sizeOf(line) <= targetedSize;
 		}
+		
+		@Override
+		public String toString() {
+			return Objects.toStringHelper(this).add("lineMetric", lineMetric)
+					.add("targetedSize", targetedSize).toString();
+		}
 	}
 
-	private static final class Greedy implements Strategy {
+	private static final class GreedyStrategy implements Strategy {
 		private final Predicate<String> shouldFitOnOneLine;
 
-		public Greedy(Predicate<String> shouldFitOnOneLine) {
+		public GreedyStrategy(Predicate<String> shouldFitOnOneLine) {
 			this.shouldFitOnOneLine = shouldFitOnOneLine;
 		}
 
@@ -54,7 +64,13 @@ public final class WordWrapper {
 			return new LineIterator(words);
 		}
 		
-		private final class LineIterator extends AbstractIterator<String> { // TODO non-static?
+		@Override
+		public String toString() {
+			return Objects.toStringHelper(this).add("shouldFitOnOneLine", shouldFitOnOneLine)
+					.toString();
+		}
+		
+		private final class LineIterator extends AbstractIterator<String> {
 			private final PeekingIterator<String> words;
 	
 			public LineIterator(Iterator<String> words) {
@@ -66,27 +82,31 @@ public final class WordWrapper {
 				LineBuilder line = new LineBuilder();				
 				
 				while (words.hasNext()) {
+					// Peek at the coming word and offer it to the current line
 					boolean accepted = line.offer(words.peek());
 					
 					if (accepted) {
-						// The offered word was accepted, consume it and continue.
+						// Word was accepted, pop it off and go on
 						words.next();
 					} else {
-						// Finish the line.  The offending word has not been consumed.
-						return line.toString();
+						// Couldn't accept the coming word, leave it on the iterator for the next
+						// line to handle
+						break;
 					}
 				}
 				
-				// Grab the last line
-				if (!(line.isEmpty())) { // TODO Any way to redo the above logic so that this isn't necessary?
-					return line.toString();
+				if (line.isEmpty()) {
+					// The line can only be empty here if we've run out of words
+					assert (!(words.hasNext()));
+					
+					return endOfData();
 				}
 				
-				return endOfData();
+				return line.toString();
 			}
 			
 			
-			final class LineBuilder { // TODO code review carefully.. non-static, mutable
+			final class LineBuilder {
 				private final StringBuilder text;
 	
 				LineBuilder() {
@@ -98,6 +118,8 @@ public final class WordWrapper {
 				}
 				
 				/**
+				 * Accept and append {@code word} if it fits or if the line is empty.
+				 * 
 				 * @param A word to offer for appending to this line
 				 * @return Whether the line accepts the new word.
 				 */
@@ -130,16 +152,12 @@ public final class WordWrapper {
 		}		
 	}
 	
-//	public static WordWrapper leastRagged(LineMetric lineMetric, int targetedSize) { // TODO delete
-//		return new WordWrapper(new Knuth(lineMetric, targetedSize));
-//	}
-	
 	/**
 	 * Wraps {@code text} into lines. Breaks will be inserted only at line breaks as found by
-	 * {@link LineBreaks#in(String)}.
+	 * {@link LineChunks#in(String)}.
 	 */
 	public Iterable<String> wrap(String text) {
-		return wrap(LineBreaks.in(text));
+		return wrap(LineChunks.in(text));
 	}
 
 	/**
@@ -153,6 +171,10 @@ public final class WordWrapper {
 	/**
 	 * Wraps {@code words} into lines. Breaks occur only between elements of {@code words}, never
 	 * within.
+	 * 
+	 * @param words
+	 *            The backing iterator. This method assumes ownership of it, so clients should cease
+	 *            making direct calls to it after calling this method.
 	 */
 	public Iterable<String> wrap(final Iterator<String> words) {
 		return new Iterable<String>() {
