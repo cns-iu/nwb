@@ -48,22 +48,23 @@ public final class LineWrapper {
 			}
 	
 			@Override
-			protected String computeNext() { // TODO add comments
+			protected String computeNext() {
 				LineBuilder line = new LineBuilder();				
 				
 				while (words.hasNext()) {
-					if (!(line.canFit(words.peek()))) {
-						if (line.isEmpty()) {
-							line.append(words.next());
-						}
-						
+					boolean accepted = line.offer(words.peek());
+					
+					if (accepted) {
+						// The offered word was accepted, consume it and continue.
+						words.next();
+					} else {
+						// Finish the line.  The offending word has not been consumed.
 						return line.toString();
 					}
-					
-					line.append(words.next());
 				}
 				
-				if (!(line.isEmpty())) {
+				// Grab the last line
+				if (!(line.isEmpty())) { // TODO Any way to redo the above logic so that this isn't necessary?
 					return line.toString();
 				}
 				
@@ -71,7 +72,7 @@ public final class LineWrapper {
 			}
 			
 			
-			class LineBuilder { // TODO code review carefully, mutable, non-static
+			final class LineBuilder { // TODO code review carefully.. non-static, mutable
 				private final StringBuilder text;
 	
 				LineBuilder() {
@@ -82,15 +83,28 @@ public final class LineWrapper {
 					this.text = new StringBuilder(text);
 				}
 				
-				boolean canFit(String moreText) {
-					return lineConstraint.fitsOnOneLine(text.toString() + moreText);
+				/**
+				 * @param A word to offer for appending to this line
+				 * @return Whether the line accepts the new word.
+				 */
+				boolean offer(String word) {
+					if (canFit(word) || this.isEmpty()) {
+						append(word);
+						return true;
+					}
+					
+					return false;
 				}
 				
 				boolean isEmpty() {
 					return text.toString().isEmpty();
 				}
 				
-				void append(String moreText) {
+				private boolean canFit(String moreText) {
+					return lineConstraint.fitsOnOneLine(text.toString() + moreText);
+				}
+				
+				private void append(String moreText) {
 					text.append(moreText);
 				}
 				

@@ -103,7 +103,6 @@ public final class Words implements Iterable<String> { // TODO A less deceptive 
 		return Objects.hashCode(text, locale);
 	}
 
-	// TODO Or should we not provide a notion of Words equality and leave it up to the results?
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

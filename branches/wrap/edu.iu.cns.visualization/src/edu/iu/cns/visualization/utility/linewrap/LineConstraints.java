@@ -13,9 +13,6 @@ import com.google.common.base.Objects;
  * @see LineConstraint
  */
 public final class LineConstraints {
-	// TODO document
-	private static final Graphics PHONY_GRAPHICS = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
-
 	private LineConstraints() {}
 	
 	/**
@@ -55,13 +52,22 @@ public final class LineConstraints {
 	}
 	
 	/**
-	 * TODO explain Prefer {@link #byWidth(double, Font, Graphics)} with an explicit Graphics
-	 *             when possible. This method creates a phony Graphics context and may not behave as
-	 *             expected.
+	 * A constraint that the {@link FontMetrics#stringWidth(String)} of the line should not be more
+	 * than {@code targetedWidth} when using the provided {@code font} within a fictional Graphics
+	 * context.
+	 * 
+	 * Prefer {@link #byWidth(double, Font, Graphics)} with an explicit Graphics when possible. This
+	 * method creates a phony Graphics context and may not behave as expected.
 	 */
 	public static LineConstraint byWidth(double targetedWidth, Font font) {
 		return byWidth(targetedWidth, font, PHONY_GRAPHICS);
-	}	
+	}
+	/**
+	 * A fictional Graphics context for byWidth callers who do not have one.
+	 * This seems to work for current purposes but has not been extensively tested.
+	 */
+	private static final Graphics PHONY_GRAPHICS =
+			new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 	private static final class WidthLineConstraint implements LineConstraint {
 		private final double targetedWidth;
 		private final FontMetrics fontMetrics;

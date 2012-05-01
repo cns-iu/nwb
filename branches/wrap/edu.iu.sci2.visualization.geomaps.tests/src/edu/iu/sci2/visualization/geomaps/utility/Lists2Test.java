@@ -73,6 +73,7 @@ public class Lists2Test extends TestCase {
 	private enum PositiveIntegerPredicate implements Predicate<Integer> {
 		INSTANCE;
 	
+		@Override
 		public boolean apply(Integer i) {
 			return i.intValue() > 0;
 		}		
