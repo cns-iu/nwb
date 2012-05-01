@@ -1,4 +1,4 @@
-package edu.iu.cns.visualization.utility.linewrap;
+package edu.iu.cns.visualization.utility.wordwrap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,8 +9,10 @@ import org.junit.Test;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
-public class LineWrapperTest {
-	private static final LineWrapper LINE_WRAPPER = LineWrapper.greedy(LineConstraints.byLength(40));
+
+public class WordWrapperTest {
+	private static final WordWrapper LINE_WRAPPER =
+			WordWrapper.fewestLines(LineMetrics.length(), 40);
 	private static final ImmutableList<String> TARGET_LINES = ImmutableList.of(
 		/////0000000001111111111222222222233333333334
 		/////1234567890123456789012345678901234567890
@@ -30,12 +32,12 @@ public class LineWrapperTest {
 	@Test
 	public void testWrapIterableOfString() {
 		assertEquals(TARGET_LINES,
-				ImmutableList.copyOf(LINE_WRAPPER.wrap(Words.in(TEXT).withLocale(Locale.US))));
+				ImmutableList.copyOf(LINE_WRAPPER.wrap(LineBreaks.in(TEXT).withLocale(Locale.US))));
 	}
 
 	@Test
 	public void testWrapIteratorOfString() {
-		assertEquals(TARGET_LINES, ImmutableList.copyOf(LINE_WRAPPER.wrap(Words.in(TEXT)
+		assertEquals(TARGET_LINES, ImmutableList.copyOf(LINE_WRAPPER.wrap(LineBreaks.in(TEXT)
 				.withLocale(Locale.US).iterator())));
 	}
 

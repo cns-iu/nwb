@@ -1,4 +1,4 @@
-package edu.iu.cns.visualization.utility.linewrap;
+package edu.iu.cns.visualization.utility.wordwrap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,7 +11,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-public class WordsTest {
+import edu.iu.cns.visualization.utility.wordwrap.LineBreaks;
+
+public class LineBreaksTest {
 	@Test
 	public void testWordsFromPhraseWithQuotesHyphensAndADecimalPoint() {
 		assertTrue(Iterables.elementsEqual(
@@ -28,26 +30,26 @@ public class WordsTest {
 						"as ",
 						"you ",
 						"go.\""),
-				Words.in("It says: \"Add three-halves to 1.5, spot-checking as you go.\"")));
+				LineBreaks.in("It says: \"Add three-halves to 1.5, spot-checking as you go.\"")));
 	}
 	
 	@Test
 	public void testEmptyStringHasNoWords() {
-		assertTrue(Iterables.elementsEqual(ImmutableList.of(), Words.in("")));
+		assertTrue(Iterables.elementsEqual(ImmutableList.of(), LineBreaks.in("")));
 	}
 	
 	@Test
 	public void testStringWithNoLineBreaksIsNotBroken() {
 		String TARGET = "Unbroken.";
 		
-		assertTrue(Iterables.elementsEqual(ImmutableList.of(TARGET), Words.in(TARGET)));
+		assertTrue(Iterables.elementsEqual(ImmutableList.of(TARGET), LineBreaks.in(TARGET)));
 	}
 	
 	@Test
 	public void testConcatenationMatchesInputForNormalSentence() {
 		String TARGET = "It says: \"Add three-halves to 1.5, spot-checking as you go.\"";
 		
-		assertEquals(TARGET, Joiner.on("").join(Words.in(TARGET)));
+		assertEquals(TARGET, Joiner.on("").join(LineBreaks.in(TARGET)));
 	}
 	
 	@Test
@@ -56,12 +58,12 @@ public class WordsTest {
 		String TARGET = String.format("'--! '%s., ,!!%s!\" . ,.' . !\"%s''\"'\"", LINE_SEPARATOR,
 				LINE_SEPARATOR, LINE_SEPARATOR);
 		
-		assertEquals(TARGET, Joiner.on("").join(Words.in(TARGET)));
+		assertEquals(TARGET, Joiner.on("").join(LineBreaks.in(TARGET)));
 	}
 	
 	@Test
 	public void testLocaleCallDoesNotModifyInstance() {
-		Words words = Words.in("Ignored.").withLocale(Locale.ENGLISH);
+		LineBreaks words = LineBreaks.in("Ignored.").withLocale(Locale.ENGLISH);
 		words.withLocale(Locale.GERMAN);
 		
 		assertEquals(words.getLocale(), Locale.ENGLISH);
@@ -69,7 +71,7 @@ public class WordsTest {
 	
 	@Test
 	public void testLocaleChangeTakesEffectInCopy() {
-		Words words = Words.in("Ignored.").withLocale(Locale.GERMAN).withLocale(Locale.ENGLISH);
+		LineBreaks words = LineBreaks.in("Ignored.").withLocale(Locale.GERMAN).withLocale(Locale.ENGLISH);
 		
 		assertEquals(words.getLocale(), Locale.ENGLISH);
 	}

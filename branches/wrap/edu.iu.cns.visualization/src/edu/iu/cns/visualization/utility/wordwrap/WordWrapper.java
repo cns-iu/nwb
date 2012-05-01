@@ -1,52 +1,66 @@
-package edu.iu.cns.visualization.utility.linewrap; // TODO Move this entire package to some more general String utilities area?
+package edu.iu.cns.visualization.utility.wordwrap; // TODO Move this entire package to some more general String utilities area?
 
 import java.util.Iterator;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 
 /**
- * Partitions a body of text or sequence of words into a sequence of lines.
+ * Wraps a body of text (or a sequence of unbreakable words) into a sequence of lines.
  */
-public final class LineWrapper {
+public final class WordWrapper {
 	private final Strategy strategy;
 	
-	private LineWrapper(Strategy strategy) {
-		this.strategy = strategy;	
+	private WordWrapper(Strategy strategy) {
+		this.strategy = strategy;
 	}
 
 	/**
-	 * A LineWrapper that places as many words on each line as possible and violates its
-	 * LineConstraint only when necessary (as when a single word alone is in violation). This
-	 * strategy minimizes line count, not raggedness.
+	 * A word wrapper that greedily places as many words on each line as possible, exceeding the
+	 * {@code targetedSize} (as measured by {@code lineMetric}) only when necessary (as when a
+	 * single word alone is too big). This strategy minimizes line count, not raggedness.
 	 */
-	public static LineWrapper greedy(LineConstraint lineConstraint) {
-		return new LineWrapper(new Greedy(lineConstraint));
+	public static WordWrapper fewestLines(final LineMetric lineMetric, final int targetedSize) {
+		return new WordWrapper(new Greedy(new MetricAtMost(lineMetric, targetedSize)));
+	}
+
+	private static final class MetricAtMost implements Predicate<String> {
+		private final LineMetric lineMetric;
+		private final int targetedSize;
+
+		private MetricAtMost(LineMetric lineMetric, int targetedSize) {
+			this.lineMetric = lineMetric;
+			this.targetedSize = targetedSize;
+		}
+
+		@Override
+		public boolean apply(String line) {
+			return lineMetric.sizeOf(line) <= targetedSize;
+		}
 	}
 
 	private static final class Greedy implements Strategy {
-		private final LineConstraint lineConstraint;
-	
-		Greedy(LineConstraint lineConstraint) {
-			this.lineConstraint = lineConstraint;
+		private final Predicate<String> shouldFitOnOneLine;
+
+		public Greedy(Predicate<String> shouldFitOnOneLine) {
+			this.shouldFitOnOneLine = shouldFitOnOneLine;
 		}
-			
+
 		@Override
 		public Iterator<String> lineIteratorOver(Iterator<String> words) {
-			return new LineIterator(lineConstraint, words);
+			return new LineIterator(words);
 		}
 		
-		private static final class LineIterator extends AbstractIterator<String> {
-			private final LineConstraint lineConstraint;
+		private final class LineIterator extends AbstractIterator<String> { // TODO non-static?
 			private final PeekingIterator<String> words;
 	
-			LineIterator(LineConstraint lineConstraint, Iterator<String> words) {
-				this.lineConstraint = lineConstraint;
+			public LineIterator(Iterator<String> words) {
 				this.words = Iterators.peekingIterator(words);
 			}
-	
+
 			@Override
 			protected String computeNext() {
 				LineBuilder line = new LineBuilder();				
@@ -101,7 +115,7 @@ public final class LineWrapper {
 				}
 				
 				private boolean canFit(String moreText) {
-					return lineConstraint.fitsOnOneLine(text.toString() + moreText);
+					return shouldFitOnOneLine.apply(text.toString() + moreText);
 				}
 				
 				private void append(String moreText) {
@@ -116,28 +130,29 @@ public final class LineWrapper {
 		}		
 	}
 	
+//	public static WordWrapper leastRagged(LineMetric lineMetric, int targetedSize) { // TODO delete
+//		return new WordWrapper(new Knuth(lineMetric, targetedSize));
+//	}
+	
 	/**
-	 * Wrap {@code text} into lines.  Line breaks are discovered using {@link Words#in(String)}.
+	 * Wraps {@code text} into lines. Breaks will be inserted only at line breaks as found by
+	 * {@link LineBreaks#in(String)}.
 	 */
 	public Iterable<String> wrap(String text) {
-		return wrap(Words.in(text));
+		return wrap(LineBreaks.in(text));
 	}
 
 	/**
-	 * Wrap {@code words} into lines. Breaks occur only between elements of {@code words}, never
-	 * within.
-	 * 
-	 * @see Words#in(String)
+	 * Wraps {@code words} into lines. Breaks will be inserted only between elements of
+	 * {@code words}, never within.
 	 */
 	public Iterable<String> wrap(Iterable<String> words) {
 		return wrap(words.iterator());
 	}
 	
 	/**
-	 * Wrap {@code words} into lines. Breaks occur only between elements of {@code words}, never
+	 * Wraps {@code words} into lines. Breaks occur only between elements of {@code words}, never
 	 * within.
-	 * 
-	 * @see Words#in(String)
 	 */
 	public Iterable<String> wrap(final Iterator<String> words) {
 		return new Iterable<String>() {
@@ -163,8 +178,8 @@ public final class LineWrapper {
 	public boolean equals(Object o) {
 		if (this == o) { return true; }
 		if (o == null) { return false; }
-		if (!(o instanceof LineWrapper)) { return false; }
-		LineWrapper that = (LineWrapper) o;
+		if (!(o instanceof WordWrapper)) { return false; }
+		WordWrapper that = (WordWrapper) o;
 
 		return Objects.equal(this.strategy, that.strategy);
 	}

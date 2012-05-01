@@ -1,4 +1,4 @@
-package edu.iu.cns.visualization.utility.linewrap;
+package edu.iu.cns.visualization.utility.wordwrap;
 
 import java.text.BreakIterator;
 import java.util.Iterator;
@@ -8,23 +8,23 @@ import com.google.common.base.Objects;
 import com.google.common.collect.AbstractIterator;
 
 /**
- * An {@link Iterable} over the "words" in a body of text. Here a "word" means the substring between
- * each consecutive pair of line breaks yielded by an instance of
- * {@link BreakIterator#getLineInstance(Locale)}.
+ * An {@link Iterable} over the "words" between {@link BreakIterator#getLineInstance(Locale) line
+ * breaks} in a body of text.
  * 
- * <p/>For example, the words in <u>{@code It says: "Add three-halves to 1.5, spot-checking as you 
- * go."} </u> are <u>{@code It }</u>, <u>{@code says: }</u>, <u>{@code "Add }</u>,
- * <u>{@code three-}</u>, <u>{@code halves }</u>, <u>{@code to }</u>, <u>{@code 1.5, }</u>,
- * <u>{@code spot-}</u>, <u>{@code checking }</u>, <u>{@code as }</u>, <u>{@code you }</u>, and
- * <u>{@code go."}</u>.
+ * <p/>
+ * For example, the words in <u>{@code It says: "Add three-halves to 1.5, spot-checking as you 
+ * go."} </u> are <u>{@code It }</u>, <u>{@code says: }</u>, <u>{@code "Add }</u>, <u>{@code three-}
+ * </u>, <u>{@code halves }</u>, <u>{@code to }</u>, <u>{@code 1.5, }</u>, <u>{@code spot-}</u>, <u>
+ * {@code checking }</u>, <u>{@code as }</u>, <u>{@code you }</u>, and <u>{@code go."}</u>.
  * 
- * <p/>The concatenation of the words produced must equal the input.
+ * <p/>
+ * The concatenation of the words will always equal the input.
  */
-public final class Words implements Iterable<String> { // TODO A less deceptive name?
+public final class LineBreaks implements Iterable<String> { // TODO A less deceptive name?  LineBreaks?
 	private final String text;
 	private final Locale locale;
 
-	private Words(String text, Locale locale) {
+	private LineBreaks(String text, Locale locale) {
 		this.text = text;
 		this.locale = locale;
 	}
@@ -33,16 +33,16 @@ public final class Words implements Iterable<String> { // TODO A less deceptive 
 	 * An {@link Iterable} over the "words" in {@code text} according to {@link Locale#getDefault()}
 	 * .
 	 */
-	public static Words in(String text) {
-		return new Words(text, Locale.getDefault());
+	public static LineBreaks in(String text) {
+		return new LineBreaks(text, Locale.getDefault());
 	}
 	
 	/**
-	 * A copy of this Words object using this explicit {@link Locale} to find line breaks. The
+	 * A copy of this LineBreaks object using this explicit {@link Locale} to find line breaks. The
 	 * called instance is <strong>not</strong> modified.
 	 */
-	public Words withLocale(Locale locale) {
-		return new Words(text, locale);
+	public LineBreaks withLocale(Locale locale) {
+		return new LineBreaks(text, locale);
 	}
 	
 	@Override
@@ -85,10 +85,16 @@ public final class Words implements Iterable<String> { // TODO A less deceptive 
 		}
 	}
 	
+	/**
+	 * @return The text to scan for words between line breaks.
+	 */
 	public String getText() {
 		return text;
 	}
 
+	/**
+	 * @return The locale used to determine line breaks.
+	 */
 	public Locale getLocale() {
 		return locale;
 	}
@@ -111,10 +117,10 @@ public final class Words implements Iterable<String> { // TODO A less deceptive 
 		if (o == null) {
 			return false;
 		}
-		if (!(o instanceof Words)) {
+		if (!(o instanceof LineBreaks)) {
 			return false;
 		}
-		Words that = (Words) o;
+		LineBreaks that = (LineBreaks) o;
 
 		return Objects.equal(this.text, that.text) && Objects. equal(this.locale, that.locale);
 	}

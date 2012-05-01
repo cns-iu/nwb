@@ -1,7 +1,5 @@
 package edu.iu.sci2.visualization.geomaps.viz.ps;
 
-import edu.iu.cns.visualization.utility.linewrap.LineConstraints;
-import edu.iu.cns.visualization.utility.linewrap.LineWrapper;
 import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.io.InputStreamReader;
@@ -13,6 +11,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import edu.iu.cns.visualization.utility.wordwrap.LineMetrics;
+import edu.iu.cns.visualization.utility.wordwrap.WordWrapper;
 import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
@@ -71,9 +71,11 @@ public class HowToRead implements PostScriptable {
 			Point2D.Double lowerLeft, PageLayout pageLayout, String text, String mapKind) {
 		String content = "";
 		
-		List<String> lines = Lists.newArrayList(LineWrapper.greedy(
-				LineConstraints.byWidth(pageLayout.howToReadWidth().get(), pageLayout.contentFont()))
-				.wrap(text));
+		List<String> lines = Lists.newArrayList(
+				WordWrapper.fewestLines(
+						LineMetrics.widthInFont(pageLayout.contentFont()),
+						pageLayout.howToReadWidth().get().intValue())
+					.wrap(text));
 		List<String> restOfLines = lines.subList(1, lines.size());
 
 		Point2D.Double firstLineStartPoint =
