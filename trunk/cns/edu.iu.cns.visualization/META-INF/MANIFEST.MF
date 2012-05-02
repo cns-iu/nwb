@@ -3,11 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Visualization Plug-in
 Bundle-SymbolicName: edu.iu.cns.visualization
 Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: edu.iu.cns.visualization,
  edu.iu.cns.visualization.exception,
- edu.iu.cns.visualization.utility
-Import-Package: org.freehep.graphics2d,
+ edu.iu.cns.visualization.utility,
+ edu.iu.cns.visualization.utility.wordwrap
+Import-Package: com.google.common.base;version="11.0.1",
+ com.google.common.collect;version="11.0.1",
+ org.freehep.graphics2d,
  org.freehep.graphicsio,
  org.freehep.graphicsio.pdf,
  org.freehep.util.export,

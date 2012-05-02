@@ -7,7 +7,6 @@
     <groupId>edu.iu.cns</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>edu.iu.cns</groupId>
   <artifactId>edu.iu.cns.visualization</artifactId>
   <version>1.0.0</version>
   <packaging>eclipse-plugin</packaging>
