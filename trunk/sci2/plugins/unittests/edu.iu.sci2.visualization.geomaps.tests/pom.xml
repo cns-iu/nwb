@@ -7,7 +7,6 @@
     <groupId>edu.iu.sci2.unittests</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>edu.iu.sci2.unittests</groupId>
   <artifactId>edu.iu.sci2.visualization.geomaps.tests</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>

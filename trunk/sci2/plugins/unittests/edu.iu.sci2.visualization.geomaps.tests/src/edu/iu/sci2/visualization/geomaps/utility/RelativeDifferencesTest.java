@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.utility.numberformat;
+package edu.iu.sci2.visualization.geomaps.utility;
 
 import edu.iu.sci2.visualization.geomaps.utility.RelativeDifferences;
 import junit.framework.TestCase;

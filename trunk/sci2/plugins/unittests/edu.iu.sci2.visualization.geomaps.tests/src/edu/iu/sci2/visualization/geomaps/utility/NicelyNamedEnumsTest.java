@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.geomaps.utility.numberformat;
+package edu.iu.sci2.visualization.geomaps.utility;
 
 import junit.framework.TestCase;
 
@@ -20,6 +20,7 @@ public class NicelyNamedEnumsTest extends TestCase {
 			this.niceName = niceName;
 		}
 
+		@Override
 		public String getNiceName() {
 			return niceName;
 		}		
@@ -36,6 +37,7 @@ public class NicelyNamedEnumsTest extends TestCase {
 			this.niceName = niceName;
 		}
 
+		@Override
 		public String getNiceName() {
 			return niceName;
 		}		
