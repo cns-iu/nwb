@@ -6,8 +6,7 @@ import java.awt.geom.Point2D;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 public class PageFooter implements PostScriptable {
-	public static final String TEXT =
-			"NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)";
+	public static final String TEXT = "CNS (cns.iu.edu)";
 	public static final double FONT_BRIGHTNESS = 0.45;
 	
 	private final Point2D.Double lowerCenter;
