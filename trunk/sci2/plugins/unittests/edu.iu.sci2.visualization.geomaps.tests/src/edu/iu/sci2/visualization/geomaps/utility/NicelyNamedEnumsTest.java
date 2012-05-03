@@ -22,7 +22,7 @@ public class NicelyNamedEnumsTest extends TestCase {
 
 		@Override
 		public String getNiceName() {
-			return niceName;
+			return this.niceName;
 		}		
 	}
 	
@@ -39,7 +39,7 @@ public class NicelyNamedEnumsTest extends TestCase {
 
 		@Override
 		public String getNiceName() {
-			return niceName;
+			return this.niceName;
 		}		
 	}
 	
