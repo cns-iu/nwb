@@ -31,4 +31,5 @@ public class AveragesTest extends TestCase {
 	public static void testAverageThreeElements() {
 		assertEquals((3.0 + 4.0 + 9.0) / 3, Averages.meanOfDoubles(3.0, 4.0, 9.0), EPSILON);
 	}
+	
 }
