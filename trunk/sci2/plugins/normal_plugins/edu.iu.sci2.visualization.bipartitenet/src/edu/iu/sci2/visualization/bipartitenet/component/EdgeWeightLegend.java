@@ -24,7 +24,7 @@ public class EdgeWeightLegend implements Paintable {
 	private final ImmutableList<Double> labeledValues;
 	private final ComplexLabelPainter titlePainter;
 	
-	private static final double ARROW_LENGTH = 40;
+	private static final double EDGE_LENGTH = 40;
 	private static final int LABEL_X_OFFSET = 10;
 	private final Font labelFont;
 	
@@ -50,13 +50,13 @@ public class EdgeWeightLegend implements Paintable {
 	public void paint(Graphics2D g) {
 		this.titlePainter.paint(g);
 		float yOffset = this.titlePainter.estimateHeight() + 8;
-		paintArrows(g, yOffset);
+		paintEdges(g, yOffset);
 	}
 
-	private void paintArrows(Graphics2D gForLabels, float yOffset) {
+	private void paintEdges(Graphics2D gForLabels, float yOffset) {
 		Graphics2D g = (Graphics2D) gForLabels.create();
-		Point2D arrowsTopLeft = topLeft.translate(0, yOffset);
-		Point2D arrowStart = arrowsTopLeft;
+		Point2D edgesTopLeft = topLeft.translate(0, yOffset);
+		Point2D edgeStart = edgesTopLeft;
 		
 		UnsignedZeroFormat formatter = NumberFormatFactory.getNumberFormat(
 				NumberFormatFactory.NumericFormatType.GENERAL, 
@@ -69,16 +69,16 @@ public class EdgeWeightLegend implements Paintable {
 		
 		for (Double value : labeledValues.reverse()) {
 			// loop invariant: arrowStart is the start of the current arrow
-			Point2D arrowEnd = arrowStart.translate(ARROW_LENGTH, 0);
-			LineSegment2D line = new LineSegment2D(arrowStart, arrowEnd);
+			Point2D edgeEnd = edgeStart.translate(EDGE_LENGTH, 0);
+			LineSegment2D line = new LineSegment2D(edgeStart, edgeEnd);
 			float lineThickness = coding.apply(value).floatValue();
-			ThicknessCodedEdgeView.drawArrow(line, lineThickness, g);
+			ThicknessCodedEdgeView.drawEdge(line, lineThickness, g);
 			
-			Point2D labelPoint = arrowEnd.translate(LABEL_X_OFFSET, 0);
+			Point2D labelPoint = edgeEnd.translate(LABEL_X_OFFSET, 0);
 			labelPainter.paintLabel(labelPoint, formatter.format(value), gForLabels);
 			
 			// preserve invariant
-			arrowStart = arrowStart.translate(0, 1.2 * labelFont.getSize());
+			edgeStart = edgeStart.translate(0, 1.2 * labelFont.getSize());
 		}
 		g.dispose();
 		

@@ -38,8 +38,19 @@ public class ThicknessCodedEdgeView implements Paintable {
 				tEnd = (baseLine.getLength() - dest.getRadius() - NODE_EDGE_SPACE)
 							/ baseLine.getLength();
 		AbstractLine2D grossLine = baseLine.getSubCurve(tStart, tEnd);
-		drawArrow(grossLine, edgeThickness.floatValue(), g);
+		drawEdge(grossLine, edgeThickness.floatValue(), g);
+	}
+
+	public static void drawEdge(AbstractLine2D line, float edgeThickness,
+			Graphics2D g) {
+		drawLine(line, edgeThickness, g);
+	}
+	
+	public static void drawLine(AbstractLine2D line, float edgeThickness,
+			Graphics2D g) {
+		g.setStroke(new BasicStroke(edgeThickness));
 		
+		line.draw(g);		
 	}
 
 	public static void drawArrow(AbstractLine2D grossLine, float edgeThickness, Graphics2D g) {
@@ -54,9 +65,7 @@ public class ThicknessCodedEdgeView implements Paintable {
 				tEnd = 1 - (endOffset / grossLine.getLength());
 		AbstractLine2D fineLine = grossLine.getSubCurve(tStart, tEnd);
 		
-		g.setStroke(new BasicStroke(edgeThickness));
-		
-		fineLine.draw(g);
+		drawLine(fineLine, edgeThickness, g);
 
 		drawArrowHead(fineLine, edgeThickness, g);
 	}
