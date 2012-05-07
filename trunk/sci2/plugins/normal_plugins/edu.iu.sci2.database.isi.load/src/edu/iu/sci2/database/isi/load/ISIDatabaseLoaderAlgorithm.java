@@ -15,18 +15,16 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseService;
-import org.cishell.utilities.AlgorithmUtilities;
-import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.DataFactory;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import prefuse.util.collections.IntIterator;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
-import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.sci2.database.isi.load.utilities.ISITablePreprocessor;
@@ -42,56 +40,56 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	private DatabaseService databaseProvider;
 	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 	private CIShellContext ciShellContext;
-	private AlgorithmFactory mergeIdentical;
-	
+	private AlgorithmFactory mergeIdenticalRecords;
 
 	public ISIDatabaseLoaderAlgorithm(Data[] data,
-			CIShellContext ciShellContext, AlgorithmFactory mergeIdentical) {
+			CIShellContext ciShellContext,
+			AlgorithmFactory mergeIdenticalRecords) {
 		this.inData = data[0];
-
 		this.logger = (LogService) ciShellContext.getService(LogService.class
 				.getName());
 		this.databaseProvider = (DatabaseService) ciShellContext
 				.getService(DatabaseService.class.getName());
 		this.ciShellContext = ciShellContext;
-		this.mergeIdentical = mergeIdentical;
+		this.mergeIdenticalRecords = mergeIdenticalRecords;
+	}
+
+	private static Collection<Integer> getAllRows(Table table) {
+		Collection<Integer> rows = new ArrayList<Integer>();
+		IntIterator rowIttr = table.rows();
+
+		while (rowIttr.hasNext()) {
+			rows.add(rowIttr.nextInt());
+		}
+
+		return rows;
 	}
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
-			// Convert input ISI data to an ISI table.
-			
+			/* Convert input ISI data to an ISI table. */
 			Table isiTable = convertISIToTable(this.inData, this.logger);
 
-			// Preprocess the ISI table: generate unique IDs for rows without
-			// them.
+			/* Convert the original data to a database */
+			Database originalDatabase = ISITableDatabaseLoader.createISIDatabase(
+					isiTable, getAllRows(isiTable), this.progressMonitor,
+					this.databaseProvider);
+			Data unprocessedData = DataFactory.withClassNameAsFormat(originalDatabase, DataProperty.DATABASE_TYPE, this.inData, "ISI Data: " + this.inData.getData());
+			
+			List<Data> returnData = new ArrayList<Data>();
+			returnData.addAll(Arrays.asList(unprocessedData));
 
+			/*
+			 * Preprocess the ISI table: generate unique IDs for rows without
+			 * them.
+			 */
 			ISITablePreprocessor.generateMissingUniqueIDs(isiTable);
 
-			// Preprocess the ISI table: remove duplicate Documents (on the row
-			// level).
+			/* Table with Unique ISI Records Merged */
+			Data[] uniqueRecordsData =  getUniqueRecordsOutputData(isiTable, unprocessedData);
+			returnData.addAll(Arrays.asList(uniqueRecordsData));
 
-			Collection<Integer> rows = ISITablePreprocessor
-					.removeRowsWithDuplicateDocuments(isiTable);
-
-			// Convert the ISI table to an ISI database.
-
-			Database database = ISITableDatabaseLoader
-					.createISIDatabase(isiTable, rows, this.progressMonitor,
-							this.databaseProvider);
-
-			// Annotate ISI database as output data with metadata and return it.
-			Data[] annotatedOutputData = annotateOutputData(database,
-					this.inData);
-
-			List<Data> returnData = new ArrayList<Data>();
-			returnData.addAll(Arrays.asList(annotatedOutputData));
-			
-			// Automatically merge identical documents and add them to the return data.
-			Data[] mergedData = getMergedData(annotatedOutputData[0]);
-			returnData.addAll(Arrays.asList(mergedData));
-			
 			return returnData.toArray(new Data[0]);
 		} catch (AlgorithmCanceledException e) {
 			return new Data[] {};
@@ -100,41 +98,54 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		}
 	}
 
-
-	/**
-	 * Given the {@code loadedDatabase}, the {@link Database} wrapped as
-	 * {@link Data}, it will run the Merge Identical Documents algorithm and
-	 * return it's {@link Data} array.
-	 * 
-	 * @param loadedDatabase
-	 *            The {@link Database} wrapped as {@link Data}. It will also be
-	 *            used as the parent for the returned {@link Data}.
-	 * @return The {@link Data} array returned by the merging algorithm.
-	 * @throws AlgorithmExecutionException
-	 */
-	private Data[] getMergedData(Data loadedDatabase)
-			throws AlgorithmExecutionException {
+	private Data[] getUniqueRecordsOutputData(Table isiTable, Data parent) {
 		try {
-			Data[] mergedData = AlgorithmUtilities.executeAlgorithm(
-					this.mergeIdentical, 
-					getProgressMonitor(),
-					new Data[] { loadedDatabase },
-					new Hashtable<String, Object>(), 
-					this.ciShellContext);
+			/** Merge using the ISI Unique Records algorithm **/
+			
+			/* Pack the table for the algorithm */
+			Data isiTableData = DataFactory.withClassNameAsFormat(
+					isiTable,
+					DataProperty.TABLE_TYPE,
+					this.inData,
+					String.valueOf(this.inData.getMetadata().get(
+							DataProperty.LABEL)));
+			
+			/* Run the algorithm on the packed table */
+			Data[] uniqueISIRecords = this.mergeIdenticalRecords
+					.createAlgorithm(new Data[] { isiTableData },
+							new Hashtable<String, Object>(),
+							this.ciShellContext).execute();
+			
+			/* Pull the Unique Records table out of the algorithm's Data[] */
+			Table uniqueISITable = (Table) uniqueISIRecords[0].getData();
+			
+			/* Create the database from the processed table */
+			Database uniqueISIDatabase = ISITableDatabaseLoader
+					.createISIDatabase(uniqueISITable,
+							getAllRows(uniqueISITable), this.progressMonitor,
+							this.databaseProvider);
 
-			for (Data data : mergedData) {
-				changeParent(data, loadedDatabase);
-			}
-			return mergedData;
+			/* Pack the data as output data using the provided parent */
+			String label = (String) uniqueISIRecords[0].getMetadata().get(
+					DataProperty.LABEL);
+			Data data = DataFactory.withClassNameAsFormat(uniqueISIDatabase,
+					DataProperty.DATABASE_TYPE, parent, label);
+			return new Data[] { data };
 		} catch (AlgorithmExecutionException e) {
-			throw new AlgorithmExecutionException(
-					"It was not possible to automatically merge the identical documents for this database."
-							+ System.getProperty("line.separator")
-							+ e.getMessage(), e);
+			String message = "It was not possible to automatically merge Unique ISI records."
+					+ System.getProperty("line.separator")
+					+ e.getLocalizedMessage();
+			this.logger.log(LogService.LOG_ERROR, message);
+			return new Data[] {};
+		} catch (ISILoadingException e) {
+			String message = "It was not possible to automatically merge Unique ISI records."
+					+ System.getProperty("line.separator")
+					+ e.getLocalizedMessage();
+			this.logger.log(LogService.LOG_ERROR, message);
+			return new Data[] {};
 		}
 	}
 
-	
 	@Override
 	public void setProgressMonitor(ProgressMonitor progressMonitor) {
 		this.progressMonitor = progressMonitor;
@@ -160,28 +171,14 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		}
 	}
 
-	private static Data[] annotateOutputData(Database isiDatabase, Data parentData) {
-		Data data = new BasicData(isiDatabase, ISI.ISI_DATABASE_MIME_TYPE);
-		Dictionary<String, Object> metadata = data.getMetadata();
-		metadata.put(
-				DataProperty.LABEL,
-				"ISI Database From "
-						+ FileUtilities
-								.extractFileNameWithExtension((String) parentData
-										.getData()));
-		metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
-		metadata.put(DataProperty.PARENT, parentData);
-
-		return new Data[] { data };
-	}
-	
 	/*
-	 *  SOMEDAY if you find use for this, put it in a utility.  For now there is
-	 *  no good place.  It is also used in {@link CSVDatabaseLoader}.
+	 * SOMEDAY if you find use for this, put it in a utility. For now there is
+	 * no good place. It is also used in {@link CSVDatabaseLoader}.
 	 */
-	
+
 	/**
-	 * Sets the {@code child}'s parent {@link Data} element to be {@code parent}.
+	 * Sets the {@code child}'s parent {@link Data} element to be {@code parent}
+	 * .
 	 * 
 	 * @param child
 	 *            The {@link Data} to have it's parent changed.

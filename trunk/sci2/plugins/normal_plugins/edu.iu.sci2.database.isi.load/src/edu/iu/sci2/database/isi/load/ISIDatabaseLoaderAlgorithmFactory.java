@@ -16,16 +16,15 @@ public class ISIDatabaseLoaderAlgorithmFactory implements AlgorithmFactory {
 	public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
 		
-		AlgorithmFactory mergeIdentical = getMergeIdentical(this.bundleContext);
-        return new ISIDatabaseLoaderAlgorithm(data, ciShellContext, mergeIdentical);
+		AlgorithmFactory mergeIdenticalRecords = getMergeIdenticalRecords(this.bundleContext);
+        return new ISIDatabaseLoaderAlgorithm(data, ciShellContext, mergeIdenticalRecords);
     }
     
     protected void activate(ComponentContext componentContext) {
     	this.bundleContext = componentContext.getBundleContext();
     }
     
-    private static AlgorithmFactory getMergeIdentical(BundleContext bundleContext) {
-    	return AlgorithmUtilities.getAlgorithmFactoryByPID(
-    			"edu.iu.sci2.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm", bundleContext);
+    private static AlgorithmFactory getMergeIdenticalRecords(BundleContext bundleContext) {
+    	return AlgorithmUtilities.getAlgorithmFactoryByPID("edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm", bundleContext);
     }
 }

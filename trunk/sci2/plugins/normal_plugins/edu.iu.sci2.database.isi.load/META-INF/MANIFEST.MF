@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.loader.isi.db
 Bundle-SymbolicName: edu.iu.sci2.database.isi.load
-Bundle-Version: 0.0.5
+Bundle-Version: 0.0.6
 Bundle-ClassPath: .
 Import-Package: com.google.common.base,
  com.google.common.collect,
@@ -40,4 +40,5 @@ Export-Package: edu.iu.sci2.database.isi.load,
  edu.iu.sci2.database.scholarly.model.entity,
  edu.iu.sci2.database.scopus.load
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: edu.iu.nwb.converter.prefusecsv;bundle-version="0.7.0"
+Require-Bundle: edu.iu.nwb.converter.prefusecsv;bundle-version="0.7.0",
+ edu.iu.nwb.analysis.isidupremover;bundle-version="0.0.1"
