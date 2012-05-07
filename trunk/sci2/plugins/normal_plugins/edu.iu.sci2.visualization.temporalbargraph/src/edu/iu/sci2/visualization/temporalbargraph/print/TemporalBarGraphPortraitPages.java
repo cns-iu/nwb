@@ -119,9 +119,7 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 	private PageElement getFooterPageElement() {
 		StringTemplate footerTemplate = pageElementsGroup
 				.getInstanceOf("footer");
-		footerTemplate
-				.setAttribute("footer",
-						"NIH's Reporter Web site (projectreporter.nih.gov), NETE & CNS (cns.iu.edu)");
+		footerTemplate.setAttribute("footer", "CNS (cns.iu.edu)");
 
 		StringTemplate footerDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("footerDefinitions");
