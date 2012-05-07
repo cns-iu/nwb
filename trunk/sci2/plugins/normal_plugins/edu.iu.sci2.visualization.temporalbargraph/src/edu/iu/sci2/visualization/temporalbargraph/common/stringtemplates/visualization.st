@@ -58,15 +58,15 @@ visualizationAreaDefinitions(topVizPosition, pointsPerDay, pointsPerY) ::= <<
 	grestore
 } def
 
-/datelineLineWidth { 1 } def
-/datelineDashSize { 2 } def
+/datelineLineWidth { 0 } def
+/datelineDashSize { 5 } def
 /dateline { % (label) x => -
 	gsave
 	visualizationLeft visualizationBottom translate
 	leftTextMargin 0 translate
 	dup
 	0 moveto
-	0.75 0.75 0.75 setrgbcolor
+	0.3 0.3 0.3 setrgbcolor
 	[datelineDashSize] 0 setdash
 	datelineLineWidth setlinewidth
 	0 topVizPosition rlineto
@@ -77,7 +77,7 @@ visualizationAreaDefinitions(topVizPosition, pointsPerDay, pointsPerY) ::= <<
 } def
 
 /datelineLabelFont { /ArialMT } def
-/datelineLabelFontSize { 12.0 } def
+/datelineLabelFontSize { 10.0 } def
 /datelinelabel { % (label) x => -
 	datelineLabelFont datelineLabelFontSize selectfont
 	datelineLabelFontSize neg center

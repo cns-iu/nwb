@@ -221,7 +221,7 @@ This will draw a few boxes to describe area further.  NOTE!  The bottom specifie
 
 gapYearValue is the number of years, as a decimal rounded to one place that prepresents the distance between the year ticks. 
 */
-areaLegendDefinitions(barWidth, fontSize, bigBarHeight, bigBarValue, medBarHeight, medBarValue, smallBarHeight, smallBarValue, yearValue) ::= <<
+areaLegendDefinitions(barWidth, fontSize, bigBarHeight, bigBarValue, medBarHeight, medBarValue, smallBarHeight, smallBarValue, yearValue, titleFontSize) ::= <<
 
 %%%%%%%%%%%%%%%%
 %  AreaLegend  %
@@ -243,10 +243,20 @@ areaLegendDefinitions(barWidth, fontSize, bigBarHeight, bigBarValue, medBarHeigh
 	
 	/yearValue { (<yearValue> Year(s)) } def
 	
+	/setTitleFont { /Arial-BoldMT <titleFontSize> selectfont } def
+	/legendText { (Area) } def
+	
 	gsave
 	/ArialMT fontSize selectfont
 	0 0 moveto
 	areaLegendLeft areaLegendTop translate
+	% Draw the title
+	gsave
+		0 0 moveto
+		setTitleFont
+		legendText stringwidth pop 10 add neg legendText textheight neg rmoveto
+		legendText show
+	grestore
 	% Draw the big bar and label
 	0 0 moveto
 		barWidth 0 rlineto

@@ -65,10 +65,6 @@ public class WebTemporalBarGraphAlgorithm extends
 		this.records = readRecordsFromTable(inputTable, logger, labelColumn,
 				startDateColumn, endDateColumn, sizeByColumn, startDateFormat,
 				endDateFormat, categoryColumn);
-
-		for (Record record : this.records) {
-			this.colorRegistry.getColorOf(record.getCategory());
-		}
 	}
 
 	@Override

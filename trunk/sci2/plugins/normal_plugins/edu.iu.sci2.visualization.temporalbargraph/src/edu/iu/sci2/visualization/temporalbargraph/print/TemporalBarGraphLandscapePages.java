@@ -77,7 +77,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 			String visualization = this.visualizations
 					.renderVisualizationPostscript(ii);
 			double visualizationLeft = inchToPoint(0.75);
-			double visualizationBottom = inchToPoint(1.75);
+			double visualizationBottom = inchToPoint(1.85);
 			PageElement visualizationElement = new PageElement("visualization",
 					visualizationLeft, visualizationBottom, visualization,
 					visualizationDefinitions);
@@ -152,6 +152,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 		StringTemplate areaDefinitionsTemplate = pageElementsGroup
 				.getInstanceOf("areaLegendDefinitions");
 		areaDefinitionsTemplate.setAttribute("fontSize", 10);
+		areaDefinitionsTemplate.setAttribute("titleFontSize", 14);
 		areaDefinitionsTemplate.setAttribute("barWidth",
 				String.valueOf(barWidth));
 		areaDefinitionsTemplate.setAttribute("bigBarHeight", bigBarHeight);

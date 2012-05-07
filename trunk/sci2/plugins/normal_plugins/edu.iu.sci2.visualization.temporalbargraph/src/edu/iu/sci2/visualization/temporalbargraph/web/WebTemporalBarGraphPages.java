@@ -112,6 +112,7 @@ public class WebTemporalBarGraphPages extends AbstractPages{
 		
 		StringTemplate areaDefinitionsTemplate = pageElementsGroup.getInstanceOf("areaLegendDefinitions");
 		areaDefinitionsTemplate.setAttribute("fontSize", 16);
+		areaDefinitionsTemplate.setAttribute("titleFontSize", 20);
 		areaDefinitionsTemplate.setAttribute("barWidth", String.valueOf(barWidth));
 		areaDefinitionsTemplate.setAttribute("bigBarHeight", bigBarHeight);
 		areaDefinitionsTemplate.setAttribute("medBarHeight", medBarHeight);

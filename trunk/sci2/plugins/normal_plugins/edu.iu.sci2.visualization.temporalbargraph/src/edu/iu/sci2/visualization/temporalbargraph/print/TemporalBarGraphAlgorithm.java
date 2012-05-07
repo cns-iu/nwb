@@ -1,8 +1,10 @@
 package edu.iu.sci2.visualization.temporalbargraph.print;
 import java.awt.Color;
+import java.util.Dictionary;
 import java.util.List;
 
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.color.ColorRegistry;
 import org.osgi.service.log.LogService;
 
@@ -71,9 +73,6 @@ public class TemporalBarGraphAlgorithm extends
 				this.labelColumn, this.startDateColumn, this.endDateColumn,
 				this.sizeByColumn, this.startDateFormat, this.endDateFormat,
 				this.categoryColumn);
-		for (Record record : this.records) {
-			this.colorRegistry.getColorOf(record.getCategory());
-		}
 	}
 
 	@Override
@@ -91,6 +90,31 @@ public class TemporalBarGraphAlgorithm extends
 
 	}
 
+	private String getSubtitle() {
+		Data data = this.getInputData();
+		if (data == null) {
+			return "";
+		}
+		
+		Dictionary<String, Object> metadata = data.getMetadata();
+		if (metadata == null) {
+			return "";
+		}
+		
+		Object labelProperty = metadata.get(DataProperty.LABEL);
+		if (labelProperty == null) {
+			return "";
+		}
+		
+		try {
+			String label = (String) labelProperty;
+			String subtitle = "Generated from " + label;
+			return subtitle;
+		} catch (ClassCastException e) {
+			return "";
+		}
+	}
+	
 	@Override
 	protected LogService getLogger() {
 		return this.logger;
