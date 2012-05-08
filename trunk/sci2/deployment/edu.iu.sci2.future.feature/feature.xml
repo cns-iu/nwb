@@ -297,7 +297,7 @@
          unpack="false"/>
 
    <plugin
-         id="edu.iu.sci2.database.medine"
+         id="edu.iu.sci2.database.medline"
          download-size="0"
          install-size="0"
          version="0.0.0"
