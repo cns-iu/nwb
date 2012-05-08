@@ -1,9 +1,6 @@
-package edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db;
+package edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.Dictionary;
 
@@ -20,25 +17,22 @@ import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.DataFactory;
-import org.cishell.utilities.UnicodeReader;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
-import edu.iu.sci2.medline.common.MedlineRecord;
-import edu.iu.sci2.medline.common.MedlineRecordParser;
+import edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db.MedlineFileTableModelParser.TableModelParsingException;
 
 /**
- * This 'validates' a pubmed file to an isi:db by reading the records all at
- * once. This can have serious memory consequences. It uses the
- * {@code edu.iu.sci2.medline.validator.Validator}
- * for validation.
+ * This 'validates' a medline file to an isi:db. It is designed to load the
+ * records individually to the database or by batch insertion (though the
+ * database functionality required to do this has not yet been written) to keep
+ * memory requirements low.
  * 
  * <p>
  * <b> Warning!! </b>
@@ -49,7 +43,7 @@ import edu.iu.sci2.medline.common.MedlineRecordParser;
  * </p>
  * 
  */
-public class AllRecordsAtOnceValidator implements Algorithm {
+public class Validator implements Algorithm {
 
 	public static class Factory implements AlgorithmFactory {
 		private BundleContext bundleContext;
@@ -66,7 +60,7 @@ public class AllRecordsAtOnceValidator implements Algorithm {
 			Preconditions
 					.checkArgument(parameters.isEmpty(),
 							"The CIShell 1.0 Spec guarantees that parameters will be null for a validator.");
-			return new AllRecordsAtOnceValidator(ciShellContext, getValidator(
+			return new Validator(ciShellContext, getValidator(
 					this.bundleContext).createAlgorithm(data, parameters,
 					ciShellContext));
 		}
@@ -86,8 +80,7 @@ public class AllRecordsAtOnceValidator implements Algorithm {
 	private LogService logger;
 	private DatabaseService databaseProvider;
 
-	public AllRecordsAtOnceValidator(CIShellContext ciShellContext,
-			Algorithm validator) {
+	public Validator(CIShellContext ciShellContext, Algorithm validator) {
 		Preconditions.checkArgument(validator != null,
 				"The validation algorithm must not be null.");
 		Preconditions.checkArgument(ciShellContext != null,
@@ -102,19 +95,20 @@ public class AllRecordsAtOnceValidator implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
+		
+		Data[] validMedlineFileData = this.validator.execute();
+		Data rootData = getData(validMedlineFileData);
+		File validMedlineFile = getFile(rootData);
+		DatabaseModel model;
 		try {
-			Data[] validMedlineFileData = this.validator.execute();
-			Data rootData = getData(validMedlineFileData);
-			File validMedlineFile = getFile(rootData);
-			ImmutableList<MedlineRecord> records = getRecords(validMedlineFile);
-			DatabaseModel model = new PubmedRecordsTableModelParser(records,
-					this.logger).getModel();
-			Database database = getDatabase(model);
-			return createOutputData(database, rootData);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			model = new MedlineFileTableModelParser(
+					validMedlineFile, this.logger).getModel();
+		} catch (TableModelParsingException e) {
+			throw new AlgorithmExecutionException(e);
 		}
+		Database database = getDatabase(model);
+		return createOutputData(database, rootData);
+	
 	}
 
 	private File getFile(Data validMedlineFileData)
@@ -143,28 +137,13 @@ public class AllRecordsAtOnceValidator implements Algorithm {
 		}
 	}
 
-	private ImmutableList<MedlineRecord> getRecords(File validMedlineFile)
-			throws AlgorithmExecutionException {
-		Preconditions.checkArgument(validMedlineFile != null,
-				"The file must not be null.");
-		try {
-			return MedlineRecordParser.getAllRecords(new BufferedReader(
-					new UnicodeReader(new FileInputStream(validMedlineFile))), this.logger);
-
-		} catch (FileNotFoundException e) {
-			String message = "File could not be found.";
-			this.logger.log(LogService.LOG_ERROR, message);
-			throw new AlgorithmExecutionException(message, e);
-		}
-	}
-
 	private Database getDatabase(DatabaseModel model)
 			throws AlgorithmExecutionException {
 		Preconditions.checkArgument(model != null,
 				"The model must not be null to create a database.");
 		try {
 			Database database = DerbyDatabaseCreator.createFromModel(
-					this.databaseProvider, model, "pubmed",
+					this.databaseProvider, model, "medline",
 					ProgressMonitor.NULL_MONITOR, model.getRowItemLists()
 							.size());
 
@@ -195,7 +174,7 @@ public class AllRecordsAtOnceValidator implements Algorithm {
 				"The parent data object must not be null.");
 		return new Data[] { DataFactory.forObject(database,
 				ISI.ISI_DATABASE_MIME_TYPE, DataProperty.DATABASE_TYPE, parent,
-				"Pubmed Database for " + parent.getData().toString()) };
+				"Medline Database for " + parent.getData().toString()) };
 	}
 
 }

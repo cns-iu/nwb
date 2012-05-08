@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db.Validator.component" immediate="false">
-	<implementation class="edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db.Validator$Factory"/>
+<component name="edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db.Validator.component" immediate="false">
+	<implementation class="edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db.Validator$Factory"/>
 	<properties entry="OSGI-INF/validator/medline_ext_to_isi_db.properties"/>
 	
 	<service>

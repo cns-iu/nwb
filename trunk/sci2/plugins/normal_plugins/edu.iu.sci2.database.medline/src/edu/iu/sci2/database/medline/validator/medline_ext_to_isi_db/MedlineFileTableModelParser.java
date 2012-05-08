@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db;
+package edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableList;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.sci2.database.pubmed.common.AbstractPubmedTableModelParser;
+import edu.iu.sci2.database.medline.common.AbstractMedlineTableModelParser;
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
@@ -36,7 +36,7 @@ import edu.iu.sci2.medline.common.MedlineRecordParser;
  * the {@linkplain MedlineRecord}s individually to a database (once the database
  * loading code has been rewritten) to reduce the memory requirements.
  */
-public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
+public class MedlineFileTableModelParser extends AbstractMedlineTableModelParser {
 	public static class TableModelParsingException extends Exception {
 		private static final long serialVersionUID = -4579673818400442630L;
 
@@ -51,16 +51,16 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 
 	private MedlineRecordParser recordParser;
 
-	protected PubmedFileTableModelParser(File pubmedFile, LogService logger)
+	protected MedlineFileTableModelParser(File medlineFile, LogService logger)
 			throws TableModelParsingException {
-		Preconditions.checkArgument(pubmedFile != null,
-				"The pubmed file must not be null.");
+		Preconditions.checkArgument(medlineFile != null,
+				"The medline file must not be null.");
 		Preconditions.checkArgument(logger != null,
 				"The LogService must not be null.");
 		this.logger = logger;
 		try {
 			this.recordParser = new MedlineRecordParser(new BufferedReader(
-					new UnicodeReader(new FileInputStream(pubmedFile))), this.logger);
+					new UnicodeReader(new FileInputStream(medlineFile))), this.logger);
 
 		} catch (FileNotFoundException e) {
 			String message = "File could not be found.";
@@ -244,16 +244,16 @@ public class PubmedFileTableModelParser extends AbstractPubmedTableModelParser {
 
 	private static ImmutableList<Keyword> getKeywords(
 			DatabaseTableKeyGenerator keyGenerator, MedlineRecord record) {
-		final String PUBMED_KEYWORD_PREFIX = "pubmed ";
+		final String MEDLINE_KEYWORD_PREFIX = "medline ";
 
 		ImmutableList<Keyword> originalKeywords = makeKeywords(
 				record.getValues(MedlineField.MESH_TERMS),
-				PUBMED_KEYWORD_PREFIX + MedlineField.MESH_TERMS.getName(),
+				MEDLINE_KEYWORD_PREFIX + MedlineField.MESH_TERMS.getName(),
 				keyGenerator);
 
 		ImmutableList<Keyword> newKeywords = makeKeywords(
 				record.getValues(MedlineField.OTHER_TERM),
-				PUBMED_KEYWORD_PREFIX + MedlineField.OTHER_TERM.getName(),
+				MEDLINE_KEYWORD_PREFIX + MedlineField.OTHER_TERM.getName(),
 				keyGenerator);
 
 		return new ImmutableList.Builder<Keyword>().addAll(originalKeywords)

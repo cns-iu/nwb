@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db;
+package edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.sci2.database.pubmed.common.AbstractPubmedTableModelParser;
+import edu.iu.sci2.database.medline.common.AbstractMedlineTableModelParser;
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
@@ -27,13 +27,13 @@ import edu.iu.sci2.medline.common.MedlineRecord;
 /**
  * A parser that can create a {@linkplain DatabaseModel} from {@linkplain MedlineRecord}s.
  */
-public class PubmedRecordsTableModelParser extends AbstractPubmedTableModelParser{
+public class MedlineRecordsTableModelParser extends AbstractMedlineTableModelParser{
 
 	private LogService logger;
 	private ImmutableList<MedlineRecord> records;
 	private DatabaseModel model;
 	
-	protected PubmedRecordsTableModelParser(ImmutableList<MedlineRecord> records, LogService logger) {
+	protected MedlineRecordsTableModelParser(ImmutableList<MedlineRecord> records, LogService logger) {
 		Preconditions.checkArgument(records != null, "Records may not be null.");
 		Preconditions.checkArgument(logger != null, "The LogService may not be null.");
 		this.records = records;
@@ -196,12 +196,12 @@ public class PubmedRecordsTableModelParser extends AbstractPubmedTableModelParse
 	
 	private static ImmutableList<Keyword> getKeywords(DatabaseTableKeyGenerator keyGenerator,
 			MedlineRecord record) {
-		final String PUBMED_KEYWORD_PREFIX = "pubmed ";
+		final String MEDLINE_KEYWORD_PREFIX = "medline ";
 		
-		ImmutableList<Keyword> originalKeywords = makeKeywords(record.getValues(MedlineField.MESH_TERMS), PUBMED_KEYWORD_PREFIX
+		ImmutableList<Keyword> originalKeywords = makeKeywords(record.getValues(MedlineField.MESH_TERMS), MEDLINE_KEYWORD_PREFIX
 				+ MedlineField.MESH_TERMS.getName(), keyGenerator);
 		
-		ImmutableList<Keyword> newKeywords = makeKeywords(record.getValues(MedlineField.OTHER_TERM), PUBMED_KEYWORD_PREFIX
+		ImmutableList<Keyword> newKeywords = makeKeywords(record.getValues(MedlineField.OTHER_TERM), MEDLINE_KEYWORD_PREFIX
 				+ MedlineField.OTHER_TERM.getName(), keyGenerator);
 
 		return new ImmutableList.Builder<Keyword>().addAll(originalKeywords).addAll(newKeywords).build();

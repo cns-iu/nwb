@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.pubmed.converter.medline_table_to_isi_db;
+package edu.iu.sci2.database.medline.converter.medline_table_to_isi_db;
 
 import java.sql.SQLException;
 import java.util.Dictionary;
@@ -86,26 +86,26 @@ public class Converter implements Algorithm, ProgressTrackable {
 			throw e;
 		} catch (DatabaseCreationException e) {
 			throw new AlgorithmExecutionException(
-					"The pubmed database couldn't be created.", e);
+					"The medline database couldn't be created.", e);
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException(
-					"The pubmed database couldn't be created.", e);
+					"The medline database couldn't be created.", e);
 		}
 	}
 
 	private static Data[] createOutputData(Database database, Data parent) {
 		return new Data[] { DataFactory.forObject(database,
 				ISI.ISI_DATABASE_MIME_TYPE, DataProperty.DATABASE_TYPE, parent,
-				"Pubmed Database for " + parent.getData().toString()) };
+				"Medline Database for " + parent.getData().toString()) };
 	}
 
-	private static Database getDatabase(MedlineTable pubmedTable,
+	private static Database getDatabase(MedlineTable medlineTable,
 			DatabaseService databaseProvider, LogService logger,
 			ProgressMonitor progressMonitor) throws AlgorithmCanceledException,
 			DatabaseCreationException, SQLException {
 		progressMonitor.start(ProgressMonitor.WORK_TRACKABLE, 2);
 		progressMonitor.describeWork("Making the table model.");
-		DatabaseModel model = new PubmedTableTableModelParser(pubmedTable,
+		DatabaseModel model = new MedlineTableTableModelParser(medlineTable,
 				logger).getModel();
 		progressMonitor.worked(1);
 
@@ -114,7 +114,7 @@ public class Converter implements Algorithm, ProgressTrackable {
 
 		progressMonitor.describeWork("Creating the database from the model.");
 		Database database = DerbyDatabaseCreator.createFromModel(
-				databaseProvider, model, "pubmed", progressMonitor, model
+				databaseProvider, model, "medline", progressMonitor, model
 						.getRowItemLists().size());
 		progressMonitor.worked(1);
 

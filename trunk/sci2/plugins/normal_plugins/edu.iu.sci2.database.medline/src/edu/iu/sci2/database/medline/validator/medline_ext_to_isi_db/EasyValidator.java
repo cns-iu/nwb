@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.pubmed.validator.medline_ext_to_isi_db;
+package edu.iu.sci2.database.medline.validator.medline_ext_to_isi_db;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -33,7 +33,7 @@ import edu.iu.sci2.medline.common.MedlineTable;
  * validation,
  * {@code edu.iu.sci2.medline.converter.medline_to_table_converter.Converter} to
  * get a {@linkplain MedlineTable}, and
- * {@code edu.iu.sci2.database.pubmed.converter.medline_table_to_isi_db.Converter}
+ * {@code edu.iu.sci2.database.medline.converter.medline_table_to_isi_db.Converter}
  * to get the {@code db:isi} {@linkplain Database}.
  * </p>
  */
@@ -44,7 +44,7 @@ public class EasyValidator implements Algorithm, ProgressTrackable {
 		private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 		private static final String validatorPID = "edu.iu.sci2.medline.validator.Validator";
 		private static final String medlineToMedlineTableConverterPID = "edu.iu.sci2.medline.converter.medline_to_table_converter.Converter";
-		private static final String medlineTableToDBConverterPID = "edu.iu.sci2.database.pubmed.converter.medline_table_to_isi_db.Converter";
+		private static final String medlineTableToDBConverterPID = "edu.iu.sci2.database.medline.converter.medline_table_to_isi_db.Converter";
 
 		@Override
 		public Algorithm createAlgorithm(Data[] data,

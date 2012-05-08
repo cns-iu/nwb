@@ -7,7 +7,7 @@
     <groupId>edu.iu.sci2.normal_plugins</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>edu.iu.sci2.database.pubmed</artifactId>
+  <artifactId>edu.iu.sci2.database.medline</artifactId>
   <version>1.0.0</version>
   <packaging>eclipse-plugin</packaging>
 </project>

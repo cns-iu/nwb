@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.pubmed.common;
+package edu.iu.sci2.database.medline.common;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -50,7 +50,7 @@ import edu.iu.sci2.medline.common.MedlineUtilities.ParsedName;
  * An abstract class for creating a {@link DatabaseModel} for a Generic
  * Scholarly {@linkplain Database} for MEDLINE®/PubMed® data.
  */
-public abstract class AbstractPubmedTableModelParser {
+public abstract class AbstractMedlineTableModelParser {
 	protected List<RowItemContainer<? extends RowItem<?>>> dbTables;
 	protected RowItemContainer<Document> documentsTable;
 	protected RowItemContainer<Person> peopleTable;
@@ -63,7 +63,7 @@ public abstract class AbstractPubmedTableModelParser {
 	protected RowItemContainer<DocumentKeyword> documentKeywordsTable;
 	protected RowItemContainer<ResearchAddress> researchAddressesTable;
 
-	public AbstractPubmedTableModelParser() {
+	public AbstractMedlineTableModelParser() {
 		makeTables();
 	}
 

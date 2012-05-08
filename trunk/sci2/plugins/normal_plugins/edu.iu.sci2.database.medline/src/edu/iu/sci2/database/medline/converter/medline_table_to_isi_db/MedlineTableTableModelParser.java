@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.pubmed.converter.medline_table_to_isi_db;
+package edu.iu.sci2.database.medline.converter.medline_table_to_isi_db;
 
 import static edu.iu.sci2.database.scopus.load.EntityUtils.cleanString;
 import static edu.iu.sci2.database.scopus.load.EntityUtils.removeArrayWrapper;
@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableList;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.sci2.database.pubmed.common.AbstractPubmedTableModelParser;
+import edu.iu.sci2.database.medline.common.AbstractMedlineTableModelParser;
 import edu.iu.sci2.database.scholarly.model.entity.Address;
 import edu.iu.sci2.database.scholarly.model.entity.Author;
 import edu.iu.sci2.database.scholarly.model.entity.Document;
@@ -34,14 +34,14 @@ import edu.iu.sci2.medline.common.MedlineTable;
 /**
  * A parser that can create a {@linkplain DatabaseModel} from a {@linkplain MedlineTable}.
  */
-public class PubmedTableTableModelParser extends
-		AbstractPubmedTableModelParser {
+public class MedlineTableTableModelParser extends
+		AbstractMedlineTableModelParser {
 
 	private Table table;
 	private LogService logger;
 	private DatabaseModel model;
 	
-	public PubmedTableTableModelParser(MedlineTable medlineTable,
+	public MedlineTableTableModelParser(MedlineTable medlineTable,
 			LogService logger) {
 		this.logger = logger;
 		this.table = medlineTable.getTable();
@@ -187,12 +187,12 @@ public class PubmedTableTableModelParser extends
 
 	protected static ImmutableList<Keyword> getKeywords(
 			DatabaseTableKeyGenerator keyGenerator, Tuple row, LogService logger) {
-		final String PUBMED_KEYWORD_PREFIX = "pubmed ";
+		final String MEDLINE_KEYWORD_PREFIX = "medline ";
 		
-		ImmutableList<Keyword> originalKeywords = makeKeywords(getCleanSplitValues(row, MedlineField.MESH_TERMS, logger), PUBMED_KEYWORD_PREFIX
+		ImmutableList<Keyword> originalKeywords = makeKeywords(getCleanSplitValues(row, MedlineField.MESH_TERMS, logger), MEDLINE_KEYWORD_PREFIX
 				+ MedlineField.MESH_TERMS.getName(), keyGenerator);
 		
-		ImmutableList<Keyword> newKeywords = makeKeywords(getCleanSplitValues(row, MedlineField.OTHER_TERM, logger), PUBMED_KEYWORD_PREFIX
+		ImmutableList<Keyword> newKeywords = makeKeywords(getCleanSplitValues(row, MedlineField.OTHER_TERM, logger), MEDLINE_KEYWORD_PREFIX
 				+ MedlineField.OTHER_TERM.getName(), keyGenerator);
 
 		return new ImmutableList.Builder<Keyword>().addAll(originalKeywords).addAll(newKeywords).build();
