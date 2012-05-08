@@ -269,7 +269,6 @@ public class JournalsMapAlgorithm implements Algorithm {
 		psGraphic.setProperties(psProperties);
 		psGraphic.setMultiPage(true);
 		psGraphic.startExport();
-		System.out.println("Pages = " + pageManger.numberOfPages());
 		for (int pageNumber = 0; pageNumber < pageManger.numberOfPages(); pageNumber++) {
 			try {
 				psGraphic.openPage(pageManger.pageDimensions(), "Page " + (pageNumber + 1));
