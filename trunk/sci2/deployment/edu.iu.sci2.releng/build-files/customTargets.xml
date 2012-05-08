@@ -216,8 +216,8 @@
 		</antcall>
 		
 		<antcall target="pre_add_extra-files">
-					<param name="myArch" value="macosx.cocoa.x86_64" />
-				</antcall>
+			<param name="myArch" value="macosx.cocoa.x86_64" />
+		</antcall>
 
 		<antcall target="pre_add_extra-files">
 			<param name="myArch" value="solaris.gtk.sparc" />	
