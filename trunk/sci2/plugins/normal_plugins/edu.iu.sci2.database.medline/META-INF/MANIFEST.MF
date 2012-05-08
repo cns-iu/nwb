@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.database.medline
-Bundle-SymbolicName: edu.iu.sci2.database.medine
+Bundle-SymbolicName: edu.iu.sci2.database.medline
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 X-AutoStart: true
