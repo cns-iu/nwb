@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Sci2 Tool" uid="Sci2" id="edu.iu.sci2.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true" includeLaunchers="true">
+<product name="Science of Science Tool" uid="sci2" id="edu.iu.sci2.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/edu.iu.sci2.gui.brand/icons/about.gif"/>
+      <image path="../../../../edu.iu.sci2.gui.brand/icons/about.gif"/>
       <text>
          %blurb
       </text>
    </aboutInfo>
 
-   <configIni use="default"/>
+   <configIni use="default">
+   </configIni>
 
    <launcherArgs>
    </launcherArgs>
@@ -21,11 +22,11 @@
       location="edu.iu.sci2.gui.brand"
       startupProgressRect="0,163,500,10" />
    <launcher name="sci2">
-      <linux icon="/edu.iu.sci2.gui.brand/icons/scisip32.xpm"/>
-      <macosx icon="/edu.iu.sci2.gui.brand/icons/scisip128.icns"/>
+      <linux icon="../../../../edu.iu.sci2.gui.brand/icons/scisip32.xpm"/>
+      <macosx icon="../../../../edu.iu.sci2.gui.brand/icons/scisip128.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/edu.iu.sci2.gui.brand/icons/scisip128.ico"/>
+         <ico path="../../../../edu.iu.sci2.gui.brand/icons/scisip128.ico"/>
          <bmp
             winSmallHigh="icons/ivc_sm_32.bmp"
             winSmallLow="icons/ivc_sm_16.bmp"
@@ -37,7 +38,13 @@
    </launcher>
 
    <vm>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</windows>
    </vm>
+
+   <license>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+   </license>
 
    <plugins>
    </plugins>
@@ -53,7 +60,7 @@
       <feature id="edu.iu.sci2.converter.feature" version="1.0.0"/>
    </features>
 
-	<configurations>
+   <configurations>
       <plugin id="org.cishell.service.autostart" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.cm" autoStart="true" startLevel="3" />
@@ -64,4 +71,5 @@
       <plugin id="org.eclipse.equinox.metatype" autoStart="true" startLevel="3" />
       <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />
    </configurations>
+
 </product>

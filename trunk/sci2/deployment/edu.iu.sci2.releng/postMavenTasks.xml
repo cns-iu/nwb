@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="addAntBuiltPlugins" default="build">
+	<property name="product.name" relative="true">sci2</property>
 	<property name="input.dir" relative="true">${basedir}/target/products</property>
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
-	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/sci2</property>
+	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
 	<property name="product.version">1.0.0</property>
+	<!-- permission.files defined files which the executable bit need to be enable at Mac and Linux. -->
+	<property name="permission.files">**/${product.name}</property>
 
 	<target name="build">
+		<echo>
+			Before this will work, you will need to add the 
+			[Ant-Contrib](http://ant-contrib.sourceforge.net/)
+			library to Ant. See README for more information.
+		</echo>
+		
 		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
 		<delete dir="${output.dir}" />
 		<mkdir dir="${output.dir}" />
 
 		<foreach target="each-product-zip" param="product.zip">
 			<path>
-				<fileset dir="${input.dir}" includes="*.zip" />
+				<fileset dir="${input.dir}" includes="${product.name}-win32*.zip" />
+			</path>
+		</foreach>
+	
+		<foreach target="each-product-tgz" param="product.zip">
+			<path>
+				<fileset dir="${input.dir}" includes="${product.name}-macosx*.zip ${product.name}-linux*.zip" />
 			</path>
 		</foreach>
 	</target>
@@ -38,16 +53,46 @@
 			</patternset>
 		</unzip>
 
-		<!-- Tycho / Eclipse don't honor this option if you set it to true in the .product definition file.  You have to change it after the fact.  *pout* -->
+		<!-- Tycho / Eclipse don't honor this option if you set it to true in the .product definition file. You have to change it after the fact. *pout* -->
 		<replaceregexp match="org\.eclipse\.update\.reconcile=false" replace="org\.eclipse\.update\.reconcile=true">
 			<fileset dir="${temp.dir}" includes="**/configuration/config.ini" />
 		</replaceregexp>
 
 		<zip destfile="${product.zip.out}" duplicate="fail">
 			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini" />
-			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="sci2-nonpde-plugins.txt" prefix="plugins" />
+			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="plugins" />
 			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
 		</zip>
+		<delete dir="${temp.dir}" />
+	</target>
+	
+	<target name="each-product-tgz">
+		<basename property="product.filename" file="${product.zip}" />
+		<propertyregex property="output.filename" input="${product.filename}" regexp=".zip" replace=".tgz" />
+		<property name="product.tgz.out">${output.dir}/${output.filename}</property>
+		<echo>Going to use ${product.zip} to make ${product.tgz.out}</echo>
+
+		<tempfile property="temp.dir" />
+		<mkdir dir="${temp.dir}" />
+
+		<unzip src="${product.zip}" dest="${temp.dir}" >
+			<patternset>
+				<include name="**/configuration/config.ini" />
+			</patternset>
+		</unzip>
+
+		<!-- Tycho / Eclipse don't honor this option if you set it to true in the .product definition file. You have to change it after the fact. *pout* -->
+		<replaceregexp match="org\.eclipse\.update\.reconcile=false" replace="org\.eclipse\.update\.reconcile=true">
+			<fileset dir="${temp.dir}" includes="**/configuration/config.ini" />
+		</replaceregexp>
+	
+		<tar destfile="${product.tgz.out}" compression="gzip">
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files}" />
+			<zipfileset src="${product.zip}" includes="${permission.files}" filemode="755" />
+			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="plugins" />
+			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
+		</tar>
+
 		<delete dir="${temp.dir}" />
 	</target>
 </project>

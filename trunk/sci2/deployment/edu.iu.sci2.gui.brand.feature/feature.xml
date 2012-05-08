@@ -26,19 +26,19 @@ software distributed under the License is distributed on an
 KIND, either express or implied. See the License for the specific
 language governing permissions and limitations under the License.
 Project Contacts:
-(mwlinnem@indiana.edu)
+Chin Hua Kong (kongch@indiana.edu)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
 
    <includes
          id="org.cishell.reference.gui.feature"
-         version="0.0.0"/>
+         version="1.0.0"/>
 
    <plugin
          id="edu.iu.sci2.gui.brand"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
 </feature>
