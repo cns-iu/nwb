@@ -15,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
@@ -93,6 +94,7 @@ public class MapOfScienceTest {
 
 	// This could be used to manually run the algorithm test to visually verify the results.
 	@Test
+	@Ignore
 	public void testVisually() {
 
 		try {
