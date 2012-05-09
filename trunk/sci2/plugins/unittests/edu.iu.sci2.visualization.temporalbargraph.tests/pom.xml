@@ -16,7 +16,7 @@
     <plugin>
       <groupId>org.sonatype.tycho</groupId>
       <artifactId>maven-osgi-test-plugin</artifactId>
-      <version>${tycho-version}</version>
+      <version>${tychoVersion}</version>
       <configuration>
         <includes>
           <include>**/*test*</include>
