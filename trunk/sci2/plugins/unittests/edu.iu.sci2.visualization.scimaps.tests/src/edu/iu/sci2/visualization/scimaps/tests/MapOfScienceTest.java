@@ -1,6 +1,7 @@
 package edu.iu.sci2.visualization.scimaps.tests;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -14,8 +15,8 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
@@ -94,12 +95,12 @@ public class MapOfScienceTest {
 
 	// This could be used to manually run the algorithm test to visually verify the results.
 	@Test
-	@Ignore
 	public void testVisually() {
 
 		try {
 			File inFile = new File("sampledata", "LaszloBarabasi.isi.csv");
-			Data data = new BasicData(inFile, JournalsMapAlgorithm.CSV_MIME_TYPE);
+			Data data = new BasicData(inFile,
+					JournalsMapAlgorithm.CSV_MIME_TYPE);
 
 			PrefuseCsvReader prefuseCSVReader = new PrefuseCsvReader(
 					new Data[] { data });
@@ -111,7 +112,8 @@ public class MapOfScienceTest {
 			parameters.put(JournalsMapAlgorithmFactory.SCALING_FACTOR_ID, 1.0f);
 			parameters.put(JournalsMapAlgorithmFactory.DATA_DISPLAY_NAME_ID,
 					inFile.getName());
-			parameters.put(JournalsMapAlgorithmFactory.SHOW_EXPORT_WINDOW, true);
+			parameters
+					.put(JournalsMapAlgorithmFactory.SHOW_EXPORT_WINDOW, true);
 			parameters.put(JournalsMapAlgorithmFactory.WEB_VERSION_ID, false);
 
 			AlgorithmFactory algorithmFactory = new JournalsMapAlgorithmFactory();
@@ -122,10 +124,17 @@ public class MapOfScienceTest {
 			System.out.println("Executing.. ");
 			algorithm.execute();
 			System.out.println(".. Done.");
+		} catch (NoClassDefFoundError e) {
+			if (e.getMessage() != null
+					&& e.getMessage()
+							.contains("sun.awt.X11GraphicsEnvironment")) {
+				Assume.assumeNoException(e);
+			}
+			throw e;
 		} catch (Exception e) {
 			System.err.println("error!");
 			e.printStackTrace();
-			System.exit(-1);
+			fail("There was a problem" + e.getMessage());
 		}
 	}
 
