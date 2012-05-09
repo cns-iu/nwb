@@ -48,14 +48,38 @@ public final class LineMetrics {
 	 * Prefer {@link #widthInContext(Font, Graphics)} with an explicit Graphics when possible.
 	 */
 	public static LineMetric widthInFont(Font font) {
-		return widthInContext(font, FICTIONAL_GRAPHICS_CONTEXT);
+		return widthInContext(font, FictionalGraphicsContext.getInstance());
 	}
+	
 	/**
-	 * A fictional Graphics context for callers who do not have one.
-	 * This seems to work for current purposes but has not been extensively tested.
+	 * A fictional Graphics context for callers who do not have one. This seems
+	 * to work for current purposes but has not been extensively tested.
 	 */
-	private static final Graphics FICTIONAL_GRAPHICS_CONTEXT =
-			new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
+	protected static class FictionalGraphicsContext {
+		// from http://en.wikipedia.org/wiki/Singleton_pattern
+
+		private static Graphics _instance = null;
+		
+		private FictionalGraphicsContext() {
+			// Singleton, do not instantiate.
+		}
+
+		/**
+		 * Get a fictional Graphics context for callers who do not have one.
+		 * 
+		 * @return A fictional {@link Graphics} context.
+		 */
+		public static synchronized Graphics getInstance() {
+			if (_instance == null) {
+				_instance = new BufferedImage(5, 5,
+						BufferedImage.TYPE_INT_RGB).createGraphics();
+			}
+			
+			return _instance;
+		}
+
+	}
+			
 	private static final class WidthLineMetric implements LineMetric {
 		private final FontMetrics fontMetrics;
 		

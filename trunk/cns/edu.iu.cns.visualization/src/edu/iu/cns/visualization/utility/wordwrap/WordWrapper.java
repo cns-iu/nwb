@@ -118,9 +118,11 @@ public final class WordWrapper {
 				}
 				
 				/**
-				 * Accept and append {@code word} if it fits or if the line is empty.
+				 * Accept and append {@code word} if it fits or if the line is
+				 * empty.
 				 * 
-				 * @param A word to offer for appending to this line
+				 * @param word
+				 *            A word to offer for appending to this line
 				 * @return Whether the line accepts the new word.
 				 */
 				boolean offer(String word) {
