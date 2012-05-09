@@ -23,10 +23,7 @@ public class Utilities {
 	 * Additionally, it will open the files if the {@code openFiles} parameter
 	 * is {@code true}.
 	 * 
-	 * Warning! All errors relating to opening the file are suppressed.
-	 * 
 	 * @throws AlgorithmExecutionException
-	 * @throws Exception
 	 */
 	public static void testTBGAlgorithm(AlgorithmFactory algorithmFactory,
 			Dictionary<String, Object> parameters, Data[] convertedData,
@@ -59,7 +56,7 @@ public class Utilities {
 				e.printStackTrace();
 				throw new AlgorithmExecutionException(
 						"The files produced could not be opened!"
-								+ e.getLocalizedMessage());
+								+ e.getLocalizedMessage(), e);
 			}
 		}
 	}
