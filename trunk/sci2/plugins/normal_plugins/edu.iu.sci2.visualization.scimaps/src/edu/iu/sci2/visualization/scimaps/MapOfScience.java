@@ -32,8 +32,6 @@ public class MapOfScience {
 	/**
 	 * Creates a map of science. You must provide a mapping from the journal
 	 * name to the hits for that journal.
-	 * 
-	 * @param journalNameAndHitCount
 	 */
 	public MapOfScience(Map<String, Integer> journalNameAndHitCount) {
 		this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
@@ -46,8 +44,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a float representing the number of found publications.
-	 * 
-	 * @return
 	 */
 	public float countOfMappedPublications() {
 		return this.mappingResult.getMappedJournals().size();
@@ -55,8 +51,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a string representing a pretty version of the found publications.
-	 * 
-	 * @return
 	 */
 	public String prettyCountOfMappedPublications() {
 		float count = countOfMappedPublications();
@@ -65,8 +59,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a float representing the number of unfound publications.
-	 * 
-	 * @return
 	 */
 	public float countOfUnmappedPublications() {
 		return this.mappingResult.getUnmappedJournals().size();
@@ -75,8 +67,6 @@ public class MapOfScience {
 	/**
 	 * Return a string representing a pretty version of the unfound
 	 * publications.
-	 * 
-	 * @return
 	 */
 	public String prettyCountOfUnmappedPublications() {
 		float count = countOfUnmappedPublications();
@@ -85,8 +75,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a float representing the number of total publications.
-	 * 
-	 * @return
 	 */
 	public float countOfPublications() {
 		return this.mappingResult.getJournals().size();
@@ -94,8 +82,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a string representing a pretty version of the total publications.
-	 * 
-	 * @return
 	 */
 	public String prettyCountOfPublications() {
 		float count = countOfPublications();
@@ -104,8 +90,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a float representing the number of found subdisciplines.
-	 * 
-	 * @return
 	 */
 	public float countOfMappedSubdisciplines() {
 		return this.mappingResult.getMappedResult().size();
@@ -113,8 +97,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a string representing a pretty version of the found subdisciplines.
-	 * 
-	 * @return
 	 */
 	public String prettyCountOfMappedSubdisciplines() {
 		float count = countOfMappedSubdisciplines();
@@ -124,8 +106,6 @@ public class MapOfScience {
 	/**
 	 * Return a float representing the number of disciplines that contain all the
 	 * publications.
-	 * 
-	 * @return
 	 */
 	public float countOfDisciplinesUsed() {
 		Set<Discipline> disciplinesUsed = new HashSet<Discipline>();
@@ -142,8 +122,6 @@ public class MapOfScience {
 	/**
 	 * Return a string representing a pretty version of the number of disciplines
 	 * that contain all the publications.
-	 * 
-	 * @return
 	 */
 	public String prettyCountOfDisciplinesUsed() {
 		float count = countOfDisciplinesUsed();
@@ -152,8 +130,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a mapping of found publication node ids to their weight.
-	 * 
-	 * @return
 	 */
 	public Map<Integer, Float> getMappedResults() {
 		return this.mappingResult.getMappedResult();
@@ -162,8 +138,6 @@ public class MapOfScience {
 	/**
 	 * Return a mapping of unfound publication names to the hitcount of those
 	 * publications
-	 * 
-	 * @return
 	 */
 	public Map<String, Float> getUnmappedResults() {
 		return this.mappingResult.getUnmappedResult();
@@ -171,8 +145,6 @@ public class MapOfScience {
 
 	/**
 	 * Return the total weights for all found node ids
-	 * 
-	 * @return
 	 */
 	public Collection<Float> getMappedWeights() {
 		return getMappedResults().values();
@@ -180,8 +152,6 @@ public class MapOfScience {
 
 	/**
 	 * Return a set of all the node ids that matched publications found.
-	 * 
-	 * @return
 	 */
 	public Set<Integer> getMappedIds() {
 		return getMappedResults().keySet();
@@ -190,8 +160,6 @@ public class MapOfScience {
 	/**
 	 * This will return a list of publication node's ids that were found ordered
 	 * by the weight of that node.
-	 * 
-	 * @return
 	 */
 	public List<Integer> getMappedIdsByWeight() {
 		Integer[] mappedIds = getMappedIds().toArray(new Integer[] {});
@@ -207,8 +175,6 @@ public class MapOfScience {
 
 	/**
 	 * Returns a map linking the node id to the weight for that node.
-	 * 
-	 * @return
 	 */
 	public Map<Integer, Float> getIdWeightMapping() {
 		return this.mappingResult.getMappedResult();
@@ -216,8 +182,6 @@ public class MapOfScience {
 
 	/**
 	 * Get a set of all the journals.
-	 * 
-	 * @return
 	 */
 	public Set<Journal> getJournals() {
 		return this.mappingResult.getJournals();
@@ -225,8 +189,6 @@ public class MapOfScience {
 
 	/**
 	 * Get a set of all the edges used in the map of science.
-	 * 
-	 * @return
 	 */
 	public static Set<Edge> getEdges() {
 		return ScienceMapping.getEdges();
@@ -234,8 +196,6 @@ public class MapOfScience {
 
 	/**
 	 * Get a set of all the disciplines used in the map of science.
-	 * 
-	 * @return
 	 */
 	public static Set<Discipline> getDisciplines() {
 		return ScienceMapping.getDisciplines();
@@ -243,8 +203,6 @@ public class MapOfScience {
 
 	/**
 	 * Get a set of all the nodes used in the map of science.
-	 * 
-	 * @return
 	 */
 	public static Set<Node> getNodes() {
 		return ScienceMapping.getNodes();
@@ -252,8 +210,6 @@ public class MapOfScience {
 
 	/**
 	 * Get a set of all the journals that were found for the map of science.
-	 * 
-	 * @return
 	 */
 	public Set<Journal> getMappedJournals() {
 		return this.mappingResult.getMappedJournals();
@@ -261,8 +217,6 @@ public class MapOfScience {
 
 	/**
 	 * Get a set of all the journals that were not found for the map of science.
-	 * 
-	 * @return
 	 */
 	public Set<Journal> getUnmappedJournals() {
 		return this.mappingResult.getUnmappedJournals();
@@ -271,8 +225,6 @@ public class MapOfScience {
 	/**
 	 * This gives a mapping for all the disciplines used by the mapped (used)
 	 * journals.
-	 * 
-	 * @return
 	 */
 	public SortedMap<Discipline, SortedSet<Journal>> getMappedJournalsByDiscipline() {
 		return getJournalsByDiscipline(getMappedJournals());
@@ -281,8 +233,6 @@ public class MapOfScience {
 	/**
 	 * This gives a mapping for all the disciplines used by unused journals. This
 	 * should only return the NONE discipline.
-	 * 
-	 * @return
 	 */
 	public SortedMap<Discipline, SortedSet<Journal>> getUnmappedJournalsByDiscipline() {
 		return getJournalsByDiscipline(getUnmappedJournals());
@@ -291,9 +241,6 @@ public class MapOfScience {
 	/**
 	 * Given a set of journals, it will return a mapping from the discipline used
 	 * by those journals to a list of the journals in that discipline.
-	 * 
-	 * @param journals
-	 * @return
 	 */
 	public static SortedMap<Discipline, SortedSet<Journal>> getJournalsByDiscipline(
 			Set<Journal> journals) {

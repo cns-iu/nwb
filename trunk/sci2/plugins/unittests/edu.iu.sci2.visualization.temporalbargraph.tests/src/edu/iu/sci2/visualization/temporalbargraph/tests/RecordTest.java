@@ -17,7 +17,6 @@ import org.cishell.utilities.DateUtilities;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import prefuse.data.DataTypeException;
@@ -29,18 +28,25 @@ import prefuse.data.tuple.TupleManager;
 import edu.iu.sci2.visualization.temporalbargraph.common.InvalidRecordException;
 import edu.iu.sci2.visualization.temporalbargraph.common.Record;
 
+/**
+ * Tests for {@link Record}s.
+ *
+ */
 public class RecordTest {
 
 	Table table;
 
-	public static final String labelKey = "label_column";
-	public static final String startDateKey = "start_date";
-	public static final String endDateKey = "end_date";
-	public static final String startDateFormat = "start_format";
-	public static final String endDateFormat = "end_format";
-	public static final String sizeByKey = "size_by";
-	public static final String categoryKey = "category";
+	private static final String labelKey = "label_column";
+	private static final String startDateKey = "start_date";
+	private static final String endDateKey = "end_date";
+	private static final String startDateFormat = "start_format";
+	private static final String endDateFormat = "end_format";
+	private static final String sizeByKey = "size_by";
+	private static final String categoryKey = "category";
 
+	/**
+	 * Setup the {@code table} and add the required columns
+	 */
 	@Before
 	public void setUp() {
 		this.table = new Table();
@@ -54,6 +60,9 @@ public class RecordTest {
 		this.table.addColumn(categoryKey, String.class);
 	}
 
+	/**
+	 * Test a table with {@link String} columns.
+	 */
 	@Test
 	public void testStringTable() {
 
@@ -114,9 +123,12 @@ public class RecordTest {
 
 	}
 
+	/**
+	 * Test the table when there is an integer field for one of the columns.
+	 */
 	@Test
-	public void testIntegerTable() throws InvalidRecordException {
-		table = new Table();
+	public void testIntegerTable() {
+		this.table = new Table();
 
 		this.table.addColumn(labelKey, String.class);
 		this.table.addColumn(startDateKey, Integer.class);
@@ -182,6 +194,9 @@ public class RecordTest {
 }
 
 	
+	/**
+	 * Test the table when {@link Date}s are used.
+	 */
 	@SuppressWarnings("deprecation") // I'm testing dates so it's ok that they've been deprecated.
 	@Test
 	public void testDateTable() {
@@ -256,8 +271,11 @@ public class RecordTest {
 
 	}
 
+	/**
+	 * Test with an invalid record
+	 */
 	@Test
-	public void testInvalidRecord() throws InvalidRecordException {
+	public void testInvalidRecord() {
 
 		this.table.addRows(2);
 
@@ -292,9 +310,17 @@ public class RecordTest {
 		this.table.set(1, sizeByKey, row2SizeByKey);
 		this.table.set(1, categoryKey, row2CategoryKey);
 
-		Record r1 = new Record(this.table.getTuple(0), labelKey, startDateKey,
-				endDateKey, sizeByKey, startDateFormat, endDateFormat,
-				categoryKey);
+		Record r1 = null;
+		
+		try {
+			r1 = new Record(this.table.getTuple(0), labelKey,
+					startDateKey, endDateKey, sizeByKey, startDateFormat,
+					endDateFormat, categoryKey);
+		} catch (InvalidRecordException e) {
+			fail("An InvalidRecordException should not have been thrown here: "
+					+ e.getMessage());
+		}
+		
 		boolean thrown = false;
 		try {
 			new Record(this.table.getTuple(1), labelKey, startDateKey,
@@ -306,13 +332,20 @@ public class RecordTest {
 
 		assertTrue(thrown);
 
-		assertEquals(row1Label, r1.getLabel());
-		assertEquals(2012, r1.getStartDate().toLocalDate().getYear());
+		if (r1 == null) {
+			fail("The record was not initalized.");
+		} else {
+			assertEquals(row1Label, r1.getLabel());
+			assertEquals(2012, r1.getStartDate().toLocalDate().getYear());
 
-		assertEquals(row1CategoryKey, r1.getCategory());
+			assertEquals(row1CategoryKey, r1.getCategory());
+		}
 
 	}
 
+	/**
+	 * Test a {@link Record} with {@code null} for a value.
+	 */
 	@Test
 	public void testNullRecord() {
 
@@ -374,6 +407,9 @@ public class RecordTest {
 		assertTrue(thrown2);
 	}
 	
+	/**
+	 * Make sure the ordering is correct.
+	 */
 	@Test
 	public void testOrderingTable() {
 
@@ -463,6 +499,9 @@ public class RecordTest {
 
 	}
 	
+	/**
+	 * Test that the {@code null} label works.
+	 */
 	@Test
 	public void testNullLabel(){
 		Map<String, Class<?>> columns = new HashMap<String, Class<?>>();

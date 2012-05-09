@@ -23,7 +23,7 @@ public class Utilities {
 	 * Additionally, it will open the files if the {@code openFiles} parameter
 	 * is {@code true}.
 	 * 
-	 * @throws AlgorithmExecutionException
+	 * @throws AlgorithmExecutionException If the files could not be opened
 	 */
 	public static void testTBGAlgorithm(AlgorithmFactory algorithmFactory,
 			Dictionary<String, Object> parameters, Data[] convertedData,

@@ -225,6 +225,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 	 * TODO HACK FIXME XXX
 	 * 
 	 * @throws IOException
+	 *             If there is a problem creating the temp file or reading from
+	 *             the {@code psFile}.
 	 */
 	private static File hackPageSizeForFreehepAndAdobe(File psFile,
 			PageManager pageManger) throws IOException {

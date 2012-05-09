@@ -1,7 +1,6 @@
 package edu.iu.sci2.visualization.temporalbargraph.tests.algorithm_tests.nete;
 
 import static edu.iu.sci2.visualization.temporalbargraph.tests.Utilities.testTBGAlgorithm;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -30,9 +29,9 @@ public class DateIssue {
 	 * Use this to decide if you want to visually inspect the output files.
 	 * WARNING! It will open many files!!
 	 */
-	public final boolean openFiles = true;
-	public static ImmutableSortedMap<String, Object> commonParameters;
-	public static Data[] convertedData;
+	private final boolean openFiles = true;
+	private static ImmutableSortedMap<String, Object> commonParameters;
+	private static Data[] convertedData;
 
 	@BeforeClass
 	public static void runBeforeClass() {
@@ -67,7 +66,7 @@ public class DateIssue {
 					"category");
 			commonParameters = ImmutableSortedMap.copyOf(parameters);
 		} catch (AlgorithmExecutionException e) {
-			assertTrue(false);
+			fail("The Prefuse CSV Reader failed: " + e.getMessage());
 		}
 	}
 

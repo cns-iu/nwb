@@ -44,11 +44,6 @@ public class MapOfScienceRenderer implements PageElement{
 	 * {@link GraphicsState} using a scaling factor to increase the size of the
 	 * rendered nodes. If there is an issue rendering, a
 	 * {@link MapOfScienceRenderingException} will be thrown.
-	 * 
-	 * @param state
-	 * @param mapOfScience
-	 * @param scalingFactor
-	 * @throws MapOfScienceRenderingException
 	 */
 	public static void render(GraphicsState state, MapOfScience mapOfScience,
 			float scalingFactor) throws MapOfScienceRenderingException {

@@ -29,8 +29,6 @@ public class PageLegend implements PageElement{
 	/**
 	 * Construct a PageLegend
 	 * @param numberOfUnclassified the number of {@link Journal}s that were unmapped on the {@link MapOfScience}.
-	 * @param minimumValue
-	 * @param maximumValue
 	 */
 	public PageLegend(int numberOfUnclassified, double minimumValue,
 			double maximumValue, double leftBoundary, double topBoundary, int titleFontSize, int normalFontSize) {
