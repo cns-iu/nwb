@@ -23,7 +23,8 @@ public class LineMetricsTest {
 		try {
 			assertEquals(0, LineMetrics.widthInFont(Font.decode("Dialog 12")).sizeOf(""));
 		} catch (InternalError e) {
-			if (e.getMessage() != null && e.getMessage().contains("X11 window server")) {
+			// Skip this test if we're running headless on a Linux box.
+			if (e.getMessage() != null && e.getMessage().contains("X11")) {
 				Assume.assumeNoException(e);
 			}
 			throw e;
@@ -35,9 +36,10 @@ public class LineMetricsTest {
 		try {
 			assertEquals(33, LineMetrics.widthInFont(Font.decode("Dialog 12"))
 					.sizeOf("WWW"));
-		} catch (InternalError e) {
+		} catch (NoClassDefFoundError e) {
+			// Skip this test if we're running headless on a Linux box.
 			if (e.getMessage() != null
-					&& e.getMessage().contains("X11 window server")) {
+					&& e.getMessage().contains("X11")) {
 				Assume.assumeNoException(e);
 			}
 			throw e;
