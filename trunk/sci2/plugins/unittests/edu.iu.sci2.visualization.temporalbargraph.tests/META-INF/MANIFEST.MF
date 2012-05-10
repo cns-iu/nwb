@@ -8,6 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.8.2"
 Import-Package: edu.iu.nwb.converter.prefusecsv.reader,
  edu.iu.sci2.testutilities,
- org.apache.commons.io;version="2.1.0",
  org.osgi.framework;version="1.6.0",
  prefuse.data.tuple

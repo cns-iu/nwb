@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.temporalbargraph.tests.algorithm_tests.nete;
+package edu.iu.sci2.visualization.temporalbargraph.tests.algorithm_tests.date_issue;
 
 import static edu.iu.sci2.visualization.temporalbargraph.tests.Utilities.testTBGAlgorithm;
 import static org.junit.Assert.fail;
@@ -22,6 +22,7 @@ import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.tests.TestDataLoadingUtilities;
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
 public class DateIssueTest {
@@ -36,8 +37,7 @@ public class DateIssueTest {
 	@BeforeClass
 	public static void runBeforeClass() {
 		try {
-			String filelocation = "sampledata\\tbg_nete_dateissue.csv";
-			File inFile = new File(filelocation);
+			File inFile = TestDataLoadingUtilities.getDateIssueData();
 			Data data = new BasicData(inFile,
 					AbstractTemporalBarGraphAlgorithm.CSV_MIME_TYPE);
 

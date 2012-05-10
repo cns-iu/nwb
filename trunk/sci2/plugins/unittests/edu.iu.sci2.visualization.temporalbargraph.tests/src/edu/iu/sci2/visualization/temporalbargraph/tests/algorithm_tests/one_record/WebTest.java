@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSortedMap;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.tests.TestDataLoadingUtilities;
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
 public class WebTest {
@@ -35,8 +36,7 @@ public class WebTest {
 	@BeforeClass
 	public static void runBeforeClass() {
 		try {
-			String filelocation = "sampledata\\tbg_one_record.csv";
-			File inFile = new File(filelocation);
+			File inFile = TestDataLoadingUtilities.getOneRecordData();
 			Data data = new BasicData(inFile,
 					AbstractTemporalBarGraphAlgorithm.CSV_MIME_TYPE);
 

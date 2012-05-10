@@ -22,6 +22,7 @@ import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithm;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.tests.TestDataLoadingUtilities;
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
 public class WithCategoryTest {
@@ -36,8 +37,7 @@ public class WithCategoryTest {
 	@BeforeClass
 	public static void runBeforeClass() {
 		try {
-			String filelocation = "sampledata\\tbg_one_hundred_years.csv";
-			File inFile = new File(filelocation);
+			File inFile = TestDataLoadingUtilities.getLongData();
 			Data data = new BasicData(inFile,
 					AbstractTemporalBarGraphAlgorithm.CSV_MIME_TYPE);
 
