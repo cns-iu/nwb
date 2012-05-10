@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.temporalbargraph.tests.algorithm_tests.long_data;
+package edu.iu.sci2.visualization.temporalbargraph.tests.algorithm_tests.standard_data;
 
 import static edu.iu.sci2.visualization.temporalbargraph.tests.Utilities.testTBGAlgorithm;
 import static org.junit.Assert.fail;
@@ -24,7 +24,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGrap
 import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
-public class WithCategory {
+public class WithoutCategoryTest {
 	/*
 	 * Use this to decide if you want to visually inspect the output files.
 	 * WARNING! It will open many files!!
@@ -36,7 +36,7 @@ public class WithCategory {
 	@BeforeClass
 	public static void runBeforeClass() {
 		try {
-			String filelocation = "sampledata\\tbg_one_hundred_years.csv";
+			String filelocation = "sampledata\\tbg_cornell.nsf.csv";
 			File inFile = new File(filelocation);
 			Data data = new BasicData(inFile,
 					AbstractTemporalBarGraphAlgorithm.CSV_MIME_TYPE);
@@ -48,22 +48,22 @@ public class WithCategory {
 			Map<String, Object> parameters = new Hashtable<String, Object>();
 			parameters.put(
 					AbstractTemporalBarGraphAlgorithmFactory.LABEL_FIELD_ID,
-					"Name");
+					"Title");
 			parameters
 					.put(AbstractTemporalBarGraphAlgorithmFactory.START_DATE_FIELD_ID,
-							"Start");
+							"Start Date");
 			parameters.put(
 					AbstractTemporalBarGraphAlgorithmFactory.END_DATE_FIELD_ID,
-					"End");
+					"Expiration Date");
 			parameters.put(
 					AbstractTemporalBarGraphAlgorithmFactory.SIZE_BY_FIELD_ID,
-					"Amount");
+					"Awarded Amount to Date");
 			parameters
 					.put(AbstractTemporalBarGraphAlgorithmFactory.DATE_FORMAT_FIELD_ID,
 							DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
-			parameters.put(
-					AbstractTemporalBarGraphAlgorithmFactory.CATEGORY_FIELD_ID,
-					"Category");
+			parameters
+					.put(AbstractTemporalBarGraphAlgorithmFactory.CATEGORY_FIELD_ID,
+							AbstractTemporalBarGraphAlgorithmFactory.DO_NOT_PROCESS_CATEGORY_VALUE);
 			commonParameters = ImmutableSortedMap.copyOf(parameters);
 		} catch (AlgorithmExecutionException e) {
 			fail("The Prefuse CSV Reader failed: " + e.getMessage());
@@ -71,9 +71,9 @@ public class WithCategory {
 	}
 
 	@Test
-	public void testPrintStandard() {
+	public void testPrintStandardCategoryNotScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
 				"Generated from test.");
 		parameters
@@ -81,10 +81,10 @@ public class WithCategory {
 						false);
 
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
+
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategory.convertedData,
-					WithCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -94,7 +94,7 @@ public class WithCategory {
 	@Test
 	public void testPrintScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
 				"Generated from test.");
 		parameters
@@ -102,10 +102,10 @@ public class WithCategory {
 						true);
 
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
+
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategory.convertedData,
-					WithCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -115,16 +115,16 @@ public class WithCategory {
 	@Test
 	public void testWebStandard() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
 						false);
 
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
+
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategory.convertedData,
-					WithCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -134,16 +134,16 @@ public class WithCategory {
 	@Test
 	public void testWebScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
 						true);
 
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
+
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategory.convertedData,
-					WithCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");

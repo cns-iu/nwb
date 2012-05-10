@@ -24,7 +24,7 @@ import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGrap
 import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithmFactory;
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
-public class WithoutCategory {
+public class WithoutCategoryTest {
 	/*
 	 * Use this to decide if you want to visually inspect the output files.
 	 * WARNING! It will open many files!!
@@ -73,7 +73,7 @@ public class WithoutCategory {
 	@Test
 	public void testPrintStandard() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithoutCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
 				"Generated from test.");
 		parameters
@@ -83,7 +83,7 @@ public class WithoutCategory {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithoutCategory.convertedData, WithoutCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -93,7 +93,7 @@ public class WithoutCategory {
 	@Test
 	public void testPrintScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithoutCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
 				"Generated from test.");
 		parameters
@@ -103,7 +103,7 @@ public class WithoutCategory {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithoutCategory.convertedData, WithoutCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -113,7 +113,7 @@ public class WithoutCategory {
 	@Test
 	public void testWebStandard() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithoutCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
 						false);
@@ -121,7 +121,7 @@ public class WithoutCategory {
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithoutCategory.convertedData, WithoutCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -131,7 +131,7 @@ public class WithoutCategory {
 	@Test
 	public void testWebScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
-				WithoutCategory.commonParameters);
+				WithoutCategoryTest.commonParameters);
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
 						true);
@@ -139,7 +139,7 @@ public class WithoutCategory {
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithoutCategory.convertedData, WithoutCategory.openFiles);
+					WithoutCategoryTest.convertedData, WithoutCategoryTest.openFiles);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
