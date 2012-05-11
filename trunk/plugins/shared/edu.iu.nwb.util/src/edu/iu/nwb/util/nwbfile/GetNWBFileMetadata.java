@@ -20,30 +20,36 @@ public class GetNWBFileMetadata extends NWBFileParserAdapter {
 	public LinkedHashMap<String, String> getNodeSchema() {
 		return this.nodeSchema;
 	}
+	@Override
 	public void setNodeSchema(LinkedHashMap<String, String> nodeSchema) {
 		this.nodeSchema = nodeSchema;
 	}
 	public LinkedHashMap<String, String> getDirectedEdgeSchema() {
 		return this.directedEdgeSchema;
 	}
+	@Override
 	public void setDirectedEdgeSchema(LinkedHashMap<String, String> directedEdgeSchema) {
 		this.directedEdgeSchema = directedEdgeSchema;
 	}
 	public LinkedHashMap<String, String> getUndirectedEdgeSchema() {
 		return this.undirectedEdgeSchema;
 	}
+	@Override
 	public void setUndirectedEdgeSchema(LinkedHashMap<String, String> undirectedEdgeSchema) {
 		this.undirectedEdgeSchema = undirectedEdgeSchema;
 	}
 	
+	@Override
 	public void addNode(int id, String label, Map<String, Object> attributes) {
 		this.nodeCount++;
 	}
 	
+	@Override
 	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		this.directedEdgeCount++;
 	}
 	
+	@Override
 	public void addUndirectedEdge(int node1, int node2, Map<String, Object> attributes) {
 		this.undirectedEdgeCount++;
 	}
@@ -64,6 +70,7 @@ public class GetNWBFileMetadata extends NWBFileParserAdapter {
 		return this.getDirectedEdgeCount() + this.getUndirectedEdgeCount();
 	}
 	
+	@Override
 	public boolean haltParsingNow() { 
 		return
 			(this.nodeSchema != null) &&

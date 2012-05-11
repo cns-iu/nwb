@@ -19,9 +19,9 @@ class EdgeFilter extends ParserStage {
 	private AttributePredicate filter;
 
 	/**
-	 * Try {@link AttributePredicates#keepAbove(String, double)} and friends for this Predicate..
-	 * @param writer
-	 * @param filter
+	 * Try {@link AttributePredicates#keepAbove(String, double)} and friends for this Predicate.
+	 * <p>
+	 * If the {@code AttributePredicate} returns true, the edge will be kept.
 	 */
 	public EdgeFilter(NWBFileParserHandler writer, AttributePredicate filter) {
 		super(writer);

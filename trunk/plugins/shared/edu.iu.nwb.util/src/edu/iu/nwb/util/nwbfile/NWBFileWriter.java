@@ -39,14 +39,17 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		out = new PrintStream(output,true,"UTF-8");
 	}
 
+	@Override
 	public void addComment(String comment) {
 		out.println("#"+comment);
 	}
 	
+	@Override
 	public void finishedParsing() { 
 		out.close();
 	}
 	
+	@Override
 	public void addNode(int id, String label, Map<String, Object> attributes) {
 		for (Iterator<String> keys = this.nodeSchema.keySet().iterator(); keys.hasNext(); ) {
 			String key = keys.next();
@@ -74,6 +77,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}		
 	}
 
+	@Override
 	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		if (directedEdgeSchema != null) {
 			printEdge(sourceNode,targetNode,attributes,directedEdgeSchema);
@@ -82,6 +86,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 	
+	@Override
 	public void addUndirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		if (undirectedEdgeSchema != null) {
 			printEdge(sourceNode,targetNode,attributes,undirectedEdgeSchema);
@@ -121,18 +126,22 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 
+	@Override
 	public void setNodeCount(int numberOfNodes) {
 		nodeCount = numberOfNodes;
 	}
 	
+	@Override
 	public void setDirectedEdgeCount(int numberOfEdges) {
 		directedEdgeCount = numberOfEdges;
 	}
 
+	@Override
 	public void setUndirectedEdgeCount(int numberOfEdges) {
 		undirectedEdgeCount = numberOfEdges;
 	}
 	
+	@Override
 	public void setNodeSchema(LinkedHashMap<String, String> schema) {
 		nodeSchema = schema;
 		
@@ -155,6 +164,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 	
+	@Override
 	public void setDirectedEdgeSchema(LinkedHashMap<String, String> schema) {
 		directedEdgeSchema = schema;
 		
@@ -193,6 +203,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		return defaultEdgeSchema;
 	}
 
+	@Override
 	public void setUndirectedEdgeSchema(LinkedHashMap<String, String> schema) {
 		undirectedEdgeSchema = schema;
 		
@@ -215,6 +226,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 
+	@Override
 	public boolean haltParsingNow() {
 		return false;
 	}

@@ -14,6 +14,7 @@ public class AttributePredicates {
 	
 	public static AttributePredicate keepAbove(final String attribute, final double limit) {
 		return new AttributePredicate() {
+			@Override
 			public boolean apply(Map<String, Object> input) {
 				return getAttributeAsDouble(input, attribute) > limit;
 			}
@@ -25,6 +26,7 @@ public class AttributePredicates {
 	
 	public static AttributePredicate keepBelow(final String attribute, final double limit) {
 		return new AttributePredicate() {
+			@Override
 			public boolean apply(Map<String, Object> input) {
 				return getAttributeAsDouble(input, attribute) < limit;
 			}

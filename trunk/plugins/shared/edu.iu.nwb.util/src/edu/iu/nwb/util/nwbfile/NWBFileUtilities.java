@@ -107,7 +107,7 @@ public class NWBFileUtilities {
 	/**
 	 * Removes the required attributes of edges
 	 * 
-	 * @see NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES
+	 * @see NWBFileProperty#NECESSARY_EDGE_ATTRIBUTES
 	 */
 	public static Map<String, String> removeRequiredEdgeProps(
 			Map<String, String> properties) {
@@ -118,7 +118,7 @@ public class NWBFileUtilities {
 	/**
 	 * Removes the required attributes of nodes
 	 * 
-	 * @see NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES
+	 * @see NWBFileProperty#NECESSARY_EDGE_ATTRIBUTES
 	 */
 	public static Map<String, String> removeRequiredNodeProps(
 			Map<String, String> properties) {
@@ -126,25 +126,18 @@ public class NWBFileUtilities {
 				NWBFileProperty.NECESSARY_NODE_ATTRIBUTES).entriesOnlyOnLeft();
 	}
 	
-	
-
 	/**
-	 * Finds all the edge attributes that are present in all edges. That is, if
-	 * there are both directed and undirected edges, this method returns only
-	 * the attributes that have the same names and data types in the directed
-	 * and undirected portions.
+	 * Finds all the edge attributes that are present in all edges. That is, if there are both
+	 * directed and undirected edges, this method returns only the attributes that have the same
+	 * names and data types in the directed and undirected portions.
 	 * 
 	 * <p>
-	 * The Map of attributes that's returned is not in any particular order, in
-	 * contrast to {@link NWBFileUtilities.getEdgeSchemaFromMetadata}.
-	 * 
-	 * @param handler
-	 * @return
+	 * The Map of attributes that's returned is not in any particular order, in contrast to
+	 * {@link NWBFileUtilities#getEdgeSchemaFromMetadata(GetNWBFileMetadata)}.
 	 */
 
 	// common hybrid consistent candidate
-	public static Map<String, String> getConsistentEdgeAttributes(
-			GetNWBFileMetadata handler) {
+	public static Map<String, String> getConsistentEdgeAttributes(GetNWBFileMetadata handler) {
 		Map<String, String> directedEdgeSchema, undirectedEdgeSchema;
 		directedEdgeSchema = handler.getDirectedEdgeSchema();
 		undirectedEdgeSchema = handler.getUndirectedEdgeSchema();
@@ -175,18 +168,17 @@ public class NWBFileUtilities {
 	}
 
 	/**
-	 * Given a Map of column names to data types (as returned by
-	 * {@link NWBFileUtilities.getAllEdgeAttributes} or
-	 * {@link NWBFileUtilities.getEdgeSchemaFromMetadata}, find the column names
-	 * that are numeric.
-	 * 
+	 * Given a Map of column names to data types, find the column names that are numeric. You might
+	 * get the input map from {@link #getConsistentEdgeAttributes(GetNWBFileMetadata)} or
+	 * {@link #getNodeSchema(File)}, for instance.
 	 * <p>
-	 * This could include the standard "source", "target", and "id" columns,
-	 * you'd need to remove those later.
+	 * This could include the standard "source", "target", and "id" columns, you'd need to remove
+	 * those later.
+	 * <p>
 	 * 
-	 * @see NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES
-	 * @see NWBFileProperty.NECESSARY_NODE_ATTRIBUTES
-	 * @see NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES
+	 * @see NWBFileProperty#NUMERIC_ATTRIBUTE_TYPES
+	 * @see NWBFileProperty#NECESSARY_NODE_ATTRIBUTES
+	 * @see NWBFileProperty#NECESSARY_EDGE_ATTRIBUTES
 	 */
 	public static List<String> findNumericAttributes(Map<String, String> schema) {
 		List<String> numerics = new ArrayList<String>();

@@ -50,7 +50,7 @@ class OrderedEdgeCollector extends ParserStage {
 	}
 
 
-	private MinMaxPriorityQueue<Edge> createQueue(int edgeLimit, Ordering<? super Edge> ordering) {
+	private static MinMaxPriorityQueue<Edge> createQueue(int edgeLimit, Ordering<? super Edge> ordering) {
 		return MinMaxPriorityQueue.orderedBy(ordering).maximumSize(edgeLimit).create();
 	}
 

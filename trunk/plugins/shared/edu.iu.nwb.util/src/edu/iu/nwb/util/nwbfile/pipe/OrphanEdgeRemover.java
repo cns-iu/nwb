@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-public class OrphanEdgeRemover extends ParserStage {
+class OrphanEdgeRemover extends ParserStage {
 	private Set<Integer> nodes = Sets.newHashSet();
 
 	@Override

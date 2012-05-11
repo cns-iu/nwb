@@ -113,9 +113,6 @@ public class ParserPipe {
 	 * 
 	 * @see #getNaturalOrdering(String)
 	 * @see Ordering#reverse()
-	 * @param edgeLimit
-	 * @param ordering
-	 * @return
 	 */
 	public ParserPipe keepMinimumEdges(int edgeLimit, Ordering<? super Edge> ordering) {
 		extendParserPipe(new OrderedEdgeCollector(GuardParserHandler.getInstance(), edgeLimit, ordering));
@@ -138,7 +135,6 @@ public class ParserPipe {
 	 * 
 	 * @see Ordering
 	 * @param attributeName the attribute to fetch on each Node or Edge
-	 * @return
 	 */
 	public static <G extends NWBGraphPart> Ordering<G> getNaturalOrdering(final String attributeName) {
 		// OK because we expect all values of the attribute to be of the same type,
@@ -153,10 +149,10 @@ public class ParserPipe {
 	 * this means they have a "*" instead of another value.
 	 * 
 	 * @param attribute the attribute to require
-	 * @return
 	 */
 	public ParserPipe requireNodeAttribute(final String attribute) {
 		return filterNodes(new AttributePredicate() {
+			@Override
 			public boolean apply(Map<String, Object> input) {
 				return (input.get(attribute) != null);
 			}
@@ -170,10 +166,10 @@ public class ParserPipe {
 	 * Discards edges that do not have a value for the given attribute.
 	 * 
 	 * @param attribute the attribute to require
-	 * @return
 	 */
 	public ParserPipe requireEdgeAttribute(final String attribute) {
 		return filterEdges(new AttributePredicate() {
+			@Override
 			public boolean apply(Map<String, Object> input) {
 				return (input.get(attribute) != null);
 			}
@@ -185,9 +181,6 @@ public class ParserPipe {
 	
 	/**
 	 * Removes a particular attribute from all the Nodes.
-	 * 
-	 * @param attribute
-	 * @return
 	 */
 	public ParserPipe removeNodeAttribute(final String attribute) {
 		extendParserPipe(new NodeAttributeRemover(GuardParserHandler.getInstance(), attribute));
@@ -195,7 +188,7 @@ public class ParserPipe {
 	}
 	
 	/**
-	 * Adds an attribute to the Node schema, but doesn't set it any of the nodes.
+	 * Adds an attribute to the Node schema, but doesn't set it on any of the nodes.
 	 * <p>
 	 * The {@code type} parameter must be one of the {@code NWBFileProperty.TYPE_*}
 	 * constants.
@@ -205,7 +198,6 @@ public class ParserPipe {
 	 * @see NWBFileProperty#TYPE_STRING
 	 * @param name the attribute name to add
 	 * @param type the attribute type
-	 * @return
 	 */
 	public ParserPipe addNodeAttribute(final String name, final String type) {
 		extendParserPipe(new NodeAttributeAdder(GuardParserHandler.getInstance(), name, type));
@@ -227,7 +219,6 @@ public class ParserPipe {
 	 * @param name the attribute name to add
 	 * @param type the attribute type
 	 * @param defaultValue the value to use on Nodes that don't have the attribute yet
-	 * @return
 	 */
 	public ParserPipe addNodeAttribute(final String name, final String type, Object defaultValue) {
 		extendParserPipe(new NodeAttributeDefaulter(GuardParserHandler.getInstance(), name, type, defaultValue));
@@ -245,10 +236,6 @@ public class ParserPipe {
 	 * @see NWBFileProperty#TYPE_FLOAT
 	 * @see NWBFileProperty#TYPE_INT
 	 * @see NWBFileProperty#TYPE_STRING
-	 * @param name
-	 * @param type
-	 * @param computer
-	 * @return
 	 */
 	public ParserPipe addComputedNodeAttribute(final String name, final String type, FieldMakerFunction computer) {
 		extendParserPipe(new NodeAttributeComputer(GuardParserHandler.getInstance(), name, type, computer));
@@ -265,7 +252,6 @@ public class ParserPipe {
 	 * 
 	 * @param label the new Node's label
 	 * @param attributes the new Node's attributes
-	 * @return
 	 */
 	public ParserPipe injectNode(final String label, final Map<String, ? extends Object> attributes) {
 		extendParserPipe(NodeInjector.create(label, attributes));
@@ -276,9 +262,6 @@ public class ParserPipe {
 	 * Changes the name of a Node attribute.  Renaming something to a name that already exists
 	 * causes undefined behavior; use {@link #removeNodeAttribute(String)} first in that case.
 	 * 
-	 * @param oldName
-	 * @param newName
-	 * @return
 	 */
 	public ParserPipe renameNodeAttribute(final String oldName, final String newName) {
 		extendParserPipe(NodeAttributeRenamer.create(GuardParserHandler.getInstance(), ImmutableMap.of(oldName, newName)));
@@ -327,6 +310,7 @@ public class ParserPipe {
 	
 	private static <G extends NWBGraphPart, T> Function<G, T> attributeGetter(final String attribute, final Class<T> clazz) {
 		return new Function<G, T>() {
+			@Override
 			public T apply(G input) {
 				return clazz.cast(input.getAttribute(attribute));
 			}
