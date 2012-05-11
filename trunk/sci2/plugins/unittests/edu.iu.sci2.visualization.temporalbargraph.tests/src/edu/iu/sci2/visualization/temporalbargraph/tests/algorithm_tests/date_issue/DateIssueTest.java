@@ -30,7 +30,7 @@ public class DateIssueTest {
 	 * Use this to decide if you want to visually inspect the output files.
 	 * WARNING! It will open many files!!
 	 */
-	private final boolean openFiles = true;
+	private final boolean openFiles = false;
 	private static ImmutableSortedMap<String, Object> commonParameters;
 	private static Data[] convertedData;
 
