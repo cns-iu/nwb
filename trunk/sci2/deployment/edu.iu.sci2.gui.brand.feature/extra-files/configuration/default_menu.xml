@@ -214,27 +214,15 @@
 	         <menu pid="edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithm"/>
 	    </menu>
 	    
-	    <!--
-	    <menu name="Temporal" type="group">
-	         <menu pid="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>
-	    </menu>
-	    -->
-	    
 	    <menu name="Geospatial" type="group">
 			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory$Print"/>
 			<menu pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Print"/>
 	    </menu>
-	    
-	    <!-- Keep this commented out unless you're going to put something in it.
-	         Declaring an empty menu in this file seems to put nothing on the menu.
-	         Furthermore, if a plugin's properties file declares a menu_path inside such
-	         a menu, the menu manager gives errors on tool startup.
+
 	    <menu name="Topical" type="group">
 			<menu pid="edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm"/>
 			<menu pid="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm"/>
-			<menu pid="edu.iu.sci2.visualization.scimap.references.MapReferences"/>
 	    </menu>
-	    -->
 	    
 	    <menu name="Networks" type="group">
 	    	<menu pid="edu.iu.nwb.visualization.guess"/>

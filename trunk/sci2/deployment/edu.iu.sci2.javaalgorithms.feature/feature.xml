@@ -802,13 +802,13 @@ Dr. Katy Borner (katy@indiana.edu)
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-         
+
    <plugin
          id="org.jsoup"
          download-size="0"
          install-size="0"
          version="1.6.2"/>
-         
+
    <plugin
          id="edu.iu.sci2.reader.googlescholar"
          download-size="0"
@@ -829,5 +829,11 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="edu.iu.sci2.visualization.scimaps"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
