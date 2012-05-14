@@ -5,6 +5,7 @@
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
 	<property name="product.version">1.0.0</property>
+	<property name="product.extraversion">NGT</property>
 	<!-- permission.files defined files which the executable bit need to be enable at Mac and Linux. -->
 	<property name="permission.files">**/${product.name}</property>
 
@@ -34,7 +35,7 @@
 	
 	<target name="deploy">
 		<tstamp/>
-		<copy todir="${deploy.dir}/${product.version}.${DSTAMP}${TSTAMP}">
+		<copy todir="${deploy.dir}/${product.version}.${DSTAMP}${TSTAMP}${product.extraversion}">
 			<fileset dir="${output.dir}"></fileset>
 		</copy>
 	</target>
@@ -53,7 +54,8 @@
 			</patternset>
 		</unzip>
 
-		<!-- Tycho / Eclipse don't honor this option if you set it to true in the .product definition file. You have to change it after the fact. *pout* -->
+		<!-- Tycho / Eclipse don't honor this option if you set it to true in the 
+		     .product definition file.  You have to change it after the fact.  *pout* -->
 		<replaceregexp match="org\.eclipse\.update\.reconcile=false" replace="org\.eclipse\.update\.reconcile=true">
 			<fileset dir="${temp.dir}" includes="**/configuration/config.ini" />
 		</replaceregexp>
