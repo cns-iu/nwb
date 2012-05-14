@@ -12,8 +12,8 @@
 
 	<OCD name="Import Table Into R" id="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm.OCD"
 		 description="This algorithm imports a CSV into a running R instance.">
-		<AD	name="Variable name in R" id="variableNameInR" type="String" 
-			description="What variable name should be used in R for this imported CSV?" 
+		<AD	name="Table name in R" id="variableNameInR" type="String" 
+			description="What table name should be used in R for this imported CSV?" 
 			default="importedTable"/>
 	</OCD>
 	<Designate pid="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm">
@@ -22,8 +22,8 @@
 
 	<OCD name="Export Table From R" id="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm.OCD"
 		 description="This algorithm exports a CSV from a running R instance back onto the Data Manager.">
-		<AD	name="Variable name in R" id="variableNameInR" type="String" 
-			description="What variable name should we export as a table from R?" 
+		<AD	name="Table name from R" id="variableNameInR" type="String" 
+			description="Which table should we export from R?" 
 			default="importedTable"/>
 	</OCD>
 	<Designate pid="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm">
