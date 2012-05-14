@@ -5,7 +5,7 @@
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
 	<property name="product.version">1.0.0</property>
-	<property name="product.build.type"></property>
+	<property name="product.build.type">custom</property>
 	<!-- permission.files defined files which the executable bit need to be enable at Mac and Linux. -->
 	<property name="permission.files">**/${product.name}</property>
 
@@ -22,13 +22,13 @@
 
 		<foreach target="each-product-zip" param="product.zip">
 			<path>
-				<fileset dir="${input.dir}" includes="${product.name}-win32*.zip" />
+				<fileset dir="${input.dir}" includes="${product.name}-win32*.zip" casesensitive="false" />
 			</path>
 		</foreach>
 	
 		<foreach target="each-product-tgz" param="product.zip">
 			<path>
-				<fileset dir="${input.dir}" includes="${product.name}-macosx*.zip ${product.name}-linux*.zip" />
+				<fileset dir="${input.dir}" includes="${product.name}-macosx*.zip ${product.name}-linux*.zip" casesensitive="false" />
 			</path>
 		</foreach>
 	</target>
