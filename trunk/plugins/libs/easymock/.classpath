@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="cglib-nodep-2.2.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://cglib.sourceforge.net/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="easymock-3.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.easymock.org/api/easymock/3.0/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="objenesis-1.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://objenesis.googlecode.com/svn/docs/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
