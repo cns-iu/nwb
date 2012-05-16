@@ -72,17 +72,29 @@ public class MapOfScienceTest {
 		assertTrue(this.mapOfScience.countOfPublications() == this.allJournals.size());
 	}
 
-	
+	/**
+	 * Test the number of subdisciplines expected to be used by the test data.
+	 */
 	@Test
 	public void testCountOfMappedSubdisciplines() {
-		assertTrue(this.mapOfScience.countOfMappedSubdisciplines() == 83);
+		assertTrue("There should 3 mapped subdisciplines but "
+				+ this.mapOfScience.countOfMappedSubdisciplines()
+				+ " were found.",
+				this.mapOfScience.countOfMappedSubdisciplines() == 3);
 	}
 	
+	/**
+	 * Test the number of disciplines expected to be used by the test data.
+	 */
 	@Test
 	public void testCountOfCategoriesUsed() {
-		assertTrue("Expected 10 categories to be used but got " + this.mapOfScience.countOfDisciplinesUsed(), this.mapOfScience.countOfDisciplinesUsed() == 10);
+		assertTrue(
+				"Expected 1 category to be used but "
+						+ this.mapOfScience.countOfDisciplinesUsed()
+						+ " were found.",
+				this.mapOfScience.countOfDisciplinesUsed() == 1);
 	}
-	
+
 	@Test
 	public void testGetUnmappedResults(){
 		Map<String, Float> unmappedResults = this.mapOfScience.getUnmappedResults();
