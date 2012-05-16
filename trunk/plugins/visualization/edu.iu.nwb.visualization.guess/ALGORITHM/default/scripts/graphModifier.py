@@ -131,6 +131,20 @@ ORIGINAL_LABEL_FIELD_NAME = "originallabel"
 
 ######################## END GLOBAL VARIABLES ##################################
 
+# A combobox tool renderer from http://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items
+class ComboboxToolTipRenderer(javax.swing.DefaultListCellRenderer):   
+    """A combo box renderer that creates a tool tip for each item that is that item's
+        value
+        
+    """
+    def getListCellRendererComponent(self, jlist, value, index, isSelected, cellHasFocus):
+        tip = value
+        item = value
+
+        component = javax.swing.DefaultListCellRenderer.getListCellRendererComponent(self, jlist, item, index, isSelected, cellHasFocus)
+        jlist.setToolTipText(tip)
+        return component
+
 # initialize all the global variables
 def initializeGlobalVariables():
     # put all the color names into an array
@@ -457,6 +471,9 @@ class propertyBoxListener(java.awt.event.ActionListener):
         # remove all items in the JComboBox
         pblSelf.dock.valueBox.removeAllItems()
         
+        # remove the tool tip text
+        pblSelf.dock.valueBox.setToolTipText(None)
+        
         # remove all items in the operators box
         pblSelf.dock.operatorBox.removeAllItems()
         
@@ -470,6 +487,7 @@ class propertyBoxListener(java.awt.event.ActionListener):
             editor = pblSelf.dock.valueBox.getEditor().getEditorComponent()
             editor.setDocument(EDoc(pblSelf.dock.valueBox, pblSelf.dock.valueBox.getModel(), pblSelf.dock))
             pblSelf.dock.valueBox.setEditable(true)
+            pblSelf.dock.valueBox.setToolTipText("Select a value")
             
             # add in the property values
             for i in propertyValues[propertyName]:
@@ -494,7 +512,7 @@ class propertyBoxListener(java.awt.event.ActionListener):
             smallestValue = propertyValues[propertyName][0]
             largestValue = propertyValues[propertyName][1]
             valueRange = "Number from : " + str(smallestValue) + " - " + str(largestValue)
-#            pblSelf.dock.valueBox.addItem(valueRange)
+            pblSelf.dock.valueBox.setToolTipText(valueRange)
             valueItemsTokens.append(generate_sort_tokens(valueRange))
             
             # add in the appropriate operators
@@ -802,6 +820,8 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         
         # value box
         dockSelf.valueBox = JComboBox()
+        dockSelf.valueBox.renderer = ComboboxToolTipRenderer()
+        dockSelf.valueBox.setPreferredSize(Dimension(220, 20))
         dockSelf.valueBoxValue = TDoc()
         # other trackers
         dockSelf.currentAction = "" # keeps track of what button is pressed
