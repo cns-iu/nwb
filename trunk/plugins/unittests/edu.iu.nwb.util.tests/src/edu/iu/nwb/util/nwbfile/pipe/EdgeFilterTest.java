@@ -1,4 +1,4 @@
-package edu.iu.nwb.util.nwbfile.pipe.tests;
+package edu.iu.nwb.util.nwbfile.pipe;
 
 import static org.easymock.EasyMock.*;
 
@@ -11,9 +11,9 @@ import com.google.common.collect.ImmutableMap;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.model.AttributePredicates;
-import edu.iu.nwb.util.nwbfile.pipe.ParserPipe;
+import edu.iu.nwb.util.nwbfile.pipe.utils.MockUtils;
 
-public class KeepEdgesAboveBelowTest extends TestCase {
+public class EdgeFilterTest extends TestCase {
 
 	/**
 	 * Test keeping edges with weight above a threshold.
@@ -27,10 +27,7 @@ public class KeepEdgesAboveBelowTest extends TestCase {
 		replay(mock);
 
 		// make a filter that will pipe to the mock
-		NWBFileParserHandler filter = ParserPipe.create()
-				.filterEdges(AttributePredicates.keepAbove("weight", 3.0))
-				.outputTo(mock);
-		
+		NWBFileParserHandler filter = new EdgeFilter(mock, AttributePredicates.keepAbove("weight", 3.0)); 
 		
 		// parse an nwb file and verify that we got the right edges.
 		byte[] toFilter = getTestNWB();
@@ -53,9 +50,7 @@ public class KeepEdgesAboveBelowTest extends TestCase {
 		MockUtils.noMoreEdges(mock);
 		replay(mock);
 
-		NWBFileParserHandler filter = ParserPipe.create()
-				.filterEdges(AttributePredicates.keepBelow("weight", 3.0))
-				.outputTo(mock);
+		NWBFileParserHandler filter = new EdgeFilter(mock, AttributePredicates.keepBelow("weight", 3.0));
 
 		byte[] toFilter = getTestNWB();
 		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(
@@ -111,9 +106,7 @@ public class KeepEdgesAboveBelowTest extends TestCase {
 		MockUtils.noMoreEdges(mock);
 		replay(mock);
 
-		NWBFileParserHandler filter = ParserPipe.create()
-				.filterEdges(AttributePredicates.keepAbove("weight", 5.5))
-				.outputTo(mock);
+		NWBFileParserHandler filter = new EdgeFilter(mock, AttributePredicates.keepAbove("weight", 5.5));
 		
 		byte[] toFilter = s.toString().getBytes();
 		

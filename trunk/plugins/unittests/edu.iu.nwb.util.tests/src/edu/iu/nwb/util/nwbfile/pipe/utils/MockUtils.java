@@ -1,9 +1,10 @@
-package edu.iu.nwb.util.nwbfile.pipe.tests;
+package edu.iu.nwb.util.nwbfile.pipe.utils;
 
 import static org.easymock.EasyMock.*;
 
 import java.util.Map;
 
+import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
 import com.google.common.base.Joiner;
@@ -24,13 +25,13 @@ public class MockUtils {
 	// the anyObject(Class) is a raw type, but it's just a placeholder anyway.
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void noMoreEdges(NWBFileParserHandler mock) {
-		mock.addUndirectedEdge(anyInt(), anyInt(), anyObject(Map.class));
+		mock.addUndirectedEdge(anyInt(), anyInt(), EasyMock.<Map<String,Object>>anyObject());
 		expectLastCall().andStubAnswer(new IAnswer() {
 			public Object answer() throws Throwable {
 				throw new AssertionError("Got extra undirected edge: <" + Joiner.on("; ").skipNulls().join(getCurrentArguments()) + ">");
 			}
 		});
-		mock.addDirectedEdge(anyInt(), anyInt(), anyObject(Map.class));
+		mock.addDirectedEdge(anyInt(), anyInt(), EasyMock.<Map<String,Object>>anyObject());
 		expectLastCall().andStubAnswer(new IAnswer() {
 			public Object answer() throws Throwable {
 				throw new AssertionError("Got extra directed edge: <" + Joiner.on("; ").skipNulls().join(getCurrentArguments()) + ">");
@@ -50,7 +51,7 @@ public class MockUtils {
 	// the anyObject(Class) is a raw type, but it's just a placeholder anyway.
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void noMoreNodes(NWBFileParserHandler mock) {
-		mock.addNode(anyInt(), isA(String.class), anyObject(Map.class));
+		mock.addNode(anyInt(), isA(String.class), EasyMock.<Map<String,Object>>anyObject());
 		expectLastCall().andStubAnswer(new IAnswer() {
 			public Object answer() throws Throwable {
 				throw new AssertionError("Got extra node: <" + Joiner.on("; ").skipNulls().join(getCurrentArguments()) + ">");

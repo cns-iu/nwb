@@ -1,16 +1,17 @@
-package edu.iu.nwb.util.nwbfile.pipe.tests;
+package edu.iu.nwb.util.nwbfile.pipe;
 
 import static org.easymock.EasyMock.*;
 
 import java.io.ByteArrayInputStream;
 
+import junit.framework.TestCase;
+
 import com.google.common.collect.ImmutableMap;
 
-import junit.framework.TestCase;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.model.AttributePredicates;
-import edu.iu.nwb.util.nwbfile.pipe.ParserPipe;
+import edu.iu.nwb.util.nwbfile.pipe.utils.MockUtils;
 
 public class KeepNodesAboveBelowTest extends TestCase {
 
@@ -22,14 +23,12 @@ public class KeepNodesAboveBelowTest extends TestCase {
 		mock.addNode(4, "d", ImmutableMap.of("weight", (Object) 4.0f));
 		mock.addNode(5, "e", ImmutableMap.of("weight", (Object) 5.0f));
 		MockUtils.noMoreNodes(mock);
-		// all edges go back to node 1, which was omitted.
 		MockUtils.noMoreEdges(mock);
 		replay(mock);
 
-		NWBFileParserHandler filter = ParserPipe.create()
-				.filterNodes(AttributePredicates.keepAbove("weight", 3.0))
-				.outputTo(mock);
-		
+		NWBFileParserHandler filter = new NodeFilter(mock,
+				AttributePredicates.keepAbove("weight", 3.0));
+
 		byte[] toFilter = getTestNWB();
 		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(
 				toFilter));
@@ -37,7 +36,7 @@ public class KeepNodesAboveBelowTest extends TestCase {
 
 		verify(mock);
 	}
-	
+
 	/**
 	 * Test that we can keep nodes with weight below a threshold.
 	 */
@@ -46,14 +45,11 @@ public class KeepNodesAboveBelowTest extends TestCase {
 		mock.addNode(1, "a", ImmutableMap.of("weight", (Object) 1.0f));
 		mock.addNode(2, "b", ImmutableMap.of("weight", (Object) 2.0f));
 		MockUtils.noMoreNodes(mock);
-		mock.addDirectedEdge(1, 1, ImmutableMap.of("weight", (Object) 1.0f));
-		mock.addDirectedEdge(1, 2, ImmutableMap.of("weight", (Object) 2.0f));
 		MockUtils.noMoreEdges(mock);
 		replay(mock);
 
-		NWBFileParserHandler filter = ParserPipe.create()
-				.filterNodes(AttributePredicates.keepBelow("weight", 3.0))
-				.outputTo(mock);
+		NWBFileParserHandler filter = new NodeFilter(mock,
+				AttributePredicates.keepBelow("weight", 3.0));
 
 		byte[] toFilter = getTestNWB();
 		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(
@@ -62,7 +58,7 @@ public class KeepNodesAboveBelowTest extends TestCase {
 
 		verify(mock);
 	}
-	
+
 	private byte[] getTestNWB() {
 		StringBuilder s = new StringBuilder();
 
@@ -75,14 +71,10 @@ public class KeepNodesAboveBelowTest extends TestCase {
 		s.append("4		\"d\"	4.0\n");
 		s.append("5		\"e\"	5.0\n");
 
-		s.append("*DirectedEdges 5\n");
+		// Normally, we would also omit edges with missing endpoints.  That's now
+		// tested separately in OrphanEdgeRemoverTest.
+		s.append("*DirectedEdges 0\n");
 		s.append("source*int	target*int	weight*float\n");
-
-		s.append("1		1	1.0\n");
-		s.append("1		2	2.0\n");
-		s.append("1		3	3.0\n");
-		s.append("1		4	4.0\n");
-		s.append("1		5	5.0\n");
 
 		return s.toString().getBytes();
 	}

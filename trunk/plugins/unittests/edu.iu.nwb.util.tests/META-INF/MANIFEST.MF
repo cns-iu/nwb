@@ -1,11 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.nwb.preprocessing.extractnodesandedges.tests
+Bundle-Name: edu.iu.nwb.util.tests
 Bundle-SymbolicName: edu.iu.nwb.util.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit
 Bundle-ClassPath: .
+Fragment-Host: edu.iu.nwb.util
 Import-Package: com.google.common.base;version="11.0.1",
  com.google.common.collect,
  edu.iu.nwb.util.nwbfile,

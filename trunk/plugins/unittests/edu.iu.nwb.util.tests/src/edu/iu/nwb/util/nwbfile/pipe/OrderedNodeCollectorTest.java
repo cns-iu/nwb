@@ -1,28 +1,23 @@
-package edu.iu.nwb.util.nwbfile.pipe.tests;
+package edu.iu.nwb.util.nwbfile.pipe;
 
 import static org.easymock.EasyMock.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.LinkedHashMap;
+
+import junit.framework.TestCase;
 
 import com.google.common.collect.ImmutableMap;
 
-import junit.framework.TestCase;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
-import edu.iu.nwb.util.nwbfile.pipe.ParserPipe;
+import edu.iu.nwb.util.nwbfile.pipe.utils.MockUtils;
 
-public class KeepNNodesTest extends TestCase {
+public class OrderedNodeCollectorTest extends TestCase {
 	/**
 	 * Test that we can keep the N nodes with the highest weight.
 	 */
 	public void testWeightHigh() throws Exception {
-		ByteArrayOutputStream fromFilter = new ByteArrayOutputStream();
-		NWBFileParserHandler filter = ParserPipe.create()
-				.keepMinimumNodes(2, ParserPipe.getNaturalOrdering("weight").reverse())
-				.outputToStream(fromFilter);
 
 		byte[] filterInput =
 				("*Nodes\n" +
@@ -32,15 +27,7 @@ public class KeepNNodesTest extends TestCase {
 				"3	\"c\"	3.0\n" +
 				"*DirectedEdges\n" +
 				"source*int	target*int\n" +
-				"1	2\n" +
-				"2	3\n" +
-				"3	1\n").getBytes();
-		
-		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(filterInput));
-		parser.parse(filter);
-		
-		InputStream toTest = new ByteArrayInputStream(fromFilter.toByteArray());
-		parser = new NWBFileParser(toTest);
+				"2	3\n").getBytes();
 		
 		NWBFileParserHandler mock = createNiceMock(NWBFileParserHandler.class);
 		mock.addNode(2, "b", ImmutableMap.of("weight", (Object) 2.0f));
@@ -50,7 +37,9 @@ public class KeepNNodesTest extends TestCase {
 		mock.addDirectedEdge(2, 3, new LinkedHashMap<String, Object>());
 		MockUtils.noMoreEdges(mock);
 		replay(mock);
-		parser.parse(mock);
+		NWBFileParserHandler filter = new OrderedNodeCollector(mock, 2, ParserPipe.getNaturalOrdering("weight").reverse());
+		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(filterInput));
+		parser.parse(filter);
 		verify(mock);
 	}
 }

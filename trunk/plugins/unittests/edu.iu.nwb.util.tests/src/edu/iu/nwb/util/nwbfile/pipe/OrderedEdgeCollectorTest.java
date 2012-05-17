@@ -1,4 +1,4 @@
-package edu.iu.nwb.util.nwbfile.pipe.tests;
+package edu.iu.nwb.util.nwbfile.pipe;
 
 import static org.easymock.EasyMock.*;
 
@@ -13,8 +13,9 @@ import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.nwb.util.nwbfile.pipe.ParserPipe;
+import edu.iu.nwb.util.nwbfile.pipe.utils.MockUtils;
 
-public class KeepNEdgesTest extends TestCase {
+public class OrderedEdgeCollectorTest extends TestCase {
 	private static final String WEIGHT_ATTR = "weight";
 
 	/**
@@ -28,15 +29,16 @@ public class KeepNEdgesTest extends TestCase {
 		MockUtils.noMoreEdges(mock);
 
 		replay(mock);
-		NWBFileParserHandler filter = ParserPipe.create()
-				.keepMinimumEdges(3, ParserPipe.getNaturalOrdering(WEIGHT_ATTR).reverse())
-				.outputTo(mock);
+
+		NWBFileParserHandler filter = new OrderedEdgeCollector(mock, 3,
+				ParserPipe.getNaturalOrdering(WEIGHT_ATTR).reverse());
+		
 		NWBFileParser p = new NWBFileParser(new ByteArrayInputStream(
 				getTestNWB()));
 		p.parse(filter);
 		verify(mock);
 	}
-	
+
 	/**
 	 * Test that we can keep the N edges with the lowest weight.
 	 */
@@ -48,15 +50,14 @@ public class KeepNEdgesTest extends TestCase {
 		MockUtils.noMoreEdges(mock);
 
 		replay(mock);
-		NWBFileParserHandler filter = ParserPipe.create()
-				.keepMinimumEdges(3, ParserPipe.getNaturalOrdering(WEIGHT_ATTR))
-				.outputTo(mock);
+		NWBFileParserHandler filter = new OrderedEdgeCollector(mock, 3,
+				ParserPipe.getNaturalOrdering(WEIGHT_ATTR));
+		
 		NWBFileParser p = new NWBFileParser(new ByteArrayInputStream(
 				getTestNWB()));
 		p.parse(filter);
 		verify(mock);
 	}
-
 
 	private byte[] getTestNWB() {
 		StringBuilder s = new StringBuilder();
@@ -107,13 +108,12 @@ public class KeepNEdgesTest extends TestCase {
 		MockUtils.noMoreEdges(mock);
 
 		replay(mock);
-		NWBFileParserHandler filter = ParserPipe.create()
-				.keepMinimumEdges(3, ParserPipe.getNaturalOrdering(WEIGHT_ATTR).reverse())
-				.outputTo(mock);
+		NWBFileParserHandler filter = new OrderedEdgeCollector(mock, 3,
+				ParserPipe.getNaturalOrdering(WEIGHT_ATTR).reverse());
+		
 		NWBFileParser p = new NWBFileParser(new ByteArrayInputStream(inBytes));
 		p.parse(filter);
 		verify(mock);
 	}
-
 
 }

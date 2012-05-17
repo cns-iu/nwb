@@ -1,4 +1,4 @@
-package edu.iu.nwb.util.nwbfile.pipe.tests;
+package edu.iu.nwb.util.nwbfile.pipe.utils;
 
 import static org.easymock.EasyMock.*;
 
