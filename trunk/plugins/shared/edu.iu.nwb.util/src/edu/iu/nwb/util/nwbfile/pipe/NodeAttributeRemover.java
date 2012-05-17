@@ -29,7 +29,7 @@ class NodeAttributeRemover extends ParserStage {
 	public void addNode(int id, String label, Map<String, Object> attributes) {
 		HashMap<String, Object> ourCopy = Maps.newHashMap(attributes);
 		ourCopy.remove(attributeToRemove);
-		super.addNode(id, label, attributes);
+		super.addNode(id, label, ourCopy);
 	}
 	
 	@Override
