@@ -9,6 +9,7 @@
   <modules>
     <module>edu.iu.nwb.converter.prefuseisi.tests</module>
     <module>edu.iu.nwb.converter.nwbgraphml.tests</module>
+    <module>edu.iu.nwb.util.tests</module>
   </modules>
   <build>
 		<plugins>
