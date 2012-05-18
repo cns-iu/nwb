@@ -9,7 +9,7 @@
 		<Object ocdref="edu.iu.sci2.preprocessing.geocoder.GeocoderAlgorithm.OCD" />
 	</Designate>
 	
-	<OCD name="Yahoo Geocoder" id="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD"
+	<OCD name="Yahoo! Geocoder" id="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD"
 		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) using Yahoo.  Ensure your machine is connected to the Internet.  If you need to geocode more than a few entities, you may wish to obtain a Yahoo Place Finder application ID from http://developer.yahoo.com/geo/placefinder/ .  You may otherwise leave this field blank.  Each ID is limited to 50,000 requests per day.  Performance may vary due to network latency; expect about 500 unique requests per minute.">
 		<AD name="Yahoo Application ID" id="application_id" type="String" description="Please obtain a Yahoo Place Finder application ID from \nhttp://developer.yahoo.com/geo/placefinder/" default=""/>
 		<AD name="Place Type" id="place_type" type="String" description="Select the type of place: State, Country, Zip Code or Address" default="Address"/>
