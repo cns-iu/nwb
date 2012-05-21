@@ -401,7 +401,11 @@ public class ISITableReader {
 		if (tag.equals(ISITag.AUTHORS)) {
 			if (this.normalizeAuthorNames) {
 				processedLine = processAuthorLine(line);
-				this.log.log(LogService.LOG_INFO, "Author names from the '" + ISITag.AUTHORS + "' field have been normalized by capatilizing the first letter of all but the last word in the author's name.");
+				this.log.log(
+						LogService.LOG_INFO,
+						"Author names from the '"
+								+ ISITag.AUTHORS
+								+ "' field have been normalized by capitalizing the first letter of all but the last word in the author's name.");
 			} else {
 				processedLine = line;
 			}
@@ -428,7 +432,11 @@ public class ISITableReader {
 				fields[0] = processedAuthorField;
 
 				processedLine = joinOver(fields, ",");
-				this.log.log(LogService.LOG_INFO, "Author names from the '" + ISITag.CITED_REFERENCES + "' field have been normalized by capatilizing the first letter of all but the last word in the author's name.");
+				this.log.log(
+						LogService.LOG_INFO,
+						"Author names from the '"
+								+ ISITag.CITED_REFERENCES
+								+ "' field have been normalized by capitalizing the first letter of all but the last word in the author's name.");
 			} else {
 				processedLine = line;
 			}
