@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Citation Indicies Algorithm" id="edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm.OCD"
+	<OCD name="Attach citation indices from Google Scholar" id="edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm.OCD"
 		 description="Web reader algorithm that accepts a column of user IDs and returns a table with added columns that give the citation indices tied to that author on their Google Scholar author page.">
 		<AD name="User ID column" id="author" type="String" description="Google citation user ID column name to be processed" default="Mutated by Factory"/>
 		<AD name="Delimiter" id="delimiter" type="String" description="Delimiter's used in author table" default="|"/>
@@ -8,7 +8,7 @@
 	<Designate pid="edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm">
 		<Object ocdref="edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm.OCD" />
 	</Designate>
-	<OCD name="Citation Bibtex Algorithm" id="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm.OCD"
+	<OCD name="Attach citation BibTex File from Google Scholar" id="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm.OCD"
 		 description="Web reader algorithm that takes a column of user IDs as input and returns the citation bibtex associated with each unique user ID.">
 		<AD name="User ID column" id="author" type="String" description="Google citation user ID column name to be processed" default="Mutated by Factory"/>
 		<AD name="Delimiter" id="delimiter" type="String" description="Delimiter's used in author table" default="|"/>
@@ -16,7 +16,7 @@
 	<Designate pid="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm">
 		<Object ocdref="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm.OCD" />
 	</Designate>
-	<OCD name="Citation Table Algorithm" id="edu.iu.sci2.reader.googlescholar.CitationTableAlgorithm.OCD"
+	<OCD name="Attach citation Citation Table from Google Scholar" id="edu.iu.sci2.reader.googlescholar.CitationTableAlgorithm.OCD"
 		 description="Web reader algorithm that takes a column of user IDs as input and returns the citation tables associated with each unique user ID.">
 		<AD name="User ID column" id="author" type="String" description="Google citation user ID column name to be processed" default="Mutated by Factory"/>
 		<AD name="Delimiter" id="delimiter" type="String" description="Delimiter's used in author column" default="|"/>
