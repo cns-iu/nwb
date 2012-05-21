@@ -43,9 +43,7 @@ public class ISIDupRemover {
     	this.log = log;
     	
     	StringBuffer runningLog = new StringBuffer();
-    
-    	log.log(LogService.LOG_INFO, "");
-    	log.log(LogService.LOG_INFO, "Loaded " + origTable.getRowCount() + " records.");
+
     	Integer savedPubIndex = null;
     	String savedPubID = null;
     	
@@ -140,13 +138,12 @@ public class ISIDupRemover {
 			}
 		}
 
-		log.log(LogService.LOG_INFO, "Removed " + dupTable.getRowCount() + " duplicate records.");
-		log.log(LogService.LOG_INFO, "Author names have been normalized.");
+		log.log(LogService.LOG_INFO,
+				"The original "
+						+ origTable.getRowCount()
+						+ " records have been processed to remove duplicate unique ISI IDs leaving "
+						+ noDupTable.getRowCount() + " records.");
 
-    	
-		log.log(LogService.LOG_INFO, "");
-    	log.log(LogService.LOG_INFO, "" + noDupTable.getRowCount() + " records with unique ISI IDs are available via Data Manager.");
-		
     	if (recordsWithoutUIDs > 0) {
     	log.log(LogService.LOG_WARNING, "" + recordsWithoutUIDs + 
     			" records did not have unique IDs (specified with the UT tag in ISI format)," +
