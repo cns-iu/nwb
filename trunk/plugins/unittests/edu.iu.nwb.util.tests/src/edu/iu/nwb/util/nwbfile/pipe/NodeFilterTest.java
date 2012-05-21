@@ -13,7 +13,7 @@ import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.model.AttributePredicates;
 import edu.iu.nwb.util.nwbfile.pipe.utils.MockUtils;
 
-public class KeepNodesAboveBelowTest extends TestCase {
+public class NodeFilterTest extends TestCase {
 
 	/**
 	 * Test that we can keep nodes with weight above a threshold.
