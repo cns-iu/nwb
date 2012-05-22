@@ -1,81 +1,107 @@
 package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
-public class GeometricMeanFunctionFactory implements AggregateFunctionFactory{
-	private static final String type = AggregateFunctionNames.GEOMETRICMEAN;
+public class GeometricMeanFunctionFactory implements AggregateFunctionFactory {
+	private static final AggregateFunctionName TYPE = AggregateFunctionName.GEOMETRICMEAN;
 
-
-	public AggregateFunction getFunction(Class c) {
-		if (c.equals(int.class) || c.equals(Integer.class)) {
+	@Override
+	public AbstractAggregateFunction getFunction(Class c) {
+		if (c.equals(int.class) || c.equals(Integer.class)
+				|| c.equals(int[].class) || c.equals(Integer[].class)) {
 			return new DoubleGeometricMean();
 		}
-		if (c.equals(double.class) || c.equals(Double.class)) {
+		if (c.equals(double.class) || c.equals(Double.class)
+				|| c.equals(double[].class) || c.equals(Double[].class)) {
 			return new DoubleGeometricMean();
 		}
-		if (c.equals(float.class) || c.equals(Float.class)) {
+		if (c.equals(float.class) || c.equals(Float.class)
+				|| c.equals(float[].class) || c.equals(Float[].class)) {
 			return new FloatGeometricMean();
 		}
-		return null; //throw some sort of error to let them know that the class is not handled.
+		return null; // throw some sort of error to let them know that the class
+						// is not handled.
 
 	}
 
-	public String getType() {
-		return GeometricMeanFunctionFactory.type;
-	}		
-}
-
-class DoubleGeometricMean extends AggregateFunction {
-	double value;
-	long items;
-
-	public DoubleGeometricMean() {
-		items = 0;
-		value = 1.0;
+	@Override
+	public AggregateFunctionName getType() {
+		return GeometricMeanFunctionFactory.TYPE;
 	}
 
-	public Object getResult() {
-		final double result = Math.pow(value, (1.0 / items));
-		return new Double(result);
-	}
+	class DoubleGeometricMean extends AbstractAggregateFunction {
+		private double value;
+		private long items;
 
-	public Class getType() {
-		return Double.class;
-	}
+		public DoubleGeometricMean() {
+			this.items = 0;
+			this.value = 1.0;
+		}
 
-	public void operate(Object o) {
-		if (o != null && o instanceof Number) {
-			items += 1;
-			value *= ((Number) o).doubleValue();
-		} else {
-			throw new IllegalArgumentException("DoubleGeometricMean can only operate on Numbers.");
+		@Override
+		public Object getResult() {
+			final double result = Math.pow(this.value, (1.0 / this.items));
+			return result;
+		}
+
+		@Override
+		public Class getType() {
+			return Double.class;
+		}
+
+		@Override
+		protected void innerOperate(Object object) {
+			if (object instanceof Number) {
+				this.items += 1;
+				this.value *= ((Number) object).doubleValue();
+			} else {
+				throw new IllegalArgumentException(
+						"DoubleGeometricMean can only operate on Numbers.");
+			}
+		}
+
+		@Override
+		protected Double cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanDoublePrefuseBug(object);
 		}
 	}
-}
 
-class FloatGeometricMean extends AggregateFunction {
-	float value;
-	long items;
+	class FloatGeometricMean extends AbstractAggregateFunction {
+		private float value;
+		private long items;
 
-	public FloatGeometricMean(){
-		this.value = 1;
-		this.items = 0;
-	}
+		public FloatGeometricMean() {
+			this.value = 1;
+			this.items = 0;
+		}
 
-	public Object getResult() {
-		final float result = (float) Math.pow(value, (1 / (float) items));
-		return new Float(result);
-	}
+		@Override
+		public Object getResult() {
+			final float result = (float) Math.pow(this.value,
+					(1 / (float) this.items));
+			return result;
+		}
 
-	public Class getType() {
-		return Float.class;
-	}
+		@Override
+		public Class getType() {
+			return Float.class;
+		}
 
-	public void operate(Object o) {
-		if (o != null && o instanceof Number) {
-			items += 1;
-			value *= ((Number) o).floatValue();
-		} else {
-			throw new IllegalArgumentException(
-					"FloatArithmeticMean can only operate on Numbers.");
+		@Override
+		protected void innerOperate(Object object) {
+			if (object instanceof Number) {
+				this.items += 1;
+				this.value *= ((Number) object).floatValue();
+			} else {
+				throw new IllegalArgumentException(
+						"FloatArithmeticMean can only operate on Numbers.");
+			}
+		}
+
+		@Override
+		protected Float cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanFloatPrefuseBug(object);
 		}
 	}
+
 }

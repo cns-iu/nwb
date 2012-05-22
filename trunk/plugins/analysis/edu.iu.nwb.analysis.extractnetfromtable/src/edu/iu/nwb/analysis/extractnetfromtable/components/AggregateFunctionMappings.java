@@ -9,77 +9,88 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
-import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunction;
-import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunctionNames;
+import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AbstractAggregateFunction;
+import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunctionName;
 import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFunctions;
 
 public class AggregateFunctionMappings {
-	private final HashMap metaColumnNameToFunctionMap = new HashMap();
-	private final HashMap functionColumnToOriginalColumnMap = new HashMap();
-	private final HashMap functionColumnToAppliedNodeTypeMap = new HashMap();
-	private final HashMap labelToFunctionMap = new HashMap();
+	private final HashMap<String, AggregateFunctionName> metaColumnNameToFunctionMap = new HashMap<String, AggregateFunctionName>();
+	private final HashMap<String, String> functionColumnToOriginalColumnMap = new HashMap<String, String>();
+	private final HashMap<String, Integer> functionColumnToAppliedNodeTypeMap = new HashMap<String, Integer>();
+	private final HashMap<Object, ValueAttributes> labelToFunctionMap = new HashMap<Object, ValueAttributes>();
 	public static final int SOURCE_AND_TARGET = 0;
 	public static final int SOURCE = 1;
 	public static final int TARGET = 2;
 
-	public void addFunctionMapping(String functionValueCol, String originalCol, String functionType) {
-		this.metaColumnNameToFunctionMap.put(functionValueCol, functionType);
-		this.functionColumnToOriginalColumnMap.put(functionValueCol, originalCol);
-		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol, new Integer(SOURCE_AND_TARGET));
+	public void addFunctionMapping(String functionValueCol, String originalCol,
+			AggregateFunctionName function) {
+		this.metaColumnNameToFunctionMap.put(functionValueCol, function);
+		this.functionColumnToOriginalColumnMap.put(functionValueCol,
+				originalCol);
+		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol,
+				new Integer(SOURCE_AND_TARGET));
 	}
 
 	public void addFunctionMapping(String functionValueCol, String originalCol,
-			String functionType, int nodeType) {
+			AggregateFunctionName functionType, int nodeType) {
 		this.metaColumnNameToFunctionMap.put(functionValueCol, functionType);
-		this.functionColumnToOriginalColumnMap.put(functionValueCol, originalCol);
-		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol, new Integer(nodeType));
+		this.functionColumnToOriginalColumnMap.put(functionValueCol,
+				originalCol);
+		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol,
+				new Integer(nodeType));
 	}
 
 	public ValueAttributes addFunctionRow(Object id, ValueAttributes va) {
 		this.labelToFunctionMap.put(id, va);
-		
+
 		return va;
 	}
 
-	public String getFunctionFromColumnName(String columnName) {
-		return (String) this.metaColumnNameToFunctionMap.get(columnName);
+	public AggregateFunctionName getFunctionFromColumnName(String columnName) {
+		return this.metaColumnNameToFunctionMap.get(columnName);
 	}
 
 	public String getOriginalColumnFromFunctionColumn(String columnName) {
-		return (String) this.functionColumnToOriginalColumnMap.get(columnName);
+		return this.functionColumnToOriginalColumnMap.get(columnName);
 	}
 
 	public ValueAttributes getFunctionRow(Object id) {
-		return (ValueAttributes) this.labelToFunctionMap.get(id);
+		return this.labelToFunctionMap.get(id);
 	}
 
 	public int getAppliedNodeType(String columnName) {
-		return ((Integer) this.functionColumnToAppliedNodeTypeMap.get(columnName)).intValue();
+		return this.functionColumnToAppliedNodeTypeMap.get(columnName);
 	}
 
-	public static void parseProperties(Schema input, Schema nodes, Schema edges,
-			Properties properties, AggregateFunctionMappings nodeFunctionMappings,
+	public static void parseProperties(Schema input, Schema nodes,
+			Schema edges, Properties properties,
+			AggregateFunctionMappings nodeFunctionMappings,
 			AggregateFunctionMappings edgeFunctionMappings, LogService log) {
 
 		if (properties != null) {
-			HashSet functionNames = new HashSet(AssembleAggregateFunctions.defaultAssembly()
-					.getFunctionNames());
-			HashSet columnNames = new HashSet();
+			HashSet<AggregateFunctionName> functionNames = new HashSet<AggregateFunctionName>(
+					AssembleAggregateFunctions.defaultAssembly()
+							.getFunctionNames());
+			HashSet<String> columnNames = new HashSet<String>();
 
 			for (int i = 0; i < input.getColumnCount(); i++) {
 				columnNames.add(input.getColumnName(i));
 			}
 
-			for (final Iterator it = properties.keySet().iterator(); it.hasNext();) {
+			for (final Iterator it = properties.keySet().iterator(); it
+					.hasNext();) {
 				final String key = (String) it.next();
 				String[] functionDefinitionLHS = key.split("\\.");
-				String[] functionDefinitionRHS = properties.getProperty(key).split("\\.");
+				String[] functionDefinitionRHS = properties.getProperty(key)
+						.split("\\.");
 				String applyToNodeType = null;
 				int nodeType = -1;
 
 				final String sourceColumnName = functionDefinitionRHS[0];
-				final Class columnType = input.getColumnType(sourceColumnName);
-				final String function = functionDefinitionRHS[functionDefinitionRHS.length - 1];
+				final Class columnType = input
+						.getColumnType(sourceColumnName);
+				final AggregateFunctionName function = AggregateFunctionName
+						.fromString(functionDefinitionRHS[functionDefinitionRHS.length - 1]);
 				if (functionDefinitionRHS.length == 3) {
 					applyToNodeType = functionDefinitionRHS[1];
 				}
@@ -98,40 +109,56 @@ public class AggregateFunctionMappings {
 
 				String newColumnName = functionDefinitionLHS[functionDefinitionLHS.length - 1];
 
-				if (functionNames.contains(function) && columnNames.contains(sourceColumnName)
+				if (functionNames.contains(function)
+						&& columnNames.contains(sourceColumnName)
 						&& !columnNames.contains(newColumnName)) {
 					if (key.startsWith("edge.")) {
-						if (!createColumn(newColumnName, function, columnType, edges)) {
-							throw new IllegalArgumentException(String.format("Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
-									newColumnName, function, columnType.getName()));
+						if (!createColumn(newColumnName, function, columnType,
+								edges)) {
+							throw new IllegalArgumentException(
+									String.format(
+											"Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
+											newColumnName, function,
+											columnType.getName()));
 						}
-						edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName,
-								function);
+						edgeFunctionMappings.addFunctionMapping(newColumnName,
+								sourceColumnName, function);
 					}
 					if (key.startsWith("node.")) {
-						if (!createColumn(newColumnName, function, columnType, nodes)) {
-							throw new IllegalArgumentException(String.format("Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
-									newColumnName, function, columnType.getName()));
+						if (!createColumn(newColumnName, function, columnType,
+								nodes)) {
+							throw new IllegalArgumentException(
+									String.format(
+											"Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
+											newColumnName, function,
+											columnType.getName()));
 						}
-						nodeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName,
-								function, nodeType);
+						nodeFunctionMappings.addFunctionMapping(newColumnName,
+								sourceColumnName, function, nodeType);
 					}
 				}
 
 				if (!functionNames.contains(function)) {
-					log.log(LogService.LOG_WARNING, "Unrecognized function: " + function
-							+ ".\nContinuing with "
-							+ "extraction, but ignoring this specific analysis.");
+					log.log(LogService.LOG_WARNING,
+							"Unrecognized function: "
+									+ function
+									+ ".\nContinuing with "
+									+ "extraction, but ignoring this specific analysis.");
 				}
 				if (!columnNames.contains(sourceColumnName)) {
-					log.log(LogService.LOG_WARNING, "Unrecognized column: " + sourceColumnName
-							+ ".\nContinuing with "
-							+ "extraction, but ignoring this specific analysis.");
+					log.log(LogService.LOG_WARNING,
+							"Unrecognized column: "
+									+ sourceColumnName
+									+ ".\nContinuing with "
+									+ "extraction, but ignoring this specific analysis.");
 				}
 				if (columnNames.contains(newColumnName)) {
-					log.log(LogService.LOG_WARNING, "The column: " + newColumnName
-							+ " already exists." + "\nContinuing with "
-							+ "extraction, but ignoring this specific analysis.");
+					log.log(LogService.LOG_WARNING,
+							"The column: "
+									+ newColumnName
+									+ " already exists."
+									+ "\nContinuing with "
+									+ "extraction, but ignoring this specific analysis.");
 				}
 			}
 
@@ -141,7 +168,8 @@ public class AggregateFunctionMappings {
 	public static final String DEFAULT_WEIGHT_NAME = "weight";
 
 	public static void addDefaultEdgeWeightColumn(Schema inputGraphNodeSchema,
-			Schema outputGraphEdgeSchema, AggregateFunctionMappings edgeFunctionMappings,
+			Schema outputGraphEdgeSchema,
+			AggregateFunctionMappings edgeFunctionMappings,
 			String sourceColumnName) {
 		/*
 		 * Prepare to create a edge weight column, where each edge's weight is
@@ -150,16 +178,20 @@ public class AggregateFunctionMappings {
 		 * would be how many times two authors have co-authored together).
 		 */
 		String newColumnName = DEFAULT_WEIGHT_NAME;
-		String function = AggregateFunctionNames.COUNT;
-		Class columnType = inputGraphNodeSchema.getColumnType(sourceColumnName);
+		AggregateFunctionName function = AggregateFunctionName.COUNT;
+		Class columnType = inputGraphNodeSchema
+				.getColumnType(sourceColumnName);
 
 		createColumn(newColumnName, function, columnType, outputGraphEdgeSchema);
-		edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
+		edgeFunctionMappings.addFunctionMapping(newColumnName,
+				sourceColumnName, function);
 	}
 
 	/**
-	 * Returns true if the column could be created; false if it was not able to find
-	 * an appropriate aggregation function (e.g. if you try to sum a string column).
+	 * Returns true if the column could be created; false if it was not able to
+	 * find an appropriate aggregation function (e.g. if you try to sum a string
+	 * column).
+	 * 
 	 * @param newColumnName
 	 * @param function
 	 * @param columnType
@@ -167,10 +199,11 @@ public class AggregateFunctionMappings {
 	 * @return
 	 * @throws AlgorithmExecutionException
 	 */
-	private static boolean createColumn(String newColumnName, String function, Class columnType,
+	private static boolean createColumn(String newColumnName,
+			AggregateFunctionName function, Class columnType,
 			Schema newSchema) {
-		AggregateFunction aggFunc = AssembleAggregateFunctions.defaultAssembly().getAggregateFunction(
-				function, columnType);
+		AbstractAggregateFunction aggFunc = AssembleAggregateFunctions
+				.defaultAssembly().getAggregateFunction(function, columnType);
 		if (aggFunc == null) {
 			return false;
 		}

@@ -3,58 +3,69 @@ package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 import java.util.HashMap;
 import java.util.Set;
 
-
 public class AssembleAggregateFunctions {
-	private HashMap nameToFunctionFactory;
+	private HashMap<AggregateFunctionName, AggregateFunctionFactory> nameToFunctionFactory;
 
-	public AssembleAggregateFunctions(){
-		nameToFunctionFactory = new HashMap();
+	public AssembleAggregateFunctions() {
+		nameToFunctionFactory = new HashMap<AggregateFunctionName, AggregateFunctionFactory>();
 	}
 
-	public static AssembleAggregateFunctions defaultAssembly(){
+	public static AssembleAggregateFunctions defaultAssembly() {
 		AssembleAggregateFunctions aaf = new AssembleAggregateFunctions();
 
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.ARITHMETICMEAN, new ArithmeticMeanFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.COUNT, new CountFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.GEOMETRICMEAN, new GeometricMeanFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.MAX, new MaxFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.MIN, new MinFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.SUM, new SumFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.MODE, new ModeFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.ARITHMETICMEAN,
+				new ArithmeticMeanFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.COUNT,
+				new CountFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.GEOMETRICMEAN,
+				new GeometricMeanFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.MAX,
+				new MaxFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.MIN,
+				new MinFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.SUM,
+				new SumFunctionFactory());
+		aaf.putAggregateFunctionFactory(AggregateFunctionName.MODE,
+				new ModeFunctionFactory());
 
 		return aaf;
 	}
 
-	public AggregateFunction getAggregateFunction(String name, Class type){
-		AggregateFunction af = null;
-		
+	public AbstractAggregateFunction getAggregateFunction(AggregateFunctionName function,
+			Class type) {
+		AbstractAggregateFunction af = null;
+
 		try {
-			af = ((AggregateFunctionFactory)nameToFunctionFactory.get(name)).getFunction(type);
+			af = nameToFunctionFactory.get(function)
+					.getFunction(type);
 		} catch (NullPointerException npe) {
 			af = null;
 		}
-		
+
 		return af;
 	}
 
-	public AggregateFunctionFactory addAggregateFunctionFactory(String functionName, AggregateFunctionFactory aggregationFunctionFactory){
-		if(this.nameToFunctionFactory.get(functionName) != null){
-			//redefine the function but
-			//let the user know that they are 
-			//redefining a FunctionFactory, 
-			//throw FunctionFactoryDefinitionException?
+	public AggregateFunctionFactory putAggregateFunctionFactory(
+			AggregateFunctionName name,
+			AggregateFunctionFactory aggregationFunctionFactory) {
+		if (this.nameToFunctionFactory.get(name) != null) {
+			// redefine the function but
+			// let the user know that they are
+			// redefining a FunctionFactory,
+			// throw FunctionFactoryDefinitionException?
 			return null;
-		}		
-		this.nameToFunctionFactory.put(functionName, aggregationFunctionFactory);
+		}
+		this.nameToFunctionFactory.put(name, aggregationFunctionFactory);
 		return aggregationFunctionFactory;
 
 	}
 
-	public AggregateFunctionFactory removeAggregateFunctionFactory(String functionName){
-		return (AggregateFunctionFactory)this.nameToFunctionFactory.get(functionName);
+	public AggregateFunctionFactory removeAggregateFunctionFactory(
+			String functionName) {
+		return this.nameToFunctionFactory.get(functionName);
 	}
 
-	public Set getFunctionNames(){
+	public Set<AggregateFunctionName> getFunctionNames() {
 		return this.nameToFunctionFactory.keySet();
 	}
 

@@ -1,87 +1,112 @@
 package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class ModeFunctionFactory implements AggregateFunctionFactory {
-	private static final String type = AggregateFunctionNames.MODE;
+	private static final AggregateFunctionName TYPE = AggregateFunctionName.MODE;
 
-	public AggregateFunction getFunction(Class c) {
-		if (int.class.equals(c) || Integer.class.equals(c)) {
+	@Override
+	public AbstractAggregateFunction getFunction(Class c) {
+		if (int.class.equals(c) || Integer.class.equals(c)
+				|| int[].class.equals(c) || Integer[].class.equals(c)) {
 			return new IntegerMode();
-		} else if (boolean.class.equals(c) || Boolean.class.equals(c)) {
+		} else if (boolean.class.equals(c) || Boolean.class.equals(c)
+				|| boolean[].class.equals(c) || Boolean[].class.equals(c)) {
 			return new BooleanMode();
-		} else {			
+		} else {
 			return new StringMode();
 		}
 	}
 
-	public String getType() {
-		return ModeFunctionFactory.type;
-	}
-}
-
-abstract class ModeFunction extends AggregateFunction {
-	private Map objectToOccurrences;
-	
-	public ModeFunction() {
-		this.objectToOccurrences = new HashMap();
-	}
-	
-	public Object getResult() {		
-		return findKeyWithMaxValue(objectToOccurrences);
+	@Override
+	public AggregateFunctionName getType() {
+		return ModeFunctionFactory.TYPE;
 	}
 
-	public void operate(Object o) {
-		if (!objectToOccurrences.containsKey(o)) {
-			objectToOccurrences.put(o, new Integer(0));
+	private static abstract class AbstractModeFunction extends AbstractAggregateFunction {
+		private Map<Object, Integer> objectToOccurrences;
+
+		public AbstractModeFunction() {
+			this.objectToOccurrences = new HashMap<Object, Integer>();
 		}
-		
-		int oldNumberOfOccurrences = ((Integer) objectToOccurrences.get(o)).intValue();
-		
-		objectToOccurrences.put(o, new Integer(oldNumberOfOccurrences + 1));
-	}
-	
-	/**
-	 * @param numericMap	A map from Objects to Numbers.
-	 * @return				A key in numericMap whose corresponding value is maximal.
-	 * 						null when numericMap is empty.
-	 */
-	private static Object findKeyWithMaxValue(Map/*<Object, Number>*/ numericMap) {
-		Object keyToMaxValue = null;
-		double maxValue = Double.NEGATIVE_INFINITY;		
-		
-		for (Iterator numericEntries = numericMap.entrySet().iterator();
-				numericEntries.hasNext();) {
-			Entry numericEntry = (Entry) numericEntries.next();
-			double value = ((Number) numericEntry.getValue()).doubleValue();
-			
-			if (value >= maxValue) {
-				keyToMaxValue = numericEntry.getKey();
-				maxValue = value;
+
+		@Override
+		public Object getResult() {
+			return findKeyWithMaxValue(this.objectToOccurrences);
+		}
+
+		@Override
+		public void innerOperate(Object object) {
+			if (!this.objectToOccurrences.containsKey(object)) {
+				this.objectToOccurrences.put(object, 0);
 			}
+
+			Integer oldNumberOfOccurrences = this.objectToOccurrences
+					.get(object);
+
+			this.objectToOccurrences.put(object, (oldNumberOfOccurrences + 1));
 		}
-		
-		return keyToMaxValue;
-	}
-}
 
-class IntegerMode extends ModeFunction {
-	public Class getType() {
-		return Integer.class;
-	}
-}
+		/**
+		 * Get the key with the greatest mapped {@link Integer}.
+		 * 
+		 * @param map
+		 *            A map from {@link Object} to {@link Integer}.
+		 * @return The object which was mapped to the highest value.
+		 *         {@code null } will be returned if the map was empty.
+		 */
+		private static Object findKeyWithMaxValue(Map<Object, Integer> map) {
+			Object maxKey = null;
+			Integer maxValue = Integer.MIN_VALUE;
 
-class StringMode extends ModeFunction {
-	public Class getType() {
-		return String.class;
-	}
-}
+			for (Entry<Object, Integer> numericEntry : map.entrySet()) {
+				Integer value = numericEntry.getValue();
 
-class BooleanMode extends ModeFunction {
-	public Class getType() {
-		return Boolean.class;
+				if (value >= maxValue) {
+					maxKey = numericEntry.getKey();
+					maxValue = value;
+				}
+			}
+
+			return maxKey;
+		}
+	}
+
+	class IntegerMode extends AbstractModeFunction {
+		public Class getType() {
+			return Integer.class;
+		}
+
+		@Override
+		protected Integer cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanIntegerPrefuseBug(object);
+		}
+	}
+
+	class StringMode extends AbstractModeFunction {
+		public Class getType() {
+			return String.class;
+		}
+
+		@Override
+		protected String cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanStringPrefuseBug(object);
+		}
+	}
+
+	class BooleanMode extends AbstractModeFunction {
+		public Class getType() {
+			return Boolean.class;
+		}
+
+		@Override
+		protected Boolean cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanBooleanPrefuseBug(object);
+		}
 	}
 }

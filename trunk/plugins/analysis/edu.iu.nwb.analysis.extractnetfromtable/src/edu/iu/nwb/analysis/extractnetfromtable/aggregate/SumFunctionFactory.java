@@ -1,102 +1,129 @@
 package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
+public class SumFunctionFactory implements AggregateFunctionFactory {
+	private static final AggregateFunctionName TYPE = AggregateFunctionName.SUM;
 
-public class SumFunctionFactory implements AggregateFunctionFactory{
-	public static final String type = AggregateFunctionNames.SUM;
-
-
-	public AggregateFunction getFunction(Class c) {
-		if (c.equals(int.class) || c.equals(Integer.class)) {
+	@Override
+	public AbstractAggregateFunction getFunction(Class c) {
+		if (c.equals(int.class) || c.equals(Integer.class)
+				|| c.equals(int[].class) || c.equals(Integer[].class)) {
 			return new IntegerSum();
 		}
-		if (c.equals(double.class) || c.equals(Double.class)) {
+		if (c.equals(double.class) || c.equals(Double.class)
+				|| c.equals(double[].class) || c.equals(Double[].class)) {
 			return new DoubleSum();
 		}
-		if (c.equals(float.class) || c.equals(Float.class)) {
+		if (c.equals(float.class) || c.equals(Float.class)
+				|| c.equals(float[].class) || c.equals(Float[].class)) {
 			return new FloatSum();
 		}
-		return null; //can't handle class error.
+		return null; // can't handle class error.
 	}
 
-	public String getType() {
-		return SumFunctionFactory.type;
-	}
-}
-
-class DoubleSum extends AggregateFunction {
-	double total;
-
-	public DoubleSum() {
-		total = 0;
+	@Override
+	public AggregateFunctionName getType() {
+		return SumFunctionFactory.TYPE;
 	}
 
-	public Object getResult() {
-		return new Double(total);
-	}
+	class DoubleSum extends AbstractAggregateFunction {
+		private double total;
 
-	public Class getType() {
-		return Double.class;
-	}
+		public DoubleSum() {
+			this.total = 0;
+		}
 
-	public void operate(Object o) {
-		if (o != null && o instanceof Number) {
-			total += ((Number) o).doubleValue();
-		} else {
-			throw new IllegalArgumentException(
-			"DoubleSum can only operate on Numbers.");
+		@Override
+		public Double getResult() {
+			return this.total;
+		}
+
+		@Override
+		public Class getType() {
+			return Double.class;
+		}
+
+		@Override
+		protected void innerOperate(Object object) {
+			if (object instanceof Number) {
+				this.total += ((Number) object).doubleValue();
+			} else {
+				throw new IllegalArgumentException(
+						"DoubleSum can only operate on Numbers.");
+			}
+		}
+
+		@Override
+		protected Double cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanDoublePrefuseBug(object);
 		}
 	}
-}
 
+	class FloatSum extends AbstractAggregateFunction {
+		private float total;
 
-class FloatSum extends AggregateFunction {
-	float total;
+		public FloatSum() {
+			this.total = 0;
+		}
 
-	public FloatSum() {
-		total = 0;
-	}
+		@Override
+		public Float getResult() {
+			return this.total;
+		}
 
-	public Object getResult() {
-		return new Float(total);
-	}
+		@Override
+		public Class getType() {
+			return Float.class;
+		}
 
-	public Class getType() {
-		return Float.class;
-	}
+		@Override
+		protected void innerOperate(Object object) {
+			if (object instanceof Number) {
+				this.total += ((Number) object).floatValue();
+			} else {
+				throw new IllegalArgumentException(
+						"FloatSum can only operate on Numbers.");
+			}
+		}
 
-	public void operate(Object o) {
-		if (o != null && o instanceof Number) {
-			total += ((Number) o).floatValue();
-		} else {
-			throw new IllegalArgumentException(
-			"FloatSum can only operate on Numbers.");
+		@Override
+		protected Float cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanFloatPrefuseBug(object);
 		}
 	}
-}
 
+	class IntegerSum extends AbstractAggregateFunction {
+		private int total;
 
-class IntegerSum extends AggregateFunction {
-	int total;
+		public IntegerSum() {
+			this.total = 0;
+		}
 
-	public IntegerSum() {
-		total = 0;
-	}
+		@Override
+		public Integer getResult() {
+			return this.total;
+		}
 
-	public Object getResult() {
-		// TODO Auto-generated method stub
-		return (new Integer(total));
-	}
+		@Override
+		public Class getType() {
+			return Integer.class;
+		}
 
-	public Class getType() {
-		return Integer.class;
-	}
+		@Override
+		protected void innerOperate(Object object) {
+			if (object instanceof Number) {
+				this.total += ((Number) object).intValue();
+			} else {
+				throw new IllegalArgumentException(
+						"IntegerSum can only operate on Numbers.");
+			}
+		}
 
-	public void operate(Object o) {
-		if (o != null && o instanceof Number) {
-			total += ((Number) o).intValue();
-		} else {
-			throw new IllegalArgumentException(
-			"IntegerSum can only operate on Numbers.");
+		@Override
+		protected Integer cleanPrefuseIssue(Object object)
+				throws ObjectCouldNotBeCleanedException {
+			return cleanIntegerPrefuseBug(object);
 		}
 	}
 }

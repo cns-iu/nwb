@@ -2,7 +2,7 @@ package edu.iu.nwb.analysis.extractnetfromtable.components;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunction;
+import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AbstractAggregateFunction;
 import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFunctions;
 
 public class FunctionContainer {
@@ -13,7 +13,7 @@ public class FunctionContainer {
 		AssembleAggregateFunctions assembleAggregateFunction =
 			AssembleAggregateFunctions.defaultAssembly();
 
-		AggregateFunction aggregateFunction;
+		AbstractAggregateFunction aggregateFunction;
 		String operateColumn = null;
 		int appliedNodeType;
 
@@ -43,7 +43,7 @@ public class FunctionContainer {
 				}
 
 				if (va.getFunction(cc) == null) {
-					va.addFunction(cc, aggregateFunction);
+					va.putFunction(cc, aggregateFunction);
 				}
 			}
 		}
