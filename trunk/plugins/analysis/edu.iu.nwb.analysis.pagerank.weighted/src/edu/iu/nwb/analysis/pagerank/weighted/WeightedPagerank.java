@@ -14,6 +14,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.osgi.service.log.LogService;
 
 import cern.colt.function.DoubleDoubleFunction;
 import cern.colt.function.DoubleFunction;
@@ -24,33 +25,45 @@ import edu.iu.nwb.util.nwbfile.GetMetadataAndCounts;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.ParsingException;
+import org.cishell.utilities.DataFactory;
 
 public class WeightedPagerank implements Algorithm {
 	private Data[] data;
-    private Dictionary parameters;
-	//private LogService logger;
-    
-    public WeightedPagerank(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-		//this.logger = (LogService) context.getService(LogService.class.getName());
+	private Dictionary<String, Object> parameters;
+	private LogService log;
+	/**
+	 * Construct a Weighted Pagerank {@link Algorithm}.
+	 * 
+	 * @param data
+	 *            The {@link Data} array containing the <code>Data</code> for
+	 *            this algorithm.
+	 * @param parameters
+	 *            The parameters required for this function.
+	 * @param context
+	 *            The {@link CIShellContext} in which this algorithm exists.
+	 */
+	public WeightedPagerank(Data[] data, Dictionary<String, Object> parameters,
+			CIShellContext context) {
+		this.data = data;
+		this.parameters = parameters;
+		this.log = (LogService) context.getService(LogService.class.getName());
+	}
 
-    }
+	public Data[] execute() throws AlgorithmExecutionException {
 
-    public Data[] execute() throws AlgorithmExecutionException {
-    	
-    	File nwbFile = (File) data[0].getData();
-    	
-    	WeightAccessor weightAccessor = getWeightAccessor();
-    	
-    	double dampingFactor = ((Double) parameters.get("d"));
-    	
-    	Data nwbOutput = annotateWithPagerank(nwbFile, weightAccessor,
+		File nwbFile = (File) this.data[0].getData();
+		String weightAttribute = (String) this.parameters
+				.get(WeightedPagerankFactory.WEIGHT_ID);
+		WeightAccessor weightAccessor = makeWeightAccessor(weightAttribute);
+
+		double dampingFactor = (Double) this.parameters
+				.get(WeightedPagerankFactory.DAMPENING_FACTOR_ID);
+
+		Data nwbOutput = annotateWithPagerank(nwbFile, weightAccessor,
 				dampingFactor);
 		
-		
-        return new Data[]{nwbOutput};
-    }
+		return new Data[] { nwbOutput };
+	}
 
 	private Data annotateWithPagerank(File nwbFile,
 			WeightAccessor weightAccessor, double dampingFactor)
@@ -64,46 +77,39 @@ public class WeightedPagerank implements Algorithm {
 				numberOfNodes, dampingFactor);
     	
     	
-    	Data nwbOutput = prepareAnnotatedData(nwbFile, nodeLookup, pagerank);
+    	Data nwbOutput = annotateFile(nwbFile, nodeLookup, pagerank);
 		return nwbOutput;
 	}
 
-	private Data prepareAnnotatedData(File nwbFile,
+	private Data annotateFile(File nwbFile,
 			final Map<Integer, Integer> nodeLookup, DoubleMatrix1D pagerank)
 			throws AlgorithmExecutionException {
 		NWBIntegrator integrator = annotateInputFile(nwbFile, nodeLookup,
-				pagerank);
+				pagerank, this.log);
 
 		Data nwbOutput = prepareData(integrator.getOutputFile());
 		return nwbOutput;
 	}
 
-	private NWBIntegrator annotateInputFile(File nwbFile,
-			final Map<Integer, Integer> nodeLookup, DoubleMatrix1D pagerank)
-			throws AlgorithmExecutionException {
-		NWBIntegrator integrator = new NWBIntegrator(nodeLookup, pagerank);
+	private static NWBIntegrator annotateInputFile(File nwbFile,
+			final Map<Integer, Integer> nodeLookup, DoubleMatrix1D pagerank,
+			LogService log) throws AlgorithmExecutionException {
+		NWBIntegrator integrator = new NWBIntegrator(nodeLookup, pagerank, log);
 		parseNWBFile(nwbFile, integrator);
 		return integrator;
 	}
 
-	private WeightAccessor getWeightAccessor() {
-		WeightAccessor weightAccessor;
-    	String weightAttribute = (String) parameters.get("weight");
-    	if(WeightedPagerankFactory.DEFAULT_WEIGHT.equals(weightAttribute)) {
-    		weightAccessor = new ConstantWeightAccessor(1.0);
-    	} else {
-    		weightAccessor = new ColumnWeightAccessor(weightAttribute);
-    	}
-		return weightAccessor;
+	private static WeightAccessor makeWeightAccessor(String weightColumnName) {
+		if (WeightedPagerankFactory.TREAT_WEIGHT_AS_ONE.equals(weightColumnName)) {
+			return new ConstantWeightAccessor(1.0f);
+		}
+		
+		return new ColumnWeightAccessor(weightColumnName);
 	}
 
 	private Data prepareData(File file) {
-		Data nwbOutput = new BasicData(file, "file:text/nwb");
-		Dictionary<String, Object> metadata = nwbOutput.getMetadata();
-		metadata.put(DataProperty.PARENT, data[0]);
-		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-		metadata.put(DataProperty.LABEL, "with Pagerank");
-		return nwbOutput;
+		return DataFactory.forObject(file, "file:text/nwb",
+				DataProperty.NETWORK_TYPE, this.data[0], "with Pagerank");
 	}
 
 	private DoubleMatrix1D calculatePagerank(Graph graph,
@@ -218,10 +224,10 @@ public class WeightedPagerank implements Algorithm {
 				indexNode(edge.getTarget());
 				
 			}
-			private void indexNode(int source) {
-				if(!nodeLookup.containsKey(source)) {
-					nodeLookup.put(source, nodeIndex);
-					nodeIndex++;
+			private void indexNode(int nodeId) {
+				if(!nodeLookup.containsKey(nodeId)) {
+					nodeLookup.put(nodeId, this.nodeIndex);
+					this.nodeIndex++;
 				}
 			}
 			
@@ -229,29 +235,33 @@ public class WeightedPagerank implements Algorithm {
 		return nodeLookup;
 	}
 
-	private Graph prepareEdges(File nwbFile, WeightAccessor weightAccessor)
-			throws AlgorithmExecutionException {
-		Graph edges;
-    	
-    	GetMetadataAndCounts networkInfo = new GetMetadataAndCounts();
-    	parseNWBFile(nwbFile, networkInfo);
-		
+	private static Graph prepareEdges(File nwbFile,
+			WeightAccessor weightAccessor) throws AlgorithmExecutionException {
+
+		GetMetadataAndCounts networkInfo = new GetMetadataAndCounts();
+		parseNWBFile(nwbFile, networkInfo);
+
 		int numberOfNodes = networkInfo.getNodeCount();
 		int numberOfDirectedEdges = networkInfo.getDirectedEdgeCount();
-		
+
 		Runtime runtime = Runtime.getRuntime();
-		long availableMemory = runtime.freeMemory() + (runtime.maxMemory() - runtime.totalMemory());
-		// approximation of maximum memory per edge -- 64 bit architecture (8 bytes per int), three ints per edge, two ints for bookkeeping, allowing half for other stuff
-		long possibleEdges = availableMemory / (8 * 5 * 2 * 2); 
-		if(numberOfDirectedEdges > possibleEdges) {
+		long availableMemory = runtime.freeMemory()
+				+ (runtime.maxMemory() - runtime.totalMemory());
+		// approximation of maximum memory per edge -- 64 bit architecture (8
+		// bytes per int), three ints per edge, two ints for bookkeeping,
+		// allowing half for other stuff
+		long possibleEdges = availableMemory / (8 * 5 * 2 * 2);
+		Graph edges;
+		if (numberOfDirectedEdges > possibleEdges) {
 			edges = new OnDiskGraph(nwbFile, weightAccessor, numberOfNodes);
 		} else {
-			edges = new InMemoryGraph(nwbFile, weightAccessor, numberOfNodes, numberOfDirectedEdges);
+			edges = new InMemoryGraph(nwbFile, weightAccessor, numberOfNodes,
+					numberOfDirectedEdges);
 		}
 		return edges;
 	}
 
-	protected static void parseNWBFile(File nwbFile, NWBFileParserHandler handler)
+	static void parseNWBFile(File nwbFile, NWBFileParserHandler handler)
 			throws AlgorithmExecutionException {
 		try {
 			new NWBFileParser(nwbFile).parse(handler);

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
+import edu.iu.nwb.analysis.pagerank.weighted.WeightAccessor.InvalidWeightException;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class InMemoryGraph extends Graph {
@@ -21,12 +22,17 @@ public class InMemoryGraph extends Graph {
 		
 	}
 
-	private List<Edge> accumulateEdges(File nwbFile, final WeightAccessor weightAccessor,
+	private static List<Edge> accumulateEdges(File nwbFile, final WeightAccessor weightAccessor,
 			int numberOfDirectedEdges) throws AlgorithmExecutionException {
 		final List<Edge> edges = new ArrayList<Edge>(numberOfDirectedEdges + 1);
 		WeightedPagerank.parseNWBFile(nwbFile, new NWBFileParserAdapter() {
-			public void addDirectedEdge(int source, int target, Map attributes) {
-				edges.add(new Edge(source, target, weightAccessor.getWeight(attributes)));
+			@Override
+			public void addDirectedEdge(int source, int target, Map<String, Object> attributes) {
+				try {
+					edges.add(new Edge(source, target, weightAccessor.getWeight(attributes)));
+				} catch (InvalidWeightException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		});
 		return edges;
@@ -34,7 +40,7 @@ public class InMemoryGraph extends Graph {
 
 	@Override
 	public void performEdgePass(EdgeHandler handler) {
-		for(Edge edge: edges) {
+		for(Edge edge: this.edges) {
 			handler.handleEdge(edge);
 		}
 	}

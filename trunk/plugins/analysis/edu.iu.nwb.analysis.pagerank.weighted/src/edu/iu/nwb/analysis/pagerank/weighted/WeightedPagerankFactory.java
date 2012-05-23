@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -27,11 +27,25 @@ import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
 public class WeightedPagerankFactory implements AlgorithmFactory, DataValidator, ParameterMutator {
-	protected static final String DEFAULT_WEIGHT = "Treat all edges as weight one.";
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new WeightedPagerank(data, parameters, context);
-    }
+	protected static final String TREAT_WEIGHT_AS_ONE = "Treat all edges as weight one.";
+	/**
+	 * The id of the Damping Factor {@link AttributeDefinition} from the
+	 * METADATA.XML
+	 */
+	protected static final String DAMPENING_FACTOR_ID = "d";
+
+	/**
+	 * The id of the Weight {@link AttributeDefinition} that will be inserted
+	 * into the algorithm parameters.
+	 */
+	protected static final String WEIGHT_ID = "weightAttribute";
+	
+	public Algorithm createAlgorithm(Data[] data,
+			Dictionary<String, Object> parameters, CIShellContext context) {
+		return new WeightedPagerank(data, parameters, context);
+	}
     
+	@Override
     public String validate(Data[] data) {
 		File nwbFile = (File) data[0].getData();
 		GetMetadataAndCounts networkInfo = new GetMetadataAndCounts();
@@ -39,7 +53,7 @@ public class WeightedPagerankFactory implements AlgorithmFactory, DataValidator,
 		try {
 			NWBFileParser parser = new NWBFileParser(nwbFile);
 			parser.parse(networkInfo);
-		} catch (IOException e1) {
+		} catch (IOException e) {
 			return "Unable to read NWB file.";
 		} catch (ParsingException e) {
 			return "Invalid NWB file format.";
@@ -50,36 +64,42 @@ public class WeightedPagerankFactory implements AlgorithmFactory, DataValidator,
 		if(networkInfo.getUndirectedEdgeCount() > 0) {
 			if(numberOfDirectedEdges > 0) {
 				return "This network has both directed and undirected edges. The algorithm only works on entirely directed networks.";
-			} else {
-				return "This network is undirected. The algorithm only works on directed networks.";
 			}
+			return "This network is undirected. The algorithm only works on directed networks.";
 		} else if(numberOfDirectedEdges == 0) {
 			return "This network has no edges. The algorithm requires edges to work.";
 		}
-		
-		
+
 		return "";
 	}
 	
-	private String[] createKeyArray(Map<String, String> schema) {
-		List<String> goodkeys = new ArrayList<String>();
+	/**
+	 * Generate a list of possible weight columns adding in a default to treat
+	 * all edges as weight = 1
+	 * 
+	 * @param schema
+	 *            A mapping from the NWB property name to the NWB property type.
+	 * @return An array of {@link String}s of NWB property names whose entries would be
+	 *         valid types for weight.
+	 */
+	private static String[] findLikelyWeightColumns(Map<String, String> schema) {
+		List<String> goodKeys = new ArrayList<String>();
 		
-		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
-			String key = keys.next();
-			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING) &&
-				!"source".equals(key) &&
-				!"target".equals(key)) {
-				goodkeys.add(key);
+		for (Entry<String, String> entry : schema.entrySet()) {
+			if (NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES.contains(entry.getValue())
+					&& !NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES.containsKey(entry.getKey())) {
+				goodKeys.add(entry.getKey());
 			}
 		}
 		
-		goodkeys.add(DEFAULT_WEIGHT);
+		goodKeys.add(TREAT_WEIGHT_AS_ONE);
 		
-		Collections.reverse(goodkeys);
+		Collections.reverse(goodKeys);
 		
-		return (String[]) goodkeys.toArray(new String[]{});
+		return goodKeys.toArray(new String[goodKeys.size()]);
 	}
 
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition parameters) {
 		File nwbFile = (File) data[0].getData();
@@ -102,21 +122,20 @@ public class WeightedPagerankFactory implements AlgorithmFactory, DataValidator,
 			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), null);
 		}
 
-		String[] edgeAttributesArray = createKeyArray(handler.getDirectedEdgeSchema());
+		String[] edgeAttributesArray = findLikelyWeightColumns(handler.getDirectedEdgeSchema());
 
 		AttributeDefinition[] definitions = parameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
 		
 		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("weightAttribute", 
+				new BasicAttributeDefinition(WEIGHT_ID, 
 						"Weight Attribute", 
 						"The attribute to use for weight", 
 						AttributeDefinition.STRING, 
 						edgeAttributesArray, 
 						edgeAttributesArray));
 		
-		
-		for(int ii = 0; ii < definitions.length; ii++) {
-			definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
+		for(AttributeDefinition attributeDefinition : definitions) {
+			definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attributeDefinition);
 		}
 
 		return definition;

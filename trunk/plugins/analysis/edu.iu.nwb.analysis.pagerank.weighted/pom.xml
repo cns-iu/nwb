@@ -7,8 +7,7 @@
     <groupId>edu.iu.nwb.analysis</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>edu.iu.nwb.analysis</groupId>
   <artifactId>edu.iu.nwb.analysis.pagerank.weighted</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>eclipse-plugin</packaging>
 </project>
