@@ -27,6 +27,12 @@ public class WebTemporalBarGraphAlgorithmFactory extends
 		Table inputTable = (Table) inputData.getData();
 		LogService logger = (LogService) ciShellContext
 				.getService(LogService.class.getName());
+		/**
+		 * XXX
+		 * It is critical that no parameters are added here that are not
+		 * accessible for the Print AlgorithmFactory because it has a parameter
+		 * that will invoke this algorithm factory with its parameters!
+		 */
 		String labelColumn = parameters.get(LABEL_FIELD_ID).toString();
 		String startDateColumn = parameters.get(START_DATE_FIELD_ID).toString();
 		String endDateColumn = parameters.get(END_DATE_FIELD_ID).toString();

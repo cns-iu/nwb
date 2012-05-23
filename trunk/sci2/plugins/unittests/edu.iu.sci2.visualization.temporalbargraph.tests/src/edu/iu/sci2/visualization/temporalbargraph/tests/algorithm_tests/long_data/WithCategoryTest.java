@@ -79,7 +79,8 @@ public class WithCategoryTest {
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
 						false);
-
+		parameters.put(TemporalBarGraphAlgorithmFactory.SIMPLIFIED_LAYOUT_ID, false);
+		
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
@@ -100,7 +101,8 @@ public class WithCategoryTest {
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
 						true);
-
+		parameters.put(TemporalBarGraphAlgorithmFactory.SIMPLIFIED_LAYOUT_ID, false);
+		
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,

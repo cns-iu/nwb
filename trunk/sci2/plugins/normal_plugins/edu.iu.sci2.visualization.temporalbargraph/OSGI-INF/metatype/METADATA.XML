@@ -10,11 +10,16 @@
 		 <AD name="Query" id="query" type="String" description="The query that created the data." default="" />
 		 <AD name="Categeory" id="category" type="String" description="The field used for identifying cagegories within the data and color coding the bars as those categories.  More than 10 unique categories is not recommended." default="" />
 		 <AD name="Scale Output?" id="should_scale_output" type="boolean" description="If selected, all the bars will be fit into a single page.  If not, 50 bars per page will be used." default="false"/>
+		 <AD name="Simplified Layout?" id="is_simplified_layout" type="boolean" description="If selected, a simplified graphic will be produced.  If not selected, the graphic produced will be suitable for printing and include a title, date, howto, etc." default="false" />
 	</OCD>
 	<Designate pid="edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithm">
 		<Object ocdref="edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorithm.OCD" />
 	</Designate>
-	
+
+	<!-- XXX It is critical that the parameters for the Web AlgorithmFactory 
+		are a subset of those for the Print AlgorithmFactory with exactly corresponding 
+		ids! There is a parameter for that AlgorithmFactory that will instantiate 
+		the Web AlgorithmFactory with the Print AlgorithmFactory's list of parameters -->
 	<OCD name="Web Temporal Bar Graph" id="edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithm.OCD"
 		 description="Takes tabular data and generates PostScript for a temporal bar graph.">
 		 <AD name="Label" id="label" type="String" description="The field used to label the bar lines" default="TITLE"/>

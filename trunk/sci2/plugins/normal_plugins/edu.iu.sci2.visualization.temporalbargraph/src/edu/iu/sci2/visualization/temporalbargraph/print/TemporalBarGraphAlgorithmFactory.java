@@ -16,13 +16,26 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 import edu.iu.sci2.visualization.temporalbargraph.common.AbstractTemporalBarGraphAlgorithmFactory;
+import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
+/**
+ * This factory creates an algorithm for the print version of Temporal Bar Graph
+ * visualization.
+ * 
+ * @author dmcoe
+ * 
+ */
 public class TemporalBarGraphAlgorithmFactory extends
 		AbstractTemporalBarGraphAlgorithmFactory {
 	public static final double PAGE_LONG_DIMENTION = 11;
 	public static final double PAGE_SHORT_DIMENTION = 8.5;
 
 	public static final String QUERY_ID = "query";
+	/**
+	 * The parameter name for the simplified layout boolean from the
+	 * metadata.xml
+	 */
+	public static final String SIMPLIFIED_LAYOUT_ID = "is_simplified_layout";
 
 	/**
 	 * Pages can be landscapes or portrait. They are fixed at letter size for
@@ -71,6 +84,21 @@ public class TemporalBarGraphAlgorithmFactory extends
 	@Override
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+		boolean isSimplifiedLayout = ((Boolean) parameters.get(SIMPLIFIED_LAYOUT_ID));
+		
+		if (isSimplifiedLayout) {
+			/**
+			 * Use the Web algorithm rather than the print.
+			 * 
+			 * XXX It is critical that the metadata in the parameters for
+			 * WebTemporalBarGraphAlgorithmFactory is a subset of the parameters
+			 * given to this AlgorithmFactory for this to work!
+			 */
+			Algorithm webTemporalBarGraphAlgorithm = new WebTemporalBarGraphAlgorithmFactory()
+					.createAlgorithm(data, parameters, ciShellContext);
+			return webTemporalBarGraphAlgorithm;
+		}
+		
 		Data inputData = data[0];
 		Table inputTable = (Table) inputData.getData();
 		LogService logger = (LogService) ciShellContext
