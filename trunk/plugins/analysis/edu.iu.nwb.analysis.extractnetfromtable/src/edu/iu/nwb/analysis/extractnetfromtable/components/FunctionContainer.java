@@ -6,7 +6,13 @@ import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AbstractAggregateFuncti
 import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFunctions;
 
 public class FunctionContainer {
-	protected static ValueAttributes mutateFunctions(Tuple tuple, Table t,
+	boolean hasSkippedColumns;
+	
+	public FunctionContainer() {
+		this.hasSkippedColumns = false;
+	}
+	
+	protected ValueAttributes mutateFunctions(Tuple tuple, Table t,
 			int rowNumber, ValueAttributes va, AggregateFunctionMappings aggregateFunctionMappings,
 			int nodeType) {
 
@@ -16,12 +22,11 @@ public class FunctionContainer {
 		AbstractAggregateFunction aggregateFunction;
 		String operateColumn = null;
 		int appliedNodeType;
-
 		for (int cc = 0; cc < tuple.getColumnCount(); cc++) {
 			final String columnName = tuple.getColumnName(cc);
-			aggregateFunction = va.getFunction(cc); // see if the function
-													// already exists.
-
+			// see if the function already exists.
+			aggregateFunction = va.getFunction(cc); 
+			
 			// If not, try to create it.
 			if (aggregateFunction == null) {
 				aggregateFunction =
@@ -34,8 +39,16 @@ public class FunctionContainer {
 				operateColumn = aggregateFunctionMappings
 						.getOriginalColumnFromFunctionColumn(columnName);
 
+				if (aggregateFunction.skippedColumns() > 0) {
+					this.hasSkippedColumns = true;
+				}
+				
 				appliedNodeType = aggregateFunctionMappings.getAppliedNodeType(columnName);
 
+				if (aggregateFunction.skippedColumns() > 0) {
+					this.hasSkippedColumns = true;
+				}
+				
 				if (appliedNodeType == nodeType
 						|| appliedNodeType == AggregateFunctionMappings.SOURCE_AND_TARGET) {
 					aggregateFunction.operate(t.get(rowNumber, operateColumn));
@@ -44,6 +57,9 @@ public class FunctionContainer {
 
 				if (va.getFunction(cc) == null) {
 					va.putFunction(cc, aggregateFunction);
+				}
+				if (aggregateFunction.skippedColumns() > 0) {
+					this.hasSkippedColumns = true;
 				}
 			}
 		}

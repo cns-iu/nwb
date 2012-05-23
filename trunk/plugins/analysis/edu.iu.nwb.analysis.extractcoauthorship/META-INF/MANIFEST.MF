@@ -1,5 +1,5 @@
 Bundle-SymbolicName: edu.iu.nwb.analysis.extractcoauthorship
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Name: Extract a Co-Authorship Network
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.analysis.extractnetfromtable.components,

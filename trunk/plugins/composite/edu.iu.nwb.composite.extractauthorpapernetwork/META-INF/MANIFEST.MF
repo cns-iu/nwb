@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.nwb.composite.extractauthorpapernetwork
 Bundle-SymbolicName: edu.iu.nwb.composite.extractauthorpapernetwork
-Bundle-Version: 0.0.1
+Bundle-Version: 0.0.2
 Bundle-ClassPath: .
 Import-Package: com.google.common.collect,
  edu.iu.nwb.analysis.extractnetfromtable.aggregate,

@@ -11,6 +11,8 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
+import edu.iu.nwb.analysis.extractnetfromtable.components.AggregateFunctionMappings.CompatibleAggregationNotFoundException;
+
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
@@ -24,22 +26,17 @@ public class GraphContainer {
 
 	private Graph graph;
 	private Table table;
-	private AggregateFunctionMappings nodeMap;
-	private AggregateFunctionMappings edgeMap;
-	private ProgressMonitor progMonitor = null;
+	private AggregateFunctionMappings nodeFunctionMap;
+	private AggregateFunctionMappings edgeFunctionMap;
+	private ProgressMonitor progressMonitor = null;
 
-	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap,
-			AggregateFunctionMappings edgeFunctionMap) {
-		this(g, t, nodeFunctionMap, edgeFunctionMap, null);
-	}
-
-	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap,
-			AggregateFunctionMappings edgeFunctionMap, ProgressMonitor pm) {
-		this.graph = g;
-		this.table = t;
-		this.nodeMap = nodeFunctionMap;
-		this.edgeMap = edgeFunctionMap;
-		this.progMonitor = pm;
+	public GraphContainer(Graph graph, Table table, AggregateFunctionMappings nodeFunctionMap,
+			AggregateFunctionMappings edgeFunctionMap, ProgressMonitor progressMonitor) {
+		this.graph = graph;
+		this.table = table;
+		this.nodeFunctionMap = nodeFunctionMap;
+		this.edgeFunctionMap = edgeFunctionMap;
+		this.progressMonitor = progressMonitor;
 	}
 
 	public Graph buildGraph(
@@ -47,19 +44,18 @@ public class GraphContainer {
 			String targetColumnName,
 			String delimiter,
 			boolean requestBipartite,
-			LogService logger) {
+			LogService log) {
 		String[] targetColumnNames = targetColumnName.split("\\,");
 
 		if (this.graph.isDirected()) {
 			return buildDirectedGraph(
-				sourceColumnName, targetColumnNames, delimiter, requestBipartite, logger);
-		} else {
-			return buildUndirectedGraph(targetColumnNames, delimiter, logger);
+				sourceColumnName, targetColumnNames, delimiter, requestBipartite, log);
 		}
+		return buildUndirectedGraph(targetColumnNames, delimiter, log);
 	}
 
 	private Graph buildUndirectedGraph(
-			String[] targetColumnNames, String delimiter, LogService logger) {
+			String[] targetColumnNames, String delimiter, LogService log) {
 		boolean duplicateValues = false;
 		final HashMap dupValuesErrorMessages = new HashMap();
 		int numTotalRows = this.table.getRowCount();
@@ -67,11 +63,13 @@ public class GraphContainer {
 
 		NodeMaintainer nodeMaintainer = new NodeMaintainer();
 
-		if (this.progMonitor != null) {
-			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
+		if (this.progressMonitor != null) {
+			this.progressMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
 		}
-
+		
+		int recordsWithSkippedColumns = 0;
 		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();) {
+			boolean rowHasSkippedColumns = false;
 			int row = ((Integer) rowIt.next()).intValue();
 
 			Node node1 = null;
@@ -106,13 +104,17 @@ public class GraphContainer {
 							this.graph,
 							this.table,
 							row,
-							this.nodeMap,
+							this.nodeFunctionMap,
 							AggregateFunctionMappings.SOURCE_AND_TARGET);
+						if (nodeMaintainer.hasSkippedColumns) {
+							rowHasSkippedColumns = true;
+							nodeMaintainer.hasSkippedColumns = false;
+						}
 					}
 
-					node1 = this.graph.getNode(this.nodeMap.getFunctionRow(
+					node1 = this.graph.getNode(this.nodeFunctionMap.getFunctionRow(
 							new NodeID(splitTargetStringArray[ii], null)).getRowNumber());
-
+					
 					for (int jj = 0; jj < ii; jj++) {
 						if ("".equals(splitTargetStringArray[jj])) {
 							continue;
@@ -128,15 +130,20 @@ public class GraphContainer {
 									this.graph,
 									this.table,
 									row,
-									this.nodeMap,
+									this.nodeFunctionMap,
 									AggregateFunctionMappings.SOURCE_AND_TARGET);
 
 							}
 							// Create or modify an edge as necessary.
-							node2 = this.graph.getNode(this.nodeMap.getFunctionRow(
+							node2 = this.graph.getNode(this.nodeFunctionMap.getFunctionRow(
 								new NodeID(splitTargetStringArray[jj], null)).getRowNumber());
-							EdgeContainer.mutateEdge(
-								node1, node2, this.graph, this.table, row, this.edgeMap);
+							EdgeContainer edgeContainer = new EdgeContainer();
+							edgeContainer.mutateEdge(
+								node1, node2, this.graph, this.table, row, this.edgeFunctionMap);
+							if (edgeContainer.hasSkippedColumns) {
+								rowHasSkippedColumns = true;
+								edgeContainer.hasSkippedColumns = false;
+							}
 						} else {
 							duplicateValues = true; // Detected a self-loop.
 						}
@@ -160,15 +167,22 @@ public class GraphContainer {
 			}
 			numRowsProcessedSoFar = numRowsProcessedSoFar + 1;
 
-			if (this.progMonitor != null) {
-				this.progMonitor.worked(numRowsProcessedSoFar);
+			if (this.progressMonitor != null) {
+				this.progressMonitor.worked(numRowsProcessedSoFar);
+			}
+			if (rowHasSkippedColumns) {
+				recordsWithSkippedColumns++;
 			}
 		}
 
 		for (Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();) {
-			logger.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
+			log.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
 		}
 
+		if (recordsWithSkippedColumns > 0) { 
+			log.log(LogService.LOG_WARNING, recordsWithSkippedColumns + " records had empty values or parsing issues and were skipped.");
+		}
+		
 		return this.graph;
 	}
 
@@ -210,11 +224,13 @@ public class GraphContainer {
 		int numTotalRows = this.table.getRowCount();
 		int numRowsProcessedSoFar = 0;
 
-		if (this.progMonitor != null) {
-			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
+		if (this.progressMonitor != null) {
+			this.progressMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
 		}
 
+		int recordsWithSkippedColumns = 0;
 		for (Iterator rows = this.table.rows(); rows.hasNext();) {
+			boolean rowHasSkippedColumns = false;
 			int row = ((Integer) rows.next()).intValue();
 
 			final String sourceString = sourceColumn.getString(row);
@@ -231,11 +247,21 @@ public class GraphContainer {
 				Set cleanTargetNames = clean(targets);
 				
 				// Update nodes.
-				Set updatedSources = updateNodes(nodeMaintainer, row, cleanSourceNames,
-						sourceBipartiteType, AggregateFunctionMappings.SOURCE);
+				Set updatedSources = updateNodes(nodeMaintainer, row,
+						cleanSourceNames, sourceBipartiteType,
+						AggregateFunctionMappings.SOURCE);
+				if (nodeMaintainer.hasSkippedColumns) {
+					rowHasSkippedColumns = true;
+					nodeMaintainer.hasSkippedColumns = false;
+				}
 
-				Set updatedTargets = updateNodes(nodeMaintainer, row, cleanTargetNames,
-						targetBipartiteType, AggregateFunctionMappings.TARGET);
+				Set updatedTargets = updateNodes(nodeMaintainer, row,
+						cleanTargetNames, targetBipartiteType,
+						AggregateFunctionMappings.TARGET);
+				if (nodeMaintainer.hasSkippedColumns) {
+					rowHasSkippedColumns = true;
+					nodeMaintainer.hasSkippedColumns = false;
+				}
 
 				// Update edges.
 				for (Iterator updatedSourcesIt = updatedSources.iterator();
@@ -245,17 +271,25 @@ public class GraphContainer {
 					for (Iterator updatedTargetsIt = updatedTargets.iterator();
 							updatedTargetsIt.hasNext();) {
 						Node updatedTarget = (Node) updatedTargetsIt.next();
-
-						EdgeContainer.mutateEdge(updatedSource, updatedTarget, graph, table, row,
-							edgeMap);
+						
+						EdgeContainer edgeContainer = new EdgeContainer();
+						edgeContainer.mutateEdge(updatedSource, updatedTarget, graph, table, row,
+							edgeFunctionMap);
+						if (edgeContainer.hasSkippedColumns) {
+							rowHasSkippedColumns = true;
+							edgeContainer.hasSkippedColumns = false;
+						}
 					}
 				}
 			}
 
 			numRowsProcessedSoFar = numRowsProcessedSoFar + 1;
 
-			if (progMonitor != null) {
-				progMonitor.worked(numRowsProcessedSoFar);
+			if (progressMonitor != null) {
+				progressMonitor.worked(numRowsProcessedSoFar);
+			}
+			if (rowHasSkippedColumns) {
+				recordsWithSkippedColumns++;
 			}
 		}
 
@@ -263,6 +297,10 @@ public class GraphContainer {
 			log.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
 		}
 
+		if (recordsWithSkippedColumns > 0) { 
+			log.log(LogService.LOG_WARNING, recordsWithSkippedColumns + " records had empty values and were skipped.");
+		}
+		
 		return graph;
 	}
 	
@@ -289,7 +327,7 @@ public class GraphContainer {
 			String cleanName = (String) cleanNamesIt.next();
 
 			Node updatedNode = nodeMaintainer.mutateNode(cleanName, bipartiteType,
-					graph, table, rowIndex, nodeMap, aggregateFunctionMappingType);
+					graph, table, rowIndex, nodeFunctionMap, aggregateFunctionMappingType);
 
 			updatedNodes.add(updatedNode);
 		}
@@ -313,16 +351,16 @@ public class GraphContainer {
 		return cleanedStrings;
 	}
 
-	public static GraphContainer initializeGraph(Table pdt, String sourceColumnName,
-			String targetColumnName, boolean isDirected, Properties p, LogService log)
-			throws InvalidColumnNameException {
-		return initializeGraph(pdt, sourceColumnName, targetColumnName, isDirected, p, log,
+	public static GraphContainer initializeGraph(Table inputTable, String sourceColumnName,
+			String targetColumnName, boolean isDirected, Properties properties, LogService log)
+			throws InvalidColumnNameException, PropertyParsingException {
+		return initializeGraph(inputTable, sourceColumnName, targetColumnName, isDirected, properties, log,
 				null);
 	}
 
 	public static GraphContainer initializeGraph(Table inputTable, String sourceColumnName,
-			String targetColumnName, boolean isDirected, Properties functions, LogService log, ProgressMonitor progressMonitor)
-			throws InvalidColumnNameException {
+			String targetColumnName, boolean isDirected, Properties properties, LogService log, ProgressMonitor progressMonitor)
+			throws InvalidColumnNameException, PropertyParsingException {
 		final Schema inputSchema = inputTable.getSchema();
 
 		if (inputSchema.getColumnIndex(sourceColumnName) < 0) {
@@ -338,14 +376,15 @@ public class GraphContainer {
 		if ((targetColumnNameArray == null) || (targetColumnNameArray.length == 0)) {
 			throw new InvalidColumnNameException(targetColumnName
 					+ " was not a column in this table.\n");
-		} else {
-			for (int ii = 0; ii < targetColumnNameArray.length; ii++) {
-				if (inputSchema.getColumnIndex(targetColumnNameArray[ii]) < 0) {
-					throw new InvalidColumnNameException(targetColumnNameArray[ii]
-							+ " was not a column in this table.\n");
-				}
+		}
+		
+		for (String columnName : targetColumnNameArray) {
+			if (inputSchema.getColumnIndex(columnName) < 0) {
+				throw new InvalidColumnNameException(columnName
+						+ " was not a column in this table.\n");
 			}
 		}
+
 
 		Schema nodeSchema = createNodeSchema();
 		Schema edgeSchema = createEdgeSchema();
@@ -353,8 +392,13 @@ public class GraphContainer {
 		AggregateFunctionMappings nodeAggregateFunctionMap = new AggregateFunctionMappings();
 		AggregateFunctionMappings edgeAggregateFunctionMap = new AggregateFunctionMappings();
 
-		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, functions,
-				nodeAggregateFunctionMap, edgeAggregateFunctionMap, log);
+		try {
+			AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema,
+					edgeSchema, properties, nodeAggregateFunctionMap,
+					edgeAggregateFunctionMap, log);
+		} catch (CompatibleAggregationNotFoundException e) {
+			throw new PropertyParsingException(e);
+		}
 
 		if (isPerformingCooccurrenceExtraction(sourceColumnName, targetColumnName)) {
 			/*
@@ -365,8 +409,12 @@ public class GraphContainer {
 			 */
 			// If we haven't already prepared to add an edge weight column...
 			if (edgeSchema.getColumnIndex(AggregateFunctionMappings.DEFAULT_WEIGHT_NAME) == -1) {
-				AggregateFunctionMappings.addDefaultEdgeWeightColumn(inputSchema, edgeSchema,
-						edgeAggregateFunctionMap, sourceColumnName);
+				try {
+					AggregateFunctionMappings.addDefaultEdgeWeightColumn(inputSchema, edgeSchema,
+							edgeAggregateFunctionMap, sourceColumnName);
+				} catch (CompatibleAggregationNotFoundException e) {
+					throw new PropertyParsingException(e);
+				}
 			}
 		}
 
@@ -419,8 +467,42 @@ public class GraphContainer {
 			String toSplit, String delimiter, Pattern splitPattern) {
 		if (!StringUtilities.isNull_Empty_OrWhitespace(delimiter)) {
 			return splitPattern.split(toSplit);
-		} else {
-			return new String[] { toSplit };
 		}
+		return new String[] { toSplit };
 	}
+	
+	/**
+	 * This error represents problems parsing the properties.
+	 */
+	 public static class PropertyParsingException extends Exception {
+		private static final long serialVersionUID = 814116449021611862L;
+
+		/**
+		  * @see Exception#Exception()
+		  */
+		 public PropertyParsingException() {
+			 super();
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(String) 
+		  */
+		 public PropertyParsingException(String message) {
+			 super(message);			
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(Throwable)
+		  */
+		 public PropertyParsingException(Throwable cause) {
+			 super(cause);			
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(String, Throwable)
+		  */
+		 public PropertyParsingException(String message, Throwable cause) {
+			 super(message, cause);
+		 }
+	 }
 }

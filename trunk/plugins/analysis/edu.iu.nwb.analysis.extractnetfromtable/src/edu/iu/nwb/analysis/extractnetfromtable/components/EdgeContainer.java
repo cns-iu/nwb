@@ -9,7 +9,12 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 
 public class EdgeContainer {
-	private static void createEdge(Vector edgeVector, Graph graph, Table table, int rowNumber,
+	boolean hasSkippedColumns;
+	
+	public EdgeContainer() {
+		this.hasSkippedColumns = false;
+	}
+	private void createEdge(Vector edgeVector, Graph graph, Table table, int rowNumber,
 			AggregateFunctionMappings afm) {
 		if (!graph.isDirected()) {
 			Integer src = new Integer(((Node) edgeVector.get(0)).getRow());
@@ -27,16 +32,25 @@ public class EdgeContainer {
 		final Edge edge = graph.addEdge(source, target);
 
 		ValueAttributes va = new ValueAttributes(edge.getRow());
-		va = FunctionContainer.mutateFunctions(edge, table, rowNumber, va, afm,
+		FunctionContainer functionContainer = new FunctionContainer();
+		va = functionContainer.mutateFunctions(edge, table, rowNumber, va, afm,
 				AggregateFunctionMappings.SOURCE_AND_TARGET);
+		if (functionContainer.hasSkippedColumns) {
+			this.hasSkippedColumns = true;
+			functionContainer.hasSkippedColumns = false;
+		}
 		afm.addFunctionRow(edgeVector, va);
 	}
 
-	protected static void mutateEdge(Node source, Node target, Graph graph, Table table,
+	// TODO rename to 'createOrUpdateEdge'
+	void mutateEdge(Node source, Node target, Graph graph, Table table,
 			int rowNumber, AggregateFunctionMappings afm) {
 		if (source == null || target == null)
 			return;
+		
+		// the source and target of the edge
 		final Vector edgeVector = new Vector(2);
+		
 		if (!graph.isDirected()) {
 			Integer src = new Integer(source.getRow());
 			Integer tgt = new Integer(target.getRow());
@@ -58,8 +72,13 @@ public class EdgeContainer {
 			createEdge(edgeVector, graph, table, rowNumber, afm);
 		} else {
 			int edgeNumber = va.getRowNumber();
-			FunctionContainer.mutateFunctions(graph.getEdge(edgeNumber), table, rowNumber, va, afm,
+			FunctionContainer functionContainer = new FunctionContainer();
+			functionContainer.mutateFunctions(graph.getEdge(edgeNumber), table, rowNumber, va, afm,
 					AggregateFunctionMappings.SOURCE_AND_TARGET);
+			if (functionContainer.hasSkippedColumns) {
+				this.hasSkippedColumns = true;
+				functionContainer.hasSkippedColumns = false;
+			}
 		}
 	}
 

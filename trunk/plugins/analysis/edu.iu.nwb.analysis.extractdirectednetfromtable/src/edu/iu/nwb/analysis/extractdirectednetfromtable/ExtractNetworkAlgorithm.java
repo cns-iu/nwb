@@ -16,6 +16,7 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Graph;
 import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
+import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer.PropertyParsingException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
 
@@ -81,6 +82,8 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 			return new Data[] { outData };
 		} catch (InvalidColumnNameException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (PropertyParsingException e) {
+			throw new AlgorithmExecutionException(e);
 		}
 	}
 

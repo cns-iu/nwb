@@ -19,6 +19,7 @@ import prefuse.data.Graph;
 import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
+import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer.PropertyParsingException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.AuthorPaperFormat;
 
@@ -85,21 +86,26 @@ public class ExtractAuthorPaperNetwork implements Algorithm, ProgressTrackable {
 		return tableData;
 	}
 
-	private Graph constructNetwork() throws InvalidColumnNameException {
+	private Graph constructNetwork() throws InvalidColumnNameException, AlgorithmExecutionException {
 		Properties aggregateProperties =
 			loadAggregatePropertiesFile(this.fileFormatPropertiesFileName);
 
 		String authorColumn =
 			AuthorPaperFormat.AUTHOR_NAME_COLUMNS_BY_FORMATS.get(this.fileFormat);
 		String paperColumn = AuthorPaperFormat.PAPER_NAME_COLUMNS_BY_FORMATS.get(this.fileFormat);
-		GraphContainer graphContainer = GraphContainer.initializeGraph(
-			this.table,
-			authorColumn,
-			paperColumn,
-			true,
-			aggregateProperties,
-			this.logger,
-			this.progressMonitor);
+		GraphContainer graphContainer;
+		try {
+			graphContainer = GraphContainer.initializeGraph(
+				this.table,
+				authorColumn,
+				paperColumn,
+				true,
+				aggregateProperties,
+				this.logger,
+				this.progressMonitor);
+		} catch (PropertyParsingException e) {
+			throw new AlgorithmExecutionException(e);
+		}
 		// TODO Test whether we can really hard-core "|".  Use sampledata bibtex etc.
 		Graph outputNetwork = graphContainer.buildGraph(
 			authorColumn, paperColumn, "|", false, this.logger);

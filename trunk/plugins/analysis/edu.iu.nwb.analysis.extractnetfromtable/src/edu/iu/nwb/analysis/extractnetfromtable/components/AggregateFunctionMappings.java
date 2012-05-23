@@ -62,10 +62,16 @@ public class AggregateFunctionMappings {
 		return this.functionColumnToAppliedNodeTypeMap.get(columnName);
 	}
 
+	/**
+	 * @throws CompatibleAggregationNotFoundException
+	 *             if no appropriate {@link AbstractAggregateFunction} could be
+	 *             found for the column type.
+	 */
 	public static void parseProperties(Schema input, Schema nodes,
 			Schema edges, Properties properties,
 			AggregateFunctionMappings nodeFunctionMappings,
-			AggregateFunctionMappings edgeFunctionMappings, LogService log) {
+			AggregateFunctionMappings edgeFunctionMappings, LogService log)
+			throws CompatibleAggregationNotFoundException {
 
 		if (properties != null) {
 			HashSet<AggregateFunctionName> functionNames = new HashSet<AggregateFunctionName>(
@@ -115,9 +121,9 @@ public class AggregateFunctionMappings {
 					if (key.startsWith("edge.")) {
 						if (!createColumn(newColumnName, function, columnType,
 								edges)) {
-							throw new IllegalArgumentException(
+							throw new CompatibleAggregationNotFoundException(
 									String.format(
-											"Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
+											"Trying to make column '%s', could not find an aggregation function %s that applies to column type %s",
 											newColumnName, function,
 											columnType.getName()));
 						}
@@ -127,9 +133,9 @@ public class AggregateFunctionMappings {
 					if (key.startsWith("node.")) {
 						if (!createColumn(newColumnName, function, columnType,
 								nodes)) {
-							throw new IllegalArgumentException(
+							throw new CompatibleAggregationNotFoundException(
 									String.format(
-											"Trying to make column %s, could not find an aggregation function %s that applies to column type %s",
+											"Trying to make column '%s', could not find an aggregation function %s that applies to column type %s",
 											newColumnName, function,
 											columnType.getName()));
 						}
@@ -167,10 +173,17 @@ public class AggregateFunctionMappings {
 
 	public static final String DEFAULT_WEIGHT_NAME = "weight";
 
+	/**
+	 * @throws CompatibleAggregationNotFoundException
+	 *             if no appropriate {@link AbstractAggregateFunction} could be
+	 *             found for the column type.
+	 * @throws IllegalArgumentException
+	 *             if the column for weight could not be created
+	 */
 	public static void addDefaultEdgeWeightColumn(Schema inputGraphNodeSchema,
 			Schema outputGraphEdgeSchema,
 			AggregateFunctionMappings edgeFunctionMappings,
-			String sourceColumnName) {
+			String sourceColumnName) throws CompatibleAggregationNotFoundException {
 		/*
 		 * Prepare to create a edge weight column, where each edge's weight is
 		 * the number of times that relationship between nodes has occurred in
@@ -182,7 +195,12 @@ public class AggregateFunctionMappings {
 		Class columnType = inputGraphNodeSchema
 				.getColumnType(sourceColumnName);
 
-		createColumn(newColumnName, function, columnType, outputGraphEdgeSchema);
+		if (!createColumn(newColumnName, function, columnType, outputGraphEdgeSchema)) {
+			throw new CompatibleAggregationNotFoundException(
+					String.format(
+							"Trying to make column '%s', could not find an aggregation function %s that applies to column type %s",
+							newColumnName, function, columnType.getName()));
+		}
 		edgeFunctionMappings.addFunctionMapping(newColumnName,
 				sourceColumnName, function);
 	}
@@ -196,8 +214,11 @@ public class AggregateFunctionMappings {
 	 * @param function
 	 * @param columnType
 	 * @param newSchema
-	 * @return
-	 * @throws AlgorithmExecutionException
+	 * @return <code>false</code> If no aggregation function could be found for
+	 *         the <code>columnType</code>.
+	 * @throws IllegalArgumentException
+	 *             if either name or type are null or the name already exists in
+	 *             this schema.
 	 */
 	private static boolean createColumn(String newColumnName,
 			AggregateFunctionName function, Class columnType,
@@ -211,4 +232,41 @@ public class AggregateFunctionMappings {
 		newSchema.addColumn(newColumnName, finalType);
 		return true;
 	}
+	
+	/**
+	 * This exception represents the case where no compatible
+	 * {@link AbstractAggregateFunction} could be found for the type, (e.g. if
+	 * you try to sum a string column).
+	 */
+	 public static class CompatibleAggregationNotFoundException extends Exception {
+		private static final long serialVersionUID = 7588826870075190310L;
+
+		/**
+		  * @see Exception#Exception()
+		  */
+		 public CompatibleAggregationNotFoundException() {
+			 super();
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(String) 
+		  */
+		 public CompatibleAggregationNotFoundException(String message) {
+			 super(message);			
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(Throwable)
+		  */
+		 public CompatibleAggregationNotFoundException(Throwable cause) {
+			 super(cause);			
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(String, Throwable)
+		  */
+		 public CompatibleAggregationNotFoundException(String message, Throwable cause) {
+			 super(message, cause);
+		 }
+	 }
 }

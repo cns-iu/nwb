@@ -9,6 +9,6 @@
   </parent>
   <groupId>edu.iu.nwb.analysis</groupId>
   <artifactId>edu.iu.nwb.analysis.extractdirectednetfromtable</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>eclipse-plugin</packaging>
 </project>

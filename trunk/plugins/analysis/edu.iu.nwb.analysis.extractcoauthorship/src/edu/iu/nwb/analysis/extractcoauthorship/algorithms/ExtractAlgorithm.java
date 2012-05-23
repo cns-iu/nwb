@@ -21,6 +21,7 @@ import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
+import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer.PropertyParsingException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 
 public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressTrackable {
@@ -97,6 +98,8 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressT
 		return new Data[] { outputData1, outputData2 };
 		}catch(InvalidColumnNameException ex){
 			throw new AlgorithmExecutionException(ex.getMessage(),ex);
+		} catch (PropertyParsingException e) {
+			throw new AlgorithmExecutionException(e);
 		}
 	}
 	

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.nwb.analysis.extractdirectednetfromtable
 Bundle-SymbolicName: edu.iu.nwb.analysis.extractdirectednetfromtable
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.analysis.extractnetfromtable.aggregate,
  edu.iu.nwb.analysis.extractnetfromtable.components,

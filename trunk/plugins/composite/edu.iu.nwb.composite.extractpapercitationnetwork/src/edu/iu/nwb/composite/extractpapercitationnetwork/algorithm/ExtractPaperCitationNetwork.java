@@ -20,6 +20,7 @@ import prefuse.data.Graph;
 import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
+import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer.PropertyParsingException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 
 public class ExtractPaperCitationNetwork implements Algorithm, ProgressTrackable {
@@ -77,6 +78,8 @@ public class ExtractPaperCitationNetwork implements Algorithm, ProgressTrackable
 			return new Data[]{ outputGraphData, outputTableData };
 		} catch (InvalidColumnNameException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (PropertyParsingException e) {
+			throw new AlgorithmExecutionException(e);
 		}
 
 	}

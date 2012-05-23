@@ -16,6 +16,12 @@ public class NodeMaintainer {
 	 */
 	private String bipartiteTypeColumnName = null;
 
+	boolean hasSkippedColumns;
+	
+	public NodeMaintainer() {
+		this.hasSkippedColumns = false;
+	}
+
 	protected Node createNode(String label, String bipartiteType, Graph graph, Table table,
 			int rowNumber, AggregateFunctionMappings nodeFunctionMappings, int nodeType) {
 		int nodeNumber = graph.addNodeRow();
@@ -35,8 +41,12 @@ public class NodeMaintainer {
 			n.set(bipartiteTypeColumnName, bipartiteType);
 		}
 		ValueAttributes va = new ValueAttributes(nodeNumber);
-		va = FunctionContainer.mutateFunctions(n, table, rowNumber, va, nodeFunctionMappings,
+		FunctionContainer functionContainer = new FunctionContainer();
+		va = functionContainer.mutateFunctions(n, table, rowNumber, va, nodeFunctionMappings,
 				nodeType);
+		if (functionContainer.hasSkippedColumns) {
+			this.hasSkippedColumns = true;
+		}
 		nodeFunctionMappings.addFunctionRow(new NodeID(label, bipartiteType), va);
 		return n;
 	}
@@ -54,7 +64,11 @@ public class NodeMaintainer {
 		} else {
 			int nodeNumber = va.getRowNumber();
 			n = graph.getNode(nodeNumber);
-			FunctionContainer.mutateFunctions(n, table, rowNumber, va, afm, nodeType);
+			FunctionContainer functionContainer = new FunctionContainer();
+			functionContainer.mutateFunctions(n, table, rowNumber, va, afm, nodeType);
+			if (functionContainer.hasSkippedColumns) {
+				this.hasSkippedColumns = true;
+			}
 		}
 
 		return n;
