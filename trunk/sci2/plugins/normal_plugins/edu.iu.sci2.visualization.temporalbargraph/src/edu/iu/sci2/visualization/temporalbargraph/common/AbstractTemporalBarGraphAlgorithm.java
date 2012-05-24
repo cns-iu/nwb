@@ -27,7 +27,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 	// SOMEDAY import external settings if possible
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
-	public static final String EPS_FILE_SUFFIX = ".eps";
+	public static final String PS_FILE_SUFFIX = ".ps";
 	public static final String CSV_FILE_SUFFIX = ".csv";
 
 	@Override
@@ -85,7 +85,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 
 	private static File writePostScriptCodeToTemporaryFile(
 			String postScriptCode, String temporaryFileName) throws IOException {
-		File psFile = File.createTempFile(temporaryFileName, EPS_FILE_SUFFIX);
+		File psFile = File.createTempFile(temporaryFileName, PS_FILE_SUFFIX);
 		psFile.deleteOnExit();
 
 		Files.write(postScriptCode, psFile, Charset.defaultCharset());
