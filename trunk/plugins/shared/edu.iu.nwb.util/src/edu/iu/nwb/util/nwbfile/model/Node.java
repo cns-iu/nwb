@@ -4,6 +4,8 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
+
 public final class Node extends NWBGraphPart {
 	private final int id;
 	private final String label;
@@ -31,7 +33,7 @@ public final class Node extends NWBGraphPart {
 		} else {
 			Node that = (Node) obj;
 			return this.id == that.id
-					&& this.label == that.label
+					&& Objects.equal(this.label, that.label)
 					&& Objects.equal(this.getAttributes(), that.getAttributes());
 		}
 	}
@@ -50,5 +52,10 @@ public final class Node extends NWBGraphPart {
 				.add("label", label)
 				.add("attribs", getAttributes())
 				.toString();
+	}
+
+	@Override
+	public boolean isAttributeReserved(String attributeName) {
+		return NWBFileProperty.NECESSARY_NODE_ATTRIBUTES.containsKey(attributeName);
 	}
 }

@@ -31,7 +31,7 @@ public class NicelyNamedEnums {
 	/**
 	 * The nice names defined by all enum constants of {@code enumClass}.
 	 * 
-	 * @throw IllegalArgumentException	If any nice name found is not unique. 
+	 * @throws IllegalArgumentException	If any nice name found is not unique. 
 	 */
 	public static <T extends Enum<T> & NicelyNamed> ImmutableSet<String> allNiceNamesOf(
 			Class<T> enumClass) {
@@ -41,7 +41,7 @@ public class NicelyNamedEnums {
 	/**
 	 * The enum constant with the given nice name.
 	 * 
-	 * @throw IllegalArgumentException	If any nice name found is not unique or if no enum constant
+	 * @throws IllegalArgumentException	If any nice name found is not unique or if no enum constant
 	 * 									has this nice name.
 	 */
 	public static <T extends Enum<T> & NicelyNamed> T getConstantNamed(
@@ -58,7 +58,7 @@ public class NicelyNamedEnums {
 	}
 
 	/**
-	 * @throw IllegalArgumentException	When nice names are not unique.
+	 * @throws IllegalArgumentException	When nice names are not unique.
 	 */
 	private static <T extends Enum<T> & NicelyNamed> ImmutableBiMap<String, T> mapNiceNamesToConstants(
 			Class<T> enumClass) {

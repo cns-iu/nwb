@@ -32,30 +32,30 @@ public class Legendarium {
 			return " ";
 		}
 		
-		String s = "";
+		StringBuilder ps = new StringBuilder();
 
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
 				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("legendDefinitions");
 			
-			s += definitionsTemplate.toString();
+			ps.append(definitionsTemplate.toString());
 			
 			this.hasPrintedDefinitions = true;
 		}
 		
-		s += "gsave" + "\n";
-		s += String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y);
+		ps.append("gsave" + "\n");
+		ps.append(String.format("%f %f moveto" + "\n", lowerLeft.x, lowerLeft.y));
 		
-		s += PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n";
-		s += PSUtility.setgray(0.0) + "\n";
-		s += "(Legend) show" + "\n";
-		s += "grestore" + "\n";
+		ps.append(PSUtility.findscalesetfont(pageLayout.titleFont()) + "\n");
+		ps.append(PSUtility.setgray(0.0) + "\n");
+		ps.append("(Legend) show" + "\n");
+		ps.append("grestore" + "\n");
 		
 		for (LabeledReference labeledReference : labeledReferences) {
-			s += labeledReference.toPostScript();
-			s += "\n";
+			ps.append(labeledReference.toPostScript());
+			ps.append("\n");
 		}
 
-		return s;
+		return ps.toString();
 	}
 }

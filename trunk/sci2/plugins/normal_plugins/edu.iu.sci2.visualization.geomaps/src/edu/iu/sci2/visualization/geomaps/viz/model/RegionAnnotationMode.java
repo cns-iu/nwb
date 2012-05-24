@@ -1,6 +1,5 @@
 package edu.iu.sci2.visualization.geomaps.viz.model;
 
-import java.awt.Color;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -28,12 +27,6 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
 public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimension> {
 	public static final String FEATURE_NAME_ID = "featureName";
-	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
-	public static final String COLOR_COLUMN_NAME_ID = "featureColorColumnName";
-	public static final String COLOR_SCALING_ID = "featureColorScaling";
-	public static final String COLOR_RANGE_ID = "featureColorRange";
-	
-	public static final Color DEFAULT_FEATURE_COLOR = null;
 	
 	private final String featureNameColumnName;
 

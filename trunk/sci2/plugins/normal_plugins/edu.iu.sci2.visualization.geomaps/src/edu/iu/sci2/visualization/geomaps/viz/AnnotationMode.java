@@ -4,14 +4,19 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.EnumSet;
 
+import org.antlr.stringtemplate.StringTemplate;
+
 import prefuse.data.Table;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.iu.sci2.visualization.geomaps.GeoMapsNetworkFactory;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset.Stage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
@@ -25,6 +30,7 @@ import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMapException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
 public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 	/**
@@ -50,10 +56,12 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			final Table table,
 			final Dictionary<String, Object> parameters,
 			PageLayout pageLayout,
-			String title)
+			String title,
+			String subtitle,
+			StringTemplate templateForHowToRead)
 				throws LegendCreationException, GeoMapException {
 		Shapefile shapefile = NicelyNamedEnums.getConstantNamed(
-				Shapefile.class, (String) parameters.get(Parameters.SHAPEFILE_ID));
+				Shapefile.class, (String) parameters.get(GeoMapsNetworkFactory.Parameter.SHAPEFILE_KEY.id()));
 		
 		KnownProjectedCRSDescriptor knownProjectedCRSDescriptor =
 				shapefile.getDefaultProjectedCrs();
@@ -84,7 +92,23 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 			LabeledReference legend = coding.makeLabeledReference(pageLayout, numericFormatType);			
 			legends.add(legend);
 		}
-
+		
+		Optional<HowToRead> howToRead = Optional.<HowToRead>absent();
+		if (pageLayout.howToReadLowerLeft().isPresent()) {
+			String mapKind = subtitle.toLowerCase();
+			
+			templateForHowToRead.setAttributes(ImmutableMap.of(
+					"mapKind", mapKind,
+					"baseMapDescription", shapefile.makeMapDescription(),
+					"projectionName", knownProjectedCRSDescriptor.getDescription(),
+					"hasInsets", shapefile.hasInsets(),
+					"partType", shapefile.getComponentDescriptionPlain()));		
+			String howToReadText = templateForHowToRead.toString().trim();
+			
+			howToRead = Optional.of(new HowToRead(pageLayout.howToReadLowerLeft().get(),
+					pageLayout, howToReadText, mapKind));
+		}
+		
 		return new GeoMap(
 				title,
 				shapefile,
@@ -92,7 +116,8 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 				makeFeatureViews(usableData, codings),
 				makeCircles(usableData, codings),
 				legends,
-				pageLayout);
+				pageLayout,
+				howToRead);
 	}
 	
 	private Collection<Binding<D>> bindTo(final Dictionary<String, Object> parameters) {

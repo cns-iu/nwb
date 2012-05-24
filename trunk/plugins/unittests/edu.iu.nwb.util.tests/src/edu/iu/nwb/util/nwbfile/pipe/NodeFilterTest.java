@@ -30,8 +30,7 @@ public class NodeFilterTest extends TestCase {
 				AttributePredicates.keepAbove("weight", 3.0));
 
 		byte[] toFilter = getTestNWB();
-		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(
-				toFilter));
+		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(toFilter));
 		parser.parse(filter);
 
 		verify(mock);
@@ -52,14 +51,13 @@ public class NodeFilterTest extends TestCase {
 				AttributePredicates.keepBelow("weight", 3.0));
 
 		byte[] toFilter = getTestNWB();
-		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(
-				toFilter));
+		NWBFileParser parser = new NWBFileParser(new ByteArrayInputStream(toFilter));
 		parser.parse(filter);
 
 		verify(mock);
 	}
 
-	private byte[] getTestNWB() {
+	private static byte[] getTestNWB() {
 		StringBuilder s = new StringBuilder();
 
 		s.append("*Nodes 5\n");

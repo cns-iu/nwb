@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Ordering;
 
@@ -19,6 +20,7 @@ import edu.iu.nwb.util.nwbfile.model.AttributePredicate;
 import edu.iu.nwb.util.nwbfile.model.Edge;
 import edu.iu.nwb.util.nwbfile.model.NWBGraphPart;
 import edu.iu.nwb.util.nwbfile.model.Node;
+import edu.iu.nwb.util.nwbfile.pipe.NodeAttributeComputer.AdditiveNodeAttributeComputer;
 
 public class ParserPipe {
 	private ParserStage pipeHead = new ParserStage();
@@ -83,7 +85,7 @@ public class ParserPipe {
 	 * you pass it in.
 	 * <p>
 	 * When extracting {@code nodeLimit} nodes, this algorithm should use
-	 * O({@code nodeLimit}) space. 
+	 * O({@code nodeLimit}) space.
 	 * 
 	 * @see #getNaturalOrdering(String)
 	 * @see Ordering#reverse()
@@ -126,7 +128,7 @@ public class ParserPipe {
 	 * {@link #keepMinimumEdges(int, Ordering)} filters.
 	 * <p>
 	 * Doesn't handle {@code null} (or missing attributes) gracefully.  You should probably put a
-	 * {@link #requireNodeAttribute(String)} or {@code requireEdgeAttribute} filter before
+	 * {@link #requireNodeAttribute(String)} or {@link #requireEdgeAttribute(String)} filter before
 	 * using an attribute with this Ordering.
 	 * <p>
 	 * The source, target, and directedness of an Edge are not stored in the attributes dictionary,
@@ -136,6 +138,8 @@ public class ParserPipe {
 	 * @see Ordering
 	 * @param attributeName the attribute to fetch on each Node or Edge
 	 */
+	/* TODO Give client greater null handling flexibility, maybe take the base Ordering as a
+	 * parameter? */
 	public static <G extends NWBGraphPart> Ordering<G> getNaturalOrdering(final String attributeName) {
 		// OK because we expect all values of the attribute to be of the same type,
 		// one of the Numbers or a String.
@@ -147,10 +151,14 @@ public class ParserPipe {
 	/**
 	 * Discards nodes that do not have a value for the given attribute.  In the input NWB file,
 	 * this means they have a "*" instead of another value.
+	 * <p>
+	 * ID and label are not accessible to this function.
 	 * 
 	 * @param attribute the attribute to require
 	 */
 	public ParserPipe requireNodeAttribute(final String attribute) {
+		checkNotReservedNodeAttribute(attribute);
+		
 		return filterNodes(new AttributePredicate() {
 			@Override
 			public boolean apply(Map<String, Object> input) {
@@ -164,10 +172,14 @@ public class ParserPipe {
 	
 	/**
 	 * Discards edges that do not have a value for the given attribute.
+	 * <p>
+	 * Source and target are not accessible to this function.
 	 * 
 	 * @param attribute the attribute to require
 	 */
 	public ParserPipe requireEdgeAttribute(final String attribute) {
+		checkNotReservedEdgeAttribute(attribute);
+		
 		return filterEdges(new AttributePredicate() {
 			@Override
 			public boolean apply(Map<String, Object> input) {
@@ -183,24 +195,47 @@ public class ParserPipe {
 	 * Removes a particular attribute from all the Nodes.
 	 */
 	public ParserPipe removeNodeAttribute(final String attribute) {
+		checkNotReservedNodeAttribute(attribute);
+		
 		extendParserPipe(new NodeAttributeRemover(GuardParserHandler.getInstance(), attribute));
 		return this;
 	}
 	
 	/**
-	 * Adds an attribute to the Node schema, but doesn't set it on any of the nodes.
+	 * Adds an attribute to the node schema.
 	 * <p>
-	 * The {@code type} parameter must be one of the {@code NWBFileProperty.TYPE_*}
-	 * constants.
+	 * ID and label cannot be added as they are guaranteed to be present.
 	 * 
 	 * @see NWBFileProperty#TYPE_FLOAT
 	 * @see NWBFileProperty#TYPE_INT
 	 * @see NWBFileProperty#TYPE_STRING
-	 * @param name the attribute name to add
-	 * @param type the attribute type
+	 * @param name
+	 *            The attribute name to add
+	 * @param type
+	 *            One of the {@code NWBFileProperty.TYPE_*} constants
 	 */
 	public ParserPipe addNodeAttribute(final String name, final String type) {
-		extendParserPipe(new NodeAttributeAdder(GuardParserHandler.getInstance(), name, type));
+		checkNotReservedNodeAttribute(name);
+		
+		return addNodeAttributes(ImmutableMap.of(name, type));
+	}
+	
+	/**
+	 * Adds attributes to the node schema.
+	 * <p>
+	 * ID and label cannot be added as they are guaranteed to be present.
+	 * 
+	 * @see NWBFileProperty#TYPE_FLOAT
+	 * @see NWBFileProperty#TYPE_INT
+	 * @see NWBFileProperty#TYPE_STRING
+	 * @param schemaUpdates
+	 *            A map from attribute names to types. Each type value should be one of the
+	 *            {@code NWBFileProperty.TYPE_*} constants).
+	 */
+	public ParserPipe addNodeAttributes(Map<String, String> schemaUpdates) {
+		checkForReservedNodeAttributes(schemaUpdates);
+		
+		extendParserPipe(new NodeAttributeAdder(GuardParserHandler.getInstance(), schemaUpdates));
 		return this;
 	}
 	
@@ -212,6 +247,8 @@ public class ParserPipe {
 	 * <p>
 	 * The {@code type} parameter must be one of the {@code NWBFileProperty.TYPE_*}
 	 * constants.
+	 * <p>
+	 * ID and label cannot be added as they are guaranteed to be present.
 	 * 
 	 * @see NWBFileProperty#TYPE_FLOAT
 	 * @see NWBFileProperty#TYPE_INT
@@ -221,24 +258,61 @@ public class ParserPipe {
 	 * @param defaultValue the value to use on Nodes that don't have the attribute yet
 	 */
 	public ParserPipe addNodeAttribute(final String name, final String type, Object defaultValue) {
+		checkNotReservedNodeAttribute(name);
+		
 		extendParserPipe(new NodeAttributeDefaulter(GuardParserHandler.getInstance(), name, type, defaultValue));
 		return this;
 	}
 	
 	/**
-	 * Adds an attribute to the Node schema.  Then, for each node, computes the value
-	 * of the attribute using a routine that you supply.
+	 * Adds an attribute to the node schema and computes its value for each node using the provided
+	 * {@link FieldMakerFunction}.
 	 * <p>
-	 * The {@code type} parameter must be one of the {@code NWBFileProperty.TYPE_*}
-	 * constants.
+	 * ID and label cannot be added or accessed by the computer.
 	 * 
-	 * @see FieldMakerFunction
 	 * @see NWBFileProperty#TYPE_FLOAT
 	 * @see NWBFileProperty#TYPE_INT
 	 * @see NWBFileProperty#TYPE_STRING
+	 * @param name
+	 *            The name of the attribute
+	 * @param type
+	 *            The type of the attribute (one of the {@code NWBFileProperty.TYPE_*} constants)
+	 * @param computer
+	 *            Computes the value of the new attribute for each node
 	 */
-	public ParserPipe addComputedNodeAttribute(final String name, final String type, FieldMakerFunction computer) {
-		extendParserPipe(new NodeAttributeComputer(GuardParserHandler.getInstance(), name, type, computer));
+	public ParserPipe addComputedNodeAttribute(
+			final String name, final String type, FieldMakerFunction computer) {
+		checkNotReservedNodeAttribute(name);
+		
+		return addComputedNodeAttributes(ImmutableMap.of(name, type), computer);
+	}
+	
+	/**
+	 * Adds attributes to the node schema and computes their values for each node using the
+	 * provided {@link FieldMakerFunction}.
+	 * 
+	 * <p>
+	 * The names of the attributes declared in {@code schemaUpdates} must not collide with the
+	 * names of any existing node attributes.
+	 * 
+	 * <p>
+	 * The names of the computed attributes must be among those declared in {@code schemaUpdates}.
+	 * <p>
+	 * ID and label cannot be added or accessed by the computer.
+	 * 
+	 * @see NWBFileProperty#TYPE_FLOAT
+	 * @see NWBFileProperty#TYPE_INT
+	 * @see NWBFileProperty#TYPE_STRING
+	 * @param schemaUpdates
+	 *            A map from attribute names to types. Each type value should be one of the
+	 *            {@code NWBFileProperty.TYPE_*} constants).
+	 */
+	public ParserPipe addComputedNodeAttributes(Map<String, String> schemaUpdates,
+			FieldMakerFunction computer) {
+		checkForReservedNodeAttributes(schemaUpdates);
+		
+		extendParserPipe(new AdditiveNodeAttributeComputer(
+				GuardParserHandler.getInstance(), schemaUpdates, computer));
 		return this;
 	}
 	
@@ -251,9 +325,11 @@ public class ParserPipe {
 	 * which makes them far more flexible, but also much less efficient.
 	 * 
 	 * @param label the new Node's label
-	 * @param attributes the new Node's attributes
+	 * @param attributes the new Node's attributes, other than ID and label
 	 */
 	public ParserPipe injectNode(final String label, final Map<String, ? extends Object> attributes) {
+		checkForReservedNodeAttributes(attributes);
+		
 		extendParserPipe(NodeInjector.create(label, attributes));
 		return this;
 	}
@@ -261,9 +337,14 @@ public class ParserPipe {
 	/**
 	 * Changes the name of a Node attribute.  Renaming something to a name that already exists
 	 * causes undefined behavior; use {@link #removeNodeAttribute(String)} first in that case.
+	 * <p>
+	 * ID and label cannot be renamed.
 	 * 
 	 */
 	public ParserPipe renameNodeAttribute(final String oldName, final String newName) {
+		checkNotReservedNodeAttribute(oldName);
+		checkNotReservedNodeAttribute(newName);
+		
 		extendParserPipe(NodeAttributeRenamer.create(GuardParserHandler.getInstance(), ImmutableMap.of(oldName, newName)));
 		return this;
 	}
@@ -312,6 +393,8 @@ public class ParserPipe {
 		return new Function<G, T>() {
 			@Override
 			public T apply(G input) {
+				Preconditions.checkArgument(! input.isAttributeReserved(attribute),
+						"Cannot use reserved attribute %s", attribute);
 				return clazz.cast(input.getAttribute(attribute));
 			}
 		};
@@ -335,5 +418,33 @@ public class ParserPipe {
 		return Objects.toStringHelper(this)
 				.add("pipe", pipeHead)
 				.toString();
+	}
+	
+	/*
+	 * Reserved Attribute Checking
+	 * 
+	 * The source, target, and directedness of an Edge are not stored in the attributes dictionary,
+	 * and neither are the id and label of a Node.  This is because of the design of the
+	 * NWBFileParserHandler interface, which uses source, target, id, and label as separate
+	 * parameters to its methods.  If you really want to manipulate or access these properties,
+	 * you'll have to go one level deeper, and either extend ParserStage (or NWBFileParserHandler),
+	 * or make your own Ordering<Node> or Ordering<Edge> (if applicable).
+	 */
+	private static void checkNotReservedNodeAttribute(String attribute) {
+		Preconditions.checkArgument(
+				!(NWBFileProperty.NECESSARY_NODE_ATTRIBUTES.containsKey(attribute)),
+				"Node attribute \"%s\" is reserved.", attribute);
+	}
+	
+	private static void checkNotReservedEdgeAttribute(String attribute) {
+		Preconditions.checkArgument(
+				!(NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES.containsKey(attribute)),
+				"Edge attribute \"%s\" is reserved.", attribute);
+	}
+	
+	private static void checkForReservedNodeAttributes(Map<String, ?> map) {
+		for (String attribute : map.keySet()) {
+			checkNotReservedNodeAttribute(attribute);
+		}
 	}
 }

@@ -59,7 +59,7 @@ public class OrderedEdgeCollectorTest extends TestCase {
 		verify(mock);
 	}
 
-	private byte[] getTestNWB() {
+	private static byte[] getTestNWB() {
 		StringBuilder s = new StringBuilder();
 
 		s.append("*Nodes 5\n");

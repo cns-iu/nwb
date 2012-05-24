@@ -1,34 +1,27 @@
 package edu.iu.nwb.util.nwbfile.pipe;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 
 class NodeAttributeAdder extends ParserStage {
-	private final String fieldName;
-	private final String fieldType;
+	private final ImmutableMap<String, String> schemaUpdates;
 
-	public NodeAttributeAdder(NWBFileParserHandler delegate, String fieldName, String fieldType) {
+	public NodeAttributeAdder(NWBFileParserHandler delegate, Map<String, String> schemaUpdates) {
 		super(delegate);
-		this.fieldName = fieldName;
-		this.fieldType = fieldType;
+		
+		this.schemaUpdates = ImmutableMap.copyOf(schemaUpdates);
 	}
 
 	@Override
 	public void setNodeSchema(LinkedHashMap<String, String> schema) {
 		LinkedHashMap<String, String> copy = Maps.newLinkedHashMap(schema);
-		copy.put(getFieldName(), getFieldType());
+		copy.putAll(schemaUpdates);
+		
 		super.setNodeSchema(copy);
 	}
-
-	public String getFieldName() {
-		return fieldName;
-	}
-
-	public String getFieldType() {
-		return fieldType;
-	}
-
 }

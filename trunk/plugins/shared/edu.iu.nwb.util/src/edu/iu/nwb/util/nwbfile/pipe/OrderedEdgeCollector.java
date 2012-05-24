@@ -60,8 +60,7 @@ class OrderedEdgeCollector extends ParserStage {
 			super.setDirectedEdgeSchema(this.directedEdgeSchema);
 			for (Edge e : edges) {
 				if (e.isDirected()) {
-					super.addDirectedEdge(e.getSource(), e.getTarget(),
-							e.getAttributes());
+					super.addDirectedEdge(e.getSource(), e.getTarget(), e.getAttributes());
 				}
 			}
 		}
@@ -69,8 +68,7 @@ class OrderedEdgeCollector extends ParserStage {
 			super.setUndirectedEdgeSchema(this.undirectedEdgeSchema);
 			for (Edge e : edges) {
 				if (!e.isDirected()) {
-					super.addUndirectedEdge(e.getSource(), e.getTarget(),
-							e.getAttributes());
+					super.addUndirectedEdge(e.getSource(), e.getTarget(), e.getAttributes());
 				}
 			}
 		}

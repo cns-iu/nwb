@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.geomaps.data.scaling;
 
+import edu.iu.sci2.visualization.geomaps.LogStream;
+
 
 public enum Scaling {
 	Linear {
@@ -61,6 +63,7 @@ public enum Scaling {
 			scale(value);
 			return true;
 		} catch (ScalingException e) {
+			LogStream.DEBUG.send(e, "Failed to scale value %f.", value);
 			return false;
 		}
 	}

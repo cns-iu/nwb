@@ -18,7 +18,7 @@ public abstract class AbstractCoding<D extends Enum<D> & VizDimension, V> implem
 	private final Range<Double> usableRange;
 	private final Continuum<V> vizContinuum;
 	
-	public AbstractCoding(Binding<D> binding, Range<Double> usableRange, Continuum<V> vizContinuum) {
+	protected AbstractCoding(Binding<D> binding, Range<Double> usableRange, Continuum<V> vizContinuum) {
 		this.binding = binding;
 		this.usableRange = usableRange;
 		this.vizContinuum = vizContinuum;

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
 
-import org.osgi.service.log.LogService;
-
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 
@@ -20,8 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.sci2.visualization.geomaps.data.GeoDatum.GeoDatumValueInterpretationException;
+import edu.iu.sci2.visualization.geomaps.LogStream;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
@@ -51,17 +48,18 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		for (Tuple tuple : tuples) {
 			try {
 				builder.add(GeoDatum.forTuple(tuple, dimensionToBinding, dimensionClass, geoMaker));
-			} catch (GeoDatumValueInterpretationException e) {
+			} catch (GeoDatum.GeoDatumValueInterpretationException e) {
 				// Skip tuples we can't use.  The presence and number of these is reported below.
+				LogStream.DEBUG.send(e, "Skipping uninterpretable tuple %s.", tuple);
 			}
 		}
 		ImmutableSet<GeoDatum<G, D>> geoData = builder.build();
 
 		if (geoData.size() < tuples.size()) {
 			int incompleteSpecificationCount = tuples.size() - geoData.size();
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, String.format(
+			LogStream.WARNING.send(
 					"%d rows of the table did not specify all required values and were skipped.",
-					incompleteSpecificationCount));
+					incompleteSpecificationCount);
 		}
 
 		return new GeoDataset<G, D>(geoData, bindings);

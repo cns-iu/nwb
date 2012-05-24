@@ -24,7 +24,7 @@ public class GeoMapsNetworkFactory implements AlgorithmFactory, ParameterMutator
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciShellContext) {
-		return new GeoMapsNetworkAlgorithm(data, parameters, ciShellContext);
+		return new GeoMapsNetworkAlgorithm(data, parameters);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class GeoMapsNetworkFactory implements AlgorithmFactory, ParameterMutator
 			throw new AlgorithmCreationFailedException(message, e);
 		} catch (NWBMetadataParsingException e) {
 			throw new AlgorithmCreationFailedException("Error reading input file: " + e.getMessage(), e);
-		}		
+		}
 	}
 	
 

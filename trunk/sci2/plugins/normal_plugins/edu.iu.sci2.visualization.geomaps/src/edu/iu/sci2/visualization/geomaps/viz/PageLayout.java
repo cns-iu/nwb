@@ -2,11 +2,13 @@ package edu.iu.sci2.visualization.geomaps.viz;
 
 import java.awt.Font;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
 
 import com.google.common.base.Optional;
 
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
+import edu.iu.sci2.visualization.geomaps.utility.Rectangles;
 
 /**
  * All figures in points.  1 point = 1/72 inch.
@@ -161,5 +163,27 @@ public enum PageLayout {
 		} else {
 			return Optional.absent();
 		}
+	}
+
+	public Rectangle2D.Double calculateMapRectangle(Rectangle2D.Double dataRectangle) {
+		double availableMapHeight =	mapPageAreaMaxDimensions().getHeight();
+		
+		double mapCenterY =
+				pageFooterHeight()
+				+ legendariumReservedDimensions().getHeight()
+				+ availableMapHeight / 2;
+		Point2D.Double displayCenter = new Point2D.Double(mapCenterX(), mapCenterY);
+		
+		double xScale =
+				mapPageAreaMaxDimensions().getWidth()  / dataRectangle.getWidth();
+		double yScale =
+				mapPageAreaMaxDimensions().getHeight() / dataRectangle.getHeight();
+		double scale = Math.min(xScale, yScale);		
+		
+		Dimension<Double> displayDimension = Dimension.ofSize(
+				(scale * dataRectangle.getWidth()),
+				(scale * dataRectangle.getHeight()));
+		
+		return Rectangles.forCenterWithDimensions(displayCenter, displayDimension);
 	}
 }

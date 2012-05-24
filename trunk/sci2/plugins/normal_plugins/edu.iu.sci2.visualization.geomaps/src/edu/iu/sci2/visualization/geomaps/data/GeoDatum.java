@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.geomaps.data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cishell.utilities.NumberUtilities;
 
@@ -37,17 +38,21 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 		
 		return of(geoDatum.geo, updatedValues);
 	}
+
 	/**
-	 * @throw {@link GeoDatumValueInterpretationException} If the value in any dimension is
-	 *        absent or non-numeric
+	 * @throws GeoDatumValueInterpretationException
+	 *             If the value in any dimension is absent or non-numeric
 	 */
 	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> forTuple(Tuple tuple,
 			Map<D, ? extends Binding<D>> dimensionToBinding, Class<D> dimensionClass,
 			Function<Tuple, G> geoMaker) throws GeoDatumValueInterpretationException {
 		EnumMap<D, Double> dimensionToValue = Maps.newEnumMap(dimensionClass);
 		
-		for (D dimension : dimensionToBinding.keySet()) {
-			Object valueObject = tuple.get(dimensionToBinding.get(dimension).columnName());
+		for (Entry<D, ? extends Binding<D>> dimensionAndBinding : dimensionToBinding.entrySet()) {
+			D dimension = dimensionAndBinding.getKey();
+			Binding<D> binding = dimensionAndBinding.getValue();
+			
+			Object valueObject = tuple.get(binding.columnName());
 
 			if (valueObject == null) {
 				throw new GeoDatumValueInterpretationException(String.format(

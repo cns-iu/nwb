@@ -14,7 +14,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
-import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
@@ -35,22 +34,21 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
 public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Choropleth Map";
-	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
+	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ =
 			HowToRead.TEMPLATE_GROUP.getInstanceOf("choropleth");
 	
 	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciShellContext) {
 		String featureNameColumnName = (String) parameters.get(RegionAnnotationMode.FEATURE_NAME_ID);
-		
+
 		return new GeoMapsAlgorithm<String, FeatureDimension>(
 				data,
 				parameters,
 				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
 				SUBTITLE,
-				TEMPLATE_FOR_HOW_TO_READ,
-				(LogService) ciShellContext.getService(LogService.class.getName()));
+				TEMPLATE_FOR_HOW_TO_READ);
 	}
 	
 	abstract PageLayout getPageLayout();
@@ -59,7 +57,7 @@ public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, Paramet
 		@Override
 		PageLayout getPageLayout() {
 			return PageLayout.PRINT;
-		}		
+		}
 	}
 	
 	public static class Web extends GeoMapsRegionsFactory {
@@ -79,6 +77,7 @@ public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, Paramet
 					Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
 		} catch (ColumnNotFoundException e) {
 			// No problem, the color coding is optional so no numeric columns are strictly necessary
+			LogStream.DEBUG.send(e, "No numeric table columns found.");
 		}
 		
 		List<String> stringColumnNames = ImmutableList.of();
@@ -99,14 +98,14 @@ public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, Paramet
 		for (VizDimension dimension : EnumSet.allOf(FeatureDimension.class)) {
 			dimension.addOptionsToAlgorithmParameters(mutator, numericColumnNames);
 		}
-
+		
 		mutator.add(RegionAnnotationMode.FEATURE_NAME_ID, stringColumnNames);
 		
-		mutator.add(RegionAnnotationMode.COLOR_SCALING_ID,
+		mutator.add(FeatureDimension.REGION_COLOR.getScalingParameterId(),
 				Collections2.transform(EnumSet.allOf(Scaling.class), Functions.toStringFunction()));
 
-		mutator.add(
-				RegionAnnotationMode.COLOR_RANGE_ID, AbstractColorCoding.COLOR_CONTINUUMS.keySet());
+		mutator.add(FeatureDimension.REGION_COLOR.getRangeParameterId(),
+				AbstractColorCoding.COLOR_CONTINUUMS.keySet());
 		
 		return mutator.mutate(oldOCD);
 	}

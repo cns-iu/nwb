@@ -15,7 +15,6 @@ import org.cishell.utilities.StringUtilities;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.operation.TransformException;
-import org.osgi.service.log.LogService;
 
 import com.google.common.base.Equivalences;
 import com.google.common.base.Function;
@@ -26,7 +25,7 @@ import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
+import edu.iu.sci2.visualization.geomaps.LogStream;
 import edu.iu.sci2.visualization.geomaps.utility.Iterables2;
 import edu.iu.sci2.visualization.geomaps.utility.Lists2;
 import edu.iu.sci2.visualization.geomaps.utility.Points;
@@ -41,7 +40,7 @@ public class FeaturePrinter {
 	 * Point-to-point distances in a path exceeding this threshold are assumed to be projection
 	 * glitches.  We'll use this to split paths as necessary into subpaths with no big jumps.
 	 */
-	public static final double INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD = 150;
+	public static final double GLITCH_DETECTION_THRESHOLD = 150;
 	public static final double BORDER_BRIGHTNESS = 0.7;
 	public static final double BORDER_LINE_WIDTH = 0.4;
 	public static final String INDENT = "  ";
@@ -86,14 +85,14 @@ public class FeaturePrinter {
 		out.write(PSUtility.setgray(BORDER_BRIGHTNESS) + "\n");
 		out.write("\n");
 
-		FeatureIterator<SimpleFeature> iterator = geoMap.getShapefile().viewOfFeatureCollection().features();
-		while (iterator.hasNext()) {
-			SimpleFeature feature = iterator.next();
-
-			printFeature(out, feature, featureColorMap);
+		FeatureIterator<SimpleFeature> featuresIt = geoMap.getShapefile().viewOfFeatureCollection().features();
+		try {
+			while (featuresIt.hasNext()) {
+				printFeature(out, featuresIt.next(), featureColorMap);
+			}
+		} finally {
+			featuresIt.close();
 		}
-		// Quoth GeoTools: "YOU MUST CLOSE THE ITERATOR!"
-		iterator.close();
 
 		out.write("grestore" + "\n");
 
@@ -136,7 +135,7 @@ public class FeaturePrinter {
 				ArrayListUtilities.makePreview(
 					unfoundFeatureNames, prefixSize, suffixSize, ", ", "...");
 			
-			String warning = "Warning: "
+			String message = "Warning: "
 				+ unfoundFeatureNames.size()
 				+ " regions had "
 				+ "data associated in the table but could not be found in "
@@ -147,19 +146,18 @@ public class FeaturePrinter {
 				+ ".";
 			
 			if (unfoundFeatureNames.size() > previewSize) {
-				warning += "  The full list is in the log file.";
+				message += "  The full list is in the log file.";
 			}
 			
-			GeoMapsAlgorithm.logger.log(
-				LogService.LOG_WARNING,
-				warning,
+			LogStream.WARNING.send(
 				new Exception(
 					"These regions could not be found in the shapefile (using "
 					+ "region name key \""
 					+ geoMap.getShapefile().getFeatureAttributeName()
 					+ "\"): "
 					+ StringUtilities.implodeItems(unfoundFeatureNames, ", ")
-					+ "."));
+					+ "."),
+				message);
 		}
 	}
 
@@ -170,12 +168,12 @@ public class FeaturePrinter {
 				throws IOException, TransformException {
 		String featureName = geoMap.getShapefile().extractFeatureName(feature);
 		
-		for (Geometry geometry : geoMap.projectAndInset((Geometry) feature.getDefaultGeometry())) {
-			for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
+		for (Geometry geometry : geoMap.cropTransformAndInset((Geometry) feature.getDefaultGeometry())) {
+			final int numberOfSubgeometries = geometry.getNumGeometries();
+			for (int gg = 0; gg < numberOfSubgeometries; gg++) {
 				out.write(INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
-				Geometry subgeometry = geometry.getGeometryN(gg);
 				
-				printGeometry(subgeometry, out, featureColorMap, featureName);
+				printGeometry(geometry.getGeometryN(gg), out, featureColorMap, featureName);
 			}
 		}
 
@@ -198,8 +196,8 @@ public class FeaturePrinter {
 				coordinates,
 				new Function<Coordinate, Point2D.Double>() {
 					@Override
-					public Point2D.Double apply(Coordinate input) {
-						return geoMapViewPageArea.displayPointFor(input);
+					public Point2D.Double apply(Coordinate projectedCoordinate) {
+						return geoMapViewPageArea.displayPointFor(projectedCoordinate);
 					}					
 				});
 		
@@ -214,7 +212,7 @@ public class FeaturePrinter {
 		List<List<Point2D.Double>> paths = Iterables2.split(
 				distinctDisplayPoints,
 				Points.distanceEquivalenceWithTolerance(
-						INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD)); 
+						GLITCH_DETECTION_THRESHOLD)); 
 		
 		List<List<Point2D.Double>> pathsExceptLast = paths.subList(0, paths.size() - 1);
 		List<Point2D.Double> lastPath = paths.get(paths.size() - 1);

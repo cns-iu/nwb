@@ -15,7 +15,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
-import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
@@ -32,7 +31,7 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
 
 public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String SUBTITLE = "Proportional Symbol Map";
-	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ = 
+	public static final StringTemplate TEMPLATE_FOR_HOW_TO_READ =
 			HowToRead.TEMPLATE_GROUP.getInstanceOf("proportionalSymbols");
 
 	@Override
@@ -42,15 +41,14 @@ public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, Paramet
 				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		String longitudeColumnName =
 				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
-		
+
 		return new GeoMapsAlgorithm<Coordinate, CircleDimension>(
 				data,
 				parameters,
 				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
 				SUBTITLE,
-				TEMPLATE_FOR_HOW_TO_READ,
-				(LogService) ciShellContext.getService(LogService.class.getName()));
+				TEMPLATE_FOR_HOW_TO_READ);
 	}
 	
 	abstract PageLayout getPageLayout();
@@ -59,7 +57,7 @@ public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, Paramet
 		@Override
 		PageLayout getPageLayout() {
 			return PageLayout.PRINT;
-		}		
+		}
 	}
 	
 	public static class Web extends GeoMapsCirclesFactory {

@@ -38,7 +38,6 @@ import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
-import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.Inset.Request;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
 
 public enum Shapefile implements NicelyNamed {
@@ -47,7 +46,7 @@ public enum Shapefile implements NicelyNamed {
 			"NAME",
 			KnownProjectedCRSDescriptor.ALBERS,
 			ImmutableSet.of(Inset.Request.ALASKA, Inset.Request.HAWAII, Inset.Request.PUERTO_RICO),
-			ImmutableSet.of(AnchorPoint.NEAR_ALEUTIAN_ISLANDS, AnchorPoint.NEAR_PUERTO_RICO)),
+			ImmutableSet.of(AnchorPoint.NEAR_WASHINGTON, AnchorPoint.NEAR_FLORIDA)),
 	WORLD(
 			Resources.getResource(Shapefile.class, "countries.shp"), "World",
 			"%d countries of the world", "Country", "country", "NAME",
@@ -166,10 +165,13 @@ public enum Shapefile implements NicelyNamed {
 		Set<String> uniqueFeatureNames = Sets.newHashSet();
 
 		FeatureIterator<SimpleFeature> it = viewOfFeatureCollection().features();
-		while (it.hasNext()) {
-			uniqueFeatureNames.add(extractFeatureName(it.next()));
+		try {
+			while (it.hasNext()) {
+				uniqueFeatureNames.add(extractFeatureName(it.next()));
+			}
+		} finally {
+			it.close();
 		}
-		it.close();
 
 		return String.format(mapDescriptionFormat, uniqueFeatureNames.size());
 	}
@@ -194,7 +196,7 @@ public enum Shapefile implements NicelyNamed {
 		return anchorPoints;
 	}
 
-	public ImmutableCollection<Request> getInsetRequests() {
+	public ImmutableCollection<Inset.Request> getInsetRequests() {
 		return insetRequests;
 	}
 
@@ -238,7 +240,9 @@ public enum Shapefile implements NicelyNamed {
 		public static Inset forRequest(Request request, Shapefile shapefile,
 				GeometryProjector projector) throws InsetCreationException {
 			try {
-				return new Inset(request, shapefile.boundsForFeatureName(request.getFeatureName()),
+				return new Inset(
+						request,
+						shapefile.boundsForFeatureName(request.getFeatureName()),
 						createTransform(request, projector));
 			} catch (FeatureBoundsDetectionException e) {
 				throw new InsetCreationException(String.format(
@@ -254,39 +258,39 @@ public enum Shapefile implements NicelyNamed {
 		private static AffineTransform2D createTransform(Request request,
 				GeometryProjector projector) throws TransformException {
 			// First, re-center at origin so the scale works right
-			Coordinate naturalAnchorDisplayCoordinate = displayCoordinate(
-					request.getNaturalAnchor(), projector);
-			AffineTransform preScale = AffineTransform.getTranslateInstance(
-					-naturalAnchorDisplayCoordinate.x, -naturalAnchorDisplayCoordinate.y);
+			Point naturalPoint = projector.transformCoordinate(request.getNaturalAnchor());
+			AffineTransform preScale = AffineTransform.getTranslateInstance(-naturalPoint.getX(),
+					-naturalPoint.getY());
 
 			// Second, scale
 			AffineTransform scale = AffineTransform.getScaleInstance(
-					request.calculateDimensionScaling(),
-					request.calculateDimensionScaling());
+					request.calculateDimensionScaling(), request.calculateDimensionScaling());
 
 			// Third, move so that the natural anchor is now at the inset anchor
-			Coordinate insetAnchorDisplayCoordinate = displayCoordinate(
-					request.getInsetAnchor(), projector);
-			AffineTransform postScale = AffineTransform.getTranslateInstance(
-					insetAnchorDisplayCoordinate.x, insetAnchorDisplayCoordinate.y);
+			Point insetPoint = projector.transformCoordinate(request.getInsetAnchor());
+			AffineTransform postScale = AffineTransform.getTranslateInstance(insetPoint.getX(),
+					insetPoint.getY());
 
 			return new AffineTransform2D(preConcatenate(preScale, scale, postScale));
 		}
-
-		private static Coordinate displayCoordinate(Coordinate geoCoordinate,
-				GeometryProjector projector) throws TransformException {
-			Point geoPoint = JTSFactoryFinder.getGeometryFactory(null).createPoint(geoCoordinate);
-			/* We project a Point to a Point, but the result is a Geometry.
-			 * To get the result Point out of the Geometry just take the centroid.
-			 */
-			Point displayPoint = projector.transformGeometry(geoPoint).getCentroid();
-			Coordinate displayCoordinate = new Coordinate(displayPoint.getX(), displayPoint.getY());
-
-			return displayCoordinate;
+		
+		public boolean shouldInsetCoordinate(Coordinate coordinate) {
+			return bounds.contains(coordinate);
 		}
 
 		public boolean shouldInset(Geometry geometry) {
 			return bounds.contains(geometry.getEnvelopeInternal());
+		}
+		
+		public Point insetPoint(Point projectedPoint) {
+			try {
+				Coordinate coordinate = new Coordinate();
+				JTS.transform(projectedPoint.getCoordinate(), coordinate, transform);
+				
+				return JTSFactoryFinder.getGeometryFactory(null).createPoint(coordinate);
+			} catch (TransformException e) {
+				throw new RuntimeException("Inset transform failed.", e);
+			}
 		}
 
 		public Geometry inset(Geometry projectedGeometry) {
@@ -387,13 +391,13 @@ public enum Shapefile implements NicelyNamed {
 	public static class AnchorPoint {
 		public static final Shapefile.AnchorPoint NEAR_ALASKA = AnchorPoint.at("Near Alaska",
 				new Coordinate(-179, 89 - GeometryProjector.NORTH_POLE_CROP_HEIGHT_IN_DEGREES));
-		public static final Shapefile.AnchorPoint NEAR_ALEUTIAN_ISLANDS = AnchorPoint.at(
-				"Near Aleutian Islands", new Coordinate(-179, 50));
+		public static final Shapefile.AnchorPoint NEAR_WASHINGTON = AnchorPoint.at(
+				"Near Aleutian Islands", new Coordinate(-127, 49));
 		public static final Shapefile.AnchorPoint NEAR_ANTARCTICA = AnchorPoint.at(
 				"Near Antarctica", new Coordinate(179, -89
 						+ GeometryProjector.SOUTH_POLE_CROP_HEIGHT_IN_DEGREES));
-		public static final Shapefile.AnchorPoint NEAR_PUERTO_RICO = AnchorPoint.at(
-				"Near Puerto Rico", new Coordinate(-64, 16));
+		public static final Shapefile.AnchorPoint NEAR_FLORIDA = AnchorPoint.at(
+				"Near Puerto Rico", new Coordinate(-79, 24));
 
 		private final String displayName;
 		private final Coordinate coordinate;

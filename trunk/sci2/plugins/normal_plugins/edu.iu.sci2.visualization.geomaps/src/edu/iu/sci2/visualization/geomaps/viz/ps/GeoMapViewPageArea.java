@@ -8,63 +8,37 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.sci2.visualization.geomaps.data.interpolation.Interpolator1D;
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
-import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.Rectangles;
-import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 public class GeoMapViewPageArea implements PostScriptable {
-	public static final boolean CLIP_TO_BOUNDING_BOX = true;
-	public static final boolean BACKGROUND_TRANSPARENT = true;
-	public static final Color BACKGROUND_COLOR = Color.CYAN;
-	public static final boolean DRAW_BOUNDING_BOX = false;
-	public static final double BOUNDING_BOX_LINE_WIDTH = .2;
+	private static final boolean CLIP_TO_BOUNDING_BOX = false;
+	private static final boolean BACKGROUND_TRANSPARENT = true;
+	private static final Color BACKGROUND_COLOR = Color.CYAN;
+	private static final boolean DRAW_BOUNDING_BOX = false;
+	private static final double BOUNDING_BOX_LINE_WIDTH = .2;
+	private static final String INDENT = "  ";
 
-	public static final String INDENT = "  ";
-
-	private final Rectangle2D.Double dataRectangle;
 	private final Rectangle2D.Double displayRectangle;
+	private final Interpolator1D xInterpolator;
+	private final Interpolator1D yInterpolator;
 
-	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle, PageLayout pageLayout) {
-		this.dataRectangle = dataRectangle;
+	public GeoMapViewPageArea(Rectangle2D.Double dataRectangle, Rectangle2D.Double displayRectangle) {
+		this.displayRectangle = displayRectangle;
 		
-		double xScale = pageLayout.mapPageAreaMaxDimensions().getWidth() / dataRectangle.getWidth();
-		double yScale = pageLayout.mapPageAreaMaxDimensions().getHeight() / dataRectangle.getHeight();		
-		double scale = Math.min(xScale, yScale);		
-		
-		Dimension<Double> displayDimension =
-				Dimension.ofSize(
-						(scale * dataRectangle.getWidth()),
-						(scale * dataRectangle.getHeight()));
-		
-		double availableMapHeight =	pageLayout.mapPageAreaMaxDimensions().getHeight();
-		
-		double mapCenterY =
-				pageLayout.pageFooterHeight()
-				+ pageLayout.legendariumReservedDimensions().getHeight()
-				+ availableMapHeight / 2;
-		
-		Point2D.Double displayCenter =
-				new Point2D.Double(pageLayout.mapCenterX(), mapCenterY);
-		
-		
-		this.displayRectangle = Rectangles.forCenterWithDimensions(displayCenter, displayDimension);
-	}
-	
-	public Point2D.Double displayPointFor(Coordinate coordinate) {
-		Interpolator1D xInterpolator = Interpolator1D.between(
+		xInterpolator = Interpolator1D.between(
 				Rectangles.xRange(dataRectangle),
-				Continuum.fromRange(Rectangles.xRange(displayRectangle)));		
+				Continuum.fromRange(Rectangles.xRange(displayRectangle)));
 		
-		Interpolator1D yInterpolator = Interpolator1D.between(
+		yInterpolator = Interpolator1D.between(
 				Rectangles.yRange(dataRectangle),
 				Continuum.fromRange(Rectangles.yRange(displayRectangle)));
-		
-		return new Point2D.Double(
-				xInterpolator.apply(coordinate.x), yInterpolator.apply(coordinate.y));
 	}
 	
-	public Rectangle2D.Double getDisplayRectangle() {
-		return displayRectangle;
+	public Point2D.Double displayPointFor(Coordinate projectedCoordinate) {
+		return new Point2D.Double(
+				xInterpolator.apply(projectedCoordinate.x),
+				yInterpolator.apply(projectedCoordinate.y));
+		
 	}
 
 	@Override

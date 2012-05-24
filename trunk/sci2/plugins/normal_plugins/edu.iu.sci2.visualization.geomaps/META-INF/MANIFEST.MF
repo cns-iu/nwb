@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Geo Maps
+Bundle-Name: edu.iu.sci2.visualization.geomaps
 Bundle-SymbolicName: edu.iu.sci2.visualization.geomaps
 Bundle-Version: 0.1.0
 Bundle-ClassPath: .
@@ -67,3 +67,5 @@ Export-Package: edu.iu.sci2.visualization.geomaps.data.scaling,
  edu.iu.sci2.visualization.geomaps.utility,
  edu.iu.sci2.visualization.geomaps.utility.numberformat,
  edu.iu.sci2.visualization.geomaps.viz
+Bundle-Activator: edu.iu.sci2.visualization.geomaps.LogStream$Activator
+Bundle-ActivationPolicy: lazy

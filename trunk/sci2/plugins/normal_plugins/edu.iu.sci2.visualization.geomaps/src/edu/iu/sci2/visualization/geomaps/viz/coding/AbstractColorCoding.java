@@ -35,7 +35,7 @@ public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> exte
 	
 	private final Interpolator<Color> interpolator;
 
-	public AbstractColorCoding(
+	protected AbstractColorCoding(
 			Binding<D> binding,
 			Range<Double> usableRange,
 			Interpolator<Color> interpolator) {

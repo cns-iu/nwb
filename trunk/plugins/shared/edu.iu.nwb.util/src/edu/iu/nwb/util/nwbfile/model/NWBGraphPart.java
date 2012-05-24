@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-public class NWBGraphPart {
+public abstract class NWBGraphPart {
 	private final ImmutableMap<String, Object> attributes;
 
 	protected NWBGraphPart(Map<String, ? extends Object> attributes) {
@@ -22,4 +22,6 @@ public class NWBGraphPart {
 	public boolean hasAttribute(String name) {
 		return attributes.containsKey(name);
 	}
+	
+	public abstract boolean isAttributeReserved(String attributeName);
 }

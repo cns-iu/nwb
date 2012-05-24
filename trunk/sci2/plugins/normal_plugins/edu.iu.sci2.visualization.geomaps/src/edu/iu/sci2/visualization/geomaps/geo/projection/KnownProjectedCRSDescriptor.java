@@ -77,7 +77,7 @@ public enum KnownProjectedCRSDescriptor implements ProjectedCRSDescriptor, Nicel
 	private static final class EPSGCode implements ProjectedCRSDescriptor {
 		private final String code;
 	
-		public EPSGCode(String code) {
+		EPSGCode(String code) {
 			this.code = code;
 		}
 		

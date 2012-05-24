@@ -32,18 +32,18 @@ public class NumberFormatFactory {
 				return GENERAL;
 			}
 		
-			if (isYearish(columnName) && isYearish(range)) {
+			if (isColumnNameYearish(columnName) && isRangeYearish(range)) {
 				return YEAR;
 			}
 		
 			return GENERAL;
 		}
 
-		private static boolean isYearish(Range<Double> range) {
+		private static boolean isRangeYearish(Range<Double> range) {
 			return TYPICAL_YEAR_RANGE.encloses(range);
 		}
 
-		private static boolean isYearish(final String string) {
+		private static boolean isColumnNameYearish(final String string) {
 			return Iterables.any(
 					ImmutableSet.of("year", "yr", "date", "time"),
 					StringPredicates.substringOf(string, ToCaseFunction.LOWER));

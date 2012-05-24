@@ -85,7 +85,8 @@ public class PSUtility {
 	}
 	
 	/**
-	 * @throw IllegalArgumentException	If {@code points} is empty.
+	 * @throws IllegalArgumentException
+	 *             If {@code points} is empty.
 	 */
 	public static String path(List<? extends Point2D.Double> points) {
 		Preconditions.checkArgument(!(points.isEmpty()));
@@ -96,7 +97,8 @@ public class PSUtility {
 	}
 	
 	/**
-	 * @throw IllegalArgumentException	If {@code points} is empty.
+	 * @throws IllegalArgumentException
+	 *             If {@code points} is empty.
 	 */
 	public static String closedPath(List<? extends Point2D.Double> points) {
 		Preconditions.checkArgument(!(points.isEmpty()));

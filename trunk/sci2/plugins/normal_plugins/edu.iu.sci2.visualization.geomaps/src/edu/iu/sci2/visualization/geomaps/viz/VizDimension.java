@@ -19,8 +19,9 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
  * A quantitative aspect of data suitable for visualization with methods for hooking into algorithm
  * parameters.
  * 
- * <p>It is recommended that implementations are enums that together give all suitable codings
- * for a particular kind of visualization.
+ * <p>
+ * It is recommended that implementations are enums that together give all suitable codings for a
+ * particular kind of visualization.
  */
 public interface VizDimension {
 	String getColumnNameParameterId();
@@ -28,8 +29,8 @@ public interface VizDimension {
 	String getScalingParameterId();
 	String getRangeParameterId();
 	
-	abstract Strategy defaultStrategy();
-	abstract Binding<? extends VizDimension> bindingFor(Dictionary<String, Object> parameters);
+	Strategy defaultStrategy();
+	Binding<? extends VizDimension> bindingFor(Dictionary<String, Object> parameters);
 	
 	void addOptionsToAlgorithmParameters(DropdownMutator mutator, List<String> numericColumnNames);
 	
@@ -43,12 +44,12 @@ public interface VizDimension {
 	 * 
 	 * @param <D>	The VizDimension being bound
 	 */
-	public static abstract class Binding<D extends Enum<D> & VizDimension> {		
+	abstract class Binding<D extends Enum<D> & VizDimension> {		
 		private final D dimension;
 		private final String columnName;
 		private final Scaling scaling;
 		
-		public Binding(D dimension, Dictionary<String, Object> parameters) {
+		protected Binding(D dimension, Dictionary<String, Object> parameters) {
 			this.dimension = dimension;
 			this.columnName = (String) parameters.get(dimension.getColumnNameParameterId());
 			this.scaling = Scaling.valueOf((String) parameters.get(dimension.getScalingParameterId()));

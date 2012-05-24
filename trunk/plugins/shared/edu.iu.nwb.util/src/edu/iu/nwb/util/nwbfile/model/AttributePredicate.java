@@ -22,6 +22,9 @@ import com.google.common.base.Predicate;
  * <p>
  * It is also nice for implementers to override {@code toString()}, with a short description
  * of what the Predicate does, e.g. "AttributePredicate(weight > 3.5)".
+ * <p>
+ * The map of attributes does not include the id or label of a node, or the source or target of
+ * an edge.
  * 
  * @see AttributePredicates
  * @see Predicate#apply(Object)

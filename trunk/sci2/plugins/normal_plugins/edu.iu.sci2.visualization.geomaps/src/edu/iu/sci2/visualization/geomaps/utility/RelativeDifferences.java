@@ -34,6 +34,8 @@ public class RelativeDifferences {
 	 * The relative difference of x and y is |x-y|/max(|x|,|y|) or 0 for equal x and y.
 	 */
 	public static double relativeDifference(double d1, double d2) {
+		/* The d1 == d2 check will in particular catch d1 == d2 == 0.0 and guard against division
+		 * by zero. */
 		return (d1 == d2) ? 0 : Math.abs(d1 - d2) / Math.max(Math.abs(d1), Math.abs(d2));
 	}
 

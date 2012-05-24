@@ -1,0 +1,30 @@
+*Nodes
+id*int label*string longitude*float latitude*float 
+1 "Maseno" 34.59 -0.01 
+2 "Pontianak" 109.33 -0.02 
+3 "Baraton" 37.9 -0.02 
+4 "Porto Alerge" -51.17 -0.03 
+5 "Kisumu" 34.76 -0.09 
+6 "Sao Gabriel Da Cachoeira" -67.05 -0.12 
+7 "N Sumatera" 100.63 -0.14 
+8 "Naro Moru" 37.01 -0.16 
+9 "Cumbaya Quito" -78.4 -0.19 
+10 "Trinidade" -66.84 -0.2 
+11 "Quito" -78.52 -0.22 
+12 "Chogoria" 37.62 -0.22 
+13 "Nakuru" 36.06 -0.29 
+14 "Sangolqui" -78.45 -0.3 
+15 "Bukittinggi" 100.36 -0.31 
+*UndirectedEdges
+source*int target*int weight*float 
+8 5 1.0 
+3 3 4.0 
+3 10 1.0 
+3 9 1.0 
+3 5 1.0 
+3 9 1.0 
+3 9 1.0 
+4 7 1.0 
+8 10 1.0 
+7 5 1.0 
+6 6 1.0

@@ -22,12 +22,4 @@ public class CircleAreaStrategy implements Strategy {
 	public String toPostScript() {
 		return String.valueOf(area);
 	}
-
-	public static double calculateAreaFromRadius(double radius) {
-		return (Math.PI * radius * radius);
-	}
-	
-	public static double calculateRadiusFromArea(double area) {
-		return Math.sqrt(area / Math.PI);
-	}
 }

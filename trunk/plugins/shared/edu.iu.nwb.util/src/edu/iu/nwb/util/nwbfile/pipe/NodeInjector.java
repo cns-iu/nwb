@@ -38,6 +38,7 @@ class NodeInjector extends ParserStage {
 	@Override
 	public void finishedParsing() {
 		this.inputNodesHaveEnded();
+		
 		super.finishedParsing();
 	}
 	@Override

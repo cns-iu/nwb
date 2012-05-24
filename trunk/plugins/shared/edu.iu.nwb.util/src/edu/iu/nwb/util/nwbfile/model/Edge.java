@@ -4,6 +4,8 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
+
 public class Edge extends NWBGraphPart {
 	private final int target;
 	private final int source;
@@ -61,5 +63,11 @@ public class Edge extends NWBGraphPart {
 				.add("directed", isDirected)
 				.add("attribs", getAttributes())
 				.toString();
+	}
+
+
+	@Override
+	public boolean isAttributeReserved(String attributeName) {
+		return NWBFileProperty.NECESSARY_EDGE_ATTRIBUTES.containsKey(attributeName);
 	}
 }

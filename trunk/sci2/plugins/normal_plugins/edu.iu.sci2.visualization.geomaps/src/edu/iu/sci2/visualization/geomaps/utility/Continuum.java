@@ -30,9 +30,10 @@ public class Continuum<T> {
 		return new Continuum<T>(pointA, pointB);
 	}
 	/**
-	 * @return	The min and max of values present in {@code iterable} according to its element
-	 * 			type's natural comparator.
-	 * @throw	{@link NoSuchElementException}	if {@code iterable} is empty
+	 * @return The min and max of values present in {@code iterable} according to its element
+	 *         type's natural comparator.
+	 * @throws NoSuchElementException
+	 *             If {@code iterable} is empty
 	 */
 	public static <C extends Comparable<? super C>> Continuum<C> over(Iterable<? extends C> iterable) {
 		return between(Ordering.natural().min(iterable), Ordering.natural().max(iterable));
@@ -56,12 +57,13 @@ public class Continuum<T> {
 	public boolean isEmpty() {
 		return Objects.equal(pointA, pointB);
 	}
+	
 
 	@Override
 	public boolean equals(Object thatObject) {
-		if (!(thatObject instanceof Continuum<?>)) {
-			return false;
-		}		
+		if (this == thatObject) { return true; }
+		if (thatObject == null) { return false; }
+		if (!(thatObject instanceof Continuum<?>)) { return false; }		
 		Continuum<?> that = (Continuum<?>) thatObject;
 		
 		return Objects.equal(this.pointA, that.pointA) &&

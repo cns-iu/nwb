@@ -4,12 +4,9 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.EnumMap;
 
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.sci2.visualization.geomaps.utility.Continuum;
@@ -19,6 +16,10 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.PostScriptable;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.CircleAreaStrategy;
 import edu.iu.sci2.visualization.geomaps.viz.strategy.Strategy;
 
+/**
+ * A visual representation of a node or data point as a circle, with certain controllable
+ * dimensions.
+ */
 public class Circle {
 	private final Coordinate coordinate;
 	private final EnumMap<CircleDimension, Strategy> strategies;
@@ -43,31 +44,34 @@ public class Circle {
 	}
 	
 	
-	public String toPostScript(GeoMap geoMap, GeoMapViewPageArea geoMapViewPageArea) throws TransformException {
-		double radius = calculateRadiusFromArea(
-				((CircleAreaStrategy) strategyFor(CircleDimension.AREA)).getArea());
+	public String toPostScript(GeoMap geoMap, GeoMapViewPageArea geoMapViewPageArea)
+			throws TransformException {
+		CircleAreaStrategy areaStrategy = (CircleAreaStrategy) strategyFor(CircleDimension.AREA);
+		double radius = calculateRadiusFromArea(areaStrategy.getArea());
+		
 		Strategy innerColorStrategy = strategyFor(CircleDimension.INNER_COLOR);
 		Strategy outerColorStrategy = strategyFor(CircleDimension.OUTER_COLOR);
 
-		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-		Point coordinatePoint = geometryFactory.createPoint(coordinate);
 		/* Note we transform here, not project, because our "projection" involves
 		 * cropping and in cropping we might subtract out rawPoint.
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		StringBuilder builder = new StringBuilder();
-		for (Geometry projectedPoint : geoMap.projectAndInset(coordinatePoint)) {
-			Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint.getCoordinate());
-			
+		for (Point projectedPoint : geoMap.transformAndInset(coordinate)) {
+			Point2D.Double displayPoint = geoMapViewPageArea.displayPointFor(projectedPoint
+					.getCoordinate());
+
 			double outlineRadius = radius + Circle.OUTLINE_ADDITIONAL_RADIUS;
-			builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + outlineRadius + " circle" + "\n");
+			builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " "
+					+ outlineRadius + " circle" + "\n");
 			builder.append(outerColorStrategy.toPostScript());
-			
+
 			// Create and paint the circle path
-			builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " " + radius + " circle" + "\n");
+			builder.append(PostScriptable.INDENT + displayPoint.x + " " + displayPoint.y + " "
+					+ radius + " circle" + "\n");
 			builder.append(innerColorStrategy.toPostScript());
-			
-			builder.append("\n");
+
+			builder.append('\n');
 		}
 		
 		return builder.toString();

@@ -75,11 +75,12 @@ public class NWBFileParser {
 			processFile(fileReader);
 		} catch (IOException e) {
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new ParsingException(e);
 		} finally {
 			handler.finishedParsing();
 		}
+		
 		if (this.errorMessages.length() > 0) {
 			throw new ParsingException(this.errorMessages.toString());
 		}
