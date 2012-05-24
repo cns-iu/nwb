@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -39,13 +40,12 @@ public class MergeNodes implements Algorithm {
     private String aggregateFunctionFileName;
 
     private boolean isDirected;
-    private HashMap nodeMap = new HashMap();    
-    private HashMap edgeMap = new HashMap();
-    private List removedNodeIDList = new ArrayList();
+    private Map<Node, Node> nodeMap = new HashMap<Node, Node>();    
+    private Map<Object, Edge> edgeMap = new HashMap<Object, Edge>();
     private Map<Node, Integer> mergingNodesMap = new HashMap<Node, Integer>();
     private Map<Integer, NodeGroup> mergingTable = new HashMap<Integer, NodeGroup>();
-    private Map nodeFunctions;
-    private Map edgeFunctions;
+    private Map<String, String> nodeFunctions;
+    private Map<String, String> edgeFunctions;
     private boolean hasErrorInNodeListTable = false;
     private File mergingReport;
 
@@ -67,32 +67,32 @@ public class MergeNodes implements Algorithm {
     	Properties aggregateFunctionProperties = getAggregateFunctionProperties();
 
         try {
-        	processInputNodeListTable(inputMergeTable);
+        	processInputNodeListTable(this.inputMergeTable);
 
         	if (this.mergingTable.isEmpty()) {
         		String logMessage =
         			"There is no merging instruction in the node list table. \n" +
 					"So there is no merging action. \n";
 
-        		logger.log(LogService.LOG_INFO, logMessage);
+        		this.logger.log(LogService.LOG_INFO, logMessage);
 
         		return null;
         	}
         		
-        	if (!hasErrorInNodeListTable) {
-        		hasErrorInNodeListTable = isErrorInNodeListTable();
+        	if (!this.hasErrorInNodeListTable) {
+        		this.hasErrorInNodeListTable = isErrorInNodeListTable();
         	}
 
-        	if (hasErrorInNodeListTable) {
+        	if (this.hasErrorInNodeListTable) {
         		String logMessage =
         			"There are errors in the node list table. \n"+
     				"Please view the \"Merging Report\" File for details. \n";
-        		logger.log(LogService.LOG_ERROR, logMessage);
+        		this.logger.log(LogService.LOG_ERROR, logMessage);
         	}
         	
-        	mergingReport = generateReport(this.mergingTable);
+        	this.mergingReport = generateReport(this.mergingTable);
         	BasicData reportData =
-        		new BasicData(mergingReport, mergingReport.getClass().getName());
+        		new BasicData(this.mergingReport, this.mergingReport.getClass().getName());
         	Dictionary<String, Object> graphAttributes = reportData.getMetadata();
         	graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
         	graphAttributes.put(DataProperty.PARENT, this.inputNetworkData);
@@ -101,7 +101,7 @@ public class MergeNodes implements Algorithm {
         	
         	try {
         		Graph outputGraph =
-        			updateGraphByMergingNodes(inputNetwork, aggregateFunctionProperties);
+        			updateGraphByMergingNodes(this.inputNetwork, aggregateFunctionProperties);
         	
         		BasicData outputGraphData =
         			new BasicData(outputGraph, outputGraph.getClass().getName());
@@ -157,8 +157,8 @@ public class MergeNodes implements Algorithm {
 	    	    if (node == null) {
 	    	    	String logMessage = String.format(
 	    	    		"Failed to find %s in the original graph.", nodeRow.toString());
-	    	    	logger.log(LogService.LOG_ERROR, logMessage);	
-	    	    	hasErrorInNodeListTable = true;
+	    	    	this.logger.log(LogService.LOG_ERROR, logMessage);	
+	    	    	this.hasErrorInNodeListTable = true;
 
 	    	    	break;
 	    	    }
@@ -175,14 +175,14 @@ public class MergeNodes implements Algorithm {
    	    			addANode(nodeGroup, starValue, node);
    	    			
    	    			//need to add the row in tempTable to mergingTable
-   	    			nodeRow = (Tuple) nodeRowsByUniqueIndex.get(nodeIndex);
+   	    			nodeRow = nodeRowsByUniqueIndex.get(nodeIndex);
    	    			node = getNodeFromInputGraph(nodeRow);
 
    	    			if (node == null) {
    	    				String logMessage = String.format(
    	    					"Failed to find %s in the original graph.", nodeRow.toString());
-   	    	    		logger.log(LogService.LOG_ERROR, logMessage);	
-   	    	    		hasErrorInNodeListTable = true;
+   	    	    		this.logger.log(LogService.LOG_ERROR, logMessage);	
+   	    	    		this.hasErrorInNodeListTable = true;
 
    	    	    		break;
    	    	    	}
@@ -199,10 +199,10 @@ public class MergeNodes implements Algorithm {
     
     private Node getNodeFromInputGraph(Tuple nodeRow) throws Exception {
     	Node originalNode = null;
-		Iterator nodes = this.inputNetwork.nodes();
+		Iterator<Node> nodes = this.inputNetwork.nodes();
 
 		while (nodes.hasNext()) {
-			originalNode = (Node) nodes.next();
+			originalNode = nodes.next();
 
 			if (compareTuple(nodeRow, originalNode)) {
 				break;
@@ -212,7 +212,7 @@ public class MergeNodes implements Algorithm {
 		if (originalNode == null) {
 			String logMessage = String.format(
 				"Failed to find the node %s in the original graph.", nodeRow.toString());
-			logger.log (LogService.LOG_ERROR, logMessage);
+			this.logger.log (LogService.LOG_ERROR, logMessage);
 		}
 
 		return originalNode;		
@@ -294,7 +294,7 @@ public class MergeNodes implements Algorithm {
             
         }
         else {
-            logger.log(LogService.LOG_WARNING, "Can not handle "+dataType+" yet. \n");
+            this.logger.log(LogService.LOG_WARNING, "Can not handle "+dataType+" yet. \n");
             return false;
         }
     }         
@@ -307,14 +307,14 @@ public class MergeNodes implements Algorithm {
 			nodeGroup.addNodeToGroup(node); 
     }
     
-    private File generateReport (Map MergingTable) throws IOException{
+    private File generateReport (Map<Integer, NodeGroup> MergingTable) throws IOException{
     	File report = getTempFile();
     	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(report)));
-    	Iterator keys = MergingTable.keySet().iterator();
+    	Iterator<Integer> keys = MergingTable.keySet().iterator();
     	StringBuffer errorMsg = new StringBuffer();
     	while (keys.hasNext()){
-    		Integer key = (Integer)keys.next();
-    		NodeGroup nodeGroup = (NodeGroup)MergingTable.get(key);
+    		Integer key = keys.next();
+    		NodeGroup nodeGroup = MergingTable.get(key);
     		if(!nodeGroup.getErrorFlag()){
     			//add summary to mergingMsg
     			/*
@@ -324,8 +324,8 @@ public class MergeNodes implements Algorithm {
     			        Albett, R
     			  Using Albert, R for the node label (primary key).
     			  */
-    			Iterator labels = nodeGroup.getColumnValues(0).iterator();
-    			Iterator keyLabels = nodeGroup.getPrimaryColValues(0).iterator();
+    			Iterator<?> labels = nodeGroup.getColumnValues(0).iterator();
+    			Iterator<?> keyLabels = nodeGroup.getPrimaryColValues(0).iterator();
  	
     			out.println("Merge "+getStringList(labels)+".");
     			out.println("Use "+getStringList(keyLabels)+
@@ -341,8 +341,8 @@ public class MergeNodes implements Algorithm {
             	Reason: Specify more than one primary key.
 
     			*/
-    			Iterator labels = nodeGroup.getColumnValues(0).iterator();
-    			List primaryKeys = nodeGroup.getPrimaryColValues(0);
+    			Iterator<?> labels = nodeGroup.getColumnValues(0).iterator();
+    			List<?> primaryKeys = nodeGroup.getPrimaryColValues(0);
  	
     			errorMsg.append("Error: Fail to merge "+getStringList(labels)+". \n");
     			if (primaryKeys.size()==0)
@@ -357,7 +357,7 @@ public class MergeNodes implements Algorithm {
     	return report;
     }
     
-    private String getStringList (Iterator iterator){
+    private String getStringList (Iterator<?> iterator){
     	StringBuffer temp = new StringBuffer();
     	String value = (String)iterator.next();
 		temp.append("\""+value+"\"");
@@ -379,7 +379,7 @@ public class MergeNodes implements Algorithm {
 			tempFile = File.createTempFile("MergeNodes-", ".txt", tempDir);
 		
 		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString(), e);
+			this.logger.log(LogService.LOG_ERROR, e.toString(), e);
 			tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+
 					"temp"+System.currentTimeMillis()+".txt");
 		}
@@ -388,11 +388,11 @@ public class MergeNodes implements Algorithm {
 	
 	private boolean isErrorInNodeListTable(){
 		boolean isError = false;
-		Iterator keys = this.mergingTable.keySet().iterator();
+		Iterator<Integer> keys = this.mergingTable.keySet().iterator();
 
 		while (keys.hasNext()) {
 			Object key = keys.next();
-			NodeGroup value = (NodeGroup) this.mergingTable.get(key);
+			NodeGroup value = this.mergingTable.get(key);
 
 			if (value.getErrorFlag()) {
 				isError = true;
@@ -442,7 +442,7 @@ public class MergeNodes implements Algorithm {
 		Schema edgeSchema = orgEdgeTable.getSchema();
 		
 		Graph theOutputGraph = new Graph(nodeSchema.instantiate(),
-				edgeSchema.instantiate(), isDirected);
+				edgeSchema.instantiate(), this.isDirected);
 
 		return theOutputGraph;
 	}
@@ -453,23 +453,23 @@ public class MergeNodes implements Algorithm {
 		 * key = this type of node
 		 * value = the corresponding primary node
 		 */
-		HashMap leftNodes = new HashMap();
-		Table orgNodeTable = inputNetwork.getNodeTable();
+		HashMap<Node, Node> leftNodes = new HashMap<Node, Node>();
+		Table orgNodeTable = this.inputNetwork.getNodeTable();
 		Schema orgNodeSchema = orgNodeTable.getSchema();
 		
-		Iterator nodes = inputNetwork.nodes();
+		Iterator<Node> nodes = this.inputNetwork.nodes();
 		while(nodes.hasNext()){
-			Node originalNode = (Node)nodes.next();
+			Node originalNode = nodes.next();
 			//if the node is not in the mergingNodeMap, 
 			//add the node to the updated graph.
 			if(!this.mergingNodesMap.containsKey(originalNode)) {
 				Node newNode = updatedGraph.addNode();
 				copyValue(originalNode, newNode, orgNodeSchema, 0);
-				nodeMap.put(originalNode, newNode);
+				this.nodeMap.put(originalNode, newNode);
 			}
 			else{
 				Integer nodeGroupIndex = this.mergingNodesMap.get(originalNode);
-				NodeGroup nodeGroup = (NodeGroup) this.mergingTable.get(nodeGroupIndex);
+				NodeGroup nodeGroup = this.mergingTable.get(nodeGroupIndex);
 				Node primaryNode = nodeGroup.getPrimaryNode();
 
 				if (primaryNode == null) {
@@ -483,7 +483,7 @@ public class MergeNodes implements Algorithm {
 				if (primaryNode == originalNode) {
 					Node newNode = updatedGraph.addNode();
 					copyValue(originalNode, newNode, orgNodeSchema, 0);
-					nodeMap.put(originalNode, newNode);
+					this.nodeMap.put(originalNode, newNode);
 				} else {
 					//store primaryNode != orgNode
 					leftNodes.put(originalNode,primaryNode);
@@ -494,11 +494,11 @@ public class MergeNodes implements Algorithm {
 			//handle primaryNode != orgNode
 			nodes = leftNodes.keySet().iterator();
 			while(nodes.hasNext()){
-				Node orgNode = (Node)nodes.next();
-				Node primaryNode = (Node)leftNodes.get(orgNode);
-				Node newNode = (Node)nodeMap.get(primaryNode);
+				Node orgNode = nodes.next();
+				Node primaryNode = leftNodes.get(orgNode);
+				Node newNode = this.nodeMap.get(primaryNode);
 				updateValues(newNode, orgNode, "node");
-				nodeMap.put(orgNode, newNode);				
+				this.nodeMap.put(orgNode, newNode);				
 			}
 		}		
 	}
@@ -506,57 +506,64 @@ public class MergeNodes implements Algorithm {
 	private void copyAndMergeEdges(Graph updatedGraph) throws Exception {
 //		printMergingNodesMap();
 //		printNodeMap();
-		Table edgeTable = inputNetwork.getEdgeTable();
+		Table edgeTable = this.inputNetwork.getEdgeTable();
 		Schema edgeSchema = edgeTable.getSchema();
 		
-		Iterator edges = inputNetwork.edges();
+		Iterator<?> edges = this.inputNetwork.edges();
 		while(edges.hasNext()){
 			Edge orgEdge = (Edge) edges.next();
 			Node orgSourceNode = orgEdge.getSourceNode();
 			Node orgTargetNode = orgEdge.getTargetNode();
-			Node newSourceNode = (Node) nodeMap.get(orgSourceNode);
-			Node newTargetNode = (Node) nodeMap.get(orgTargetNode);
+			Node newSourceNode = this.nodeMap.get(orgSourceNode);
+			Node newTargetNode = this.nodeMap.get(orgTargetNode);
 			Object newEdgeKey = null;
 			
-			if(isDirected){
+			if(this.isDirected){
 				DirectedEdge newEdgeSet= new DirectedEdge(newSourceNode, newTargetNode);
 				newEdgeKey = newEdgeSet;
 			}			
 			else{
 				//deal undirected
-				HashSet newEdgeSet = new HashSet();
+				Set<Node> newEdgeSet = new HashSet<Node>();
 				newEdgeSet.add(newSourceNode);
 				newEdgeSet.add(newTargetNode);
 				newEdgeKey = newEdgeSet; 
 			}
 			
-			if(edgeMap.containsKey(newEdgeKey)){
-				Edge theEdge = (Edge) edgeMap.get(newEdgeKey);
+			if(this.edgeMap.containsKey(newEdgeKey)){
+				Edge theEdge = this.edgeMap.get(newEdgeKey);
 				updateValues(theEdge, orgEdge, "edge");		
 			}
 			else{
 				Edge newEdge = updatedGraph.addEdge(newSourceNode, newTargetNode);
 				copyValue(orgEdge, newEdge, edgeSchema, 2);
-				edgeMap.put(newEdgeKey, newEdge);
+				this.edgeMap.put(newEdgeKey, newEdge);
 			}						
 		}	 
 	}
 
 
+	/**
+	 * @param primaryTuple
+	 * 		The row into which another row is being merged
+	 * @param theTuple
+	 * 		The row to merge into the primaryTuple
+	 * @param tag
+	 * 		Either "edge" or "node": identifies whether to set an edge or node ... ??
+	 */
 	private boolean updateValues (Tuple primaryTuple, Tuple theTuple, String tag){
 		boolean isSuccessful = true;
 		Schema theSchema = primaryTuple.getSchema();
-//		Schema theSchema = theTuple.getSchema();
-		Map functionMap = null;
-		int k =0;
-		if (tag.equalsIgnoreCase("node")){
-			k = 1;
-			functionMap=nodeFunctions;
-		}			
-		else {
-			//assume if (tag.equalsIgnoreCase("edge"))
-			k = 2;
-			functionMap=edgeFunctions;
+		Map<String, String> functionMap = null;
+		int startingColumnIndex = 0;
+		if (tag.equalsIgnoreCase("node")) {
+			startingColumnIndex = 1;
+			functionMap = this.nodeFunctions;
+		} else if (tag.equalsIgnoreCase("edge")) {
+			startingColumnIndex = 2;
+			functionMap = this.edgeFunctions;
+		} else {
+			throw new IllegalArgumentException("Attributes can only be added to 'edge' or 'node', not " + tag);
 		}
 		/*
 		 * Note: aggregationFunctions are not always required if there's no node 
@@ -564,23 +571,36 @@ public class MergeNodes implements Algorithm {
 		 */
 		if (functionMap != null){
 			
-			for (; k < theSchema.getColumnCount(); k++) {
-				final String cn = theSchema.getColumnName(k);
-				final Class dt = theSchema.getColumnType(k);
-				
-				final String fn = (String) functionMap.get(cn.toLowerCase());
-				try{
-					UtilityFunction theFunction = getFunction(fn, dt);	
-					if (theFunction != null){
-						Object primaryValue = primaryTuple.get(k);
-						Object theValue = theTuple.get(k);
-						Object newValue = theFunction.operate(primaryValue, theValue);
-						primaryTuple.set(k, newValue);	
-					}
-				}catch (Exception e){
-					logger.log(LogService.LOG_ERROR, e.toString(), e);
+			for (int i = startingColumnIndex; i < theSchema.getColumnCount(); i++) {
+				final String columnName = theSchema.getColumnName(i);
+				final Class<?> type = theSchema.getColumnType(i);
+
+				final String functionName = functionMap.get(columnName
+						.toLowerCase());
+				if (functionName == null) {
 					isSuccessful = false;
-					break;
+					this.logger
+							.log(LogService.LOG_ERROR,
+									"No function was mapped for the column '"
+											+ columnName
+											+ "'.  Please review the aggregate function file.  It is very likely that data was discarded during the merge!");
+					continue;
+				}
+				try {
+					UtilityFunction theFunction = getFunction(functionName,
+							type);
+					if (theFunction != null) {
+						Object primaryValue = primaryTuple.get(i);
+						Object theValue = theTuple.get(i);
+						Object newValue = theFunction.operate(primaryValue,
+								theValue);
+						primaryTuple.set(i, newValue);
+					}
+				} catch (UnsupportedTypeForFunctionException e) {
+					this.logger.log(LogService.LOG_ERROR,
+							e.getLocalizedMessage(), e);
+					isSuccessful = false;
+					continue;
 				}
 			}
 		}
@@ -590,9 +610,9 @@ public class MergeNodes implements Algorithm {
 	private void createUtilityFunctionMap(Properties aggFunctionKeyValuePairs){
 	    //key= the column/attribute name for nodes or edges
 	    //value = function name such as sum, max, ignore, etc.
-	 	nodeFunctions = new HashMap();
-		edgeFunctions = new HashMap();
-		Enumeration names = aggFunctionKeyValuePairs.propertyNames();
+	 	this.nodeFunctions = new HashMap<String, String>();
+		this.edgeFunctions = new HashMap<String, String>();
+		Enumeration<?> names = aggFunctionKeyValuePairs.propertyNames();
 		while (names.hasMoreElements()) {
 
 			final String key = (String) names.nextElement();			
@@ -600,67 +620,92 @@ public class MergeNodes implements Algorithm {
 			String columnName = key.substring(key.indexOf(".")+1);
 			String functionName = value.substring(value.indexOf(".")+1);
 			if (key.startsWith("edge.")) {
-				edgeFunctions.put(columnName.toLowerCase(), functionName);				
+				this.edgeFunctions.put(columnName.toLowerCase(), functionName);				
 			}
 			else if (key.startsWith("node.")) {
-				nodeFunctions.put(columnName.toLowerCase(), functionName);
+				this.nodeFunctions.put(columnName.toLowerCase(), functionName);
 			}
 		}
 	}
 	
-	private UtilityFunction getFunction(String functionName, 
-			Class type) throws Exception{
-		final String errorMsg = "Can not support "+functionName+" for "+
-			type.getName()+" yet.\n";
+	private static UtilityFunction getFunction(String functionName,
+			Class<?> type) throws UnsupportedTypeForFunctionException {
+
+		final String errorMsg = new StringBuilder().append("Can not support ")
+				.append(functionName).append(" for ").append(type.getName())
+				.append(" yet.").append("\n").toString();
+
 		final String name = functionName.toLowerCase();
+
 		if (name.equals("count")) {
 			return new Count();
 		} else if (name.equals("arithmeticmean")) {
-				throw new Exception(errorMsg);
-				//return new DoubleArithmeticMean();
+			throw new UnsupportedTypeForFunctionException(errorMsg);
 		} else if (name.equals("sum")) {
-				if (type.equals(int.class) || type.equals(Integer.class)) {
-					return new IntegerSum();
-				}
-				if (type.equals(double.class) || type.equals(Double.class)) {
-					throw new Exception(errorMsg);
-					//return new DoubleSum();
-				}
-				if (type.equals(float.class) || type.equals(Float.class)) {
-					throw new Exception(errorMsg);
-					//return new FloatSum();
-				}
+			if (type.equals(int.class) || type.equals(Integer.class)) {
+				return new IntegerSum();
+			} else if (type.equals(double.class) || type.equals(Double.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			} else if (type.equals(float.class) || type.equals(Float.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			}
 		} else if (name.equals("max")) {
-				if (type.equals(int.class) || type.equals(Integer.class)) {
-					throw new Exception(errorMsg);
-					//return new IntegerMax();
-				}
-				if (type.equals(double.class) || type.equals(Double.class)) {
-					throw new Exception(errorMsg);
-					//return new DoubleMax();
-				}
-				if (type.equals(float.class) || type.equals(Float.class)) {
-					throw new Exception(errorMsg);
-					//return new FloatMax();
-				}
+			if (type.equals(int.class) || type.equals(Integer.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			} else if (type.equals(double.class) || type.equals(Double.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			} else if (type.equals(float.class) || type.equals(Float.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			}
 		} else if (name.equals("min")) {
-				if (type.equals(int.class) || type.equals(Integer.class)) {
-					throw new Exception(errorMsg);
-					//return new IntegerMin();
-				}
-				if (type.equals(double.class) || type.equals(Double.class)) {
-					throw new Exception(errorMsg);
-					//return new DoubleMin();
-				}
-				if (type.equals(float.class) || type.equals(Float.class)) {
-					throw new Exception(errorMsg);
-					//return new FloatMin();
-				}
-		}
-		else if (name.equals("ignore"))
+			if (type.equals(int.class) || type.equals(Integer.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			} else if (type.equals(double.class) || type.equals(Double.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			} else if (type.equals(float.class) || type.equals(Float.class)) {
+				throw new UnsupportedTypeForFunctionException(errorMsg);
+			}
+		} else if (name.equals("ignore")) {
 			return null;
+		}
 		return null;
 	}
+
+	/**
+	 * Represents errors that occur when no function class (e.g. Sum) could be
+	 * found to support a type (e.g. Integer.class).
+	 */
+	public static class UnsupportedTypeForFunctionException extends Exception {
+		private static final long serialVersionUID = -2285330745413728087L;
+
+		/**
+		  * @see Exception#Exception()
+		  */
+		 public UnsupportedTypeForFunctionException() {
+			 super();
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(String) 
+		  */
+		 public UnsupportedTypeForFunctionException(String message) {
+			 super(message);			
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(Throwable)
+		  */
+		 public UnsupportedTypeForFunctionException(Throwable cause) {
+			 super(cause);			
+		 }
+		 
+		 /**
+		  * @see Exception#Exception(String, Throwable)
+		  */
+		 public UnsupportedTypeForFunctionException(String message, Throwable cause) {
+			 super(message, cause);
+		 }
+	 }
 	
 //	private void printMergingNodesMap() {
 //		Iterator<Node> keys = this.mergingNodesMap.keySet().iterator();
