@@ -401,8 +401,12 @@ public class ISITableReader {
 		if (tag.equals(ISITag.AUTHORS)) {
 			if (this.normalizeAuthorNames) {
 				processedLine = processAuthorLine(line);
+				/**
+				 * Prints WAY too much to the console.  Find a way to group these errors or ideally only print once. Then print it to info.
+				 */
+				// TODO Print the INFO once the number of prints is reduced.
 				this.log.log(
-						LogService.LOG_INFO,
+						LogService.LOG_DEBUG,
 						"Author names from the '"
 								+ ISITag.AUTHORS
 								+ "' field have been normalized by capitalizing the first letter of all but the last word in the author's name.");
@@ -432,8 +436,12 @@ public class ISITableReader {
 				fields[0] = processedAuthorField;
 
 				processedLine = joinOver(fields, ",");
+				/**
+				 * Prints WAY too much to the console.  Find a way to group these errors or ideally only print once. Then print it to info.
+				 */
+				// TODO Print the INFO once the number of prints is reduced.
 				this.log.log(
-						LogService.LOG_INFO,
+						LogService.LOG_DEBUG,
 						"Author names from the '"
 								+ ISITag.CITED_REFERENCES
 								+ "' field have been normalized by capitalizing the first letter of all but the last word in the author's name.");
