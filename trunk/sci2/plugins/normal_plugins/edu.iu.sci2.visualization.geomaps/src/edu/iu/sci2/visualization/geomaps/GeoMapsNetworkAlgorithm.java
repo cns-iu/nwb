@@ -22,14 +22,13 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.DataFactory;
 import org.cishell.utilities.NumberUtilities;
 import org.geotools.factory.FactoryRegistryException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -209,25 +208,20 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	}
 
 	
-	private static Data[] formOutData(File postScriptFile, File outNetwork, Data inDatum) {
-		Dictionary<String, Object> inMetaData = inDatum.getMetadata();
+	private static Data[] formOutData(File postScriptFile, File nwbFile, Data inDatum) {
+		Data postScriptData = DataFactory.forFile(
+				postScriptFile,
+				GeoMapsAlgorithm.POSTSCRIPT_MIME_TYPE,
+				DataProperty.VECTOR_IMAGE_TYPE,
+				inDatum,
+				"Base map with anchor points");
 
-		Data postScriptData = new BasicData(postScriptFile, GeoMapsAlgorithm.POSTSCRIPT_MIME_TYPE);
-
-		Dictionary<String, Object> postScriptMetaData = postScriptData.getMetadata();
-
-		String inLabel = Strings.nullToEmpty((String) inMetaData.get(DataProperty.LABEL));
-		String inFileDisplayName = FileUtilities.extractFileName(inLabel);
-		postScriptMetaData.put(DataProperty.LABEL, OUTPUT_ALGORITHM_NAME + "_map_"
-				+ inFileDisplayName);
-		postScriptMetaData.put(DataProperty.PARENT, inDatum);
-		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
-
-		Data nwbData = new BasicData(outNetwork, "file:text/nwb");
-		Dictionary<String, Object> nwbMetaData = nwbData.getMetadata();
-		nwbMetaData.put(DataProperty.LABEL, OUTPUT_ALGORITHM_NAME + "_net_" + inFileDisplayName);
-		nwbMetaData.put(DataProperty.PARENT, inDatum);
-		nwbMetaData.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		Data nwbData = DataFactory.forFile(
+				nwbFile,
+				NWBFileProperty.NWB_MIME_TYPE,
+				DataProperty.NETWORK_TYPE,
+				inDatum,
+				"Network layout overlay");
 
 		return new Data[] { postScriptData, nwbData };
 	}
