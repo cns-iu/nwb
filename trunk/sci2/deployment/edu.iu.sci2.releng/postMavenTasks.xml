@@ -3,7 +3,7 @@
 	<property name="product.name" relative="true">sci2</property>
 	<property name="input.dir" relative="true">${basedir}/target/products</property>
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
-	
+
 	<!-- To override any of these properties, run ant [...] -Dproperty.name=value -->
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
 	<property name="product.version">1.0.0</property>
@@ -11,22 +11,22 @@
 	<property name="product.build.type">custom</property>
 	<!-- permission.files defined files which the executable bit need to be enable at Mac and Linux. -->
 	<property name="permission.files">**/${product.name}</property>
-	
+
 	<!-- source: http://stackoverflow.com/questions/945374/how-to-pull-out-a-substring-in-ant -->
 	<scriptdef name="substring" language="javascript">
-     <attribute name="text" />
-     <attribute name="start" />
-     <attribute name="end" />
-     <attribute name="property" />
-     <![CDATA[
+		<attribute name="text" />
+		<attribute name="start" />
+		<attribute name="end" />
+		<attribute name="property" />
+		<![CDATA[
        var text = attributes.get("text");
        var start = attributes.get("start");
        var end = attributes.get("end") || text.length();
        var propertyToSet = attributes.get("property");
        project.setProperty(propertyToSet, text.substring(start, end));
      ]]>
-  	</scriptdef>
-	
+	</scriptdef>
+
 
 	<target name="build">
 		<echo>
@@ -34,7 +34,7 @@
 			[Ant-Contrib](http://ant-contrib.sourceforge.net/)
 			library to Ant. See README for more information.
 		</echo>
-		
+
 		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
 		<delete dir="${output.dir}" />
 		<mkdir dir="${output.dir}" />
@@ -44,21 +44,21 @@
 				<fileset dir="${input.dir}" includes="${product.name}-win32*.zip" casesensitive="false" />
 			</path>
 		</foreach>
-	
+
 		<foreach target="each-product-tgz" param="product.zip">
 			<path>
 				<fileset dir="${input.dir}" includes="${product.name}-macosx*.zip ${product.name}-linux*.zip" casesensitive="false" />
 			</path>
 		</foreach>
 	</target>
-	
+
 	<target name="deploy">
 		<tstamp/>
-		
+
 		<!-- Pull out the first letter of the build type -->
 		<substring property="product.build.type.short"
 			start="0" end="1" text="${product.build.type}" />
-			
+
 		<copy todir="${deploy.dir}/${product.version}.${DSTAMP}${TSTAMP}${product.build.type}">
 			<fileset dir="${output.dir}" />
 			<mapper>
@@ -70,6 +70,11 @@
 			</mapper>
 		</copy>
 	</target>
+
+	<!-- Since we don't use the p2 functionality we are excluding this from the 
+			build to reduce the size (~4MBs) on the final build.  
+			See Jira SCISQUARED-300 for further details. -->
+	<property name="exclude_p2">**/p2/**</property>
 
 	<target name="each-product-zip">
 		<basename property="product.filename" file="${product.zip}" />
@@ -92,13 +97,13 @@
 		</replaceregexp>
 
 		<zip destfile="${product.zip.out}" duplicate="fail">
-			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini" />
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini,${exclude_p2}" />
 			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="plugins" />
 			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
 		</zip>
 		<delete dir="${temp.dir}" />
 	</target>
-	
+
 	<target name="each-product-tgz">
 		<basename property="product.filename" file="${product.zip}" />
 		<propertyregex property="output.filename" input="${product.filename}" regexp=".zip" replace=".tgz" />
@@ -118,9 +123,9 @@
 		<replaceregexp match="org\.eclipse\.update\.reconcile=false" replace="org\.eclipse\.update\.reconcile=true">
 			<fileset dir="${temp.dir}" includes="**/configuration/config.ini" />
 		</replaceregexp>
-	
+
 		<tar destfile="${product.tgz.out}" compression="gzip">
-			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files}" />
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files} ${exclude_p2}" />
 			<zipfileset src="${product.zip}" includes="${permission.files}" filemode="755" />
 			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="plugins" />
 			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
