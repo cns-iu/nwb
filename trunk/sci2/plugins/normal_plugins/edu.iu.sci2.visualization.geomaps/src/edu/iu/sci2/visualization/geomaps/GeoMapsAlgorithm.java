@@ -142,10 +142,11 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 //				projections.toArray(new KnownProjectedCRSDescriptor[0]);
 		
 //		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
-		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+//		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-		Example.US_REGIONS.run(PageLayout.PRINT);//, projectionsArray);
+//		Example.US_REGIONS.run(PageLayout.PRINT);//, projectionsArray);
 //		Example.US_REGIONS.run(PageLayout.WEB);
+		Example.CONGRESSIONAL_CIRCLES.run(PageLayout.PRINT);
 	}
 
 
@@ -223,6 +224,36 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 								"White to Black")
 						.put(CircleDimension.INNER_COLOR.getColumnNameParameterId(),
 								CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken())
+						.put(CircleDimension.INNER_COLOR.getScalingParameterId(),
+								Scaling.Linear.toString())
+						.put(CircleDimension.INNER_COLOR.getRangeParameterId(),
+								"Yellow to Blue")
+						.build()
+				),
+		CONGRESSIONAL_CIRCLES(
+				Shapefile.UNITED_STATES,
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM +
+						"congressional-districts.csv"),
+				"congressional districts",
+				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
+						PageLayout.PRINT, GeoMapsCirclesFactory.Print.class,
+						PageLayout.WEB, GeoMapsCirclesFactory.Web.class),
+				ImmutableMap.<String, Object>builder()
+						.put(GeoMapsNetworkFactory.Parameter.LATITUDE.id(), "Latitude")
+						.put(GeoMapsNetworkFactory.Parameter.LONGITUDE.id(), "Longitude")
+						.put(CircleDimension.AREA.getColumnNameParameterId(),
+								// CircleDimension.AREA.getColumnNameParameterDisablingToken()
+								"Circle Size")
+						.put(CircleDimension.AREA.getScalingParameterId(),
+								Scaling.Linear.toString())
+						.put(CircleDimension.OUTER_COLOR.getColumnNameParameterId(),
+								CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken())
+						.put(CircleDimension.OUTER_COLOR.getScalingParameterId(),
+								Scaling.Logarithmic.toString())
+						.put(CircleDimension.OUTER_COLOR.getRangeParameterId(), "White to Black")
+						.put(CircleDimension.INNER_COLOR.getColumnNameParameterId(),
+//										CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken()
+								"Circle Size")
 						.put(CircleDimension.INNER_COLOR.getScalingParameterId(),
 								Scaling.Linear.toString())
 						.put(CircleDimension.INNER_COLOR.getRangeParameterId(),

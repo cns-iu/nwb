@@ -65,7 +65,6 @@ import edu.iu.sci2.visualization.geomaps.viz.strategy.StrokeColorStrategy;
 
 public class GeoMapsNetworkAlgorithm implements Algorithm {
 	private static final int ANCHOR_CIRCLE_SIZE = 5;
-	private static final String OUTPUT_ALGORITHM_NAME = "NetMap";
 	private static final String IS_ANCHOR_FIELD = "isAnchor";
 	private static final String X_POS_FIELD = "x";
 	private static final String Y_POS_FIELD = "y";
@@ -242,7 +241,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	
 	
 	public static void main(String[] args) {
-		Example.BIG_NETWORK.run();
+		Example.NETWORK.run();
 	}
 	
 	
@@ -287,7 +286,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	private static final String EXAMPLE_FILE_URL_STEM =
 			"/edu/iu/sci2/visualization/geomaps/testing/";
 	private enum Example {
-		BIG_NETWORK(
+		NETWORK(
 				Shapefile.WORLD,
 				GeoMapsNetworkAlgorithm.class.getResource(
 						EXAMPLE_FILE_URL_STEM + "Network I 00-02.net.nwb"),

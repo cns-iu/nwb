@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.visualization.geomaps
 Bundle-SymbolicName: edu.iu.sci2.visualization.geomaps
-Bundle-Version: 0.1.0
+Bundle-Version: 0.1.1
 Bundle-ClassPath: .
 Import-Package: com.google.common.base;version="11.0.1",
  com.google.common.collect;version="11.0.1",

@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.geomaps.data;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
@@ -17,6 +18,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
+import com.google.common.collect.Sets;
 
 import edu.iu.sci2.visualization.geomaps.LogStream;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
@@ -42,24 +44,43 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		ImmutableMap<D, ? extends Binding<D>> dimensionToBinding =
 				mapDimensionsToBindings(bindings);
 
-		ImmutableSet<Tuple> tuples = ImmutableSet.copyOf((Iterator<Tuple>) table.tuples());
-
-		ImmutableSet.Builder<GeoDatum<G, D>> builder = ImmutableSet.builder();
-		for (Tuple tuple : tuples) {
+		int duplicateCount = 0;
+		int invalidCount = 0;
+		
+		Set<GeoDatum<G, D>> geoData = Sets.newHashSetWithExpectedSize(table.getRowCount());
+		for (Iterator<?> tuples = table.tuples(); tuples.hasNext(); ) {
+			Tuple tuple = (Tuple) tuples.next();
+			
 			try {
-				builder.add(GeoDatum.forTuple(tuple, dimensionToBinding, dimensionClass, geoMaker));
+				GeoDatum<G, D> geoDatum =
+						GeoDatum.forTuple(tuple, dimensionToBinding, dimensionClass, geoMaker);
+				
+				boolean wasNew = geoData.add(geoDatum);
+				
+				if (!wasNew) {
+					LogStream.DEBUG
+							.send("Ignored record %s with duplicate values for all of the attributes considered.",
+									tuple);
+					duplicateCount++;
+				}
 			} catch (GeoDatum.GeoDatumValueInterpretationException e) {
-				// Skip tuples we can't use.  The presence and number of these is reported below.
-				LogStream.DEBUG.send(e, "Skipping uninterpretable tuple %s.", tuple);
+				LogStream.DEBUG.send(e, "Skipped record %s with unusable values for the required "
+						+ "attributes.", tuple);
+				invalidCount++;
 			}
 		}
-		ImmutableSet<GeoDatum<G, D>> geoData = builder.build();
-
-		if (geoData.size() < tuples.size()) {
-			int incompleteSpecificationCount = tuples.size() - geoData.size();
+		
+		if (invalidCount > 0) {
 			LogStream.WARNING.send(
-					"%d rows of the table did not specify all required values and were skipped.",
-					incompleteSpecificationCount);
+					"Skipped %d records with unusable values for the required attributes.",
+					invalidCount);
+		}
+		
+		if (duplicateCount > 0) {
+			LogStream.WARNING.send(
+					"Ignored %d records with duplicate values for all of the attributes considered.  " +
+							"Consider aggregating this data before visualizing.",
+					duplicateCount);
 		}
 
 		return new GeoDataset<G, D>(geoData, bindings);
