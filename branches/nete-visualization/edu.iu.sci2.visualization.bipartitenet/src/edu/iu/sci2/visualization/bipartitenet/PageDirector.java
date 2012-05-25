@@ -127,6 +127,10 @@ public class PageDirector implements Paintable {
 			Point2D thePoint = new Point2D(width / 2.0, height - 20);
 			return thePoint;
 		}
+		
+		public boolean hasTitle() {
+			return headerPosition != null;
+		}
 
 		public int getMaxNodeRadius() {
 			return maxNodeRadius;
@@ -183,7 +187,7 @@ public class PageDirector implements Paintable {
 	private PaintableContainer painter = new PaintableContainer();
 	private BipartiteGraphDataModel dataModel;
 
-	private static final String TITLE = "Network Visualization";
+	private static final String MAIN_TITLE = "Network Visualization";
 	
 	private final Layout layout;
 	
@@ -195,7 +199,7 @@ public class PageDirector implements Paintable {
 	private final double WHITESPACE_AMONG_LABELS = 30;
 
 	public PageDirector(final Layout layout, 
-			final BipartiteGraphDataModel dataModel, 
+			final String subtitle, final BipartiteGraphDataModel dataModel, 
 			final String leftSideType, final String leftSideTitle, 
 			final String rightSideType, final String rightSideTitle) {
 		this.layout = layout;
@@ -224,13 +228,15 @@ public class PageDirector implements Paintable {
 		painter.add(renderer);
 		
 		// The main title, and headers
-		Point2D headerPosition = layout.getHeaderPosition();
-		// Position's null if there should be no title 
-		if (headerPosition != null) {
-			painter.add(
-					new ComplexLabelPainter.Builder(headerPosition, layout.getFont(TextType.LEGEND), Color.BLACK)
-					.addLine(TITLE, layout.getFont(TextType.TITLE))
-					.addLine(getTimeStamp())
+		if (layout.hasTitle()) {
+			Point2D headerPosition = layout.getHeaderPosition();
+			ComplexLabelPainter.Builder builder 
+				= new ComplexLabelPainter.Builder(headerPosition, layout.getFont(TextType.LEGEND), Color.BLACK)
+					.addLine(MAIN_TITLE, layout.getFont(TextType.TITLE));
+			if (! subtitle.isEmpty()) {
+				builder.addLine(subtitle);
+			}
+			painter.add(builder.addLine(getTimeStamp())
 					.withLineSpacing(LINE_SPACING)
 					.build());
 		}
