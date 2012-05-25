@@ -1,17 +1,20 @@
-package edu.iu.sci2.visualization.bipartitenet.component;
+package edu.iu.sci2.visualization.bipartitenet.component.edge;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
+import edu.iu.sci2.visualization.bipartitenet.component.ComplexLabelPainter;
+import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
+import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.sci2.visualization.bipartitenet
 Bundle-SymbolicName: edu.iu.sci2.visualization.bipartitenet
-Bundle-Version: 1.1.1
+Bundle-Version: 1.2.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 X-AutoStart: true
 Import-Package: com.google.common.base;version="8.0.0",
@@ -15,6 +15,7 @@ Import-Package: com.google.common.base;version="8.0.0",
  math.geom2d.line,
  math.geom2d.point,
  math.geom2d.polygon,
+ math.geom2d.spline,
  org.apache.commons.lang,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",

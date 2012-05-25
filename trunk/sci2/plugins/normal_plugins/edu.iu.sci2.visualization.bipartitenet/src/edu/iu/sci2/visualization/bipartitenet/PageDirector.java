@@ -20,16 +20,19 @@ import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.bipartitenet.component.CircleRadiusLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.ComplexLabelPainter;
-import edu.iu.sci2.visualization.bipartitenet.component.EdgeWeightLegend;
 import edu.iu.sci2.visualization.bipartitenet.component.HowToRead;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.XAlignment;
 import edu.iu.sci2.visualization.bipartitenet.component.SimpleLabelPainter.YAlignment;
+import edu.iu.sci2.visualization.bipartitenet.component.edge.EdgeWeightLegend;
+import edu.iu.sci2.visualization.bipartitenet.component.edge.shape.BezierEdgeShape;
+import edu.iu.sci2.visualization.bipartitenet.component.edge.shape.EdgeShape;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
+import edu.iu.sci2.visualization.bipartitenet.scale.BasicZeroAnchoredScale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ConstantValue;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ZeroAnchoredCircleRadiusScale;
@@ -59,20 +62,30 @@ public class PageDirector implements Paintable {
 			TextType.LEGEND,     BASE_FONT.deriveFont(Font.PLAIN, 14),
 			TextType.FOOTER,     BASE_FONT.deriveFont(Font.ITALIC, 10),
 			TextType.HOW_TO_READ,BASE_FONT.deriveFont(Font.PLAIN, 14));
+
+	/**
+	 * The proportion of a node's diameter that is allowed to be overlapped by
+	 * the previous node.
+	 * <p>
+	 * For example, if it's set to 0, the nodes do not overlap. If set to 0.75,
+	 * the previous node can overlap three quarters of this node's diameter.
+	 * </p>
+	 */
+	private static final double NODE_OVERLAP_PART = 0.5;
 	
 	public static enum Layout {
 		PRINT(792, 612,
 				new Point2D(18, 18), // title top-left corner
 				new LineSegment2D(296, 144, 296, 412),
 				new LineSegment2D(792 - 296, 144, 792 - 296, 412),
-				14, 3,
+				14, 2,
 				PRINT_FONTS,
 				true),
 		WEB(1280, 960,
 				null, // No title!
 				new LineSegment2D(480, 100, 480, 780),
 				new LineSegment2D(800, 100, 800, 780),
-				24, 5,
+				24, 4,
 				WEB_FONTS,
 				false);
 		
@@ -82,13 +95,13 @@ public class PageDirector implements Paintable {
 		private final LineSegment2D rightLine;
 		private final int maxNodeRadius;
 		private final Point2D headerPosition;
-		private final int maxEdgeThickness;
+		private final double maxEdgeThickness;
 		private final boolean hasHowToRead;
 		private final ImmutableMap<TextType, Font> fontScheme;
 
 		private Layout(int width, int height, Point2D headerPosition, 
 				LineSegment2D leftLine, LineSegment2D rightLine,
-				int maxNodeRadius, int maxEdgeThickness,
+				int maxNodeRadius, double maxEdgeThickness,
 				ImmutableMap<TextType, Font> fontScheme, boolean hasHowToRead) {
 			this.width = width;
 			this.height = height;
@@ -144,7 +157,7 @@ public class PageDirector implements Paintable {
 			return maxNodeRadius;
 		}
 
-		public int getMaxEdgeThickness() {
+		public double getMaxEdgeThickness() {
 			return maxEdgeThickness;
 		}
 		
@@ -190,6 +203,14 @@ public class PageDirector implements Paintable {
 		public boolean hasHowToRead() {
 			return this.hasHowToRead;
 		}
+
+		public double getMinEdgeThickness() {
+			return getMaxEdgeThickness() / 10.0;
+		}
+		
+		public EdgeShape getEdgeShape() {
+			return new BezierEdgeShape(maxNodeRadius * 3);
+		}
 	}
 	
 	private PaintableContainer painter = new PaintableContainer();
@@ -197,10 +218,11 @@ public class PageDirector implements Paintable {
 
 	private final Layout layout;
 	
-
-	// This whitespace is distributed evenly among the spaces between all the node labels.
-	// Actually, the total whitespace decreases with increasing # of labels, so this is not linear.
-	// Argh! Just read the code.
+	/**
+	 * This whitespace is distributed evenly among the spaces between all the
+	 * node labels. Actually, the total whitespace decreases with increasing #
+	 * of labels, so this is not linear. Argh! Just read the code.
+	 */
 	private final double WHITESPACE_AMONG_LABELS = 30;
 
 	public PageDirector(final Layout layout, 
@@ -229,7 +251,8 @@ public class PageDirector implements Paintable {
 		BipartiteGraphRenderer renderer = new BipartiteGraphRenderer(dataModel,
 				layout.getLeftLine(), layout.getRightLine(), layout.getMaxNodeRadius(), 
 				nodeCoding, edgeCoding,
-				createNodeLabelFonts(), layout.getWidth() - layout.getRightLine().getFirstPoint().getX());
+				createNodeLabelFonts(), layout.getWidth() - layout.getRightLine().getFirstPoint().getX(),
+				layout.getEdgeShape());
 		painter.add(renderer);
 		
 		// The main title, and headers
@@ -326,7 +349,9 @@ public class PageDirector implements Paintable {
 				Math.max(
 					dataModel.getLeftNodes().size(), 
 					dataModel.getRightNodes().size());
-		return Math.min(layout.getMaxNodeRadius(), layout.getLeftLine().getLength() / (maxNodesOnOneSide));
+		return Math.min(layout.getMaxNodeRadius(), 
+				layout.getLeftLine().getLength() 
+					/ (maxNodesOnOneSide * 2 * (1 - NODE_OVERLAP_PART)));
 	}
 	
 	private Scale<Double, Double> makeNodeCodingAndLegend() {
@@ -346,7 +371,7 @@ public class PageDirector implements Paintable {
 
 	private Scale<Double,Double> makeEdgeCodingAndLegend() {
 		if (dataModel.hasWeightedEdges()) {
-			Scale<Double,Double> thicknessScale = new ZeroAnchoredCircleRadiusScale(layout.getMaxEdgeThickness());
+			Scale<Double,Double> thicknessScale = new BasicZeroAnchoredScale(layout.getMinEdgeThickness(), layout.getMaxEdgeThickness());
 			thicknessScale.train(Iterables.transform(dataModel.getEdges(), Edge.WEIGHT_GETTER));
 			thicknessScale.doneTraining();
 			

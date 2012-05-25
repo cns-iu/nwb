@@ -53,12 +53,22 @@ public class NodeView implements Paintable {
 		// avoid lop-sided circles
 		g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-		Circle2D circle = new Circle2D(nodeCenter.getX(), nodeCenter.getY(), getRadius());
+		Circle2D circle = getNodeCircle();
 		node.getDestination().paintLabel(this, g, nodeFont, nodeToPageEdgeDistance);
 		g.setColor(node.getDestination().getFillColor());
 		circle.fill(g);
 		g.setColor(Color.black);
 		circle.draw(g);
+	}
+
+	/*
+	 * I'm sad that this exposes the fact that the representation is a circle.
+	 * It's only public because the EdgeView needs to use the same code as
+	 * NodeView so it's not duplicated. Would like to refactor this sometime.
+	 */
+	public Circle2D getNodeCircle() {
+		Circle2D circle = new Circle2D(nodeCenter, getRadius());
+		return circle;
 	}
 
 	public String getLabel() {

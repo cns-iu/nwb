@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.bipartitenet.component;
+package edu.iu.sci2.visualization.bipartitenet.component.edge;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,6 +8,8 @@ import math.geom2d.Point2D;
 import math.geom2d.line.AbstractLine2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.polygon.SimplePolygon2D;
+import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
+import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 

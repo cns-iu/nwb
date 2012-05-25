@@ -1,56 +1,56 @@
-package edu.iu.sci2.visualization.bipartitenet.component;
+package edu.iu.sci2.visualization.bipartitenet.component.edge;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
+import math.geom2d.curve.AbstractContinuousCurve2D;
 import math.geom2d.line.AbstractLine2D;
-import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.SimplePolygon2D;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
+import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
+import edu.iu.sci2.visualization.bipartitenet.component.edge.shape.EdgeShape;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
 
 public class ThicknessCodedEdgeView implements Paintable {
 	
-	private static final double NODE_EDGE_SPACE = 4;
 	private final NodeView dest;
 	private final NodeView src;
 	private final Scale<Double,Double> edgeCoding;
 	private final Edge e;
+	private final EdgeShape edgeShape;
 
-	public ThicknessCodedEdgeView(Edge e, NodeView src, NodeView dest, Scale<Double,Double> edgeCoding) {
+	public ThicknessCodedEdgeView(Edge e, NodeView src, NodeView dest, Scale<Double,Double> edgeCoding, EdgeShape edgeShape) {
 		this.e = e;
 		this.src = src;
 		this.dest = dest;
 		this.edgeCoding = edgeCoding;
+		this.edgeShape = edgeShape;
 	}
 
 	@Override
 	public void paint(Graphics2D g) {
 		Double edgeThickness = edgeCoding.apply(e.getWeight());
-		LineSegment2D baseLine = new LineSegment2D(src.getNodeCenter(), dest.getNodeCenter());
-		double tStart = (src.getRadius() + NODE_EDGE_SPACE) / baseLine.getLength(),
-				tEnd = (baseLine.getLength() - dest.getRadius() - NODE_EDGE_SPACE)
-							/ baseLine.getLength();
-		AbstractLine2D grossLine = baseLine.getSubCurve(tStart, tEnd);
-		drawEdge(grossLine, edgeThickness.floatValue(), g);
+		AbstractContinuousCurve2D curve = edgeShape.connectNodes(src, dest);
+		drawEdge(curve, edgeThickness.floatValue(), g);
 	}
 
-	public static void drawEdge(AbstractLine2D line, float edgeThickness,
+	public static void drawEdge(AbstractContinuousCurve2D curve, float edgeThickness,
 			Graphics2D g) {
-		drawLine(line, edgeThickness, g);
+		drawLine(curve, edgeThickness, g);
 	}
 	
-	public static void drawLine(AbstractLine2D line, float edgeThickness,
+	public static void drawLine(AbstractContinuousCurve2D curve, float edgeThickness,
 			Graphics2D g) {
-		g.setStroke(new BasicStroke(edgeThickness));
+		g.setStroke(new BasicStroke(edgeThickness, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 		
-		line.draw(g);		
+		curve.draw(g);		
 	}
 
 	public static void drawArrow(AbstractLine2D grossLine, float edgeThickness, Graphics2D g) {

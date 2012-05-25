@@ -15,7 +15,8 @@ import com.google.common.collect.Maps;
 import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.component.PaintableContainer;
-import edu.iu.sci2.visualization.bipartitenet.component.ThicknessCodedEdgeView;
+import edu.iu.sci2.visualization.bipartitenet.component.edge.ThicknessCodedEdgeView;
+import edu.iu.sci2.visualization.bipartitenet.component.edge.shape.EdgeShape;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
@@ -36,12 +37,14 @@ public class BipartiteGraphRenderer implements Paintable {
 	private final int maxNodeRadius;
 	private final Font[] nodeFonts;
 	private final double nodeToPageEdgeDistance;
+	private final EdgeShape edgeShape;
 
 	public BipartiteGraphRenderer(BipartiteGraphDataModel skel,
 			LineSegment2D leftLine, LineSegment2D rightLine,
 			int maxNodeRadius, Scale<Double,Double> nodeRadiusCoding, 
 			Scale<Double,Double> edgeCoding,
-			Font[] nodeFonts, double nodeToPageEdgeDistance) {
+			Font[] nodeFonts, double nodeToPageEdgeDistance,
+			EdgeShape edgeShape) {
 		this.data = skel;
 		this.leftLine = leftLine;
 		this.rightLine = rightLine;
@@ -50,6 +53,7 @@ public class BipartiteGraphRenderer implements Paintable {
 		this.edgeCoding = edgeCoding;
 		this.nodeFonts = nodeFonts;
 		this.nodeToPageEdgeDistance = nodeToPageEdgeDistance;
+		this.edgeShape = edgeShape;
 
 		nodeToNodeView = ImmutableMap.copyOf(placeNodes());
 		placeEdges();
@@ -60,9 +64,10 @@ public class BipartiteGraphRenderer implements Paintable {
 	private void placeEdges() {
 		for (Edge e : data.getEdges()) {
 			ThicknessCodedEdgeView ev = new ThicknessCodedEdgeView(e, nodeToNodeView.get(e.getLeftNode()),
-					nodeToNodeView.get(e.getRightNode()), edgeCoding);
+					nodeToNodeView.get(e.getRightNode()), edgeCoding,
+					edgeShape);
 			
-			painter.add(ev);
+			painter.insert(ev);
 		}
 	}
 
@@ -105,8 +110,6 @@ public class BipartiteGraphRenderer implements Paintable {
 	public void paint(Graphics2D g) {
 		g.setColor(Color.black);
 		painter.paint(g);
-		
-//		doTestStuff(g);
 	}
 	
 	
