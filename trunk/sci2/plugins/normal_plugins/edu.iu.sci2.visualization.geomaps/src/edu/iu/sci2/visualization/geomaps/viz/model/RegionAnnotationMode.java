@@ -47,7 +47,9 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 				new Function<Tuple, String>() {
 					@Override
 					public String apply(Tuple row) {
-						return StringUtilities.interpretObjectAsString(row.get(featureNameColumnName));
+						return normalizeFeatureName(
+								StringUtilities.interpretObjectAsString(
+										row.get(featureNameColumnName)));
 					}					
 				});
 	}
@@ -84,5 +86,10 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 			GeoDataset<String, FeatureDimension> scaledData,
 			Collection<? extends Coding<FeatureDimension>> codings) {
 		return asFeatureViews(scaledData.geoData(Stage.SCALED), codings);
+	}
+
+
+	public static String normalizeFeatureName(String featureName) {
+		return featureName.toLowerCase();
 	}
 }

@@ -13,7 +13,6 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 
 public class PageHeader implements PostScriptable {
-	public static final String INDENT = "	";
 	public static final double TITLE_FONT_BRIGHTNESS = 0.0;
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	

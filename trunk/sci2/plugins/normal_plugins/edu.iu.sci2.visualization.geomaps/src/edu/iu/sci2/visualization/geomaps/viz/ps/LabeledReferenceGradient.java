@@ -1,17 +1,17 @@
-package edu.iu.sci2.visualization.geomaps.viz.legend;
+package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
 
 import org.antlr.stringtemplate.StringTemplate;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.utility.ColorTuples;
 import edu.iu.sci2.visualization.geomaps.utility.Dimension;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
+import edu.iu.sci2.visualization.geomaps.viz.legend.ColorLegend;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 
 /* Create PostScript to draw a color gradient representing the extrema (minimum,
  * midpoint, and maximum) of the interpolated range and label each end with the
@@ -70,7 +70,7 @@ public class LabeledReferenceGradient implements LabeledReference {
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("colorLegendDefinitions");
+				GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf("colorLegendDefinitions");
 			
 			s += definitionsTemplate.toString();
 			
@@ -79,7 +79,7 @@ public class LabeledReferenceGradient implements LabeledReference {
 		
 		
 		StringTemplate invocationTemplate =
-			GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("colorLegend");
+			GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf("colorLegend");
 		
 		invocationTemplate.setAttribute("x", lowerLeft.x);
 		invocationTemplate.setAttribute("y", lowerLeft.y);

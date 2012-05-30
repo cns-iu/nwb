@@ -8,18 +8,12 @@ public class FeatureView {
 	private final String featureName;
 	private final EnumMap<FeatureDimension, Strategy> strategies;
 
-	public FeatureView(
-			String featureName,
-			EnumMap<FeatureDimension, Strategy> strategies) {
-		this.featureName = normalizeFeatureName(featureName);
+	public FeatureView(String featureName, EnumMap<FeatureDimension, Strategy> strategies) {
+		this.featureName = featureName;
 		this.strategies = strategies;
 	}
 	
 	
-	public static String normalizeFeatureName(String featureName) {
-		return featureName.toLowerCase();
-	}
-
 	public String getFeatureName() {
 		return featureName;
 	}

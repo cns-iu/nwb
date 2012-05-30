@@ -3,7 +3,6 @@ package edu.iu.sci2.visualization.geomaps;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Dictionary;
@@ -11,7 +10,6 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -49,16 +47,12 @@ import edu.iu.sci2.visualization.geomaps.viz.ps.GeoMapViewPS.ShapefilePostScript
 /* The codings and legends are determined using all available data, not just data that is actually
  * shown. */
 public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Algorithm {
-	public static final String BASE_TITLE = "Geospatial Visualization";
+	private static final String BASE_TITLE = "Geospatial Visualization";
 	
-	public static final String CSV_MIME_TYPE = "file:text/csv";
-	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
-	public static final String OUTPUT_FILE_EXTENSION = "ps"; // Though we generate EPS specifically
+	private static final String CSV_MIME_TYPE = "file:text/csv";
+	static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
+	static final String OUTPUT_FILE_EXTENSION = "ps"; // Though we generate EPS specifically
 
-	public static StringTemplateGroup TEMPLATE_GROUP = loadTemplates();
-	public static final String STRING_TEMPLATE_FILE_PATH =
-		"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/geomap.stg";
-	
 	private final Data[] data;
 	private final Dictionary<String, Object> parameters;
 	private final PageLayout pageLayout;
@@ -95,7 +89,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 					subtitle, templateForHowToRead);
 			
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, pageLayout);
-			File geoMapFile = geoMapView.writeToPSFile(dataLabel);
+			File geoMapFile = geoMapView.writeToPSFile(dataLabel, OUTPUT_FILE_EXTENSION);
 
 			Data[] outData = new Data[] {
 					DataFactory.forFile(
@@ -125,13 +119,6 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	}
 
 
-	private static StringTemplateGroup loadTemplates() {
-		return new StringTemplateGroup(
-				new InputStreamReader(
-					GeoMapsAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
-	}
-	
-	
 	public static void main(String[] args) {
 //		Set<KnownProjectedCRSDescriptor> projections =
 //				EnumSet.of(
@@ -146,7 +133,8 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
 //		Example.US_REGIONS.run(PageLayout.PRINT);//, projectionsArray);
 //		Example.US_REGIONS.run(PageLayout.WEB);
-		Example.CONGRESSIONAL_CIRCLES.run(PageLayout.PRINT);
+		Example.DUPLICATE_REGIONS.run(PageLayout.PRINT);
+		Example.DUPLICATE_CIRCLES.run(PageLayout.PRINT);
 	}
 
 
@@ -259,6 +247,51 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 						.put(CircleDimension.INNER_COLOR.getRangeParameterId(),
 								"Yellow to Blue")
 						.build()
+				),
+		DUPLICATE_REGIONS(
+				Shapefile.UNITED_STATES,
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "duplicates.csv"),
+				"duplicate regions",
+				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
+						PageLayout.PRINT, GeoMapsRegionsFactory.Print.class,
+						PageLayout.WEB, GeoMapsRegionsFactory.Web.class),
+				ImmutableMap.<String, Object>builder()
+						.put(RegionAnnotationMode.FEATURE_NAME_ID, "State")
+						.put(FeatureDimension.REGION_COLOR.getColumnNameParameterId(),
+//										FeatureDimension.REGION_COLOR.getColumnNameParameterDisablingToken()
+								"Value")
+						.put(FeatureDimension.REGION_COLOR.getScalingParameterId(),
+								Scaling.Linear.toString())
+						.put(FeatureDimension.REGION_COLOR.getRangeParameterId(),
+								"Yellow to Blue")
+						.build()
+				),
+		DUPLICATE_CIRCLES(
+				Shapefile.UNITED_STATES,
+				GeoMapsAlgorithm.class.getResource(EXAMPLE_FILE_URL_STEM + "duplicates.csv"),
+				"duplicate circles",
+				ImmutableMap.<PageLayout, Class<? extends AlgorithmFactory>>of(
+						PageLayout.PRINT, GeoMapsCirclesFactory.Print.class,
+						PageLayout.WEB, GeoMapsCirclesFactory.Web.class),
+				ImmutableMap.<String, Object>builder()
+						.put(GeoMapsNetworkFactory.Parameter.LATITUDE.id(), "Latitude")
+						.put(GeoMapsNetworkFactory.Parameter.LONGITUDE.id(), "Longitude")
+						.put(CircleDimension.AREA.getColumnNameParameterId(),
+								// CircleDimension.AREA.getColumnNameParameterDisablingToken()
+								"Value")
+						.put(CircleDimension.AREA.getScalingParameterId(),
+								Scaling.Linear.toString())
+						.put(CircleDimension.OUTER_COLOR.getColumnNameParameterId(),
+								CircleDimension.OUTER_COLOR.getColumnNameParameterDisablingToken())
+						.put(CircleDimension.OUTER_COLOR.getScalingParameterId(),
+								Scaling.Logarithmic.toString())
+						.put(CircleDimension.OUTER_COLOR.getRangeParameterId(), "White to Black")
+						.put(CircleDimension.INNER_COLOR.getColumnNameParameterId(),
+								CircleDimension.INNER_COLOR.getColumnNameParameterDisablingToken())
+						.put(CircleDimension.INNER_COLOR.getScalingParameterId(),
+								Scaling.Linear.toString())
+						.put(CircleDimension.INNER_COLOR.getRangeParameterId(), "Yellow to Blue")
+						.build()
 				);
 		
 		private final Shapefile shapefile;
@@ -311,8 +344,16 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 				
 				// Test with system's default PS handler
 				Desktop.getDesktop().open(outFile);
-			} catch (Exception e) {
-				LogStream.DEBUG.send(e, e.getMessage());
+			} catch (AlgorithmExecutionException e) {
+				LogStream.ERROR.send(e);
+			} catch (InstantiationException e) {
+				LogStream.ERROR.send(e);
+			} catch (IllegalAccessException e) {
+				LogStream.ERROR.send(e);
+			} catch (URISyntaxException e) {
+				LogStream.ERROR.send(e);
+			} catch (IOException e) {
+				LogStream.ERROR.send(e);
 			}
 		}
 		

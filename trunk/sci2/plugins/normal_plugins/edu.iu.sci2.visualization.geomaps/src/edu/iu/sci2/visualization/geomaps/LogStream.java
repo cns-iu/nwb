@@ -7,6 +7,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 
+import com.google.common.base.Preconditions;
+
 /**
  * A bridge to the bundle's {@link LogService} or, when not available, a fallback PrintStream (one
  * of {@link System#err} or {@link System#out}.
@@ -56,18 +58,37 @@ public enum LogStream {
 	 * @see #send(Throwable, String, Object...)
 	 */
 	public void send(String messageTemplate, Object... templateArguments) {
-		send(null, messageTemplate, templateArguments);
+		// TODO Are these send signatures ambiguous?  What if I call the Throwable variant with null?
+		send((Throwable) null, messageTemplate, templateArguments);
 	}
-
+	
 	/**
-	 * Logs a message and an exception.
+	 * Logs an throwable and its message.
 	 * 
 	 * <p>
 	 * This information is sent to a backing {@link LogService} when available, otherwise to a
 	 * standard output stream like {@link System#err} or {@link System#out}.
 	 * 
 	 * @param throwable
-	 *            The exception that reflects the condition or null.
+	 *            The throwable that reflects the condition.
+	 * 
+	 * @see #send(Throwable, String, Object...)
+	 */
+	public void send(Throwable throwable) {
+		Preconditions.checkNotNull(throwable);
+		
+		send(throwable, throwable.getMessage());
+	}	
+	
+	/**
+	 * Logs a message and an throwable.
+	 * 
+	 * <p>
+	 * This information is sent to a backing {@link LogService} when available, otherwise to a
+	 * standard output stream like {@link System#err} or {@link System#out}.
+	 * 
+	 * @param throwable
+	 *            The throwable that reflects the condition or null.
 	 * @param messageTemplate
 	 *            A {@link Formatter format string} for the human readable message describing the
 	 *            condition.
@@ -77,6 +98,8 @@ public enum LogStream {
 	 * @see LogService#log(int, String, Throwable)
 	 */
 	public void send(Throwable throwable, String messageTemplate, Object... templateArguments) {
+		Preconditions.checkNotNull(messageTemplate);
+		
 		String message = String.format(messageTemplate, templateArguments);
 		
 		if (logService != null) {

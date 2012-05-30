@@ -8,7 +8,6 @@ import org.cishell.utilities.NumberUtilities;
 
 import prefuse.data.Tuple;
 
-import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -45,7 +44,7 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 	 */
 	public static <G, D extends Enum<D> & VizDimension> GeoDatum<G, D> forTuple(Tuple tuple,
 			Map<D, ? extends Binding<D>> dimensionToBinding, Class<D> dimensionClass,
-			Function<Tuple, G> geoMaker) throws GeoDatumValueInterpretationException {
+			G geoIdentifier) throws GeoDatumValueInterpretationException {
 		EnumMap<D, Double> dimensionToValue = Maps.newEnumMap(dimensionClass);
 		
 		for (Entry<D, ? extends Binding<D>> dimensionAndBinding : dimensionToBinding.entrySet()) {
@@ -73,7 +72,7 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 			}
 		}
 		
-		return GeoDatum.of(geoMaker.apply(tuple), dimensionToValue);
+		return GeoDatum.of(geoIdentifier, dimensionToValue);
 	}
 	
 	
@@ -97,7 +96,7 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 			&& Objects.equal(this.values,
 							 that.values);
 	}
-	
+		
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(geo, values);

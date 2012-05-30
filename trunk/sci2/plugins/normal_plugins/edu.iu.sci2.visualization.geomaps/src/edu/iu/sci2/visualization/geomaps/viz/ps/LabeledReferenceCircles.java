@@ -1,15 +1,15 @@
-package edu.iu.sci2.visualization.geomaps.viz.legend;
+package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.geom.Point2D;
 
 import org.antlr.stringtemplate.StringTemplate;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.NumberFormatFactory;
 import edu.iu.sci2.visualization.geomaps.utility.numberformat.UnsignedZeroFormat;
 import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
+import edu.iu.sci2.visualization.geomaps.viz.legend.AreaLegend;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 
 /* Create PostScript to draw three Circles representing the extrema (minimum,
  * midpoint, and maximum) of the interpolated range and label each with the
@@ -54,7 +54,7 @@ public class LabeledReferenceCircles implements LabeledReference {
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf(
+				GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf(
 						"circleAreaLegendDefinitions");
 			
 			s += definitionsTemplate.toString();
@@ -63,7 +63,7 @@ public class LabeledReferenceCircles implements LabeledReference {
 		}
 		
 		StringTemplate invocationTemplate =
-			GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circleAreaLegend");
+			GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf("circleAreaLegend");
 		
 		invocationTemplate.setAttribute("x", keyTextLowerLeft.x);
 		invocationTemplate.setAttribute("y", keyTextLowerLeft.y);

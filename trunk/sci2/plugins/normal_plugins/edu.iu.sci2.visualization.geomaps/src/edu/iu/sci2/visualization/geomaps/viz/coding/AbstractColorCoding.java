@@ -19,8 +19,8 @@ import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 import edu.iu.sci2.visualization.geomaps.viz.legend.ColorLegend;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
-import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReferenceGradient;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LegendCreationException;
+import edu.iu.sci2.visualization.geomaps.viz.ps.LabeledReferenceGradient;
 
 public abstract class AbstractColorCoding<D extends Enum<D> & VizDimension> extends AbstractCoding<D, Color> {
 	public static final ImmutableMap<String, Continuum<Color>> COLOR_CONTINUUMS =

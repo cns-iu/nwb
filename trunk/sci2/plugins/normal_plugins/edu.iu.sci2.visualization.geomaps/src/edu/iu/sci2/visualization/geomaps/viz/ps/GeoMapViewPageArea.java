@@ -16,8 +16,7 @@ public class GeoMapViewPageArea implements PostScriptable {
 	private static final Color BACKGROUND_COLOR = Color.CYAN;
 	private static final boolean DRAW_BOUNDING_BOX = false;
 	private static final double BOUNDING_BOX_LINE_WIDTH = .2;
-	private static final String INDENT = "  ";
-
+	
 	private final Rectangle2D.Double displayRectangle;
 	private final Interpolator1D xInterpolator;
 	private final Interpolator1D yInterpolator;

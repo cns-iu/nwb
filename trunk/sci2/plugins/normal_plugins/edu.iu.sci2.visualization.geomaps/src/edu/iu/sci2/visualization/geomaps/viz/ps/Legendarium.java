@@ -1,13 +1,12 @@
-package edu.iu.sci2.visualization.geomaps.viz.legend;
+package edu.iu.sci2.visualization.geomaps.viz.ps;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
 import org.antlr.stringtemplate.StringTemplate;
 
-import edu.iu.sci2.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
-import edu.iu.sci2.visualization.geomaps.viz.ps.PSUtility;
+import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
 
 public class Legendarium {
 	private final Point2D.Double lowerLeft;
@@ -36,7 +35,7 @@ public class Legendarium {
 
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("legendDefinitions");
+				GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf("legendDefinitions");
 			
 			ps.append(definitionsTemplate.toString());
 			

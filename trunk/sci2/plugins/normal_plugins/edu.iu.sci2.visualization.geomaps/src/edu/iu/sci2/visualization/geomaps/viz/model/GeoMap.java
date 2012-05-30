@@ -28,8 +28,8 @@ import edu.iu.sci2.visualization.geomaps.viz.Circle;
 import edu.iu.sci2.visualization.geomaps.viz.FeatureView;
 import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.legend.LabeledReference;
-import edu.iu.sci2.visualization.geomaps.viz.legend.Legendarium;
 import edu.iu.sci2.visualization.geomaps.viz.ps.HowToRead;
+import edu.iu.sci2.visualization.geomaps.viz.ps.Legendarium;
 
 public class GeoMap {	
 	private final String title;
@@ -213,10 +213,11 @@ public class GeoMap {
 				} catch (IllegalArgumentException e) { // TODO Still necessary?
 					/* This seems to happen intermittently with version 2.7.4 of geolibs/Geotools
 					 * for one subgeometry of Minnesota in Shapefile.UNITED_STATES. */
-					LogStream.DEBUG.send(String.format(
-							"Skipping a geometry of feature %s due to IllegalArgumentException " +
-							"during projection (%s).",
-							shapefile.extractFeatureName(feature), e.getMessage()));
+					LogStream.DEBUG.send(
+							e,
+							"Skipping a geometry of feature %s due to IllegalArgumentException "
+									+ "during projection.",
+							shapefile.extractFeatureName(feature));
 					continue;
 				}
 		

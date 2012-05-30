@@ -6,8 +6,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 
+import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -25,15 +27,15 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 import edu.iu.sci2.visualization.geomaps.viz.model.GeoMap;
 
 public class GeoMapViewPS {
-	/* Percentage of the data range to add to each side of the map as a buffer.
-	 * Between 0 and 1.
-	 */
-	public static final double MAP_BOUNDING_BOX_BUFFER_RATIO = 0.1;
-	public static final String INDENT = "  ";
+	static final StringTemplateGroup TEMPLATE_GROUP = loadTemplates();
+
+	private static final String STRING_TEMPLATE_RESOURCE_PATH =
+			"/edu/iu/sci2/visualization/geomaps/viz/stringtemplates/geomap.stg";
 	
 	private final GeoMap geoMap;
 	private final PageLayout pageLayout;
 	private final GeoMapViewPageArea geoMapViewPageArea;
+
 
 	public GeoMapViewPS(GeoMap geoMap, PageLayout pageLayout) throws ShapefilePostScriptWriterException {
 		try {
@@ -50,10 +52,10 @@ public class GeoMapViewPS {
 	}
 
 	
-	public File writeToPSFile(String dataLabel)
+	public File writeToPSFile(String dataLabel, String fileExtension)
 				throws IOException, TransformException {		
 		File psFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-				"geoMaps", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
+				"geoMaps", fileExtension);
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 		try {
@@ -61,7 +63,7 @@ public class GeoMapViewPS {
 			
 			out.write((new DSCProlog(geoMap.getTitle(), pageLayout.pageDimensions()).toPostScript()));
 			
-			out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
+			out.write(GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf("utilityDefinitions").toString());
 			out.write("\n");
 			
 			out.write((new PageFooter(new Point2D.Double(
@@ -93,14 +95,14 @@ public class GeoMapViewPS {
 			}
 			
 	
-			out.write(GeoMapsAlgorithm.TEMPLATE_GROUP.getInstanceOf("circlePrinterDefinitions").toString());
+			out.write(GeoMapViewPS.TEMPLATE_GROUP.getInstanceOf("circlePrinterDefinitions").toString());
 	
 			out.write("% Circle annotations" + "\n");		
 			out.write("gsave" + "\n");
 			out.write("\n");
 			
 			double circleLineWidth = Circle.DEFAULT_CIRCLE_LINE_WIDTH;
-			out.write(INDENT + circleLineWidth + " setlinewidth" + "\n");
+			out.write(PostScriptable.INDENT + circleLineWidth + " setlinewidth" + "\n");
 			out.write("\n");
 	
 			for (Circle circle : geoMap.getCircles()) {
@@ -173,6 +175,12 @@ public class GeoMapViewPS {
 		return geoMapViewPageArea.displayPointFor(someProjectedPoint.getCoordinate());
 	}
 	
+	public static StringTemplateGroup loadTemplates() {
+		return new StringTemplateGroup(
+				new InputStreamReader(
+					GeoMapsAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_RESOURCE_PATH)));
+	}
+
 	public static class ShapefilePostScriptWriterException extends Exception {
 		private static final long serialVersionUID = -4207770884445237065L;
 	

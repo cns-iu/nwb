@@ -40,10 +40,9 @@ public class FeaturePrinter {
 	 * Point-to-point distances in a path exceeding this threshold are assumed to be projection
 	 * glitches.  We'll use this to split paths as necessary into subpaths with no big jumps.
 	 */
-	public static final double GLITCH_DETECTION_THRESHOLD = 150;
-	public static final double BORDER_BRIGHTNESS = 0.7;
-	public static final double BORDER_LINE_WIDTH = 0.4;
-	public static final String INDENT = "  ";
+	private static final double GLITCH_DETECTION_THRESHOLD = 150;
+	private static final double BORDER_BRIGHTNESS = 0.7;
+	private static final double BORDER_LINE_WIDTH = 0.4;
 	
 	private final GeoMap geoMap;
 	private final GeoMapViewPageArea geoMapViewPageArea;
@@ -81,7 +80,7 @@ public class FeaturePrinter {
 		// Write PostScript to draw and color the features
 		out.write("% Features" + "\n");
 		out.write("gsave" + "\n");
-		out.write(INDENT + BORDER_LINE_WIDTH + " setlinewidth" + "\n");
+		out.write(PostScriptable.INDENT + BORDER_LINE_WIDTH + " setlinewidth" + "\n");
 		out.write(PSUtility.setgray(BORDER_BRIGHTNESS) + "\n");
 		out.write("\n");
 
@@ -102,18 +101,14 @@ public class FeaturePrinter {
 	}
 
 
-	/* Find all feature names in featureColorMap that were never actually
-	 * used to color a feature.  These represent rows (regions) in the table
-	 * that had valid names and data, but that were not found in the
-	 * shapefile during printFeatures.
-	 * This is all to warn the user in the case that some rows aren't
-	 * represented in the output, so that they can tweak their table and
-	 * correct the region names (maybe the row is name="Canana" and now they
-	 * can see that they wanted name="Canada" and correct it).
-	 * It's important to do this because the accidental omission could be
-	 * subtle (for example, the region is tiny and they don't notice that
-	 * that one's color is missing).
-	 */
+	/* Find all feature names in featureColorMap that were never actually used to color a feature.
+	 * These represent rows (regions) in the table that had valid names and data, but that were not
+	 * found in the shapefile during printFeatures. This is all to warn the user in the case that
+	 * some rows aren't represented in the output, so that they can tweak their table and correct
+	 * the region names (maybe the row is name="Canana" and now they can see that they wanted
+	 * name="Canada" and correct it). It's important to do this because the accidental omission
+	 * could be subtle (for example, the region is tiny and they don't notice that that one's color
+	 * is missing). */
 	private void reportUnfoundFeatures() {
 		final List<String> unfoundFeatureNames = new ArrayList<String>();
 		
@@ -135,29 +130,24 @@ public class FeaturePrinter {
 				ArrayListUtilities.makePreview(
 					unfoundFeatureNames, prefixSize, suffixSize, ", ", "...");
 			
-			String message = "Warning: "
-				+ unfoundFeatureNames.size()
-				+ " regions had "
-				+ "data associated in the table but could not be found in "
-				+ "the shapefile (using region name key \""
-				+ geoMap.getShapefile().getFeatureAttributeName()
-				+ "\") and so could not be colored: "
-				+ unfoundFeatureNamesPreview
-				+ ".";
-			
+			String shortMessage = String.format(
+					"%d regions had data associated in the table but could not be found in the " +
+							"shapefile (using region name key \"%s\") and so could not be " +
+							"colored: %s.",
+					unfoundFeatureNames.size(),
+					geoMap.getShapefile().getFeatureAttributeName(),
+					unfoundFeatureNamesPreview);			
 			if (unfoundFeatureNames.size() > previewSize) {
-				message += "  The full list is in the log file.";
+				shortMessage += "  The full list is in the log file.";
 			}
+			LogStream.WARNING.send(shortMessage);
 			
-			LogStream.WARNING.send(
-				new Exception(
-					"These regions could not be found in the shapefile (using "
-					+ "region name key \""
-					+ geoMap.getShapefile().getFeatureAttributeName()
-					+ "\"): "
-					+ StringUtilities.implodeItems(unfoundFeatureNames, ", ")
-					+ "."),
-				message);
+			String fullMessage = String.format(
+					"These regions could not be found in the shapefile (using region name " +
+							"key \"%s\"): %s.",					
+					geoMap.getShapefile().getFeatureAttributeName(),
+					StringUtilities.implodeItems(unfoundFeatureNames, ", "));			
+			LogStream.DEBUG.send(fullMessage);
 		}
 	}
 
@@ -171,7 +161,7 @@ public class FeaturePrinter {
 		for (Geometry geometry : geoMap.cropTransformAndInset((Geometry) feature.getDefaultGeometry())) {
 			final int numberOfSubgeometries = geometry.getNumGeometries();
 			for (int gg = 0; gg < numberOfSubgeometries; gg++) {
-				out.write(INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
+				out.write(PostScriptable.INDENT + "% Feature, " + geoMap.getShapefile().getFeatureAttributeName() + " = " + featureName + ", subgeometry " + gg + "\n");
 				
 				printGeometry(geometry.getGeometryN(gg), out, featureColorMap, featureName);
 			}
@@ -229,16 +219,15 @@ public class FeaturePrinter {
 	}
 
 	private void writeInkingCommands(
-			BufferedWriter out,	Map<String, FeatureView> featureColorMap, String rawName)
+			BufferedWriter out,	Map<String, FeatureView> featureColorMap, String featureName)
 				throws IOException {
 		// Fill the interior
 		Strategy colorStrategy = new NullColorStrategy();
 		
-		String normalName = FeatureView.normalizeFeatureName(rawName);
-		
-		if (featureColorMap.containsKey(normalName)) {
-			featureWasColoredMap.put(normalName, true);
-			colorStrategy = featureColorMap.get(normalName).strategyFor(FeatureDimension.REGION_COLOR);
+		if (featureColorMap.containsKey(featureName)) {
+			featureWasColoredMap.put(featureName, true);
+			colorStrategy = featureColorMap.get(featureName).strategyFor(
+					FeatureDimension.REGION_COLOR);
 		}
 		out.write(colorStrategy.toPostScript());
 		

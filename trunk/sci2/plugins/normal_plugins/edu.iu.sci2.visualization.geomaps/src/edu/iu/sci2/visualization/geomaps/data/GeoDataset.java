@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.geomaps.data;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import prefuse.data.Table;
@@ -13,8 +14,10 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
@@ -32,7 +35,7 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 	private GeoDataset(
 			Collection<? extends GeoDatum<G, D>> geoData,
 			Collection<? extends Binding<D>> bindings) {
-		this.geoData = ImmutableSet.copyOf(geoData);
+		this.geoData = ImmutableList.copyOf(geoData);
 		this.bindings = ImmutableSet.copyOf(bindings);
 	}
 
@@ -44,25 +47,29 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		ImmutableMap<D, ? extends Binding<D>> dimensionToBinding =
 				mapDimensionsToBindings(bindings);
 
-		int duplicateCount = 0;
+		int redundantCount = 0;
 		int invalidCount = 0;
 		
-		Set<GeoDatum<G, D>> geoData = Sets.newHashSetWithExpectedSize(table.getRowCount());
-		for (Iterator<?> tuples = table.tuples(); tuples.hasNext(); ) {
+		Set<G> geoIdentifiers = Sets.newHashSet();
+		
+		List<GeoDatum<G, D>> geoData = Lists.newArrayListWithExpectedSize(table.getRowCount());
+		for (Iterator<?> tuples = table.tuples(); tuples.hasNext();) {
 			Tuple tuple = (Tuple) tuples.next();
 			
+			// Check whether we've already seen this geo identifier
+			G geoIdentifier = geoMaker.apply(tuple);			
+			if (geoIdentifiers.contains(geoIdentifier)) {
+				LogStream.DEBUG.send("Ignored tuple %s with redundant geo identifier %s.", tuple,
+						geoIdentifier);
+				redundantCount++;
+				continue;
+			}
+			geoIdentifiers.add(geoIdentifier);
+			
+			// Try to read the coding values we need from the tuple
 			try {
-				GeoDatum<G, D> geoDatum =
-						GeoDatum.forTuple(tuple, dimensionToBinding, dimensionClass, geoMaker);
-				
-				boolean wasNew = geoData.add(geoDatum);
-				
-				if (!wasNew) {
-					LogStream.DEBUG
-							.send("Ignored record %s with duplicate values for all of the attributes considered.",
-									tuple);
-					duplicateCount++;
-				}
+				geoData.add(GeoDatum.forTuple(
+						tuple, dimensionToBinding, dimensionClass, geoIdentifier));
 			} catch (GeoDatum.GeoDatumValueInterpretationException e) {
 				LogStream.DEBUG.send(e, "Skipped record %s with unusable values for the required "
 						+ "attributes.", tuple);
@@ -70,18 +77,19 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 			}
 		}
 		
+		if (redundantCount > 0) {
+			LogStream.WARNING.send(
+					"Ignored %d records with redundant geo identifiers (coordinates or " +
+							"region names).  Consider aggregating this data before visualizing.",
+					redundantCount);
+		}
+		
 		if (invalidCount > 0) {
 			LogStream.WARNING.send(
-					"Skipped %d records with unusable values for the required attributes.",
+					"Skipped %d records with unusable values for the required coding attributes.",
 					invalidCount);
 		}
 		
-		if (duplicateCount > 0) {
-			LogStream.WARNING.send(
-					"Ignored %d records with duplicate values for all of the attributes considered.  " +
-							"Consider aggregating this data before visualizing.",
-					duplicateCount);
-		}
 
 		return new GeoDataset<G, D>(geoData, bindings);
 	}

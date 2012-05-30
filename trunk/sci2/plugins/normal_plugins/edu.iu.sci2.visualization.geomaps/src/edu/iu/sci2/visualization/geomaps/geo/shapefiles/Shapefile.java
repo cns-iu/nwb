@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.Point;
 import edu.iu.sci2.visualization.geomaps.geo.projection.GeometryProjector;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.utility.NicelyNamedEnums.NicelyNamed;
+import edu.iu.sci2.visualization.geomaps.viz.model.RegionAnnotationMode;
 
 public enum Shapefile implements NicelyNamed {
 	UNITED_STATES(Resources.getResource(Shapefile.class, "st99_d00.shp"), "United States",
@@ -121,22 +122,21 @@ public enum Shapefile implements NicelyNamed {
 		Object featureName = feature.getAttribute(featureAttributeName);
 
 		if (featureName != null) {
-			return String.valueOf(featureName);
+			return RegionAnnotationMode.normalizeFeatureName(String.valueOf(featureName));
+		} else {
+			String message = String.format("Feature %s has no \"%s\" property.  ", feature,
+					featureAttributeName);
+	
+			message += "Consider using one of these properties: ";
+			List<String> attributeDescriptorNames = Lists.newArrayList();
+			for (AttributeDescriptor attributeDescriptor : viewOfFeatureCollection().getSchema()
+					.getAttributeDescriptors()) {
+				attributeDescriptorNames.add(attributeDescriptor.getName().toString());
+			}
+			message += Joiner.on(",").join(attributeDescriptorNames);
+	
+			throw new FeatureAttributeAbsentException(message);
 		}
-
-		// Error
-		String message = String.format("Feature %s has no \"%s\" property.  ", feature,
-				featureAttributeName);
-
-		message += "Consider using one of these properties: ";
-		List<String> attributeDescriptorNames = Lists.newArrayList();
-		for (AttributeDescriptor attributeDescriptor : viewOfFeatureCollection().getSchema()
-				.getAttributeDescriptors()) {
-			attributeDescriptorNames.add(attributeDescriptor.getName().toString());
-		}
-		message += Joiner.on(",").join(attributeDescriptorNames);
-
-		throw new FeatureAttributeAbsentException(message);
 	}
 
 	public static class FeatureAttributeAbsentException extends RuntimeException {

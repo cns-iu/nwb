@@ -125,7 +125,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, getPageLayout());
 			
-			File geoMapFile = geoMapView.writeToPSFile("");
+			File geoMapFile = geoMapView.writeToPSFile("", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
 
 			File outNetwork = processNetwork(inFile, anchorPoints, geoMapView);
 
@@ -220,7 +220,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 				NWBFileProperty.NWB_MIME_TYPE,
 				DataProperty.NETWORK_TYPE,
 				inDatum,
-				"Network layout overlay");
+				"Laid out network");
 
 		return new Data[] { postScriptData, nwbData };
 	}
@@ -340,20 +340,15 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 
 				Desktop.getDesktop().open(nwbFile);
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogStream.ERROR.send(e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogStream.ERROR.send(e);
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogStream.ERROR.send(e);
 			} catch (AlgorithmExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogStream.ERROR.send(e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogStream.ERROR.send(e);
 			}
 		}
 		
