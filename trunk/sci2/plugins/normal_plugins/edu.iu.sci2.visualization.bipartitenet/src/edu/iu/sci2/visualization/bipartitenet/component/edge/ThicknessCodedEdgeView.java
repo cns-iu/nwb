@@ -10,6 +10,7 @@ import math.geom2d.line.AbstractLine2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.SimplePolygon2D;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import edu.iu.sci2.visualization.bipartitenet.component.NodeView;
@@ -27,6 +28,11 @@ public class ThicknessCodedEdgeView implements Paintable {
 	private final EdgeShape edgeShape;
 
 	public ThicknessCodedEdgeView(Edge e, NodeView src, NodeView dest, Scale<Double,Double> edgeCoding, EdgeShape edgeShape) {
+		Preconditions.checkNotNull(e);
+		Preconditions.checkNotNull(src);
+		Preconditions.checkNotNull(dest);
+		Preconditions.checkNotNull(edgeCoding);
+		Preconditions.checkNotNull(edgeShape);
 		this.e = e;
 		this.src = src;
 		this.dest = dest;

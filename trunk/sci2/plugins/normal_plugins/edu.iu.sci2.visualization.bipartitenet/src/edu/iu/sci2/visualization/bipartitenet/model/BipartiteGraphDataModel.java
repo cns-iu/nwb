@@ -1,12 +1,9 @@
 package edu.iu.sci2.visualization.bipartitenet.model;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 
 
 public class BipartiteGraphDataModel {
@@ -16,34 +13,15 @@ public class BipartiteGraphDataModel {
 	private final String nodeValueAttribute;
 	private final String edgeValueAttribute;
 
-	public BipartiteGraphDataModel(Collection<Node> allNodes,
+	public BipartiteGraphDataModel(ImmutableList<Node> leftNodes,
+			ImmutableList<Node> rightNodes,
 			Collection<Edge> edges, String nodeValueAttribute, String edgeValueAttribute) {
 		this.edges = ImmutableList.copyOf(edges);
 		this.nodeValueAttribute = nodeValueAttribute;
 		this.edgeValueAttribute = edgeValueAttribute;
 		
-		List<Node> leftNodes = Lists.newArrayList(),
-				rightNodes = Lists.newArrayList();
-		
-		for (Node n : allNodes) {
-			if (n.getDestination() == NodeDestination.LEFT) {
-				leftNodes.add(n);
-			} else {
-				rightNodes.add(n);
-			}
-		}
-		
-		Ordering<Node> nodeOrdering;
-		if (this.hasWeightedNodes()) {
-			// Descending weight
-			nodeOrdering = Node.WEIGHT_ORDERING.reverse();
-		} else {
-			// Ascending label
-			nodeOrdering = Node.LABEL_ORDERING;
-		}
-		
-		this.leftNodes = ImmutableList.copyOf(nodeOrdering.sortedCopy(leftNodes));
-		this.rightNodes = ImmutableList.copyOf(nodeOrdering.sortedCopy(rightNodes));
+		this.leftNodes = leftNodes;
+		this.rightNodes = rightNodes;
 	}
 
 

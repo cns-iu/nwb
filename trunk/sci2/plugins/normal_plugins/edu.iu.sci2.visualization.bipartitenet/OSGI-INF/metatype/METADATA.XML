@@ -6,6 +6,8 @@
 		<AD name="Subtitle (only visible with PRINT layout)" id="subtitle" type="String" description="Text printed below the title of the visualization" default="" />
 		<AD name="Left side node type" id="leftSideType" type="String" description="Values taken from the 'bipartitetype' column, which one should be on the left" default="(mutate)" />
 		<AD name="Node size" id="nodeSizeColumn" type="String" description="The column to use to calculate the node size" default="(mutate)" />
+		<AD name="Left side node ordering" id="leftColumnOrdering" type="String" description="The order in which to place nodes on the left side" default="(mutate)" />
+		<AD name="Right side node ordering" id="rightColumnOrdering" type="String" description="The order in which to place nodes on the right side" default="(mutate)" />
 		<AD name="Edge weight" id="edgeWeightColumn" type="String" description="The column to use to calculate the edge weight" default="(mutate)" />
 		<AD name="Title for left column (blank for default)" id="leftColumnTitle" type="String" description="The text to place above the left-hand column of nodes.  The default is to use the value of the 'bipartitetype' column." default="" />
 		<AD name="Title for right column (blank for default)" id="rightColumnTitle" type="String" description="The text to place above the right-hand column of nodes  The default is to use the value of the 'bipartitetype' column." default="" />

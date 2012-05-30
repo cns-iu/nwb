@@ -16,41 +16,40 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.FileUtilities;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.freehep.util.UserProperties;
-import org.osgi.service.log.LogService;
+
+import com.google.common.annotations.VisibleForTesting;
 
 import edu.iu.nwb.util.nwbfile.ParsingException;
+import edu.iu.sci2.visualization.bipartitenet.LogStream;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector.Layout;
 import edu.iu.sci2.visualization.bipartitenet.component.Paintable;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
+import edu.iu.sci2.visualization.bipartitenet.model.NodeType;
 
 public class BipartiteNetAlgorithm implements Algorithm {
 
 	private final NWBDataImporter importer;
 	private final File nwbFile;
 	private final Data parentData;
-	private final String leftSideType;
-	private final String rightSideType;
-	private final String leftSideTitle;
-	private final String rightSideTitle;
 	private final Layout layout;
 	private final String subtitle;
-	private final LogService log;
+	private final NodeType leftType;
+	private final NodeType rightType;
 
-	public BipartiteNetAlgorithm(Data parentData, File nwbFile, Layout layout, String subtitle, String nodeWeightColumn, String edgeWeightColumn,
-			String leftSideType, String leftSideTitle, String rightSideType, String rightSideTitle, LogService log) {
+	public BipartiteNetAlgorithm(Data parentData, File nwbFile, Layout layout,
+			String subtitle, String edgeWeightColumn, NodeType leftType,
+			NodeType rightType) {
 		this.parentData = parentData;
 		this.layout = layout;
 		this.subtitle = subtitle;
-		this.leftSideType = leftSideType;
-		this.leftSideTitle = leftSideTitle;
-		this.rightSideType = rightSideType;
-		this.rightSideTitle = rightSideTitle;
-		this.importer = new NWBDataImporter("bipartitetype",
-				leftSideType, nodeWeightColumn, edgeWeightColumn, log);
+		this.leftType = leftType;
+		this.rightType = rightType;
+		this.importer = NWBDataImporter.create("bipartitetype", leftType.getName(),
+				leftType.getWeightColumn(), edgeWeightColumn, leftType.getOrdering(),
+				rightType.getOrdering());
 		this.nwbFile = nwbFile;
-		this.log = log;
 	}
 
 	@Override
@@ -65,12 +64,11 @@ public class BipartiteNetAlgorithm implements Algorithm {
 			
 			if (( ! layout.hasTitle())
 					&& ( ! subtitle.isEmpty())) {
-				log.log(LogService.LOG_WARNING, "A subtitle was requested, but it won't be rendered " +
+				LogStream.WARNING.send("A subtitle was requested, but it won't be rendered " +
 						"because the chosen layout does not render titles or subtitles.");
 			}
 			
-			PageDirector pageDirector = new PageDirector(layout, subtitle, model, leftSideType, 
-					leftSideTitle, rightSideType, rightSideTitle);
+			PageDirector pageDirector = new PageDirector(layout, subtitle, model, leftType, rightType);
 			
 			Data psData = drawToPSFile(pageDirector);
 			
@@ -136,4 +134,8 @@ public class BipartiteNetAlgorithm implements Algorithm {
 //		return outData;
 //	}
 
+	@VisibleForTesting
+	Layout getLayout() {
+		return this.layout;
+	}
 }

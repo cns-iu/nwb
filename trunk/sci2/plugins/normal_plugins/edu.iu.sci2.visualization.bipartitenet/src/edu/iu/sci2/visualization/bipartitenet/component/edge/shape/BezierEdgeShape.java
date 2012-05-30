@@ -1,5 +1,7 @@
 package edu.iu.sci2.visualization.bipartitenet.component.edge.shape;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.curve.AbstractContinuousCurve2D;
@@ -51,6 +53,7 @@ public class BezierEdgeShape implements EdgeShape {
 				secondControlAndDest.getFirstPoint());
 	}
 
+	@VisibleForTesting
 	static LineSegment2D getSourceAndControl(Circle2D nodeCircle,
 			Point2D otherNodeCenter, double controlPointOffset) {
 		Point2D firstPoint = nodeCircle.getCenter();

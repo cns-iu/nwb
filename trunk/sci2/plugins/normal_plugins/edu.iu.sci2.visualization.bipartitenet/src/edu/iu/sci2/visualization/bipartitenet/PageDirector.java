@@ -32,6 +32,7 @@ import edu.iu.sci2.visualization.bipartitenet.component.edge.shape.EdgeShape;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.Edge;
 import edu.iu.sci2.visualization.bipartitenet.model.Node;
+import edu.iu.sci2.visualization.bipartitenet.model.NodeType;
 import edu.iu.sci2.visualization.bipartitenet.scale.BasicZeroAnchoredScale;
 import edu.iu.sci2.visualization.bipartitenet.scale.ConstantValue;
 import edu.iu.sci2.visualization.bipartitenet.scale.Scale;
@@ -225,15 +226,13 @@ public class PageDirector implements Paintable {
 	 */
 	private final double WHITESPACE_AMONG_LABELS = 30;
 
-	public PageDirector(final Layout layout, 
-			final String subtitle, final BipartiteGraphDataModel dataModel, 
-			final String leftSideType, final String leftSideTitle, 
-			final String rightSideType, final String rightSideTitle) {
+	public PageDirector(Layout layout, String subtitle,
+			BipartiteGraphDataModel model, NodeType leftType, NodeType rightType) {
 		this.layout = layout;
-		this.dataModel = dataModel;
+		this.dataModel = model;
 
 		
-		painter.add(makeSortingLegend());
+		painter.add(makeSortingLegend(leftType, rightType));
 		
 		// Make codings for the nodes and edges (size and color)
 		// If the nodes/edges are not weighted, it makes a "constant" coding.
@@ -272,10 +271,10 @@ public class PageDirector implements Paintable {
 		// The titles of the two columns
 		painter.add(SimpleLabelPainter.alignedBy(XAlignment.RIGHT, YAlignment.BASELINE)
 				.withFont(layout.getFont(TextType.TITLE))
-				.makeLabel(layout.getLeftTitlePosition(), leftSideTitle));
+				.makeLabel(layout.getLeftTitlePosition(), leftType.getDisplayName()));
 		painter.add(SimpleLabelPainter.alignedBy(XAlignment.LEFT,  YAlignment.BASELINE)
 				.withFont(layout.getFont(TextType.TITLE))
-				.makeLabel(layout.getRightTitlePosition(), rightSideTitle));
+				.makeLabel(layout.getRightTitlePosition(), rightType.getDisplayName()));
 		
 		// The footer
 		painter.add(SimpleLabelPainter.alignedBy(XAlignment.CENTER,  YAlignment.BASELINE)
@@ -300,19 +299,15 @@ public class PageDirector implements Paintable {
 		return new Font[] {baseFont.deriveFont((float) leftFontSize), baseFont.deriveFont((float) rightFontSize)};
 	}
 
-	private Paintable makeSortingLegend() {
-		String sort;
-		if (dataModel.hasWeightedNodes()) {
-			sort = dataModel.getNodeValueAttribute();
-		} else {
-			sort = "Label (alphabetically)";
-		}
-		
+	private Paintable makeSortingLegend(NodeType leftType, NodeType rightType) {
 		return new ComplexLabelPainter.Builder(layout.getSortLegendPosition(), layout.getFont(TextType.LEGEND), Color.black)
 			.withLineSpacing(LINE_SPACING)
 			.addLine("Legend", layout.getFont(TextType.TITLE))
 			.addLine("Sorted by")
-			.addLine(sort, Color.gray)
+			.addLine("Left side:", Color.gray)
+			.addLine(leftType.getShortIdentifier(), Color.gray)
+			.addLine("Right side:", Color.gray)
+			.addLine(rightType.getShortIdentifier(), Color.gray)
 			.build();
 	}
 

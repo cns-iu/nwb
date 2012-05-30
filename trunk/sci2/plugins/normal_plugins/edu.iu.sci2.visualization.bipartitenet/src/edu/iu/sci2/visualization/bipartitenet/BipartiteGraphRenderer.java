@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -63,6 +64,8 @@ public class BipartiteGraphRenderer implements Paintable {
 
 	private void placeEdges() {
 		for (Edge e : data.getEdges()) {
+			Preconditions.checkState(nodeToNodeView.containsKey(e.getLeftNode()));
+			Preconditions.checkState(nodeToNodeView.containsKey(e.getRightNode()));
 			ThicknessCodedEdgeView ev = new ThicknessCodedEdgeView(e, nodeToNodeView.get(e.getLeftNode()),
 					nodeToNodeView.get(e.getRightNode()), edgeCoding,
 					edgeShape);

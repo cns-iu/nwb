@@ -18,34 +18,37 @@ import org.freehep.util.UserProperties;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector.Layout;
+import edu.iu.sci2.visualization.bipartitenet.algorithm.NodeOrderingOption;
 import edu.iu.sci2.visualization.bipartitenet.component.CanvasContainer;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
+import edu.iu.sci2.visualization.bipartitenet.model.NodeType;
 
 public class BasicRunner {
 
-	private static final String SUBTITLE = "Generated from subatomic particles";
+	private static final String SUBTITLE = "Excepteur sint occaecat cupidatat non proident";
+	private static final NodeOrderingOption ORDERING = NodeOrderingOption.LABEL_NUMERIC_ASC;
 
-	/**
-	 * @param args
-	 * @throws ParsingException
-	 * @throws IOException
-	 */
 	public static void main(String[] args) throws IOException, ParsingException {
 		// NWBDataImporter importer = new NWBDataImporter("bipartitetype",
 		// "Who", "Desirability");
 		// BipartiteGraphDataModel model =
 		// importer.constructModelFromFile(BasicRunner.class.getResourceAsStream("test-network.nwb"));
+//
+//		NWBDataImporter importer = new NWBDataImporter("bipartitetype",
+//				"Authors", null, null);
+//		BipartiteGraphDataModel model = importer
+//				.constructModelFromFile(BasicRunner.class
+//						.getResourceAsStream("Bipartite network from Authors and Title.nwb"));
+//		NWBDataImporter importer = new NWBDataImporter("bipartitetype",
+//				"APPL_ID", "totalawarded", null);
+//		BipartiteGraphDataModel model =
+//				importer.constructModelFromFile(BasicRunner.class.getResourceAsStream("big-boring-network.nwb"));
 
-		NWBDataImporter importer = new NWBDataImporter("bipartitetype",
-				"Authors", null, null);
-		BipartiteGraphDataModel model = importer
-				.constructModelFromFile(BasicRunner.class
-						.getResourceAsStream("Bipartite network from Authors and Title.nwb"));
-		// NWBDataImporter importer = new NWBDataImporter("bipartitetype",
-		// "APPL_ID", null, null);
-		// BipartiteGraphDataModel model =
-		// importer.constructModelFromFile(BasicRunner.class.getResourceAsStream("big-boring-network.nwb"));
+		NWBDataImporter importer = NWBDataImporter.create("bipartitetype", "Vegan", "weight", "weight", ORDERING.getOrdering(),
+				ORDERING.getOrdering());
+		BipartiteGraphDataModel model =
+				importer.constructModelFromFile(BasicRunner.class.getResourceAsStream("vegan-ipsum.nwb"));
 
 		PageDirector.Layout layout = PageDirector.Layout.PRINT;
 
@@ -70,8 +73,10 @@ public class BasicRunner {
 				new Dimension(layout.getWidth(), layout.getHeight()));
 		g.setProperties(p);
 		g.startExport();
-		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
-				"What", "What title");
+		NodeType left = NodeType.createWithDefaultDisplayName("Vegan", ORDERING, "weight");
+		NodeType right = NodeType.createWithDefaultDisplayName("Ipsum", ORDERING, "weight");
+		
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, left, right);
 		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		r.paint(g);
 		g.endExport();
@@ -88,8 +93,10 @@ public class BasicRunner {
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
-				"What", "What title");
+		NodeType left = NodeType.createWithDefaultDisplayName("Vegan", ORDERING, "weight");
+		NodeType right = NodeType.createWithDefaultDisplayName("Ipsum", ORDERING, "weight");
+		
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, left, right);
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File("BLAH.png"));
 	}
@@ -99,8 +106,10 @@ public class BasicRunner {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
-				"What", "What title");
+		NodeType left = NodeType.createWithDefaultDisplayName("Vegan", ORDERING, "weight");
+		NodeType right = NodeType.createWithDefaultDisplayName("Ipsum", ORDERING, "weight");
+		
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, left, right);
 		cc.add(r);
 		f.getContentPane().add(cc);
 		cc.setPreferredSize(new Dimension(layout.getWidth(), layout.getHeight()));

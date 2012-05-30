@@ -18,9 +18,12 @@ import org.freehep.util.UserProperties;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector;
 import edu.iu.sci2.visualization.bipartitenet.PageDirector.Layout;
+import edu.iu.sci2.visualization.bipartitenet.algorithm.NodeOrderingOption;
 import edu.iu.sci2.visualization.bipartitenet.component.CanvasContainer;
 import edu.iu.sci2.visualization.bipartitenet.model.BipartiteGraphDataModel;
 import edu.iu.sci2.visualization.bipartitenet.model.NWBDataImporter;
+import edu.iu.sci2.visualization.bipartitenet.model.Node;
+import edu.iu.sci2.visualization.bipartitenet.model.NodeType;
 
 public class LongLabelRunner {
 
@@ -35,7 +38,8 @@ public class LongLabelRunner {
 //		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "Desirability");
 //		BipartiteGraphDataModel model = importer.constructModelFromFile(BasicRunner.class.getResourceAsStream("test-network.nwb"));
 		
-		NWBDataImporter importer = new NWBDataImporter("bipartitetype", "Who", "totaldesirability", "linkdesirability");
+		NWBDataImporter importer = NWBDataImporter.create("bipartitetype", "Who", "totaldesirability", "linkdesirability", Node.LABEL_ORDERING,
+		Node.LABEL_ORDERING);
 		BipartiteGraphDataModel model = importer.constructModelFromFile(LongLabelRunner.class.getResourceAsStream("long-labels.nwb"));
 		
 		PageDirector.Layout layout = PageDirector.Layout.PRINT;
@@ -52,7 +56,10 @@ public class LongLabelRunner {
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setPaint(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title", "What", "What title");
+		NodeType left = NodeType.createWithDefaultDisplayName("Who", NodeOrderingOption.LABEL_ASC, "weight");
+		NodeType right = NodeType.createWithDefaultDisplayName("What", NodeOrderingOption.LABEL_ASC, "weight");
+		
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, left, right);
 		r.paint(g);
 		ImageIO.write(img, "PNG", new File("BLAH.png"));
 	}
@@ -61,8 +68,10 @@ public class LongLabelRunner {
 		JFrame f = new JFrame("Application Review");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		CanvasContainer cc = new CanvasContainer();
-		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title", "What", "What title");
-		cc.add(r);
+		NodeType left = NodeType.createWithDefaultDisplayName("Who", NodeOrderingOption.LABEL_ASC, "weight");
+		NodeType right = NodeType.createWithDefaultDisplayName("What", NodeOrderingOption.LABEL_ASC, "weight");
+		
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, left, right);cc.add(r);
 		f.getContentPane().add(cc);
 		cc.setPreferredSize(new Dimension(layout.getWidth(), layout.getHeight()));
 		f.pack();
@@ -78,8 +87,10 @@ public class LongLabelRunner {
 				new Dimension(layout.getWidth(), layout.getHeight()));
 		g.setProperties(p);
 		g.startExport();
-		PageDirector r = new PageDirector(layout, SUBTITLE, model, "Who", "Who title",
-				"What", "What title");
+		NodeType left = NodeType.createWithDefaultDisplayName("Who", NodeOrderingOption.LABEL_ASC, "weight");
+		NodeType right = NodeType.createWithDefaultDisplayName("What", NodeOrderingOption.LABEL_ASC, "weight");
+		
+		PageDirector r = new PageDirector(layout, SUBTITLE, model, left, right);
 		g.setClip(0, 0, layout.getWidth(), layout.getHeight());
 		r.paint(g);
 		g.endExport();

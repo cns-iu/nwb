@@ -42,5 +42,49 @@ public class Edge {
 				.add("weight", weight)
 				.toString();
 	}
+
+	/*
+	 * Auto-generated hashCode and equals...
+	 */
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((leftNode == null) ? 0 : leftNode.hashCode());
+		result = prime * result
+				+ ((rightNode == null) ? 0 : rightNode.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(weight);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Edge other = (Edge) obj;
+		if (leftNode == null) {
+			if (other.leftNode != null)
+				return false;
+		} else if (!leftNode.equals(other.leftNode))
+			return false;
+		if (rightNode == null) {
+			if (other.rightNode != null)
+				return false;
+		} else if (!rightNode.equals(other.rightNode))
+			return false;
+		if (Double.doubleToLongBits(weight) != Double
+				.doubleToLongBits(other.weight))
+			return false;
+		return true;
+	}
 	
 }
