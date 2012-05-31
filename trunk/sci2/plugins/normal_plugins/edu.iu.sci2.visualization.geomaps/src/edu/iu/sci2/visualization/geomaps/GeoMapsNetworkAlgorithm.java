@@ -173,6 +173,9 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			ParserPipe pipe = ParserPipe.create();
 
+			// 0: default: not an anchor
+			pipe.addNodeAttribute(IS_ANCHOR_FIELD, NWBFileProperty.TYPE_INT, 0);
+			
 			for (AnchorPoint anchorPoint : anchorPoints) {
 				pipe.injectNode(
 						anchorPoint.getDisplayName(),
@@ -182,19 +185,13 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 								GeoMapsNetworkAlgorithm.IS_ANCHOR_FIELD, 1)); // 1: yes, these are anchors
 			}
 			
-			ParserStage handler =
-					pipe
-					.addNodeAttribute(IS_ANCHOR_FIELD, NWBFileProperty.TYPE_INT, 0) // 0: default: not an anchor
-					.addComputedNodeAttributes(
-							ImmutableMap.of(
-									X_POS_FIELD, NWBFileProperty.TYPE_FLOAT,
-									Y_POS_FIELD, NWBFileProperty.TYPE_FLOAT),
-							new LayoutFieldMakerFunction(
-									geoMapView, longitudeAttrib, latitudeAttrib))
-					.outputToFile(outFile);
+			pipe.addComputedNodeAttributes(
+					ImmutableMap.of(
+							X_POS_FIELD, NWBFileProperty.TYPE_FLOAT,
+							Y_POS_FIELD, NWBFileProperty.TYPE_FLOAT),
+					new LayoutFieldMakerFunction(geoMapView, longitudeAttrib, latitudeAttrib));
 
-			NWBFileParser parser = new NWBFileParser(inFile);
-			parser.parse(handler);
+			new NWBFileParser(inFile).parse(pipe.outputToFile(outFile));
 			
 			return outFile;
 		} catch (IOException e) {
