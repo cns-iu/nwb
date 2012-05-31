@@ -13,6 +13,13 @@ import edu.iu.sci2.visualization.geomaps.viz.PageLayout;
 
 
 public class PageHeader implements PostScriptable {
+	private static final Predicate<String> IS_NULL_OR_EMPTY = new Predicate<String>() {
+		@Override
+		public boolean apply(String input) {
+			return Strings.isNullOrEmpty(input);
+		}					
+	};
+	
 	public static final double TITLE_FONT_BRIGHTNESS = 0.0;
 	public static final double OTHER_DATA_FONT_BRIGHTNESS = 0.0;
 	
@@ -25,14 +32,8 @@ public class PageHeader implements PostScriptable {
 		this.title = title;
 		this.lowerLeft = lowerLeft;
 		this.pageLayout = pageLayout;
-		this.extraInfo = Collections2.filter(
-				Arrays.asList(extraInfo),
-				Predicates.not(new Predicate<String>() {
-					@Override
-					public boolean apply(String input) {
-						return Strings.isNullOrEmpty(input);
-					}					
-				}));
+		this.extraInfo = Collections2.filter(Arrays.asList(extraInfo),
+				Predicates.not(IS_NULL_OR_EMPTY));
 	}
 	
 	

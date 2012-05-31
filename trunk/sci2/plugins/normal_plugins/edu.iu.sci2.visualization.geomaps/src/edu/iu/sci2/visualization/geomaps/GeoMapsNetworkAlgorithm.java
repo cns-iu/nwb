@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +43,6 @@ import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.nwb.util.nwbfile.pipe.FieldMakerFunction;
 import edu.iu.nwb.util.nwbfile.pipe.ParserPipe;
-import edu.iu.nwb.util.nwbfile.pipe.ParserStage;
 import edu.iu.sci2.visualization.geomaps.geo.projection.KnownProjectedCRSDescriptor;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile;
 import edu.iu.sci2.visualization.geomaps.geo.shapefiles.Shapefile.AnchorPoint;
@@ -114,7 +114,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			List<Circle> anchorPointsAsCircles = drawAnchorPoints(anchorPoints);
 			
 			GeoMap geoMap = new GeoMap(
-					"Networks",
+					"Geospatial Network",
 					shapefile,
 					projection,
 					ImmutableSet.<FeatureView>of(),
@@ -127,7 +127,9 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			File outNetwork = processNetwork(inFile, anchorPoints, geoMapView);
 
-			File geoMapFile = geoMapView.writeToPSFile("", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
+			File geoMapFile = geoMapView.writeToPSFile(
+					Strings.nullToEmpty((String) inDatum.getMetadata().get(DataProperty.LABEL)),
+					GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
 			
 			return new Data[] {
 					DataFactory.forFile(outNetwork, NWBFileProperty.NWB_MIME_TYPE,
@@ -271,7 +273,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 				Shapefile.WORLD,
 				GeoMapsNetworkAlgorithm.class.getResource(
 						EXAMPLE_FILE_URL_STEM + "Network I 00-02.net.nwb"),
-				"network",
+				"Network I 00-02",
 				GeoMapsNetworkFactory.class,
 				ImmutableMap.<String, Object>builder()
 						.put(GeoMapsNetworkFactory.Parameter.LATITUDE.id(), "latitude")
@@ -307,15 +309,16 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 
 				LogStream.DEBUG.send("Executing.. ");
 				Data[] outData = algorithm.execute();
-				File psFileWithRawName = (File) outData[0].getData();
-				File psFile = File.createTempFile(outputFilenamePrefix, ".ps");
-				Files.copy(psFileWithRawName, psFile);
-				LogStream.DEBUG.send(psFile.getAbsolutePath());
 
-				File nwbFileWithRawName = (File) outData[1].getData();
+				File nwbFileWithRawName = (File) outData[0].getData();
 				File nwbFile = File.createTempFile(outputFilenamePrefix, ".nwb");
 				Files.copy(nwbFileWithRawName, nwbFile);
 				LogStream.DEBUG.send(nwbFile.getAbsolutePath());
+				
+				File psFileWithRawName = (File) outData[1].getData();
+				File psFile = File.createTempFile(outputFilenamePrefix, ".ps");
+				Files.copy(psFileWithRawName, psFile);
+				LogStream.DEBUG.send(psFile.getAbsolutePath());
 
 				LogStream.DEBUG.send(".. Done.");
 

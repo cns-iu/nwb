@@ -119,9 +119,17 @@ public class GeoMapViewPS {
 			
 			
 			if (pageLayout.headerLowerLeft().isPresent()) {
-				PageHeader pageHeader = new PageHeader(geoMap.getTitle(), pageLayout.headerLowerLeft().get(), pageLayout,
-						String.format("Generated from %s", PSUtility.escapeForPostScript(dataLabel)),
+				String escapedLabel = PSUtility.escapeForPostScript(dataLabel).trim();
+				
+				PageHeader pageHeader = new PageHeader(
+						geoMap.getTitle(),
+						pageLayout.headerLowerLeft().get(),
+						pageLayout,
+						(escapedLabel.isEmpty()
+								? ""
+								: String.format("Generated from %s", escapedLabel)),
 						timestamp());
+				
 				out.write(pageHeader.toPostScript());
 				out.write("\n");
 			}
