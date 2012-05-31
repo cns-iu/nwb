@@ -125,13 +125,15 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			
 			GeoMapViewPS geoMapView = new GeoMapViewPS(geoMap, getPageLayout());
 			
-			File geoMapFile = geoMapView.writeToPSFile("", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
-
 			File outNetwork = processNetwork(inFile, anchorPoints, geoMapView);
 
-			Data[] outData = formOutData(geoMapFile, outNetwork, inDatum);
-
-			return outData;
+			File geoMapFile = geoMapView.writeToPSFile("", GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
+			
+			return new Data[] {
+					DataFactory.forFile(outNetwork, NWBFileProperty.NWB_MIME_TYPE,
+							DataProperty.NETWORK_TYPE, inDatum, "Laid out network"),
+					DataFactory.forFile(geoMapFile, GeoMapsAlgorithm.POSTSCRIPT_MIME_TYPE,
+							DataProperty.VECTOR_IMAGE_TYPE, inDatum, "Base map with anchor points") };
 		} catch (TransformException e) {
 			throw new AlgorithmExecutionException(
 					"Error transforming features: " + e.getMessage(), e);
@@ -204,24 +206,6 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	}
 
 	
-	private static Data[] formOutData(File postScriptFile, File nwbFile, Data inDatum) {
-		Data postScriptData = DataFactory.forFile(
-				postScriptFile,
-				GeoMapsAlgorithm.POSTSCRIPT_MIME_TYPE,
-				DataProperty.VECTOR_IMAGE_TYPE,
-				inDatum,
-				"Base map with anchor points");
-
-		Data nwbData = DataFactory.forFile(
-				nwbFile,
-				NWBFileProperty.NWB_MIME_TYPE,
-				DataProperty.NETWORK_TYPE,
-				inDatum,
-				"Laid out network");
-
-		return new Data[] { postScriptData, nwbData };
-	}
-
 	private static List<Circle> drawAnchorPoints(Collection<AnchorPoint> anchorPoints) {
 		List<Circle> circles = Lists.newArrayList();
 		for (AnchorPoint anchorPoint : anchorPoints) {
