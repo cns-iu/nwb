@@ -9,6 +9,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.cishell.utilities.TableUtilities;
@@ -22,10 +23,11 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 	public static final String NODE_LABEL_COLUMN_NAME_ID = "nodeLabelColumnName";
 	public static final String NODE_VALUE_COLUMN_NAME_ID = "nodeValueColumnName";
 	public static final String NO_VALUE_COLUMN_TOKEN = "[None -- All Equal]";
-	public static final String DATA_DISPLAY_NAME_ID = "datasetDisplayName";
+	public static final String SUBTITLE_ID = "subtitle";
 	public static final String SCALING_FACTOR_ID = "scalingFactor";
 	public static final String WEB_VERSION_ID = "webVersion";
 	public static final String SHOW_WINDOW_ID = "showWindow";
+	public static final String DEFAULT_SUBTITLE_PREFIX = "Generated from ";
 	
 
 	public Algorithm createAlgorithm(
@@ -35,7 +37,7 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		String nodeIDColumnName = (String) parameters.get(NODE_ID_COLUMN_NAME_ID);
 		String nodeLabelColumnName = (String) parameters.get(NODE_LABEL_COLUMN_NAME_ID);
 		String nodeValueColumnName = (String) parameters.get(NODE_VALUE_COLUMN_NAME_ID);
-		String dataDisplayName = (String) parameters.get(DATA_DISPLAY_NAME_ID);
+		String dataDisplayName = (String) parameters.get(SUBTITLE_ID);
 		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
 		boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
 		boolean showWindow = (Boolean) parameters.get(SHOW_WINDOW_ID);
@@ -76,7 +78,20 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 					columnNamesWithNone,
 					columnNamesWithNone);	
 				
-		return newParameters;
+		return mutateSubtitleParameter(newParameters, data);
+	}
+	
+	/**
+	 * Generate a default subtitle.
+	 */
+	private static ObjectClassDefinition mutateSubtitleParameter(
+			ObjectClassDefinition newParameters, Data[] data) {
+		// Generate default subtitle from the dataset label
+		String defaultSubtitle = DEFAULT_SUBTITLE_PREFIX 
+				+ data[0].getMetadata().get(DataProperty.LABEL);
+		
+		return MutateParameterUtilities
+				.mutateDefaultValue(newParameters, SUBTITLE_ID,defaultSubtitle);
 	}
 
 	private static ObjectClassDefinition addSourceDataFilenameParameter(
@@ -84,6 +99,6 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		String guessedSourceDataFilename = AlgorithmUtilities.guessSourceDataFilename(data[0]);
 		
 		return MutateParameterUtilities.mutateDefaultValue(
-				newParameters, DATA_DISPLAY_NAME_ID, guessedSourceDataFilename);
+				newParameters, SUBTITLE_ID, guessedSourceDataFilename);
 	}
 }

@@ -122,7 +122,7 @@ public class MapOfScienceTest {
 			parameters.put(JournalsMapAlgorithmFactory.JOURNAL_COLUMN_ID,
 					"Journal Title (Full)");
 			parameters.put(JournalsMapAlgorithmFactory.SCALING_FACTOR_ID, 1.0f);
-			parameters.put(JournalsMapAlgorithmFactory.DATA_DISPLAY_NAME_ID,
+			parameters.put(JournalsMapAlgorithmFactory.SUBTITLE_ID,
 					inFile.getName());
 			parameters
 					.put(JournalsMapAlgorithmFactory.SHOW_EXPORT_WINDOW, true);

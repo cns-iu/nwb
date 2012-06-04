@@ -13,6 +13,7 @@ import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.MutateParameterUtilities;
@@ -26,17 +27,18 @@ import prefuse.data.Table;
 public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		ParameterMutator {
 	public static final String JOURNAL_COLUMN_ID = "journalColumn";
-	public static final String DATA_DISPLAY_NAME_ID = "datasetDisplayName";
+	public static final String SUBTITLE_ID = "subtitle";
 	public static final String SCALING_FACTOR_ID = "scalingFactor";
 	public static final String WEB_VERSION_ID = "webVersion";
 	public static final String SHOW_EXPORT_WINDOW = "showWindow";
+	public static final String DEFAULT_SUBTITLE_PREFIX = "Generated from ";
 
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext context) {
 		String journalColumnName = (String) parameters.get(JOURNAL_COLUMN_ID);
 		float scalingFactor = ((Float) parameters.get(SCALING_FACTOR_ID))
 				.floatValue();
-		String dataDisplayName = (String) parameters.get(DATA_DISPLAY_NAME_ID);
+		String dataDisplayName = (String) parameters.get(SUBTITLE_ID);
 		boolean webVersion = ((Boolean) parameters.get(WEB_VERSION_ID))
 				.booleanValue();
 		boolean showWindow = ((Boolean) parameters.get(SHOW_EXPORT_WINDOW))
@@ -61,7 +63,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		ObjectClassDefinition paramsWithJournalAndFilename = addSourceDataFilenameParameter(
 				paramsWithJournal, data);
 
-		return paramsWithJournalAndFilename;
+		return mutateSubtitleParameter(paramsWithJournalAndFilename, data);
 	}
 
 	/**
@@ -109,7 +111,20 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 				.guessSourceDataFilename(data[0]);
 
 		return MutateParameterUtilities.mutateDefaultValue(newParameters,
-				DATA_DISPLAY_NAME_ID, guessedSourceDataFilename);
+				SUBTITLE_ID, guessedSourceDataFilename);
+	}
+	
+	/**
+	 * Generate a default subtitle.
+	 */
+	private static ObjectClassDefinition mutateSubtitleParameter(
+			ObjectClassDefinition newParameters, Data[] data) {
+		// Generate default subtitle from the dataset label
+		String defaultSubtitle = DEFAULT_SUBTITLE_PREFIX 
+				+ data[0].getMetadata().get(DataProperty.LABEL);
+		
+		return MutateParameterUtilities
+				.mutateDefaultValue(newParameters, SUBTITLE_ID,defaultSubtitle);
 	}
 
 	/**

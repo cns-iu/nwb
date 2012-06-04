@@ -22,7 +22,7 @@ public class Header implements PageElement{
 			MapOfScience mapOfScience, double leftBoundary, double topBoundary) {
 
 		this.title = title;
-		this.generatedFrom = "Generated from " + generatedFrom;
+		this.generatedFrom = generatedFrom;
 
 		this.publicationMapping = String
 				.format("%s out of %s publications were mapped to %s subdisciplines and %s disciplines.",
@@ -54,7 +54,10 @@ public class Header implements PageElement{
 
 		// Draw the other
 		state.setFont("Arial", otherFontSize);
-		state.drawStringAndTranslate(this.generatedFrom, 0, 0);
+		// Only print if there is value
+		if (this.generatedFrom != null && !this.generatedFrom.isEmpty()) {
+			state.drawStringAndTranslate(this.generatedFrom, 0, 0);
+		}
 		state.drawStringAndTranslate(this.publicationMapping, 0, 0);
 		state.drawStringAndTranslate(this.date, 0, 0);
 

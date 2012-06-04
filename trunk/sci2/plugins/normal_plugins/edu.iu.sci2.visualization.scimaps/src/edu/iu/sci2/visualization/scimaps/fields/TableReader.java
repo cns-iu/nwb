@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.cishell.utilities.NumberUtilities;
+import org.cishell.utilities.NumberUtilities.EmptyCollectionException;
+import org.cishell.utilities.NumberUtilities.NotANumberException;
 import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
@@ -37,7 +39,10 @@ public class TableReader {
 			} else {
 				try {
 					value = NumberUtilities.interpretObjectAsDouble(row.get(nodeValueColumnName)).intValue();
-				} catch (NumberFormatException e) {
+				} catch (EmptyCollectionException e) {
+					value = 0;
+					noValueCount++;
+				} catch (NotANumberException e) {
 					value = 0;
 					noValueCount++;
 				}
@@ -101,19 +106,10 @@ public class TableReader {
 						badUCSDAreaCount++;
 					}
 				}
-			} catch (NumberFormatException e) {
-				if ((label == null) || (label.trim().length() == 0)) {
-					label = "Unidentified Area";
-				}
-				
-				float oldValue = 0;
-				if (this.ucsdAreaTotals.containsKey(label)) {
-					oldValue = this.unclassifiedLabelCounts.get(label);
-				}
-				
-				this.unclassifiedLabelCounts.put(label, oldValue + value);
-				
-				this.unclassifiedRecordCount++;
+			} catch (EmptyCollectionException e) {
+				handlingException(label, value);
+			} catch (NotANumberException e) {
+				handlingException(label, value);
 			}
 		}
 		
@@ -128,6 +124,21 @@ public class TableReader {
 					LogService.LOG_WARNING,
 					noValueCount + " records specified no valid value and were treated as specifying zero.");
 		}
+	}
+	
+	private void handlingException(String label, int value) {
+		if ((label == null) || (label.trim().length() == 0)) {
+			label = "Unidentified Area";
+		}
+		
+		float oldValue = 0;
+		if (this.ucsdAreaTotals.containsKey(label)) {
+			oldValue = this.unclassifiedLabelCounts.get(label);
+		}
+		
+		this.unclassifiedLabelCounts.put(label, oldValue + value);
+		
+		this.unclassifiedRecordCount++;
 	}
 	
 	
