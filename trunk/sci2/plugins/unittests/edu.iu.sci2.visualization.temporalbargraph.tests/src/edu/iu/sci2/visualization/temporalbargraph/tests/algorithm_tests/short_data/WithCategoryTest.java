@@ -75,7 +75,7 @@ public class WithCategoryTest {
 	public void testPrintStandard() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
 				WithCategoryTest.commonParameters);
-		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
+		parameters.put(TemporalBarGraphAlgorithmFactory.SUBTITLE_FIELD_ID,
 				"Generated from test.");
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
@@ -96,7 +96,7 @@ public class WithCategoryTest {
 	public void testPrintScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
 				WithCategoryTest.commonParameters);
-		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
+		parameters.put(TemporalBarGraphAlgorithmFactory.SUBTITLE_FIELD_ID,
 				"Generated from test.");
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,

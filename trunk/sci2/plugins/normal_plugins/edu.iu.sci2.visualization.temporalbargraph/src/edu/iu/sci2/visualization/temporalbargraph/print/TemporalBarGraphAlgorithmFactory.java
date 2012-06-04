@@ -8,6 +8,7 @@ import java.util.List;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.log.LogService;
@@ -30,7 +31,8 @@ public class TemporalBarGraphAlgorithmFactory extends
 	public static final double PAGE_LONG_DIMENTION = 11;
 	public static final double PAGE_SHORT_DIMENTION = 8.5;
 
-	public static final String QUERY_ID = "query";
+	public static final String SUBTITLE_FIELD_ID = "subtitle";
+	public static final String DEFAULT_SUBTITLE_PREFIX = "Generated from ";
 	/**
 	 * The parameter name for the simplified layout boolean from the
 	 * metadata.xml
@@ -112,7 +114,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 		String pageOrientation = PageOrientation.LANDSCAPE.toString();
 		String categoryColumn = (String) parameters.get(CATEGORY_FIELD_ID);
 
-		String query = (String) parameters.get(QUERY_ID);
+		String query = (String) parameters.get(SUBTITLE_FIELD_ID);
 		boolean shouldScaleOutput = ((Boolean) parameters
 				.get(SHOULD_SCALE_OUTPUT_FIELD_ID)).booleanValue();
 
@@ -209,6 +211,7 @@ public class TemporalBarGraphAlgorithmFactory extends
 				newAttributeDefinition = MutateParameterUtilities
 						.formLabelAttributeDefinition(oldAttributeDefinition,
 								table, additionalOptions);
+				// TODO: This didn't seem to be affect anything?
 				MutateParameterUtilities.mutateDefaultValue(oldParameters,
 						CATEGORY_FIELD_ID, DO_NOT_PROCESS_CATEGORY_VALUE);
 			}
@@ -220,8 +223,13 @@ public class TemporalBarGraphAlgorithmFactory extends
 			newParameters.addAttributeDefinition(
 					ObjectClassDefinition.REQUIRED, newAttributeDefinition);
 		}
-
-		return newParameters;
+		
+		// TODO: Use a general solution such as bipartite network's mutator
+		// Generate default subtitle from the dataset label. 
+		String defaultSubtitle = DEFAULT_SUBTITLE_PREFIX 
+				+ inputData.getMetadata().get(DataProperty.LABEL);
+		return MutateParameterUtilities.mutateDefaultValue(newParameters,
+				SUBTITLE_FIELD_ID, defaultSubtitle);
 	}
 
 }

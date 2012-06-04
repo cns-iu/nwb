@@ -74,7 +74,7 @@ public class DateIssueTest {
 	public void testPrintStandard() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
 				DateIssueTest.commonParameters);
-		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
+		parameters.put(TemporalBarGraphAlgorithmFactory.SUBTITLE_FIELD_ID,
 				"Generated from test.");
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
@@ -95,7 +95,7 @@ public class DateIssueTest {
 	public void testPrintScaled() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>(
 				DateIssueTest.commonParameters);
-		parameters.put(TemporalBarGraphAlgorithmFactory.QUERY_ID,
+		parameters.put(TemporalBarGraphAlgorithmFactory.SUBTITLE_FIELD_ID,
 				"Generated from test.");
 		parameters
 				.put(AbstractTemporalBarGraphAlgorithmFactory.SHOULD_SCALE_OUTPUT_FIELD_ID,
