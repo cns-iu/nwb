@@ -127,7 +127,7 @@ public class GeoMapViewPS {
 						pageLayout,
 						(escapedLabel.isEmpty()
 								? ""
-								: String.format(escapedLabel)),
+								: String.format("Generated from %s", escapedLabel)),
 						timestamp());
 				
 				out.write(pageHeader.toPostScript());

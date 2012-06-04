@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cishell.utilities.NumberUtilities;
-import org.cishell.utilities.NumberUtilities.EmptyCollectionException;
-import org.cishell.utilities.NumberUtilities.NotANumberException;
 
 import prefuse.data.Tuple;
 
@@ -64,14 +62,7 @@ public class GeoDatum<G, D extends Enum<D> & VizDimension> {
 				double value = NumberUtilities.interpretObjectAsDouble(valueObject);
 
 				dimensionToValue.put(dimension, value);
-			} catch (EmptyCollectionException e) {
-				throw new GeoDatumValueInterpretationException(
-						String.format(
-								"Value \"%s\" specified in dimension %s for tuple %s couldn't be " +
-								"interpreted as a number.",
-								String.valueOf(valueObject), dimension, tuple),
-						e);
-			} catch (NotANumberException e) {
+			} catch (NumberFormatException e) {
 				throw new GeoDatumValueInterpretationException(
 						String.format(
 								"Value \"%s\" specified in dimension %s for tuple %s couldn't be " +

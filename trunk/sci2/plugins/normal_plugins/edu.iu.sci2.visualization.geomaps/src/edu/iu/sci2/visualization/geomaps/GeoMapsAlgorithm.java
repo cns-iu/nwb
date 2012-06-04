@@ -59,21 +59,18 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 	private final AnnotationMode<G, D> annotationMode;
 	private final String subtitle;
 	private final StringTemplate templateForHowToRead;
-	private final String dataLabel;
 	
 	public GeoMapsAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
 			PageLayout pageLayout,
 			AnnotationMode<G, D> annotationMode,
-			String dataLabel,
 			String subtitle,
 			StringTemplate templateForHowToRead) {
 		this.data = data;
 		this.parameters = parameters;
 		this.pageLayout = pageLayout;
 		this.annotationMode = annotationMode;
-		this.dataLabel = dataLabel;
 		this.subtitle = subtitle;
 		this.templateForHowToRead = templateForHowToRead;
 	}
@@ -84,7 +81,7 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 		try {
 			Data inDatum = this.data[0];
 			Table inTable = (Table) inDatum.getData();
-			String dataLabel = Strings.nullToEmpty(this.dataLabel);
+			String dataLabel = Strings.nullToEmpty((String) inDatum.getMetadata().get(DataProperty.LABEL));
 			
 			String fullTitle = String.format("%s (%s)", BASE_TITLE, subtitle);
 			

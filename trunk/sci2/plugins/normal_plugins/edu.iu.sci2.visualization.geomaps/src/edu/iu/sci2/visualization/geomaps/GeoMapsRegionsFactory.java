@@ -42,14 +42,11 @@ public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, Paramet
 			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciShellContext) {
 		String featureNameColumnName = (String) parameters.get(RegionAnnotationMode.FEATURE_NAME_ID);
 
-		String dataLabel = (String) parameters.get(GeoMapsNetworkFactory.Parameter.DATA_LABEL.id());
-		
 		return new GeoMapsAlgorithm<String, FeatureDimension>(
 				data,
 				parameters,
 				getPageLayout(),
 				new RegionAnnotationMode(featureNameColumnName),
-				dataLabel,
 				SUBTITLE,
 				TEMPLATE_FOR_HOW_TO_READ);
 	}
@@ -110,7 +107,7 @@ public abstract class GeoMapsRegionsFactory implements AlgorithmFactory, Paramet
 		mutator.add(FeatureDimension.REGION_COLOR.getRangeParameterId(),
 				AbstractColorCoding.COLOR_CONTINUUMS.keySet());
 		
-		return GeoMapsNetworkFactory.mutateSubtitleDefaultValue(data, mutator.mutate(oldOCD));
+		return mutator.mutate(oldOCD);
 	}
 }
 
