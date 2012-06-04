@@ -41,13 +41,16 @@ public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, Paramet
 				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		String longitudeColumnName =
 				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
+		String dataLabel =
+				(String) parameters.get(GeoMapsNetworkFactory.Parameter.DATA_LABEL.id());
 
 		return new GeoMapsAlgorithm<Coordinate, CircleDimension>(
 				data,
 				parameters,
 				getPageLayout(),
 				new CircleAnnotationMode(longitudeColumnName, latitudeColumnName),
-				SUBTITLE,
+				dataLabel,
+				SUBTITLE, 
 				TEMPLATE_FOR_HOW_TO_READ);
 	}
 	
@@ -95,6 +98,6 @@ public abstract class GeoMapsCirclesFactory implements AlgorithmFactory, Paramet
 			dimension.addOptionsToAlgorithmParameters(mutator, numericColumnNames);
 		}
 
-		return mutator.mutate(oldParameters);
+		return GeoMapsNetworkFactory.mutateSubtitleDefaultValue(data, mutator.mutate(oldParameters));
 	}
 }

@@ -70,18 +70,20 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 	private static final String Y_POS_FIELD = "y";
 	
 	private final Data[] data;
+	private final String dataLabel;
 	private final String latitudeAttrib;
 	private final String longitudeAttrib;
 	private final Shapefile shapefile;
 	private final KnownProjectedCRSDescriptor projection;
 
-	public GeoMapsNetworkAlgorithm(Data[] data, Dictionary<String, Object> parameters)  {
+	public GeoMapsNetworkAlgorithm(Data[] data, Dictionary<String, Object> parameters, String dataLabel)  {
 		this.data = data;
 		
 		this.latitudeAttrib =
 				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LATITUDE.id());
 		this.longitudeAttrib =
 				(String) parameters.get(GeoMapsNetworkFactory.Parameter.LONGITUDE.id());
+		this.dataLabel = dataLabel;
 		
 		this.shapefile = NicelyNamedEnums.getConstantNamed(
 				Shapefile.class,
@@ -128,7 +130,7 @@ public class GeoMapsNetworkAlgorithm implements Algorithm {
 			File outNetwork = processNetwork(inFile, anchorPoints, geoMapView);
 
 			File geoMapFile = geoMapView.writeToPSFile(
-					Strings.nullToEmpty((String) inDatum.getMetadata().get(DataProperty.LABEL)),
+					Strings.nullToEmpty(this.dataLabel),
 					GeoMapsAlgorithm.OUTPUT_FILE_EXTENSION);
 			
 			return new Data[] {
