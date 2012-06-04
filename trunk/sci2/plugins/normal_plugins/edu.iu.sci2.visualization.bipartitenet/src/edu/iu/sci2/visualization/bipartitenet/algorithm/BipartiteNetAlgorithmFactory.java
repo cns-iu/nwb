@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -14,11 +13,11 @@ import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.MutateParameterUtilities;
 import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -41,8 +40,9 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 	private static final String LEFT_COLUMN_ORDERING_ID = "leftColumnOrdering";
 	private static final String RIGHT_COLUMN_TITLE_ID = "rightColumnTitle";
 	private static final String RIGHT_COLUMN_ORDERING_ID = "rightColumnOrdering";
-	private static final String LAYOUT_TYPE_ID = "layoutType";
+	private static final String IS_WEB_LAYOUT_ID = "is_web_layout";
 	private static final String SUBTITLE_ID = "subtitle";
+	private static final String DEFAULT_SUBTITLE_PREFIX = "Generated from ";
 	
 	private final CachedFunction<File, BipartiteNWBFileExaminer> examinerMaker =
 			new CachedFunction<File, BipartiteNWBFileExaminer>() {
@@ -78,7 +78,12 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 			edgeWeightColumn = null;
 		}
 		
-		Layout layout = Layout.valueOf((String) parameters.get(LAYOUT_TYPE_ID));
+		Layout layout;
+		if ((Boolean) parameters.get(IS_WEB_LAYOUT_ID)) {
+			layout = Layout.valueOf("WEB");
+		} else {
+			layout = Layout.valueOf("PRINT");
+		}
 		
 		String subtitle = (String) parameters.get(SUBTITLE_ID);
 		
@@ -132,14 +137,13 @@ public class BipartiteNetAlgorithmFactory implements AlgorithmFactory, Parameter
 		mutator.add(LEFT_SIDE_TYPE_ID, examiner.getBipartiteTypes());
 		mutator.add(NODE_SIZE_COLUMN_ID, nodeNumericColumns);
 		mutator.add(EDGE_WEIGHT_COLUMN_ID, edgeNumericColumns);
-		
-		mutator.add(LAYOUT_TYPE_ID, Collections2.transform(EnumSet.allOf(Layout.class), 
-				Functions.toStringFunction()));
-		
 		mutator.add(LEFT_COLUMN_ORDERING_ID, NodeOrderingOption.getIdentifiers());
 		mutator.add(RIGHT_COLUMN_ORDERING_ID, NodeOrderingOption.getIdentifiers());
 		
-		return mutator.mutate(oldParameters);
+		//TODO: Create a general mutator to support mutate textbox
+		ObjectClassDefinition newParameters = mutator.mutate(oldParameters);
+		String defaultSubtitle = DEFAULT_SUBTITLE_PREFIX + data[0].getMetadata().get(DataProperty.LABEL);
+		return MutateParameterUtilities.mutateDefaultValue(newParameters, SUBTITLE_ID, defaultSubtitle);
 	}
 
 	private File getNWBFile(Data[] data) {

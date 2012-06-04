@@ -10,6 +10,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DataFactory;
+import org.junit.Assume;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
@@ -40,62 +41,83 @@ public class BipartiteNetAlgorithmFactoryTest {
 	
 	@Test
 	public void testLayoutIsPrint() throws Exception {
-		Dictionary<String, Object> params = new Hashtable<String, Object>();
-        params.put("leftSideType", "a");
-        params.put("subtitle", "");
-        params.put("nodeSizeColumn", BipartiteNetAlgorithmFactory.NO_NODE_WEIGHT_OPTION);
-        params.put("edgeWeightColumn", BipartiteNetAlgorithmFactory.NO_EDGE_WEIGHT_OPTION);
-        params.put("leftColumnTitle", "Left title");
-        params.put("rightColumnTitle", "Right title");
-        params.put("leftColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
-        params.put("rightColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
-        params.put("layoutType", Layout.PRINT.name());
-
-        File tempFile = File.createTempFile("nwb-file", ".nwb");
-        Files.append(getTestNWB(), tempFile, Charsets.US_ASCII);
-        Data inData = DataFactory.forFile(tempFile, "file:text/nwb", DataProperty.NETWORK_TYPE,
-        		null, "test nwb file");
-        
-        BipartiteNetAlgorithmFactory factory = new BipartiteNetAlgorithmFactory();
-        Algorithm rawAlgorithm = factory.createAlgorithm(
-        		new Data[] { inData }, params, new LogOnlyCIShellContext());
-        
-        BipartiteNetAlgorithm algorithm = (BipartiteNetAlgorithm) rawAlgorithm;
-        Layout layout = algorithm.getLayout();
-        assertEquals(layout, Layout.PRINT);
-        Data[] out = algorithm.execute();
-        File f = (File) out[0].getData();
-//        System.out.println(Files.getChecksum(f, new CRC32()));
+		
+		try {
+			Dictionary<String, Object> params = new Hashtable<String, Object>();
+	        params.put("leftSideType", "a");
+	        params.put("subtitle", "");
+	        params.put("nodeSizeColumn", BipartiteNetAlgorithmFactory.NO_NODE_WEIGHT_OPTION);
+	        params.put("edgeWeightColumn", BipartiteNetAlgorithmFactory.NO_EDGE_WEIGHT_OPTION);
+	        params.put("leftColumnTitle", "Left title");
+	        params.put("rightColumnTitle", "Right title");
+	        params.put("leftColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
+	        params.put("rightColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
+	        params.put("is_web_layout", false);
+	
+	        File tempFile = File.createTempFile("nwb-file", ".nwb");
+	        Files.append(getTestNWB(), tempFile, Charsets.US_ASCII);
+	        Data inData = DataFactory.forFile(tempFile, "file:text/nwb", DataProperty.NETWORK_TYPE,
+	        		null, "test nwb file");
+	        
+	        BipartiteNetAlgorithmFactory factory = new BipartiteNetAlgorithmFactory();
+	        Algorithm rawAlgorithm = factory.createAlgorithm(
+	        		new Data[] { inData }, params, new LogOnlyCIShellContext());
+	        
+	        BipartiteNetAlgorithm algorithm = (BipartiteNetAlgorithm) rawAlgorithm;
+	        Layout layout = algorithm.getLayout();
+	        assertEquals(layout, Layout.PRINT);
+	        Data[] out = algorithm.execute();
+	        File f = (File) out[0].getData();
+	//        System.out.println(Files.getChecksum(f, new CRC32()));
+		} catch (NoClassDefFoundError e) {
+			// Handle this issue for the test server that dont have graphic support
+			if (e.getMessage() != null
+					&& e.getMessage()
+							.contains("sun.awt.X11GraphicsEnvironment")) {
+				Assume.assumeNoException(e);
+			}
+			throw e;
+		}
 	}
 	
 	@Test
 	public void testLayoutIsWeb() throws Exception {
-		Dictionary<String, Object> params = new Hashtable<String, Object>();
-        params.put("leftSideType", "a");
-        params.put("subtitle", "");
-        params.put("nodeSizeColumn", BipartiteNetAlgorithmFactory.NO_NODE_WEIGHT_OPTION);
-        params.put("edgeWeightColumn", BipartiteNetAlgorithmFactory.NO_EDGE_WEIGHT_OPTION);
-        params.put("leftColumnTitle", "Left title");
-        params.put("rightColumnTitle", "Right title");
-        params.put("leftColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
-        params.put("rightColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
-        params.put("layoutType", Layout.WEB.name());
-
-        File tempFile = File.createTempFile("nwb-file", ".nwb");
-        Files.append(getTestNWB(), tempFile, Charsets.US_ASCII);
-        Data inData = DataFactory.forFile(tempFile, "file:text/nwb", DataProperty.NETWORK_TYPE,
-        		null, "test nwb file");
-        
-        BipartiteNetAlgorithmFactory factory = new BipartiteNetAlgorithmFactory();
-        Algorithm rawAlgorithm = factory.createAlgorithm(
-        		new Data[] { inData }, params, new LogOnlyCIShellContext());
-        
-        BipartiteNetAlgorithm algorithm = (BipartiteNetAlgorithm) rawAlgorithm;
-        Layout layout = algorithm.getLayout();
-        assertEquals(layout, Layout.WEB);
-        Data[] out = algorithm.execute();
-        File f = (File) out[0].getData();
-//        System.out.println(Files.getChecksum(f, new CRC32()));
+		try {
+			Dictionary<String, Object> params = new Hashtable<String, Object>();
+	        params.put("leftSideType", "a");
+	        params.put("subtitle", "");
+	        params.put("nodeSizeColumn", BipartiteNetAlgorithmFactory.NO_NODE_WEIGHT_OPTION);
+	        params.put("edgeWeightColumn", BipartiteNetAlgorithmFactory.NO_EDGE_WEIGHT_OPTION);
+	        params.put("leftColumnTitle", "Left title");
+	        params.put("rightColumnTitle", "Right title");
+	        params.put("leftColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
+	        params.put("rightColumnOrdering", NodeOrderingOption.LABEL_ASC.getIdentifier());
+	        params.put("is_web_layout", true);
+	
+	        File tempFile = File.createTempFile("nwb-file", ".nwb");
+	        Files.append(getTestNWB(), tempFile, Charsets.US_ASCII);
+	        Data inData = DataFactory.forFile(tempFile, "file:text/nwb", DataProperty.NETWORK_TYPE,
+	        		null, "test nwb file");
+	        
+	        BipartiteNetAlgorithmFactory factory = new BipartiteNetAlgorithmFactory();
+	        Algorithm rawAlgorithm = factory.createAlgorithm(
+	        		new Data[] { inData }, params, new LogOnlyCIShellContext());
+	        
+	        BipartiteNetAlgorithm algorithm = (BipartiteNetAlgorithm) rawAlgorithm;
+	        Layout layout = algorithm.getLayout();
+	        assertEquals(layout, Layout.WEB);
+	        Data[] out = algorithm.execute();
+	        File f = (File) out[0].getData();
+	//        System.out.println(Files.getChecksum(f, new CRC32()));
+		} catch (NoClassDefFoundError e) {
+			// Handle this issue for the test server that dont have graphic support
+			if (e.getMessage() != null
+					&& e.getMessage()
+							.contains("sun.awt.X11GraphicsEnvironment")) {
+				Assume.assumeNoException(e);
+			}
+			throw e;
+		}
 	}
 
 
