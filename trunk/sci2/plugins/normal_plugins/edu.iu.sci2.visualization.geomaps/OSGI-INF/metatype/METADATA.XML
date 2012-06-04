@@ -27,32 +27,6 @@
 		<AD name="Interior Color Scaling" id="innerColorScaling" type="String" description="How to scale the inner color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Interior Color Range" id="innerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
 	</OCD>
-	
-	<OCD name="Choropleth Map (Web Layout)" id="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsWebFactory.OCD"
-		 description="Color-codes the named regions on a geographical map in proportion to associated numeric data.">
-		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
-		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
-		<AD name="Region Name" id="featureName" type="String" description="String attribute that names regions" default="Mutate"/>
-		<AD name="Color By" id="featureColorColumnName" type="String" description="Numeric attribute that determines region color" default="Mutate"/>
-		<AD name="Color Scaling" id="featureColorScaling" type="String" description="How to scale the color attribute (linear implies no rescaling)" default="Mutate"/>
-		<AD name="Color Range" id="featureColorRange" type="String" description="Two colors that the region colors should range between, from least to greatest" default="Mutate"/>
-	</OCD>
-		
-	<OCD name="Proportional Symbol Map (Web Layout)" id="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesWebFactory.OCD"
-		 description="Maps geospatial coordinates as circles that can be size- and color-coded in proportion to associated numeric data.">
-		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
-		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
-		<AD name="Latitude" id="latitude" type="String" description="Numeric attribute that determines circle latitude (ranges from -180 (180 degrees west) to +180 (180 degrees east)" default="Mutate"/>
-		<AD name="Longitude" id="longitude" type="String" description="Numeric attribute that determines circle longitude (ranges from -90 (90 degrees south) to +90 (90 degrees north)" default="Mutate"/>
-		<AD name="Size Circles By" id="circleAreaColumnName" type="String" description="Numeric attribute that determines circle size (that is, area)" default="Mutate"/>
-		<AD name="Size Scaling" id="circleAreaScaling" type="String" description="How to scale the size attribute (linear implies no rescaling)" default="Mutate"/>
-		<AD name="Color Circle Exteriors By" id="outerColorColumnName" type="String" description="Numeric attribute that determines outer color" default="Mutate"/>
-		<AD name="Exterior Color Scaling" id="outerColorScaling" type="String" description="How to scale the outer color attribute (linear implies no rescaling)" default="Mutate"/>
-		<AD name="Exterior Color Range" id="outerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
-		<AD name="Color Circle Interiors By" id="innerColorColumnName" type="String" description="Numeric attribute that determines inner color" default="Mutate"/>
-		<AD name="Interior Color Scaling" id="innerColorScaling" type="String" description="How to scale the inner color attribute (linear implies no rescaling)" default="Mutate"/>
-		<AD name="Interior Color Range" id="innerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
-	</OCD>
 		
 	<OCD name="Geospatial Network Layout plus Base Map" id="edu.iu.sci2.visualization.geomaps.GeoMapsNetworkFactory.OCD"
 		 description="Overlays the geolocated nodes of a network as size- and color-coded circles on a geographical map and annotates the nodes in the network with projected layout coordinates.  Special 'anchor nodes' are drawn on the map and laid out in the network to facilitate alignment.">
@@ -68,7 +42,7 @@
 	</Designate>
 	
 	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory$Web">
-		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsWebFactory.OCD"/>
+		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
 	</Designate>
 	
 	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory$Print">
@@ -76,7 +50,7 @@
 	</Designate>
 	
 	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory$Web">
-		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesWebFactory.OCD"/>
+		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
 	</Designate>
 	
 	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsNetworkFactory">
