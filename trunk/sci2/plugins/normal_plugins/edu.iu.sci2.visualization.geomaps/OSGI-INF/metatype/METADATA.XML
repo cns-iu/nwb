@@ -28,7 +28,7 @@
 		<AD name="Interior Color Range" id="innerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
 	</OCD>
 	
-	<OCD name="Choropleth Map" id="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsWebFactory.OCD"
+	<OCD name="Choropleth Map (Web Layout)" id="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsWebFactory.OCD"
 		 description="Color-codes the named regions on a geographical map in proportion to associated numeric data.">
 		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
 		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
@@ -38,7 +38,7 @@
 		<AD name="Color Range" id="featureColorRange" type="String" description="Two colors that the region colors should range between, from least to greatest" default="Mutate"/>
 	</OCD>
 		
-	<OCD name="Proportional Symbol Map" id="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesWebFactory.OCD"
+	<OCD name="Proportional Symbol Map (Web Layout)" id="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesWebFactory.OCD"
 		 description="Maps geospatial coordinates as circles that can be size- and color-coded in proportion to associated numeric data.">
 		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
 		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
