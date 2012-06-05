@@ -69,7 +69,7 @@ public class BipartiteNetAlgorithmFactoryTest {
 	        Data[] out = algorithm.execute();
 	        File f = (File) out[0].getData();
 	//        System.out.println(Files.getChecksum(f, new CRC32()));
-		} catch (NoClassDefFoundError e) {
+		} catch (InternalError e) {
 			// Handle this issue for the test server that dont have graphic support
 			if (e.getMessage() != null
 					&& e.getMessage()
@@ -117,6 +117,5 @@ public class BipartiteNetAlgorithmFactoryTest {
 			}
 		}
 	}
-
 
 }
