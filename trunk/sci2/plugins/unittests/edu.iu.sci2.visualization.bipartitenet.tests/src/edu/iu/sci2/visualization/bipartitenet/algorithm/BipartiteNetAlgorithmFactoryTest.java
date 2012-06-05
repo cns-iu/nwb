@@ -76,7 +76,6 @@ public class BipartiteNetAlgorithmFactoryTest {
 							.contains("sun.awt.X11GraphicsEnvironment")) {
 				Assume.assumeNoException(e);
 			}
-			throw e;
 		}
 	}
 	
@@ -116,7 +115,6 @@ public class BipartiteNetAlgorithmFactoryTest {
 							.contains("sun.awt.X11GraphicsEnvironment")) {
 				Assume.assumeNoException(e);
 			}
-			throw e;
 		}
 	}
 
