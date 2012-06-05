@@ -134,6 +134,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 		Map<String, Integer> journalCounts = new HashMap<String, Integer>();
 
+		int nullCount = 0;
 		for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
 		Iterator<Tuple> rows = myTable.tuples(); rows.hasNext();) {
 			Tuple row = rows.next();
@@ -141,8 +142,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			if (row.canGetString(myJournalColumnName)) {
 				String journalName = row.getString(myJournalColumnName);
 				if (journalName == null) {
-					logger.log(LogService.LOG_WARNING,
-							"A row representing journal names was null and was ignored.");
+					nullCount++;
 					continue;
 				}
 				incrementHitCount(journalCounts, journalName);
@@ -154,6 +154,12 @@ public class JournalsMapAlgorithm implements Algorithm {
 				throw new AlgorithmExecutionException(message);
 			}
 		}
+		
+		if (nullCount > 0) {
+			logger.log(LogService.LOG_WARNING,
+					nullCount + " row representing journal names were null and were ignored.");
+		}
+		
 		return journalCounts;
 	}
 

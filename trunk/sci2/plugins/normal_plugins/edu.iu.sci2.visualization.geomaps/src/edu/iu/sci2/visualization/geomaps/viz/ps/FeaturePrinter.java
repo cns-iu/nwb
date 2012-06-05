@@ -138,7 +138,7 @@ public class FeaturePrinter {
 					geoMap.getShapefile().getFeatureAttributeName(),
 					unfoundFeatureNamesPreview);			
 			if (unfoundFeatureNames.size() > previewSize) {
-				shortMessage += "  The full list is in the log file.";
+				shortMessage += " The full list is in the log file.";
 			}
 			LogStream.WARNING.send(shortMessage);
 			

@@ -35,8 +35,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 		LogService logger = getLogger();
 		Data inputData = getInputData();
 
-		logger.log(LogService.LOG_INFO,
-				"Creating PostScript. May take a few moments...");
+		logger.log(LogService.LOG_INFO, "Creating PostScript..");
 		CSVWriter csvWriter = null;
 
 		try {
@@ -146,7 +145,7 @@ public abstract class AbstractTemporalBarGraphAlgorithm implements Algorithm {
 				workingRecordSet.add(newRecord);
 
 			} catch (InvalidRecordException e) {
-				logger.log(LogService.LOG_WARNING, "An invalid record will be ignored." + System.getProperty("line.separator") + e.getMessage(), e);
+				logger.log(LogService.LOG_WARNING, "A record was ignored: " + e.getMessage(), e);
 			}
 		}
 
