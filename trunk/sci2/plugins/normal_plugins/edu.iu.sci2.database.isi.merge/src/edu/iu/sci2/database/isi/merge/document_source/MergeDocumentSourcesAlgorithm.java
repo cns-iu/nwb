@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -157,17 +158,16 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
      */
 	private static Map<String, String> createNameFormLookup() {
 		try {
-			File mergeGroupsFile =
-				new File(new URL(
-						new URL(System.getProperty("osgi.configuration.area")),
-						MERGE_GROUPS_FILE_NAME).getPath());
-			BufferedReader mergeGroupsFileReader =
-				new BufferedReader(new FileReader(mergeGroupsFile));
+			URL mergeGroupsUrl = MergeDocumentSourcesAlgorithm.class.getClass()
+					.getResource(MERGE_GROUPS_FILE_NAME);
+			InputStream in = mergeGroupsUrl.openStream();
+			BufferedReader mergeGroupsUrlReader = new BufferedReader(
+							new InputStreamReader(in, "UTF8"));
 			
 			Map<String, String> nameFormLookup = new HashMap<String, String>();
 			String line;
 			String currentKey = null;
-			while ((line = mergeGroupsFileReader.readLine()) != null) {
+			while ((line = mergeGroupsUrlReader.readLine()) != null) {
 				line = line.toLowerCase().trim();
 				
 				// Empty line?  New merge group starting.
