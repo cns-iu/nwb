@@ -3,6 +3,7 @@
 	<property name="product.name" relative="true">sci2</property>
 	<property name="input.dir" relative="true">${basedir}/target/products</property>
 	<property name="output.dir" relative="true">${basedir}/target/products-final</property>
+	<property name="product.prefix" relative="true">sci2</property>
 
 	<!-- To override any of these properties, run ant [...] -Dproperty.name=value -->
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
@@ -97,9 +98,9 @@
 		</replaceregexp>
 
 		<zip destfile="${product.zip.out}" duplicate="fail">
-			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini,${exclude_p2}" />
-			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="plugins" />
-			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini,${exclude_p2}" prefix="${product.prefix}" />
+			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="${product.prefix}/plugins" />
+			<zipfileset dir="${temp.dir}" includes="**/*.ini" prefix="${product.prefix}" />
 		</zip>
 		<delete dir="${temp.dir}" />
 	</target>
@@ -125,10 +126,10 @@
 		</replaceregexp>
 
 		<tar destfile="${product.tgz.out}" compression="gzip">
-			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files} ${exclude_p2}" />
-			<zipfileset src="${product.zip}" includes="${permission.files}" filemode="755" />
-			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="plugins" />
-			<zipfileset dir="${temp.dir}" includes="**/*.ini" />
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files} ${exclude_p2}" prefix="${product.prefix}" />
+			<zipfileset src="${product.zip}" includes="${permission.files}" filemode="755" prefix="${product.prefix}" />
+			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="${product.prefix}/plugins" />
+			<zipfileset dir="${temp.dir}" includes="**/*.ini" prefix="${product.prefix}" />
 		</tar>
 
 		<delete dir="${temp.dir}" />
