@@ -53,7 +53,6 @@
       <feature id="org.cishell.environment.equinox.feature"/>
       <feature id="org.cishell.feature"/>
       <feature id="org.cishell.reference.feature" version="1.0.0"/>
-      <feature id="org.cishell.reference.database.feature" version="1.0.0"/>
       <feature id="org.cishell.reference.gui.feature"/>
       <feature id="edu.iu.sci2.gui.brand.feature"/>
       <feature id="edu.iu.sci2.javaalgorithms.feature" version="1.0.0"/>
