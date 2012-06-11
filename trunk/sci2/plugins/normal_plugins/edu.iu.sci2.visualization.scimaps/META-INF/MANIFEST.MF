@@ -27,5 +27,5 @@ Import-Package: au.com.bytecode.opencsv,
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/fields.xml, OSGI-INF/journals.xml
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: FreeHEP_VectorGraphics
