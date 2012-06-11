@@ -9,6 +9,6 @@
   </parent>
   <groupId>edu.iu.sci2.normal_plugins</groupId>
   <artifactId>edu.iu.sci2.visualization.scimaps</artifactId>
-  <version>0.0.8</version>
+  <version>0.0.9</version>
   <packaging>eclipse-plugin</packaging>
 </project>
