@@ -43,15 +43,8 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 	@Override
 	protected GeoDataset<String, FeatureDimension> readTable(Table table,
 			Collection<Binding<FeatureDimension>> bindings) {
-		return GeoDataset.fromTable(table, bindings, FeatureDimension.class,
-				new Function<Tuple, String>() {
-					@Override
-					public String apply(Tuple row) {
-						return normalizeFeatureName(
-								StringUtilities.interpretObjectAsString(
-										row.get(featureNameColumnName)));
-					}					
-				});
+		return GeoDataset.fromTable(table, bindings, FeatureDimension.class, new FeatureNameReader(
+				featureNameColumnName));
 	}
 	
 	public static Collection<FeatureView> asFeatureViews(Collection<? extends GeoDatum<String, FeatureDimension>> valuedFeatures, final Collection<? extends Coding<FeatureDimension>> codings) {
@@ -91,5 +84,27 @@ public class RegionAnnotationMode extends AnnotationMode<String, FeatureDimensio
 
 	public static String normalizeFeatureName(String featureName) {
 		return featureName.toLowerCase();
+	}
+	
+	
+	private static class FeatureNameReader implements GeoIdentifierReader<String> {
+		private final String featureNameColumnName;
+		
+		FeatureNameReader(String featureNameColumnName) {
+			this.featureNameColumnName = featureNameColumnName;
+		}
+	
+		@Override
+		public String readFrom(Tuple tuple) throws GeoIdentifierException {
+			Object featureNameObject = tuple.get(featureNameColumnName);
+			String featureName = StringUtilities.interpretObjectAsString(featureNameObject);
+			
+			if (featureName == null) {
+				throw new GeoIdentifierException(String.format(
+						"Missing feature name info in tuple %s.", tuple));
+			}
+			
+			return normalizeFeatureName(featureName);
+		}
 	}
 }

@@ -54,18 +54,10 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 	@Override
 	protected GeoDataset<Coordinate, CircleDimension> readTable(Table table,
 			Collection<Binding<CircleDimension>> bindings) {
-		return GeoDataset.fromTable(table, bindings, CircleDimension.class,
-				new Function<Tuple, Coordinate>() {
-					@Override
-					public Coordinate apply(Tuple input) {
-						return new Coordinate(
-								NumberUtilities.interpretObjectAsDouble(input.get(longitudeColumnName)),
-								NumberUtilities.interpretObjectAsDouble(input.get(latitudeColumnName)));
-					}
-				});
+		return GeoDataset.fromTable(table, bindings, CircleDimension.class, new CoordinateReader(
+				longitudeColumnName, latitudeColumnName));
 	}
-
-
+	
 	public static Collection<Circle> asCirclesInDrawingOrder(
 			Collection<? extends GeoDatum<Coordinate, CircleDimension>> geoData,
 			final Collection<? extends Coding<CircleDimension>> codings) {
@@ -103,5 +95,34 @@ public class CircleAnnotationMode extends AnnotationMode<Coordinate, CircleDimen
 			GeoDataset<Coordinate, CircleDimension> scaledData,
 			Collection<? extends Coding<CircleDimension>> codings) {
 		return ImmutableSet.<FeatureView>of(); // No feature views in the circles mode
+	}
+
+	private static class CoordinateReader implements GeoIdentifierReader<Coordinate> {
+		private final String longitudeColumnName;
+		private final String latitudeColumnName;
+		
+		CoordinateReader(String longitudeColumnName, String latitudeColumnName) {
+			this.longitudeColumnName = longitudeColumnName;
+			this.latitudeColumnName = latitudeColumnName;
+		}
+	
+		@Override
+		public Coordinate readFrom(Tuple tuple) throws GeoIdentifierException {
+			Object xObject = tuple.get(longitudeColumnName);
+			Object yObject = tuple.get(latitudeColumnName);
+
+			if (xObject == null || yObject == null) {
+				throw new GeoIdentifierException(
+						String.format("Missing coordinate info in tuple %s.", tuple));
+			}			
+			Double x = NumberUtilities.interpretObjectAsDouble(xObject);
+			Double y = NumberUtilities.interpretObjectAsDouble(yObject);
+			
+			if (x == null || y == null) {
+				throw new GeoIdentifierException(
+						String.format("Uninterpretable coordinate info in tuple %s.", tuple));
+			}			
+			return new Coordinate(x, y);
+		}
 	}
 }

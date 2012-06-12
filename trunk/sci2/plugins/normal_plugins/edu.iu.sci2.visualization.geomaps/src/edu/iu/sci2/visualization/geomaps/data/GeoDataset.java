@@ -25,6 +25,8 @@ import com.google.common.collect.Sets;
 
 import edu.iu.sci2.visualization.geomaps.LogStream;
 import edu.iu.sci2.visualization.geomaps.data.scaling.ScalingException;
+import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode.GeoIdentifierException;
+import edu.iu.sci2.visualization.geomaps.viz.AnnotationMode.GeoIdentifierReader;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension;
 import edu.iu.sci2.visualization.geomaps.viz.VizDimension.Binding;
 
@@ -43,10 +45,11 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 			final Table table,
 			final Collection<? extends Binding<D>> bindings,
 			final Class<D> dimensionClass,
-			final Function<Tuple, G> geoMaker) {
+			final GeoIdentifierReader<G> geoIdentifierReader) {
 		ImmutableMap<D, ? extends Binding<D>> dimensionToBinding =
 				mapDimensionsToBindings(bindings);
 
+		int geoFailureCount = 0;
 		int redundantCount = 0;
 		int invalidCount = 0;
 		
@@ -56,8 +59,17 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 		for (Iterator<?> tuples = table.tuples(); tuples.hasNext();) {
 			Tuple tuple = (Tuple) tuples.next();
 			
+			// Read geo identifier
+			G geoIdentifier;
+			try {
+				geoIdentifier = geoIdentifierReader.readFrom(tuple);
+			} catch (GeoIdentifierException e) {
+				LogStream.DEBUG.send(e, "Failed to read geo identifier from tuple %s.", tuple);
+				geoFailureCount++;
+				continue;
+			}
+			
 			// Check whether we've already seen this geo identifier
-			G geoIdentifier = geoMaker.apply(tuple);			
 			if (geoIdentifiers.contains(geoIdentifier)) {
 				LogStream.DEBUG.send("Ignored tuple %s with redundant geo identifier %s.", tuple,
 						geoIdentifier);
@@ -75,6 +87,12 @@ public class GeoDataset<G, D extends Enum<D> & VizDimension> {
 						+ "attributes.", tuple);
 				invalidCount++;
 			}
+		}
+		
+		if (geoFailureCount > 0) {
+			LogStream.WARNING.send(
+					"Ignored %d records with missing geo identifiers (coordinates or region names).",
+					geoFailureCount);
 		}
 		
 		if (redundantCount > 0) {

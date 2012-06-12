@@ -132,9 +132,9 @@ public class GeoMapsAlgorithm<G, D extends Enum<D> & VizDimension> implements Al
 //				projections.toArray(new KnownProjectedCRSDescriptor[0]);
 		
 //		Example.ALASKA_CIRCLE_OVERLAY_INSET_TEST.run(PageLayout.PRINT);
-//		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
+		Example.WORLD_CIRCLES.run(PageLayout.PRINT);
 //		Example.WORLD_CIRCLES.run(PageLayout.WEB);
-//		Example.US_REGIONS.run(PageLayout.PRINT);//, projectionsArray);
+		Example.US_REGIONS.run(PageLayout.PRINT);//, projectionsArray);
 //		Example.US_REGIONS.run(PageLayout.WEB);
 		Example.DUPLICATE_REGIONS.run(PageLayout.PRINT);
 		Example.DUPLICATE_CIRCLES.run(PageLayout.PRINT);

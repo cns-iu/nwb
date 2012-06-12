@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import org.antlr.stringtemplate.StringTemplate;
 
 import prefuse.data.Table;
+import prefuse.data.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -15,6 +16,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.sci2.visualization.geomaps.GeoMapsNetworkFactory;
 import edu.iu.sci2.visualization.geomaps.data.GeoDataset;
@@ -136,5 +138,41 @@ public abstract class AnnotationMode<G, D extends Enum<D> & VizDimension> {
 						return binding.isEnabled();
 					}
 				});
+	}
+
+	/**
+	 * An interpretation of a value or values in a {@link Tuple} as a geo identifier.
+	 * 
+	 * <p>
+	 * This could for example read latitude and longitude values in a tuple and create a
+	 * {@link Coordinate} object.
+	 * 
+	 * @param <G>
+	 *            The type of geo identifier produced by this reader, e.g. {@link Coordinate} (for
+	 *            circles) or {@link String} (for feature names)
+	 */
+	public static interface GeoIdentifierReader<G> {
+		/**
+		 * Read a geo identifier object from a tuple.
+		 * 
+		 * @param tuple
+		 *            A tuple holding a value or values that may be interpreted as a geo
+		 *            identifier.
+		 * @return The proper geo identifier.
+		 * @throws GeoIdentifierException
+		 *             If the interpretation fails.
+		 */
+		public G readFrom(Tuple tuple) throws GeoIdentifierException;
+	}
+
+	/**
+	 * @see AnnotationMode.GeoIdentifierReader#readFrom(Tuple)
+	 */
+	public static class GeoIdentifierException extends Exception {
+		private static final long serialVersionUID = 2920164548741550342L;
+	
+		public GeoIdentifierException(String message) {
+			super(message);
+		}
 	}
 }
