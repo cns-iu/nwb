@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.utilities.color.ColorRegistry;
+import org.freehep.graphicsio.ps.PSStringStyler;
 import org.joda.time.DateTime;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -135,7 +136,7 @@ public class TemporalBarGraphPortraitPages extends AbstractPages {
 		StringTemplate titleTemplate = pageElementsGroup
 				.getInstanceOf("leftAlignedTitleWithQueryAndInfo");
 		titleTemplate.setAttribute("title", "Temporal Bar Graph");
-		titleTemplate.setAttribute("query", this.query);
+		titleTemplate.setAttribute("query", PSStringStyler.getEscaped(this.query));
 		titleTemplate.setAttribute("date", new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
 
 		Map<String, String> attributes = new HashMap<String, String>();

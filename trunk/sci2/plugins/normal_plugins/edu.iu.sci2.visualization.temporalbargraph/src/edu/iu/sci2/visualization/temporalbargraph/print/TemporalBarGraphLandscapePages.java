@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.utilities.color.ColorRegistry;
+import org.freehep.graphicsio.ps.PSStringStyler;
 import org.joda.time.DateTime;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -232,7 +233,7 @@ public class TemporalBarGraphLandscapePages extends AbstractPages {
 				.getInstanceOf("pageHeadingDefinitions");
 		titleDefinitionsTemplate
 				.setAttribute("title", "Temporal Visualization");
-		titleDefinitionsTemplate.setAttribute("query", this.query);
+		titleDefinitionsTemplate.setAttribute("query", PSStringStyler.getEscaped(this.query));
 		titleDefinitionsTemplate.setAttribute("date",
 				new DateTime().toString("MMMM dd, YYYY | h:mm a zzz"));
 

@@ -67,13 +67,19 @@ public class PSUtility {
 		return builder.toString();
 	}
 
-	// TODO Move somewhere more public
 	/**
-	 * Replaces each backslash with two backslashes, then each open parenthesis with an escaped
-	 * open parenthesis, then each close parenthesis with an escaped parenthesis.
+	 * Replaces each backslash with two backslashes, then each open parenthesis
+	 * with an escaped open parenthesis, then each close parenthesis with an
+	 * escaped parenthesis.
+	 * <br />
+	 * Please use consider using
+	 * 
+	 *             {@link org.freehep.graphicsio.ps.PSStringStyler#getEscaped(java.lang.String)}
+	 *             instead.
 	 */
 	public static String escapeForPostScript(String string) {
-		return string.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)");
+		return string.replace("\\", "\\\\").replace("(", "\\(")
+				.replace(")", "\\)").replace("%", "\\%");
 	}
 
 	public static String findscalesetfont(Font font) {
