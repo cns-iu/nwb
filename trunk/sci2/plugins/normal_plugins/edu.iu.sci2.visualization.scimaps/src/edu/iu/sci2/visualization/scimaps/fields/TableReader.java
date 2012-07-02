@@ -57,7 +57,7 @@ public class TableReader {
 				List<Integer> ids = new ArrayList<Integer>();
 				if (idsObject instanceof String) { // TODO Or just try cast?
 					String idsString = (String) idsObject;
-					String[] idStrings = idsString.split("\\D");
+					String[] idStrings = idsString.split("\\D"); // TODO Strange that this is hard-coded
 					
 					for (String idString : idStrings) {
 						if (idString.trim().length() > 0) {
@@ -65,8 +65,7 @@ public class TableReader {
 						}
 					}
 				} else {
-					int id =
-						NumberUtilities.interpretObjectAsDouble(row.get(nodeIDColumnName)).intValue();
+					int id = NumberUtilities.interpretObjectAsDouble(idsObject).intValue();
 					ids.add(id);
 				}
 				
