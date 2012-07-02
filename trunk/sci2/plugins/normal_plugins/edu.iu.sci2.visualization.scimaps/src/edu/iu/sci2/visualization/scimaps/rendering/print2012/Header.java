@@ -25,7 +25,7 @@ public class Header implements PageElement{
 		this.generatedFrom = generatedFrom;
 
 		this.publicationMapping = String
-				.format("%s out of %s publications were mapped to %s subdisciplines and %s disciplines.",
+				.format("%s out of %s records were mapped to %s subdisciplines and %s disciplines.",
 						mapOfScience.prettyCountOfMappedPublications(),
 						mapOfScience.prettyCountOfPublications(),
 						mapOfScience.prettyCountOfMappedSubdisciplines(),

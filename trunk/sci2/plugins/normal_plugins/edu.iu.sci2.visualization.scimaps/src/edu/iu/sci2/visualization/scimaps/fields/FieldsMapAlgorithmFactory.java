@@ -42,7 +42,9 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
 		boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
 		boolean showWindow = (Boolean) parameters.get(SHOW_WINDOW_ID);
-		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName, nodeValueColumnName, dataDisplayName, scalingFactor, webVersion, showWindow);
+		
+		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName,
+				nodeValueColumnName, dataDisplayName, scalingFactor, webVersion, showWindow);
 	}
 
 	/* Add a drop-down containing the String and Integer type column names
