@@ -11,8 +11,7 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
  * This class represents a circle legend.
  */
 public class CircleSizeLegend implements PageElement {
-	private static final DecimalFormat formatter = new DecimalFormat(
-			"###,###.##");
+	private static final DecimalFormat FORMATTER = new DecimalFormat("###,###.##");
 
 	private float minArea;
 	private float maxArea;
@@ -71,9 +70,9 @@ public class CircleSizeLegend implements PageElement {
 		float midRadius = Node.calculateRadius(this.midArea, 1.0f);
 		float maxRadius = Node.calculateRadius(this.maxArea, 1.0f);
 
-		String minLabel = formatter.format(Node.calculateWeight(minRadius / this.pageScalingFactor, this.scalingFactor));
-		String midLabel = formatter.format(Node.calculateWeight(midRadius / this.pageScalingFactor, this.scalingFactor));
-		String maxLabel = formatter.format(Node.calculateWeight(maxRadius / this.pageScalingFactor, this.scalingFactor));
+		String minLabel = FORMATTER.format(Node.calculateWeight(minRadius / this.pageScalingFactor, this.scalingFactor));
+		String midLabel = FORMATTER.format(Node.calculateWeight(midRadius / this.pageScalingFactor, this.scalingFactor));
+		String maxLabel = FORMATTER.format(Node.calculateWeight(maxRadius / this.pageScalingFactor, this.scalingFactor));
 
 		double circleX = maxRadius;
 
