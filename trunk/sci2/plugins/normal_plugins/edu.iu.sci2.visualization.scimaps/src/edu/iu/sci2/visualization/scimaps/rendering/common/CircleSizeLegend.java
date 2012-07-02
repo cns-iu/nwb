@@ -49,6 +49,7 @@ public class CircleSizeLegend implements PageElement {
 		this.midArea = Math.round((this.minArea + this.maxArea) / 2.0);
 	}
 
+	@Override
 	public void render(GraphicsState state) {
 		// Draw the word 'Area'
 		String title = "Area";
@@ -87,8 +88,10 @@ public class CircleSizeLegend implements PageElement {
 		// the top of the mid circle, and the top label should be just under the
 		// top line
 		float minLabelY = maxRadius * 2;
-		float midLabelY = midCircleY - midRadius
-				+ (state.current.getFontMetrics().getHeight() / 2);
+		float midLabelY = (float) (
+				midCircleY
+				- midRadius
+				+ (state.current.getFontMetrics().getHeight() / 2.0));
 		float maxLabelY = 0 + state.current.getFontMetrics().getHeight();
 
 		state.drawCircle((int) circleX, (int) minCircleY, (int) minRadius);

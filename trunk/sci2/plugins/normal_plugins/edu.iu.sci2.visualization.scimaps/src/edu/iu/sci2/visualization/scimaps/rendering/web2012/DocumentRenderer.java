@@ -73,11 +73,13 @@ public class DocumentRenderer extends PageManager implements
 				this.dimensions.getHeight() - inch(0.25f)));
 	}
 
+	@Override
 	public String title() {
 		String title = "Topical Visualization";
 		return title;
 	}
 
+	@Override
 	public GraphicsState preRender(Graphics2D graphics, Dimension size) {
 
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -92,6 +94,7 @@ public class DocumentRenderer extends PageManager implements
 		return graphicsState;
 	}
 
+	@Override
 	public void render(GraphicsState state, Dimension size) {
 
 		try {
@@ -102,6 +105,7 @@ public class DocumentRenderer extends PageManager implements
 
 	}
 
+	@Override
 	public Dimension getDimension() {
 		return this.dimensions;
 	}

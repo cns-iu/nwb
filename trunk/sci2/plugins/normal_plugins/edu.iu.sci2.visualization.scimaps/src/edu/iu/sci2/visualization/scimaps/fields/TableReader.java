@@ -27,8 +27,8 @@ public class TableReader {
 		int noValueCount = 0;
 		int badUCSDAreaCount = 0;
 		
-		for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
-		Iterator<Tuple> rows = table.tuples(); rows.hasNext();) {
+		// Raw Iterator from table.tuples()
+		for (@SuppressWarnings("unchecked") Iterator<Tuple> rows = table.tuples(); rows.hasNext();) {
 			Tuple row = rows.next();
 			
 			int value = 0;
@@ -40,6 +40,7 @@ public class TableReader {
 				} catch (NumberFormatException e) {
 					value = 0;
 					noValueCount++;
+					logger.log(LogService.LOG_DEBUG, e.getMessage(), e);
 				}
 				
 				if (value < 0) {
@@ -48,8 +49,7 @@ public class TableReader {
 				}
 			}
 			
-			String label =
-				StringUtilities.interpretObjectAsString(row.get(nodeLabelColumnName));						
+			String label = StringUtilities.interpretObjectAsString(row.get(nodeLabelColumnName));			
 			
 			try {
 				Object idsObject = row.get(nodeIDColumnName);
@@ -107,13 +107,15 @@ public class TableReader {
 				}
 				
 				float oldValue = 0;
-				if (this.ucsdAreaTotals.containsKey(label)) {
+				if (this.unclassifiedLabelCounts.containsKey(label)) {
 					oldValue = this.unclassifiedLabelCounts.get(label);
 				}
 				
 				this.unclassifiedLabelCounts.put(label, oldValue + value);
 				
 				this.unclassifiedRecordCount++;
+				
+				logger.log(LogService.LOG_DEBUG, e.getMessage(), e);
 			}
 		}
 		

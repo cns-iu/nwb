@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -26,7 +27,7 @@ public abstract class PageManager {
 
 	private Multimap<Integer, PageElement> pageSpecificElements = HashMultimap
 			.create();
-	private HashSet<PageElement> pageIndependentElements = new HashSet<PageElement>();
+	private Set<PageElement> pageIndependentElements = new HashSet<PageElement>();
 	/*
 	 * The page size in points
 	 */

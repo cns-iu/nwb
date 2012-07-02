@@ -25,7 +25,7 @@ import oim.vivo.scimapcore.mapping.ScienceMapping;
  * This class represents the Map of Science.
  */
 public class MapOfScience {
-	public static DecimalFormat formatter = new DecimalFormat("###,###");
+	public static final DecimalFormat FORMATTER = new DecimalFormat("###,###");
 
 	private DetailedScienceMappingResult mappingResult;
 
@@ -54,7 +54,7 @@ public class MapOfScience {
 	 */
 	public String prettyCountOfMappedPublications() {
 		float count = countOfMappedPublications();
-		return formatter.format(count);
+		return FORMATTER.format(count);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class MapOfScience {
 	 */
 	public String prettyCountOfUnmappedPublications() {
 		float count = countOfUnmappedPublications();
-		return formatter.format(count);
+		return FORMATTER.format(count);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class MapOfScience {
 	 */
 	public String prettyCountOfPublications() {
 		float count = countOfPublications();
-		return formatter.format(count);
+		return FORMATTER.format(count);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class MapOfScience {
 	 */
 	public String prettyCountOfMappedSubdisciplines() {
 		float count = countOfMappedSubdisciplines();
-		return formatter.format(count);
+		return FORMATTER.format(count);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class MapOfScience {
 	 */
 	public String prettyCountOfDisciplinesUsed() {
 		float count = countOfDisciplinesUsed();
-		return formatter.format(count);
+		return FORMATTER.format(count);
 	}
 
 	/**
@@ -164,6 +164,7 @@ public class MapOfScience {
 	public List<Integer> getMappedIdsByWeight() {
 		Integer[] mappedIds = getMappedIds().toArray(new Integer[] {});
 		Arrays.sort(mappedIds, new Comparator<Integer>() {
+			@Override
 			public int compare(Integer o1, Integer o2) {
 				return getIdWeightMapping().get(o1).compareTo(
 						getIdWeightMapping().get(o2));

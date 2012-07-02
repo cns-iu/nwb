@@ -25,6 +25,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.freehep.graphicsio.AbstractVectorGraphicsIO;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.freehep.util.UserProperties;
 import org.osgi.service.log.LogService;
@@ -71,6 +72,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		this.logger = logger;
 	}
 
+	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
 		Map<String, Integer> journalNameAndHitCount = getJournalNameAndHitCount(
 				this.table, this.journalColumnName, this.logger);
@@ -267,7 +269,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 		
 		UserProperties psProperties = new UserProperties();
 		psProperties.setProperty(PSGraphics2D.EMBED_FONTS, false);
-		psProperties.setProperty(PSGraphics2D.TEXT_AS_SHAPES, false);
+		psProperties.setProperty(AbstractVectorGraphicsIO.TEXT_AS_SHAPES, false);
 		psProperties.setProperty(PSGraphics2D.FIT_TO_PAGE, false);
 		psProperties.setProperty(PSGraphics2D.PAGE_SIZE, PSGraphics2D.CUSTOM_PAGE_SIZE);
 		psProperties.setProperty(PSGraphics2D.CUSTOM_PAGE_SIZE, pageManger.pageDimensions());

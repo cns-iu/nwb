@@ -17,6 +17,7 @@ public class CenteredCopyrightInfo implements PageElement{
 		this.fontSize = fontSize;
 	}
 
+	@Override
 	public void render(GraphicsState state) {
 		state.save();
 		state.current.translate(0, this.centerY);

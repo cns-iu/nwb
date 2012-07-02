@@ -42,6 +42,7 @@ public class PageLegend implements PageElement{
 	}
 
 
+	@Override
 	public void render(GraphicsState state) {
 		state.save();
 		state.current.translate(this.leftBoundary, this.topBoundary);

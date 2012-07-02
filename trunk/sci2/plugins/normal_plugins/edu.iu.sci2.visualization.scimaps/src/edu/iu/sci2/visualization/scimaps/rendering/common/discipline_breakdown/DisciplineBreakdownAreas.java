@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -14,6 +15,7 @@ import oim.vivo.scimapcore.journal.Journal;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 
@@ -69,7 +71,7 @@ public class DisciplineBreakdownAreas {
 
 		for (Column column : columns) {
 			if (unfilledPage.isFull()) {
-				pages.add(unfilledPage.getImmutableCopy());
+				pages.add(unfilledPage.immutableCopy());
 				unfilledPage = new Page(numberOfColumns, size);
 			}
 			try {
@@ -93,7 +95,7 @@ public class DisciplineBreakdownAreas {
 			SortedMap<Discipline, SortedSet<Journal>> givenJournalsByDiscipline,
 			int columnSpace) {
 		List<Column> columns = new ArrayList<Column>();
-		TreeMap<Discipline, SortedSet<Journal>> journalsByDiscipline = new TreeMap<Discipline, SortedSet<Journal>>(
+		Map<Discipline,SortedSet<Journal>> journalsByDiscipline = new TreeMap<Discipline, SortedSet<Journal>>(
 				givenJournalsByDiscipline);
 
 		Column unfilledColumn = new Column(columnSpace);
@@ -157,21 +159,21 @@ public class DisciplineBreakdownAreas {
 	}
 
 	public static class Page {
-		private final int numOfColumns;
-		private List<Column> columns = new ArrayList<DisciplineBreakdownAreas.Column>(
-				this.numOfColumns);
-		private Dimension size;
+		private final int maxColumns;
+		private final Dimension size;
+		private final List<Column> columns;
 
-		public Page(int numOfColumns, Dimension size) {
-			this.numOfColumns = numOfColumns;
+		public Page(int maxColumns, Dimension size) {
+			this.maxColumns = maxColumns;
 			this.size = size;
+			
+			this.columns = Lists.newArrayList();
 		}
-
-		public Page(int numOfColumns, Dimension dimension,
-				ImmutableList<Column> columns) {
-			this.numOfColumns = numOfColumns;
-			this.size = dimension;
-			this.columns = columns;
+		
+		private Page(Page page) {
+			this.maxColumns = page.maxColumns;
+			this.size = page.size;
+			this.columns = page.columns;
 		}
 
 		public Dimension getSize() {
@@ -179,11 +181,11 @@ public class DisciplineBreakdownAreas {
 		}
 
 		public int getNumberOfColumns() {
-			return this.numOfColumns;
+			return this.maxColumns;
 		}
 
 		public boolean isFull() {
-			return this.columns.size() >= this.numOfColumns;
+			return this.columns.size() >= this.maxColumns;
 		}
 
 		public void addColumn(Column column) throws PageOutOfSpaceException {
@@ -198,9 +200,8 @@ public class DisciplineBreakdownAreas {
 			return this.columns;
 		}
 
-		public Page getImmutableCopy() {
-			return new Page(this.numOfColumns, new Dimension(this.size),
-					ImmutableList.copyOf(this.columns));
+		public Page immutableCopy() {
+			return new Page(this);
 		}
 	}
 
@@ -231,8 +232,7 @@ public class DisciplineBreakdownAreas {
 			this.entries = new ArrayList<ColumnEntry>();
 		}
 
-		private Column(int totalSpace, int spacedUsed,
-				ImmutableList<ColumnEntry> entries) {
+		private Column(int totalSpace, int spacedUsed, ImmutableList<ColumnEntry> entries) {
 			this.totalSpace = totalSpace;
 			this.spaceUsed = spacedUsed;
 			this.entries = entries;
@@ -300,8 +300,7 @@ public class DisciplineBreakdownAreas {
 			return this.discipline;
 		}
 
-		private ColumnEntry(Discipline discipline,
-				ImmutableSortedSet<Journal> journals) {
+		private ColumnEntry(Discipline discipline, ImmutableSortedSet<Journal> journals) {
 			this.discipline = discipline;
 			this.journals = journals;
 		}

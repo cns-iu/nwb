@@ -18,6 +18,7 @@ public class ItalicCenteredFooter implements PageElement {
 		this.footerText = "CNS (cns.iu.edu)";
 	}
 
+	@Override
 	public void render(GraphicsState state) {
 		state.save();
 

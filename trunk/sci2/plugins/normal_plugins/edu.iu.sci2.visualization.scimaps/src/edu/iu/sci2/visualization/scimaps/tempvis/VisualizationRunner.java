@@ -57,7 +57,8 @@ public class VisualizationRunner {
 
         JMenuItem exportItem = new JMenuItem("Export...");
         exportItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 ExportDialog export = new ExportDialog();
                 export.showExportDialog(
                 	getContainerPanel(), "Export view as ...", getVisualizationPanel(), "export");
@@ -67,7 +68,8 @@ public class VisualizationRunner {
 
         JMenuItem quitItem = new JMenuItem("Quit");
         quitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
             	getFrame().dispose();
             }
         });

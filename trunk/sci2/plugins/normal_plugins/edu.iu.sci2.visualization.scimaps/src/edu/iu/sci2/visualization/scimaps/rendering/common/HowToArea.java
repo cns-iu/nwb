@@ -23,6 +23,7 @@ public class HowToArea implements PageElement {
 		this.topBoundary = topBoundary;
 	}
 
+	@Override
 	public void render(GraphicsState state) {
 		state.save();
 

@@ -179,6 +179,7 @@ public class MapOfScienceRenderer implements PageElement{
 		state.restore();
 	}
 
+	@Override
 	public void render(GraphicsState state) throws PageElementRenderingException {
 		state.save();
 		state.current.translate(this.leftBoundary, this.bottomBoundary);

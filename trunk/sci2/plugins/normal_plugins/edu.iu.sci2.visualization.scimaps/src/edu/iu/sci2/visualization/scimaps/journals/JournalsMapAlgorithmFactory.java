@@ -33,6 +33,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 	public static final String SHOW_EXPORT_WINDOW = "showWindow";
 	public static final String DEFAULT_SUBTITLE_PREFIX = "Generated from ";
 
+	@Override
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext context) {
 		String journalColumnName = (String) parameters.get(JOURNAL_COLUMN_ID);
@@ -53,6 +54,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 	 * Mutate the parameters to add a dropdown list of possible journal names
 	 * and a suggested filename.
 	 */
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
 		Table table = (Table) data[0].getData();
@@ -137,6 +139,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		 * Compare two column titles to determine which is more likely to be a
 		 * column containing journal titles.
 		 */
+		@Override
 		public int compare(String left, String right) {
 			return new Integer(score(left)).compareTo(score(right));
 		}

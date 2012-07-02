@@ -52,6 +52,7 @@ public class DisciplineBreakdownArea implements PageElement{
 		this.topBoundary = topBoundary;
 	}
 
+	@Override
 	public void render(GraphicsState state) {
 		final DecimalFormat formatter = new DecimalFormat("###,###");
 		boolean journalSizeSanityChecked = false;

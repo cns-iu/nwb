@@ -39,6 +39,7 @@ public class Header implements PageElement{
 	}
 
 
+	@Override
 	public void render(GraphicsState state) {
 		int titleFontSize = 16;
 		int otherFontSize = 10;

@@ -52,6 +52,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 		this.webVersion = webVersion;
 	}
 
+	@Override
 	public Data[] execute() {
 		TableReader tableReader = new TableReader(this.table,
 				this.nodeValueColumnName, this.nodeLabelColumnName,

@@ -30,6 +30,7 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 	public static final String DEFAULT_SUBTITLE_PREFIX = "Generated from ";
 	
 
+	@Override
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		LogService logger = (LogService) context.getService(LogService.class.getName());
@@ -47,14 +48,14 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 	/* Add a drop-down containing the String and Integer type column names
 	 * in table, with those seeming mostly like to record journals coming first.
 	 */
+	@Override
 	public ObjectClassDefinition mutateParameters(
 			Data[] data, ObjectClassDefinition oldParameters) {
 		Table table = (Table) data[0].getData();
 		
 		List<String> columnNames = TableUtilities.getAllColumnNames(table.getSchema());
 		
-		ObjectClassDefinition newParameters;
-		newParameters = addSourceDataFilenameParameter(oldParameters, data);
+		ObjectClassDefinition newParameters = addSourceDataFilenameParameter(oldParameters, data);
 		newParameters =
 			MutateParameterUtilities.mutateToDropdown(
 					newParameters,
