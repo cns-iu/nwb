@@ -76,11 +76,11 @@ public class DocumentRenderer extends PageManager implements
 				titleFontSize, 5, 50));
 		addToPage(
 				pageNumber,
-				new PageLegend((int) this.mapOfScience
-						.countOfUnmappedPublications(), Collections
-						.min(this.mapOfScience.getMappedWeights()), Collections
-						.max(this.mapOfScience.getMappedWeights()),
-						inch(0.25f), inch(7.0f), titleFontSize, fontSize));
+				new PageLegend(mapOfScience.getDataColumnName(), (int) this.mapOfScience
+						.countOfUnmappedPublications(), Collections.min(this.mapOfScience
+						.getMappedWeights()),
+						Collections.max(this.mapOfScience.getMappedWeights()), inch(0.25f),
+						inch(7.0f), titleFontSize, fontSize));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
 				this.scalingFactor, pageScalingFactor, inch(0.0f), inch(5.0f)));
 

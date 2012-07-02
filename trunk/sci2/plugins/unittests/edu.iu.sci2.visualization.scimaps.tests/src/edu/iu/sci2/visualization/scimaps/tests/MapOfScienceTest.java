@@ -42,7 +42,7 @@ public class MapOfScienceTest {
 		this.allJournals.putAll(this.realJournals);
 		this.allJournals.putAll(this.fakeJournals);
 
-		this.mapOfScience = new MapOfScience(this.allJournals);
+		this.mapOfScience = new MapOfScience("Fractional Journal Count", this.allJournals);
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class MapOfScienceTest {
 
 	@Test
 	public void testPrettyCountOfMappedPublications() {
-		DecimalFormat formatter = MapOfScience.formatter;
+		DecimalFormat formatter = MapOfScience.FORMATTER;
 		assertTrue(this.mapOfScience.prettyCountOfMappedPublications().equals(
 				formatter.format(this.mapOfScience.countOfMappedPublications())));
 	}

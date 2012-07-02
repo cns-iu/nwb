@@ -84,7 +84,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 		RenderableVisualization visualization = null;
 		PageManager pageManger = null;
 
-		MapOfScience mapOfScience = new MapOfScience(journalNameAndHitCount);
+		MapOfScience mapOfScience = new MapOfScience("Fractional Journal Count",
+				journalNameAndHitCount);
 
 		if (mapOfScience.getMappedResults().isEmpty()) {
 			throw new AlgorithmExecutionException("No journals could be mapped to the Map of Science.");

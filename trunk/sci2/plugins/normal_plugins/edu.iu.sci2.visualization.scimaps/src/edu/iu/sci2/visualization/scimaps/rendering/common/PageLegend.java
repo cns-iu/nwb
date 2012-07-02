@@ -16,22 +16,22 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 public class PageLegend implements PageElement{
 	private static final DecimalFormat formatter = new DecimalFormat("###,###");
 
+	private final String dataColumnName;
 	private int numberOfUnclassified;
 	private double minimumValue;
 	private double maximumValue;
 	private double leftBoundary;
 	private double topBoundary;
-
 	private int titleFontSize;
-
 	private int normalFontSize;
 
 	/**
 	 * Construct a PageLegend
 	 * @param numberOfUnclassified the number of {@link Journal}s that were unmapped on the {@link MapOfScience}.
 	 */
-	public PageLegend(int numberOfUnclassified, double minimumValue,
+	public PageLegend(String dataColumnName, int numberOfUnclassified, double minimumValue,
 			double maximumValue, double leftBoundary, double topBoundary, int titleFontSize, int normalFontSize) {
+		this.dataColumnName = dataColumnName;
 		this.numberOfUnclassified = numberOfUnclassified;
 		this.minimumValue = minimumValue;
 		this.maximumValue = maximumValue;
@@ -48,7 +48,7 @@ public class PageLegend implements PageElement{
 		state.current.translate(this.leftBoundary, this.topBoundary);
 
 		String title = "Legend";
-		String area = "Circle area: Fractional Journal Count";
+		String area = String.format("Circle area: %s", dataColumnName);
 		String unclassified = "Unclassified = " + this.numberOfUnclassified;
 		String minimum = "Minimum = " + formatter.format(this.minimumValue);
 		String maximum = "Maximum = " + formatter.format(this.maximumValue);

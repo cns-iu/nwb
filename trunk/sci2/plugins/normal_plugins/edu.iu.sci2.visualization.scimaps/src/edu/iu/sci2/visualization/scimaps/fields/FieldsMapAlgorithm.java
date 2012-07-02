@@ -63,7 +63,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 				tableReader.getUcsdAreaLabels(),
 				tableReader.getUnclassifiedLabelCounts());
 
-		MapOfScience map = createMapOfScience(fieldsAnalyzer);
+		MapOfScience map = createMapOfScience(nodeValueColumnName, fieldsAnalyzer);
 		RenderableVisualization visualization = null;
 		PageManager pageManager = null;
 		
@@ -88,7 +88,8 @@ public class FieldsMapAlgorithm implements Algorithm {
 				this.logger);
 	}
 
-	private static MapOfScience createMapOfScience(FieldsAnalyzer fieldsAnalyzer) {
+	private static MapOfScience createMapOfScience(
+			String nodeValueColumnName, FieldsAnalyzer fieldsAnalyzer) {
 		Map<Integer, Float> mappedResult = fieldsAnalyzer.getFound();
 		Map<String, Float> unmappedResult = fieldsAnalyzer.getUnfound();
 
@@ -98,7 +99,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 		DetailedScienceMappingResult mappingResult = new FieldsDetailedScienceMapping(
 				mappedResult, unmappedResult, mappedJournals, unmappedJournals);
 
-		MapOfScience map = new MapOfScience(mappingResult);
+		MapOfScience map = new MapOfScience(nodeValueColumnName, mappingResult);
 
 		return map;
 	}

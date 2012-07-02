@@ -27,17 +27,20 @@ import oim.vivo.scimapcore.mapping.ScienceMapping;
 public class MapOfScience {
 	public static final DecimalFormat FORMATTER = new DecimalFormat("###,###");
 
+	private final String dataColumnName;
 	private DetailedScienceMappingResult mappingResult;
 
 	/**
 	 * Creates a map of science. You must provide a mapping from the journal
 	 * name to the hits for that journal.
 	 */
-	public MapOfScience(Map<String, Integer> journalNameAndHitCount) {
+	public MapOfScience(String dataColumnName, Map<String, Integer> journalNameAndHitCount) {
+		this.dataColumnName = dataColumnName;
 		this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
 	}
 	
-	public MapOfScience(DetailedScienceMappingResult mappingResult){
+	public MapOfScience(String dataColumnName, DetailedScienceMappingResult mappingResult){
+		this.dataColumnName = dataColumnName;
 		this.mappingResult = mappingResult;
 	}
 	
@@ -262,6 +265,10 @@ public class MapOfScience {
 			disciplinesByJournal.put(discipline, journalsForDiscipline);
 		}
 		return disciplinesByJournal;
+	}
+
+	public String getDataColumnName() {
+		return dataColumnName;
 	}
 
 }

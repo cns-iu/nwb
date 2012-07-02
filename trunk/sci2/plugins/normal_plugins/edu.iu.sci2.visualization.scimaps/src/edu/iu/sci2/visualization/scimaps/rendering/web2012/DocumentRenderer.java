@@ -59,11 +59,11 @@ public class DocumentRenderer extends PageManager implements
 				pageScalingFactor, inch(4.96f), inch(11.0f), 16, 20, 5, 100));
 		addToPage(
 				pageNumber,
-				new PageLegend((int) this.mapOfScience
-						.countOfUnmappedPublications(), Collections
-						.min(this.mapOfScience.getMappedWeights()), Collections
-						.max(this.mapOfScience.getMappedWeights()),
-						inch(0.25f), inch(11.0f), 20, 16));
+				new PageLegend(mapOfScience.getDataColumnName(), (int) this.mapOfScience
+						.countOfUnmappedPublications(), Collections.min(this.mapOfScience
+						.getMappedWeights()),
+						Collections.max(this.mapOfScience.getMappedWeights()), inch(0.25f),
+						inch(11.0f), 20, 16));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
 				this.scalingFactor, pageScalingFactor, 25, 500));
 	}
