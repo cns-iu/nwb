@@ -36,6 +36,8 @@ import prefuse.data.Tuple;
 import com.google.common.collect.ImmutableSet;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
+import edu.iu.sci2.visualization.scimaps.journals.canonical.CanonicalJournalFormLookup;
+import edu.iu.sci2.visualization.scimaps.journals.canonical.CanonicalJournalFormLookup.CanonicalJournalFormLookupException;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
@@ -119,10 +121,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 		return datafy(mapOfScience, pageManger, this.parentData, this.logger);
 	}
 
-	private static Map<String, Integer> getJournalNameAndHitCount(
-			Table myTable, String myJournalColumnName, LogService logger)
-			throws AlgorithmExecutionException {
-		
+	private static Map<String, Integer> getJournalNameAndHitCount(Table myTable,
+			String myJournalColumnName, LogService logger) throws AlgorithmExecutionException {
 		if (myTable == null) {
 			String message = "The table may not be null.";
 			throw new IllegalArgumentException(message);
@@ -135,6 +135,14 @@ public class JournalsMapAlgorithm implements Algorithm {
 			String message = "The logger may not be null.";
 			throw new IllegalArgumentException(message);
 		}
+		
+		CanonicalJournalFormLookup canonicalLookup;
+		try {
+			canonicalLookup = CanonicalJournalFormLookup.get();
+		} catch (CanonicalJournalFormLookupException e) {
+			throw new RuntimeException("Failed to access the canonical journal form lookup.", e);
+		}
+		
 		Map<String, Integer> journalCounts = new HashMap<String, Integer>();
 
 		int nullCount = 0;
@@ -148,7 +156,10 @@ public class JournalsMapAlgorithm implements Algorithm {
 					nullCount++;
 					continue;
 				}
-				incrementHitCount(journalCounts, journalName);
+				
+				String canonicalJournalName = canonicalLookup.lookup(journalName);
+				
+				incrementHitCount(journalCounts, canonicalJournalName);
 			} else {
 				String message = "Error reading table: Could not read value in column "
 						+ myJournalColumnName
