@@ -34,9 +34,9 @@ public class MapOfScience {
 	 * Creates a map of science. You must provide a mapping from the journal
 	 * name to the hits for that journal.
 	 */
-	public MapOfScience(String dataColumnName, Map<String, Integer> journalNameAndHitCount) {
+	public MapOfScience(String dataColumnName, Map<String, Integer> journalCounts) {
 		this.dataColumnName = dataColumnName;
-		this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalNameAndHitCount);
+		this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalCounts);
 	}
 	
 	public MapOfScience(String dataColumnName, DetailedScienceMappingResult mappingResult){
