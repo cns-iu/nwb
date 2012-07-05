@@ -158,8 +158,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 				}
 
 				return 4;
-			} else if (normalColumnName.contains("period")) { // as in
-																// periodical
+			} else if (normalColumnName.contains("period")) { // as in periodical
 				return 3;
 			} else if (normalColumnName.startsWith("j")) {
 				return 1;

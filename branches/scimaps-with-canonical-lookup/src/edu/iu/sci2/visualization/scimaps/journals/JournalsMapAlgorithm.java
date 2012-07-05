@@ -13,9 +13,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import oim.vivo.scimapcore.journal.Journal;
@@ -31,13 +28,10 @@ import org.freehep.util.UserProperties;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import prefuse.data.Tuple;
 
 import com.google.common.collect.ImmutableSet;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.journals.canonical.CanonicalJournalFormLookup;
-import edu.iu.sci2.visualization.scimaps.journals.canonical.CanonicalJournalFormLookup.CanonicalJournalFormLookupException;
 import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
 import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
@@ -52,14 +46,14 @@ public class JournalsMapAlgorithm implements Algorithm {
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 
-	private Data parentData;
-	private Table table;
-	private String journalColumnName;
-	private float scalingFactor;
-	private String dataDisplayName;
-	boolean webVersion;
-	private boolean showWindow;
-	private LogService logger;
+	private final Data parentData;
+	private final Table table;
+	private final String journalColumnName;
+	private final float scalingFactor;
+	private final String dataDisplayName;
+	private final boolean webVersion;
+	private final boolean showWindow;
+	private final LogService logger;
 
 	public JournalsMapAlgorithm(Data[] data, String journalColumnName,
 			float scalingFactor, String dataDisplayName, boolean webVersion,
@@ -76,18 +70,17 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
-		Map<String, Integer> journalNameAndHitCount = getJournalNameAndHitCount(
-				this.table, this.journalColumnName, this.logger);
+		JournalDataset dataset = JournalDataset.fromTable(table, journalColumnName, logger);
 		
-		if (journalNameAndHitCount.isEmpty()) {
+		if (dataset.isEmpty()) {
 			throw new AlgorithmExecutionException("No journals could be found in the data.");
 		}
 		
 		RenderableVisualization visualization = null;
-		PageManager pageManger = null;
+		PageManager pageManager = null;
 
 		MapOfScience mapOfScience = new MapOfScience("Fractional Journal Count",
-				journalNameAndHitCount);
+				dataset.copyAsIdentifierCountMap());
 
 		if (mapOfScience.getMappedResults().isEmpty()) {
 			throw new AlgorithmExecutionException("No journals could be mapped to the Map of Science.");
@@ -99,7 +92,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			Web2012 web2012 = new Web2012(mapOfScience, dimensions,
 					this.scalingFactor);
 			visualization = web2012.getVisualization();
-			pageManger = web2012.getPageManager();
+			pageManager = web2012.getPageManager();
 		} else {
 			// Printversion
 			Dimension dimensions = new Dimension((int) inch(11f),
@@ -107,7 +100,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			Print2012 print2012 = new Print2012(mapOfScience,
 					this.dataDisplayName, dimensions, this.scalingFactor);
 			visualization = print2012.getVisualization();
-			pageManger = print2012.getPageManager();
+			pageManager = print2012.getPageManager();
 		}
 		if (this.showWindow) {
 			VisualizationRunner visualizationRunner = new VisualizationRunner(
@@ -118,78 +111,9 @@ public class JournalsMapAlgorithm implements Algorithm {
 			visualizationRunner.run();
 		}
 
-		return datafy(mapOfScience, pageManger, this.parentData, this.logger);
+		return datafy(mapOfScience, pageManager, this.parentData, this.logger);
 	}
-
-	private static Map<String, Integer> getJournalNameAndHitCount(Table myTable,
-			String myJournalColumnName, LogService logger) throws AlgorithmExecutionException {
-		if (myTable == null) {
-			String message = "The table may not be null.";
-			throw new IllegalArgumentException(message);
-		}
-		if (myJournalColumnName == null) {
-			String message = "The myJournalColumnName may not be null.";
-			throw new IllegalArgumentException(message);
-		}
-		if (logger == null) {
-			String message = "The logger may not be null.";
-			throw new IllegalArgumentException(message);
-		}
-		
-		CanonicalJournalFormLookup canonicalLookup;
-		try {
-			canonicalLookup = CanonicalJournalFormLookup.get();
-		} catch (CanonicalJournalFormLookupException e) {
-			throw new RuntimeException("Failed to access the canonical journal form lookup.", e);
-		}
-		
-		Map<String, Integer> journalCounts = new HashMap<String, Integer>();
-
-		int nullCount = 0;
-		for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
-		Iterator<Tuple> rows = myTable.tuples(); rows.hasNext();) {
-			Tuple row = rows.next();
-
-			if (row.canGetString(myJournalColumnName)) {
-				String journalName = row.getString(myJournalColumnName);
-				if (journalName == null) {
-					nullCount++;
-					continue;
-				}
-				
-				String canonicalJournalName = canonicalLookup.lookup(journalName);
-				
-				incrementHitCount(journalCounts, canonicalJournalName);
-			} else {
-				String message = "Error reading table: Could not read value in column "
-						+ myJournalColumnName
-						+ " for row number"
-						+ row.getRow() + ".";
-				throw new AlgorithmExecutionException(message);
-			}
-		}
-		
-		if (nullCount > 0) {
-			logger.log(LogService.LOG_WARNING,
-					nullCount + " row representing journal names were null and were ignored.");
-		}
-		
-		return journalCounts;
-	}
-
-	/**
-	 * @param counts
-	 *            is side-effected
-	 */
-	private static <K> void incrementHitCount(Map<K, Integer> counts, K hitKey) {
-		if (counts.containsKey(hitKey)) {
-			counts.put(hitKey,
-					Integer.valueOf(counts.get(hitKey).intValue() + 1));
-		} else {
-			counts.put(hitKey, Integer.valueOf(1));
-		}
-	}
-
+	
 	public static Data[] datafy(MapOfScience mapOfScience,
 			PageManager pageManger, Data parentData, LogService logger) {
 
