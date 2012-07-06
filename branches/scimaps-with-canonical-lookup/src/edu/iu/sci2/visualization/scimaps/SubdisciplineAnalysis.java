@@ -54,6 +54,9 @@ public class SubdisciplineAnalysis {
 					: 0.0f;
 			
 			Tuple row = table.getTuple(table.addRow());
+//			AnalysisColumn.ID.checkedSet(row, String.valueOf(subdiscipline.getId()));
+//			AnalysisColumn.DESCRIPTION.checkedSet(row, subdiscipline.getDescription());
+//			AnalysisColumn.TOTAL.checkedSet(row, total);
 			AnalysisColumn.populateRow(row, String.valueOf(subdiscipline.getId()),
 					subdiscipline.getDescription(), total);
 		}
@@ -106,24 +109,34 @@ public class SubdisciplineAnalysis {
 		}
 		
 		static void populateRow(Tuple row, String id, String description, float total) {
-			checkedSetString(row, ID.name, id);
-			checkedSetString(row, DESCRIPTION.name, description);
-			checkedSetFloat( row, TOTAL.name, total);
+			ID.checkedSet(row, id);
+			DESCRIPTION.checkedSet(row, description);
+			TOTAL.checkedSet(row, total);
+//			checkedSetString(row, ID.name, id);
+//			checkedSetString(row, DESCRIPTION.name, description);
+//			checkedSetFloat( row, TOTAL.name, total);
 		}
 		
-		private static void checkedSetString(Tuple tuple, String columnName, String value) {
+		private <T> void checkedSet(Tuple tuple, T value) {
 			Preconditions.checkState(
-					tuple.canSetString(columnName),
-					"Cannot set String value %s in column %s of tuple %s.", value, columnName, tuple);
-			tuple.setString(columnName, value);
+					tuple.canSet(name, clazz),
+					"Cannot set TODO value %s in column %s of tuple %s.", value, name, tuple);
+			tuple.set(name, value);
 		}
-
-		private static void checkedSetFloat(Tuple tuple, String columnName, float value) {
-			Preconditions.checkState(
-					tuple.canSetFloat(columnName),
-					"Cannot set float value %s in column %s of tuple %s.", value, columnName, tuple);
-			tuple.setFloat(columnName, value);
-		}
+		
+//		private static void checkedSetString(Tuple tuple, String columnName, String value) {
+//			Preconditions.checkState(
+//					tuple.canSetString(columnName),
+//					"Cannot set String value %s in column %s of tuple %s.", value, columnName, tuple);
+//			tuple.setString(columnName, value);
+//		}
+//
+//		private static void checkedSetFloat(Tuple tuple, String columnName, float value) {
+//			Preconditions.checkState(
+//					tuple.canSetFloat(columnName),
+//					"Cannot set float value %s in column %s of tuple %s.", value, columnName, tuple);
+//			tuple.setFloat(columnName, value);
+//		}
 	}
 	
 	/**
