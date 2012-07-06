@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.common;
+package edu.iu.sci2.visualization.scimaps.rendering;
 
 import java.awt.Color;
 import java.awt.FontMetrics;

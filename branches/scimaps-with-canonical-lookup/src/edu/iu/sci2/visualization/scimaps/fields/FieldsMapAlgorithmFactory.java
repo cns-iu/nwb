@@ -16,6 +16,8 @@ import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
+
 import prefuse.data.Table;
 
 public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
@@ -41,10 +43,12 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		String dataDisplayName = (String) parameters.get(SUBTITLE_ID);
 		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
 		boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
+		Layout layout = webVersion ? Layout.SIMPLE : Layout.FULL;
+		
 		boolean showWindow = (Boolean) parameters.get(SHOW_WINDOW_ID);
 		
 		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName,
-				nodeValueColumnName, dataDisplayName, scalingFactor, webVersion, showWindow);
+				nodeValueColumnName, dataDisplayName, scalingFactor, layout, showWindow);
 	}
 
 	/* Add a drop-down containing the String and Integer type column names

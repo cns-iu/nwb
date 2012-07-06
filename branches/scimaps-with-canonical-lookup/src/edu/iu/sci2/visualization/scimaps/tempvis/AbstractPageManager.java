@@ -1,7 +1,5 @@
 package edu.iu.sci2.visualization.scimaps.tempvis;
 
-import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
-
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,16 +21,15 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement.PageElementRenderin
  * their constructor to add the required {@link PageElement}(s).
  * 
  */
-public abstract class PageManager {
-
-	private Multimap<Integer, PageElement> pageSpecificElements = HashMultimap
-			.create();
-	private Set<PageElement> pageIndependentElements = new HashSet<PageElement>();
-	/*
-	 * The page size in points
-	 */
-	protected Dimension dimensions = new Dimension((int) inch(11.0f),
-			(int) inch(8.5f));
+public abstract class AbstractPageManager {
+	private final Multimap<Integer, PageElement> pageSpecificElements = HashMultimap.create();
+	private final Set<PageElement> pageIndependentElements = new HashSet<PageElement>();
+	// The page size in points
+	protected final Dimension dimensions;
+	
+	protected AbstractPageManager(Dimension dimensions) {
+		this.dimensions = dimensions;
+	}
 	
 	/**
 	 * Add a "page dependent" element to a specific page.
@@ -102,7 +99,7 @@ public abstract class PageManager {
 	}
 
 	/**
-	 * Return the number of pages that the {@link PageManager} currently has.
+	 * Return the number of pages that the {@link AbstractPageManager} currently has.
 	 */
 	public int numberOfPages() {
 		if (this.pageIndependentElements.isEmpty()
@@ -119,7 +116,7 @@ public abstract class PageManager {
 	}
 	
 	/**
-	 * Return the size of the pages that the {@link PageManager} manages.
+	 * Return the size of the pages that the {@link AbstractPageManager} manages.
 	 */
 	public Dimension pageDimensions() {
 		return this.dimensions;

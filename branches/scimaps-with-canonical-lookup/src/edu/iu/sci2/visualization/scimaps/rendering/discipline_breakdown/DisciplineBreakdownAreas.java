@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown;
+package edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown;
 
 import java.awt.Color;
 import java.awt.Dimension;

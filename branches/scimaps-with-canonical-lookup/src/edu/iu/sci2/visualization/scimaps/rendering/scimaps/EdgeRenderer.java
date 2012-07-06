@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.common.scimaps;
+package edu.iu.sci2.visualization.scimaps.rendering.scimaps;
 
 import java.util.Set;
 

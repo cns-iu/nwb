@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.print2012;
+package edu.iu.sci2.visualization.scimaps.rendering.full;
 
 import java.awt.Color;
 
@@ -10,17 +10,16 @@ import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
-public class Header implements PageElement{
-	String title;
-	String generatedFrom;
-	String publicationMapping;
-	String date;
-	private double leftBoundary;
-	private double topBoundary;
+class Header implements PageElement {
+	private final String title;
+	private final String generatedFrom;
+	private final String publicationMapping;
+	private final String date;
+	private final double leftBoundary;
+	private final double topBoundary;
 
-	public Header(String title, String generatedFrom,
-			MapOfScience mapOfScience, double leftBoundary, double topBoundary) {
-
+	Header(String title, String generatedFrom, MapOfScience mapOfScience, double leftBoundary,
+			double topBoundary) {
 		this.title = title;
 		this.generatedFrom = generatedFrom;
 

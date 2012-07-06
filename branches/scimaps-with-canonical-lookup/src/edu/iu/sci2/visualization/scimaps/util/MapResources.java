@@ -63,8 +63,8 @@ public final class MapResources {
 					Iterables.size(tokens) == 2,
 					"Line \"%s\" contains %s tokens (%s) but exactly two were expected.",
 					line,
-					Iterables.toString(tokens),
-					Iterables.size(tokens));			
+					Iterables.size(tokens),
+					Iterables.toString(tokens));			
 			String key = Iterables.get(tokens, 0);
 			String value = Iterables.get(tokens, 1);
 			

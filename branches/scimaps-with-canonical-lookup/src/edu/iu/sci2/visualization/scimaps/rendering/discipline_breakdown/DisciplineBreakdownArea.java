@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown;
+package edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown;
 
 import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
 
@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 
 import oim.vivo.scimapcore.journal.Discipline;
 import oim.vivo.scimapcore.journal.Journal;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas.Column;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas.ColumnEntry;
-import edu.iu.sci2.visualization.scimaps.rendering.common.discipline_breakdown.DisciplineBreakdownAreas.Page;
+import edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown.DisciplineBreakdownAreas.Column;
+import edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown.DisciplineBreakdownAreas.ColumnEntry;
+import edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown.DisciplineBreakdownAreas.Page;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
 
