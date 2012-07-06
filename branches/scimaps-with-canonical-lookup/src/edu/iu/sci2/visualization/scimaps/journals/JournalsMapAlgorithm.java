@@ -89,6 +89,8 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 		return datafy(mapOfScience, manager, this.parentData, this.logger);
 	}
+
+	
 	
 	public static Data[] datafy(MapOfScience mapOfScience,
 			AbstractPageManager abstractPageManager, Data parentData, LogService logger) {

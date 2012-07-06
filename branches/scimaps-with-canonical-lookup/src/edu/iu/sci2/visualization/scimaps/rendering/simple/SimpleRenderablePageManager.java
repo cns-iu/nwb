@@ -65,6 +65,4 @@ public class SimpleRenderablePageManager extends AbstractRenderablePageManager {
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
 				this.scalingFactor, pageScalingFactor, 25, 500));
 	}
-
-	
 }

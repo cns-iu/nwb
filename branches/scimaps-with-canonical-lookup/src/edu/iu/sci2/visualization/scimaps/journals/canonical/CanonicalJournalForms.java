@@ -51,9 +51,4 @@ public final class CanonicalJournalForms {
 		
 		return CANONICAL.containsKey(normalized) ? CANONICAL.get(normalized) : journal;
 	}
-
-
-	public static void main(String[] args) {
-		System.out.println(CanonicalJournalForms.lookup("j biol chem"));
-	}
 }
