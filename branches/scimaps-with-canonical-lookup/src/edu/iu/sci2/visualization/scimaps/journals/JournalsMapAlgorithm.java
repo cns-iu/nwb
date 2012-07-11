@@ -41,8 +41,8 @@ import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
 
 public class JournalsMapAlgorithm implements Algorithm {
 	// TODO Pick a path and remove these options
-	public static final boolean RESOLVE_JOURNALS_TO_CANONICAL_NAME = true; // TODO Keep canonical.tsv in binary build only when true
-	public static final boolean INCLUDE_DISTRIBUTION_TABLE_OUTPUT_DATA = true;
+	public static final boolean RESOLVE_JOURNALS_TO_CANONICAL_NAME = false; // TODO Keep canonical.tsv in binary build only when true
+	public static final boolean INCLUDE_DISTRIBUTION_TABLE_OUTPUT_DATA = false;
 	
 	public static final String OUT_FREQUENCY_COLUMN_NAME = "Frequency";
 	public static final String OUT_JOURNAL_COLUMN_NAME = "Journal name";
