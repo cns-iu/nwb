@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Set;
 
 import oim.vivo.scimapcore.journal.Journal;
@@ -19,6 +20,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.DataFactory;
 import org.freehep.graphicsio.AbstractVectorGraphicsIO;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.freehep.util.UserProperties;
@@ -27,6 +29,7 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.rendering.AbstractRenderablePageManager;
@@ -37,6 +40,10 @@ import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
 import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
 
 public class JournalsMapAlgorithm implements Algorithm {
+	// TODO Pick a path and remove these options
+	public static final boolean RESOLVE_JOURNALS_TO_CANONICAL_NAME = true; // TODO Keep canonical.tsv in binary build only when true
+	public static final boolean INCLUDE_DISTRIBUTION_TABLE_OUTPUT_DATA = true;
+	
 	public static final String OUT_FREQUENCY_COLUMN_NAME = "Frequency";
 	public static final String OUT_JOURNAL_COLUMN_NAME = "Journal name";
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
@@ -65,53 +72,67 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
-		JournalDataset dataset = JournalDataset.fromTable(table, journalColumnName, logger);
+		JournalDataset journalOccurrences =
+				JournalDataset.fromTable(table, journalColumnName, logger);
 		
-		if (dataset.isEmpty()) {
+		if (journalOccurrences.isEmpty()) {
 			throw new AlgorithmExecutionException("No journals could be found in the data.");
 		}
 
 		MapOfScience mapOfScience = new MapOfScience("Fractional Journal Count",
-				dataset.copyAsIdentifierCountMap());
-
+				journalOccurrences.copyAsIdentifierCountMap());
+		
 		if (mapOfScience.getMappedResults().isEmpty()) {
-			throw new AlgorithmExecutionException("No journals could be mapped to the Map of Science.");
+			throw new AlgorithmExecutionException(
+					"No journals could be mapped to the Map of Science.");
 		}
 		
-		AbstractRenderablePageManager manager = layout.createPageManager(mapOfScience, scalingFactor, dataDisplayName);
+		AbstractRenderablePageManager manager =
+				layout.createPageManager(mapOfScience, scalingFactor, dataDisplayName);
 		
 		if (this.showWindow) {
 			VisualizationRunner visualizationRunner = new VisualizationRunner(manager);
-			// TODO: Do setUp() and run() ever actually need to be separate methods?
 			visualizationRunner.setUp();
 			visualizationRunner.run();
 		}
 
-		return datafy(mapOfScience, manager, this.parentData, this.logger);
+		return datafy(mapOfScience, manager, journalOccurrences, this.parentData, this.logger);
 	}
 
-	
-	
-	public static Data[] datafy(MapOfScience mapOfScience,
-			AbstractPageManager abstractPageManager, Data parentData, LogService logger) {
-
-		Set<Journal> foundJournals = mapOfScience.getMappedJournals();
-		Set<Journal> unfoundJournals = mapOfScience.getUnmappedJournals();
-
-		Table foundTable = makeJournalFrequencyTable(ImmutableSet.copyOf(foundJournals));
-		Data foundData = datafy(foundTable, "Journals located", parentData);
+	public static Data[] datafy(MapOfScience mapOfScience, AbstractPageManager abstractPageManager,
+			JournalDataset journalOccurrences, Data parentData, LogService logger) {
+		List<Data> outData = Lists.newArrayList();
 		
+		Set<Journal> foundJournals = mapOfScience.getMappedJournals();
+		Table foundTable = makeJournalFrequencyTable(ImmutableSet.copyOf(foundJournals));
+		outData.add(datafy(foundTable, "Journals located", parentData));
+		
+		Set<Journal> unfoundJournals = mapOfScience.getUnmappedJournals();
 		Table unfoundTable = makeJournalFrequencyTable(ImmutableSet.copyOf(unfoundJournals));
-		Data unfoundData = datafy(unfoundTable, "Journals not located", parentData);
+		outData.add(datafy(unfoundTable, "Journals not located", parentData));
+		
+		if (journalOccurrences != null && INCLUDE_DISTRIBUTION_TABLE_OUTPUT_DATA) {
+			outData.add(DataFactory.withClassNameAsFormat(
+					mapOfScience.createDisciplineAnalysis(journalOccurrences).copyAsTable(),
+					DataProperty.TABLE_TYPE,
+					parentData,
+					"Journal occurrences per discipline"));
+			
+			outData.add(DataFactory.withClassNameAsFormat(
+					mapOfScience.createSubdisciplineAnalysis(journalOccurrences).copyAsTable(),
+					DataProperty.TABLE_TYPE,
+					parentData,
+					"Journal occurrences per subdiscipline"));
+		}
 		
 		try {
 			Data visualizationData = createData(abstractPageManager, parentData, logger);
-			return new Data[] { foundData, unfoundData, visualizationData };
+			outData.add(visualizationData);
 		} catch (DataCreationException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage());
 		}
 
-		return new Data[] { foundData, unfoundData };
+		return outData.toArray(new Data[]{});
 	}
 
 	private static Data createData(AbstractPageManager abstractPageManager, Data parentData,

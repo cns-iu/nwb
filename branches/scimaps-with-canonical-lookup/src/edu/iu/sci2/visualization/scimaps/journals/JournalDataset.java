@@ -20,6 +20,7 @@ import edu.iu.sci2.visualization.scimaps.journals.canonical.CanonicalJournalForm
 /**
  * Keeps track of a set of journals, and how many times each has occurred.
  */
+// TODO Replace oim.vivo.scimapcore.journal.Journal with something more like JournalDataset.Journal
 public final class JournalDataset {
 	private final ImmutableMultiset<Journal> journals;
 	
@@ -96,6 +97,13 @@ public final class JournalDataset {
 		return journals.isEmpty();
 	}
 	
+	/**
+	 * The number of occurrences of a journal in this dataset, possibly zero but never negative.
+	 */
+	public int count(Journal journal) {
+		return journals.count(journal);
+	}
+
 	/* TODO This is a bridge method for interacting with existing code that expects the dataset
 	 * delivered as a Map<String, Integer>. Ultimately the receiving code should be rewritten to
 	 * accept a JournalDataset and this method should be deleted. */
@@ -139,7 +147,7 @@ public final class JournalDataset {
 		return Objects.equal(this.journals, that.journals);
 	}
 
-	/* TODO In the future this may:
+	/* XXX In the future this may:
 	 * - Reject unknown identifiers?
 	 * - Provide the "pretty" identifier when available
 	 */
@@ -164,7 +172,12 @@ public final class JournalDataset {
 		public static Journal forIdentifier(String identifier) {
 			Preconditions.checkNotNull(identifier);
 			
-			return new Journal(CanonicalJournalForms.lookup(identifier));
+			String preparedIdentifier =
+					JournalsMapAlgorithm.RESOLVE_JOURNALS_TO_CANONICAL_NAME
+					? CanonicalJournalForms.lookup(identifier)
+					: identifier;
+			
+			return new Journal(preparedIdentifier);
 		}
 		
 		/**

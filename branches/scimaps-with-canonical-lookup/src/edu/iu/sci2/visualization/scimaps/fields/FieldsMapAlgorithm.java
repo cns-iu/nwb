@@ -67,7 +67,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 			visualizationRunner.run();
 		}
 
-		return JournalsMapAlgorithm.datafy(map, manager, this.inData, this.logger);
+		return JournalsMapAlgorithm.datafy(map, manager, null, this.inData, this.logger);
 	}
 
 	private static MapOfScience createMapOfScience(String nodeValueColumnName,
