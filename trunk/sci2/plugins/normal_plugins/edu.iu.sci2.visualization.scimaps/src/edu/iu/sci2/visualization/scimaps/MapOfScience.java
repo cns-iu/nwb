@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -21,6 +22,17 @@ import oim.vivo.scimapcore.journal.Nodes;
 import oim.vivo.scimapcore.mapping.DetailedScienceMappingResult;
 import oim.vivo.scimapcore.mapping.ScienceMapping;
 
+import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Iterables;
+
+import edu.iu.sci2.visualization.scimaps.analysis.AbstractTabularAnalysis;
+import edu.iu.sci2.visualization.scimaps.analysis.DisciplineAnalysis;
+import edu.iu.sci2.visualization.scimaps.analysis.SubdisciplineAnalysis;
+import edu.iu.sci2.visualization.scimaps.analysis.SubdisciplineAnalysis.Subdiscipline;
+import edu.iu.sci2.visualization.scimaps.journals.JournalDataset;
+
 /*
  * This class represents the Map of Science.
  */
@@ -34,9 +46,9 @@ public class MapOfScience {
 	 * Creates a map of science. You must provide a mapping from the journal
 	 * name to the hits for that journal.
 	 */
-	public MapOfScience(String dataColumnName, Map<String, Integer> journalCounts) {
-		this.dataColumnName = dataColumnName;
-		this.mappingResult = ScienceMapping.generateDetailedScienceMappingResult(journalCounts);
+	public MapOfScience(String dataColumnName, Map<String, Integer> journalOccurrences) {
+		this(dataColumnName, ScienceMapping.generateDetailedScienceMappingResult(
+				journalOccurrences));
 	}
 	
 	public MapOfScience(String dataColumnName, DetailedScienceMappingResult mappingResult){
@@ -215,6 +227,8 @@ public class MapOfScience {
 	/**
 	 * Get a set of all the journals that were found for the map of science.
 	 */
+	/* XXX The oim.vivo.scimapcore.journal.Journal comparator is currently not consistent with
+	 * equals. Check client code before changing the type of this set! */
 	public Set<Journal> getMappedJournals() {
 		return this.mappingResult.getMappedJournals();
 	}
@@ -222,6 +236,8 @@ public class MapOfScience {
 	/**
 	 * Get a set of all the journals that were not found for the map of science.
 	 */
+	/* XXX The oim.vivo.scimapcore.journal.Journal comparator is currently not consistent with
+	 * equals. Check client code before changing the type of this set! */
 	public Set<Journal> getUnmappedJournals() {
 		return this.mappingResult.getUnmappedJournals();
 	}
@@ -248,12 +264,13 @@ public class MapOfScience {
 	 */
 	public static SortedMap<Discipline, SortedSet<Journal>> getJournalsByDiscipline(
 			Set<Journal> journals) {
+		/* XXX The oim.vivo.scimapcore.journal.Journal comparator is currently not consistent with
+		 * equals. Check client code before changing the type of this set! */
 		SortedMap<Discipline, SortedSet<Journal>> disciplinesByJournal = new TreeMap<Discipline, SortedSet<Journal>>();
 
 		for (Journal journal : journals) {
 			Discipline discipline = journal.getJournalDiscipline();
-			SortedSet<Journal> journalsForDiscipline = disciplinesByJournal
-					.get(discipline);
+			SortedSet<Journal> journalsForDiscipline = disciplinesByJournal.get(discipline);
 
 			if (journalsForDiscipline == null) {
 				journalsForDiscipline = new TreeSet<Journal>();
@@ -270,5 +287,86 @@ public class MapOfScience {
 	public String getDataColumnName() {
 		return dataColumnName;
 	}
-
+	
+	/**
+	 * A tabular analysis of the number of journal occurrences in each discipline (including the
+	 * special values {@link Discipline#MULTIPLE} and {@link Discipline#NONE}) of this map of
+	 * science. Journal occurrences are figured by weighting the unique journals in each discipline
+	 * by their number of occurrences in the dataset using {@code journalOccurrences}.
+	 */
+	public AbstractTabularAnalysis<Discipline> createDisciplineAnalysis(
+			JournalDataset journalOccurrences) {
+		ImmutableMultiset.Builder<Discipline> journalOccurrencesPerDiscipline =
+				ImmutableMultiset.builder();
+		
+		/* XXX getMappedJournalsByDiscipline() and getUnmappedJournalsByDiscipline() return Maps to
+		 * value type SortedSet<Journal>. These Maps are assembled by getJournalsByDiscipline(),
+		 * whose input is a (Hash)Set<Journal>. But Journal, though it implements Comparable in
+		 * terms of its String name, currently has only Object equality. But the Map returned here
+		 * is built by code that is currently put()ting only once per (journal, count) anyway.
+		 * 
+		 * So ultimately this stuff kinda works out, but this is sort of incidental and flimsy. */
+		Iterable<Entry<Discipline, SortedSet<Journal>>> allUniqueJournalsByDiscipline =
+				Iterables.concat(
+						getMappedJournalsByDiscipline().entrySet(),
+						getUnmappedJournalsByDiscipline().entrySet());
+		
+		// For each discipline, whether mapped or unmapped..
+		for (Entry<Discipline, SortedSet<Journal>> entry : allUniqueJournalsByDiscipline) {
+			Discipline discipline = entry.getKey();
+			
+			/* Turn the set of oim.vivo.scimapcore.journal.Journal into the type JournalDataset
+			 * understands */
+			ImmutableSet<JournalDataset.Journal> disciplineJournals =
+					JournalDataset.Journal.forVivoCoreJournals(entry.getValue());
+			
+			/* Total the count of occurrences of each journal mapped to this discipline, then set
+			 * the discipline to that total. */
+			journalOccurrencesPerDiscipline.setCount(
+					discipline,
+					journalOccurrences.totalCount(disciplineJournals));
+		}
+		
+		return new DisciplineAnalysis(journalOccurrencesPerDiscipline.build());
+	}
+	
+	/**
+	 * A tabular analysis of the number of journal occurrences in each subdiscipline of this map of
+	 * science. The Map returned by getIdWeightMapping() already accounts for multiplicity, but
+	 * since getUnmappedJournals() does not, journal occurrences for it are figured by weighting
+	 * the unique unmapped journals by their number of occurrences in the dataset using
+	 * {@code journalOccurrences}.
+	 */
+	public AbstractTabularAnalysis<Subdiscipline> createSubdisciplineAnalysis(
+			JournalDataset journalOccurrences) {
+		ImmutableSortedMap.Builder<Subdiscipline, Float> journalDistributionPerSubdiscipline =
+				ImmutableSortedMap.naturalOrder();
+		
+		/* getIdWeightMapping() is already counted with multiplicity, so journalOccurrences is not
+		 * needed for this part. */
+		for (Map.Entry<Integer, Float> entry : getIdWeightMapping().entrySet()) {
+			journalDistributionPerSubdiscipline.put(
+					Subdiscipline.forID(entry.getKey()), entry.getValue());
+		}
+		
+		/* XXX getUnmappedJournals() returns a (Hash)Set<Journal>, but Journal, though it
+		 * implements Comparable in terms of its String name, currently has only Object equality.
+		 * But the underlying code is building the set from a map that is currently put()ting only
+		 * once per (journal, count) anyway.
+		 * 
+		 * So ultimately the set of unmapped journals has one entry per journal, but this is sort
+		 * of incidental and flimsy. */
+		
+		/* Turn the set of oim.vivo.scimapcore.journal.Journal into the type JournalDataset
+		 * understands */
+		ImmutableSet<JournalDataset.Journal> unmappedJournals =
+				JournalDataset.Journal.forVivoCoreJournals(getUnmappedJournals());
+		
+		/* Total the count of occurrences of each unmapped journal, then set the discipline to that
+		 * total. */
+		int unmappedJournalOccurrencesCount = journalOccurrences.totalCount(unmappedJournals);
+		
+		return new SubdisciplineAnalysis(journalDistributionPerSubdiscipline.build(),
+				unmappedJournalOccurrencesCount);
+	}
 }

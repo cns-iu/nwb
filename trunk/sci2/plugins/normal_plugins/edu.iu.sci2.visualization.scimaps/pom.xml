@@ -8,6 +8,6 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>edu.iu.sci2.visualization.scimaps</artifactId>
-  <version>0.0.10</version>
+  <version>0.1.0</version>
   <packaging>eclipse-plugin</packaging>
 </project>

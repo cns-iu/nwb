@@ -1,4 +1,4 @@
-package edu.iu.sci2.visualization.scimaps.rendering.common.scimaps;
+package edu.iu.sci2.visualization.scimaps.rendering.scimaps;
 
 import oim.vivo.scimapcore.journal.Node;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;

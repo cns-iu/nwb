@@ -22,6 +22,8 @@ import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
+
 import prefuse.data.Table;
 //SOMEDAY this and the FieldsMapAlgorithmFactory are very similar.  Combine them.
 public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
@@ -40,11 +42,12 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		float scalingFactor = ((Float) parameters.get(SCALING_FACTOR_ID)).floatValue();
 		String dataDisplayName = (String) parameters.get(SUBTITLE_ID);
 		boolean webVersion = ((Boolean) parameters.get(WEB_VERSION_ID)).booleanValue();
+		Layout layout = webVersion ? Layout.SIMPLE : Layout.FULL;
 		boolean showWindow = ((Boolean) parameters.get(SHOW_EXPORT_WINDOW)).booleanValue();
 		LogService logger = (LogService) context.getService(LogService.class.getName());
 		
 		return new JournalsMapAlgorithm(data, journalColumnName, scalingFactor, dataDisplayName,
-				webVersion, showWindow, logger);
+				layout, showWindow, logger);
 	}
 
 	/**

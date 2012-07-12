@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.scimaps.journals;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.log.LogService;
 
@@ -12,16 +13,19 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
+
+import edu.iu.sci2.visualization.scimaps.journals.canonical.CanonicalJournalForms;
 
 /**
  * Keeps track of a set of journals, and how many times each has occurred.
  */
 public final class JournalDataset {
-	private final ImmutableMultiset<Journal> journals;
+	private final ImmutableMultiset<JournalDataset.Journal> journals;
 	
-	private JournalDataset(Multiset<Journal> journals) {
+	private JournalDataset(Multiset<JournalDataset.Journal> journals) {
 		this.journals = ImmutableMultiset.copyOf(journals);
 	}
 
@@ -43,8 +47,8 @@ public final class JournalDataset {
 		Preconditions.checkNotNull(table);
 		Preconditions.checkNotNull(journalColumnName);
 		Preconditions.checkNotNull(logger);
-
-		ImmutableMultiset.Builder<Journal> builder = ImmutableMultiset.builder();
+		
+		ImmutableMultiset.Builder<JournalDataset.Journal> builder = ImmutableMultiset.builder();
 
 		int unreadableCount = 0;
 		int nullCount = 0;
@@ -65,7 +69,7 @@ public final class JournalDataset {
 				continue;
 			}
 				
-			builder.add(Journal.forIdentifier(journalName.trim()));
+			builder.add(JournalDataset.Journal.forName(journalName.trim()));
 		}
 
 		if (unreadableCount > 0) { 
@@ -78,7 +82,7 @@ public final class JournalDataset {
 					String.format("Skipped %d rows with missing journal identifiers.", nullCount));
 		}
 		
-		ImmutableMultiset<Journal> journals = builder.build();
+		ImmutableMultiset<JournalDataset.Journal> journals = builder.build();
 		
 		logger.log(LogService.LOG_INFO, String.format(
 				"Loaded %d occurrences of %d distinct journals.", journals.size(), journals
@@ -94,6 +98,30 @@ public final class JournalDataset {
 		return journals.isEmpty();
 	}
 	
+	/**
+	 * The number of occurrences of a journal in this dataset, possibly zero but never negative.
+	 */
+	public int count(JournalDataset.Journal journal) {
+		return journals.count(journal);
+	}
+	
+	/**
+	 * The sum of the number of occurrences in the dataset of all the journals in {@code journals}.
+	 * 
+	 * @see #count(Journal)
+	 */
+	public int totalCount(Set<JournalDataset.Journal> journals) {
+		int totalCount = 0;
+		
+		for (JournalDataset.Journal journal : journals) {
+			totalCount += count(journal);
+		}
+		
+		return totalCount;
+	}
+	
+	
+
 	/* TODO This is a bridge method for interacting with existing code that expects the dataset
 	 * delivered as a Map<String, Integer>. Ultimately the receiving code should be rewritten to
 	 * accept a JournalDataset and this method should be deleted. */
@@ -104,7 +132,7 @@ public final class JournalDataset {
 	ImmutableMap<String, Integer> copyAsIdentifierCountMap() {
 		ImmutableMap.Builder<String, Integer> builder = ImmutableMap.builder();
 		
-		for (Entry<Journal> entry : journals.entrySet()) {
+		for (Entry<JournalDataset.Journal> entry : journals.entrySet()) {
 			builder.put(entry.getElement().getIdentifier(), entry.getCount());
 		}
 		
@@ -137,14 +165,14 @@ public final class JournalDataset {
 		return Objects.equal(this.journals, that.journals);
 	}
 
-	/* TODO In the future this may:
-	 * - Reject unknown identifiers
-	 * - Determine its identity using the canonical identifier when available
+	/* XXX In the future this may:
+	 * - Reject unknown identifiers?
 	 * - Provide the "pretty" identifier when available
 	 */
 	/**
-	 * A journal.
+	 * A journal whose identity is decided by its identifier.
 	 */
+	// TODO Replace oim.vivo.scimapcore.journal.Journal with something more like this
 	public static final class Journal {
 		private final String identifier;
 
@@ -153,17 +181,40 @@ public final class JournalDataset {
 		}
 		
 		/**
-		 * A Journal instance representing this String {@code identifier}.
+		 * The JournalDataset.Journal instance representing this journal name. The resulting
+		 * instance may not take its identifier from the given name verbatim. It may first perform
+		 * one or more forms of canonicalization.
 		 * 
-		 * @param identifier
+		 * @param name
 		 *            A string identifying some journal
 		 * @throws NullPointerException
 		 *             if {@code identifier} is null
 		 */
-		public static Journal forIdentifier(String identifier) {
-			Preconditions.checkNotNull(identifier);
+		public static JournalDataset.Journal forName(String name) {
+			Preconditions.checkNotNull(name);
 			
-			return new Journal(identifier.trim().toLowerCase());
+			String identifier =
+					JournalsMapAlgorithm.RESOLVE_JOURNALS_TO_CANONICAL_NAME
+					? CanonicalJournalForms.lookup(name)
+					: name;
+			
+			return new JournalDataset.Journal(identifier);
+		}
+		
+		public static JournalDataset.Journal forVivoCoreJournal(
+				oim.vivo.scimapcore.journal.Journal vivoCoreJournal) {
+			return JournalDataset.Journal.forName(vivoCoreJournal.getJournalName());
+		}
+
+		public static ImmutableSet<JournalDataset.Journal> forVivoCoreJournals(
+				Iterable<? extends oim.vivo.scimapcore.journal.Journal> vivoCoreJournals) {
+			ImmutableSet.Builder<JournalDataset.Journal> datasetJournals = ImmutableSet.builder();
+			
+			for (oim.vivo.scimapcore.journal.Journal vivoCoreJournal : vivoCoreJournals) {
+				datasetJournals.add(JournalDataset.Journal.forVivoCoreJournal(vivoCoreJournal));
+			}
+			
+			return datasetJournals.build();
 		}
 		
 		/**
@@ -193,10 +244,10 @@ public final class JournalDataset {
 			if (o == null) {
 				return false;
 			}
-			if (!(o instanceof Journal)) {
+			if (!(o instanceof JournalDataset.Journal)) {
 				return false;
 			}
-			Journal that = (Journal) o;
+			JournalDataset.Journal that = (JournalDataset.Journal) o;
 
 			return Objects.equal(this.identifier, that.identifier);
 		}

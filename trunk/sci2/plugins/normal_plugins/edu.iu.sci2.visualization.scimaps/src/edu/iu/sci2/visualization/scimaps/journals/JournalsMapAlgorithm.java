@@ -1,8 +1,5 @@
 package edu.iu.sci2.visualization.scimaps.journals;
 
-import static edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState.inch;
-
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Set;
 
 import oim.vivo.scimapcore.journal.Journal;
@@ -22,6 +20,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.DataFactory;
 import org.freehep.graphicsio.AbstractVectorGraphicsIO;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.freehep.util.UserProperties;
@@ -30,17 +29,21 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
-import edu.iu.sci2.visualization.scimaps.rendering.print2012.Print2012;
-import edu.iu.sci2.visualization.scimaps.rendering.web2012.Web2012;
+import edu.iu.sci2.visualization.scimaps.rendering.AbstractRenderablePageManager;
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
+import edu.iu.sci2.visualization.scimaps.tempvis.AbstractPageManager;
+import edu.iu.sci2.visualization.scimaps.tempvis.AbstractPageManager.PageManagerRenderingException;
 import edu.iu.sci2.visualization.scimaps.tempvis.GraphicsState;
-import edu.iu.sci2.visualization.scimaps.tempvis.PageManager;
-import edu.iu.sci2.visualization.scimaps.tempvis.PageManager.PageManagerRenderingException;
-import edu.iu.sci2.visualization.scimaps.tempvis.RenderableVisualization;
 import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
 
 public class JournalsMapAlgorithm implements Algorithm {
+	// TODO Pick a path and remove these options
+	public static final boolean RESOLVE_JOURNALS_TO_CANONICAL_NAME = false; // TODO Keep canonical.tsv in binary build only when true
+	public static final boolean INCLUDE_DISTRIBUTION_TABLE_OUTPUT_DATA = false;
+	
 	public static final String OUT_FREQUENCY_COLUMN_NAME = "Frequency";
 	public static final String OUT_JOURNAL_COLUMN_NAME = "Journal name";
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
@@ -51,101 +54,95 @@ public class JournalsMapAlgorithm implements Algorithm {
 	private final String journalColumnName;
 	private final float scalingFactor;
 	private final String dataDisplayName;
-	private final boolean webVersion;
+	private final Layout layout;
 	private final boolean showWindow;
 	private final LogService logger;
 
-	public JournalsMapAlgorithm(Data[] data, String journalColumnName,
-			float scalingFactor, String dataDisplayName, boolean webVersion,
-			boolean showWindow, LogService logger) {
+	public JournalsMapAlgorithm(Data[] data, String journalColumnName, float scalingFactor,
+			String dataDisplayName, Layout layout, boolean showWindow, LogService logger) {
 		this.parentData = data[0];
 		this.table = (Table) data[0].getData();
 		this.journalColumnName = journalColumnName;
 		this.scalingFactor = scalingFactor;
 		this.dataDisplayName = dataDisplayName;
-		this.webVersion = webVersion;
+		this.layout = layout;
 		this.showWindow = showWindow;
 		this.logger = logger;
 	}
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
-		JournalDataset dataset = JournalDataset.fromTable(table, journalColumnName, logger);
+		JournalDataset journalOccurrences =
+				JournalDataset.fromTable(table, journalColumnName, logger);
 		
-		if (dataset.isEmpty()) {
+		if (journalOccurrences.isEmpty()) {
 			throw new AlgorithmExecutionException("No journals could be found in the data.");
 		}
-		
-		RenderableVisualization visualization = null;
-		PageManager pageManager = null;
 
 		MapOfScience mapOfScience = new MapOfScience("Fractional Journal Count",
-				dataset.copyAsIdentifierCountMap());
-
+				journalOccurrences.copyAsIdentifierCountMap());
+		
 		if (mapOfScience.getMappedResults().isEmpty()) {
-			throw new AlgorithmExecutionException("No journals could be mapped to the Map of Science.");
+			throw new AlgorithmExecutionException(
+					"No journals could be mapped to the Map of Science.");
 		}
 		
-		if (this.webVersion) {
-			// Webversion
-			Dimension dimensions = new Dimension(1280, 960);
-			Web2012 web2012 = new Web2012(mapOfScience, dimensions,
-					this.scalingFactor);
-			visualization = web2012.getVisualization();
-			pageManager = web2012.getPageManager();
-		} else {
-			// Printversion
-			Dimension dimensions = new Dimension((int) inch(11f),
-					(int) inch(8.5f));
-			Print2012 print2012 = new Print2012(mapOfScience,
-					this.dataDisplayName, dimensions, this.scalingFactor);
-			visualization = print2012.getVisualization();
-			pageManager = print2012.getPageManager();
-		}
+		AbstractRenderablePageManager manager =
+				layout.createPageManager(mapOfScience, scalingFactor, dataDisplayName);
 		
 		if (this.showWindow) {
-			VisualizationRunner visualizationRunner = new VisualizationRunner(
-					visualization);
-			// TODO: Do setUp() and run() ever actually need to be separate
-			// methods?
+			VisualizationRunner visualizationRunner = new VisualizationRunner(manager);
 			visualizationRunner.setUp();
 			visualizationRunner.run();
 		}
 
-		return datafy(mapOfScience, pageManager, this.parentData, this.logger);
+		return datafy(mapOfScience, manager, journalOccurrences, this.parentData, this.logger);
 	}
-	
-	public static Data[] datafy(MapOfScience mapOfScience,
-			PageManager pageManger, Data parentData, LogService logger) {
 
+	public static Data[] datafy(MapOfScience mapOfScience, AbstractPageManager pageManager,
+			JournalDataset journalOccurrences, Data parentData, LogService logger) {
+		List<Data> outData = Lists.newArrayList();
+		
 		Set<Journal> foundJournals = mapOfScience.getMappedJournals();
+		Table foundTable = makeJournalFrequencyTable(ImmutableSet.copyOf(foundJournals));
+		outData.add(datafy(foundTable, "Journals located", parentData));
+		
 		Set<Journal> unfoundJournals = mapOfScience.getUnmappedJournals();
-
-		Table foundTable = makeJournalFrequencyTable(ImmutableSet
-				.copyOf(foundJournals));
-		Data foundData = datafy(foundTable, "Journals located", parentData);
-		Table unfoundTable = makeJournalFrequencyTable(ImmutableSet
-				.copyOf(unfoundJournals));
-		Data unfoundData = datafy(unfoundTable, "Journals not located",
-				parentData);
+		Table unfoundTable = makeJournalFrequencyTable(ImmutableSet.copyOf(unfoundJournals));
+		outData.add(datafy(unfoundTable, "Journals not located", parentData));
+		
+		if (journalOccurrences != null && INCLUDE_DISTRIBUTION_TABLE_OUTPUT_DATA) {
+			outData.add(DataFactory.withClassNameAsFormat(
+					mapOfScience.createDisciplineAnalysis(journalOccurrences).copyAsTable(),
+					DataProperty.TABLE_TYPE,
+					parentData,
+					"Journal occurrences per discipline"));
+			
+			outData.add(DataFactory.withClassNameAsFormat(
+					mapOfScience.createSubdisciplineAnalysis(journalOccurrences).copyAsTable(),
+					DataProperty.TABLE_TYPE,
+					parentData,
+					"Journal occurrences per subdiscipline"));
+		}
+		
 		try {
-			Data visualizationData = createData(pageManger, parentData, logger);
-			return new Data[] { foundData, unfoundData, visualizationData };
+			Data visualizationData = createData(pageManager, parentData, logger);
+			outData.add(visualizationData);
 		} catch (DataCreationException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage());
 		}
 
-		return new Data[] { foundData, unfoundData };
+		return outData.toArray(new Data[]{});
 	}
 
-	private static Data createData(PageManager pageManger, Data parentData,
+	private static Data createData(AbstractPageManager pageManager, Data parentData,
 			LogService logger) throws DataCreationException {
 		try {
 			File outFile = File.createTempFile("MapOfScience_Visualization_", ".ps");
 			OutputStream out = new FileOutputStream(outFile);
-			writePostscript(pageManger, out, logger);
+			writePostscript(pageManager, out, logger);
 			out.close();
-			File hackOutFile = hackPageSizeForFreehepAndAdobe(outFile, pageManger);
+			File hackOutFile = hackPageSizeForFreehepAndAdobe(outFile, pageManager);
 			Data outData = new BasicData(hackOutFile, "file:text/ps");
 			Dictionary<String, Object> metadata = outData.getMetadata();
 			metadata.put(DataProperty.LABEL, "Map of Science Visualization");
@@ -174,7 +171,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 	 *             the {@code psFile}.
 	 */
 	private static File hackPageSizeForFreehepAndAdobe(File psFile,
-			PageManager pageManger) throws IOException {
+			AbstractPageManager pageManager) throws IOException {
 		File outFile = File
 				.createTempFile("MapOfScience_Visualization_", ".ps");
 		BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
@@ -183,9 +180,9 @@ public class JournalsMapAlgorithm implements Algorithm {
 		final String newline = System.getProperty("line.separator");
 		final String MAGIC_STRING_TO_APPEND_AFTER = "%%EndComments";
 		final String MAGIC_WORDS = "%%BeginFeature: *PageSize Default\n<< /PageSize [ "
-				+ pageManger.pageDimensions().getWidth()
+				+ pageManager.pageDimensions().getWidth()
 				+ " "
-				+ pageManger.pageDimensions().getHeight()
+				+ pageManager.pageDimensions().getHeight()
 				+ " ] >> setpagedevice\n%%EndFeature";
 		String line;
 		while ((line = reader.readLine()) != null) {
@@ -201,7 +198,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 	}
 
-	private static void writePostscript(PageManager pageManger,
+	private static void writePostscript(AbstractPageManager pageManager,
 			OutputStream out, LogService logger) throws IOException {
 		
 		UserProperties psProperties = new UserProperties();
@@ -209,18 +206,18 @@ public class JournalsMapAlgorithm implements Algorithm {
 		psProperties.setProperty(AbstractVectorGraphicsIO.TEXT_AS_SHAPES, false);
 		psProperties.setProperty(PSGraphics2D.FIT_TO_PAGE, false);
 		psProperties.setProperty(PSGraphics2D.PAGE_SIZE, PSGraphics2D.CUSTOM_PAGE_SIZE);
-		psProperties.setProperty(PSGraphics2D.CUSTOM_PAGE_SIZE, pageManger.pageDimensions());
+		psProperties.setProperty(PSGraphics2D.CUSTOM_PAGE_SIZE, pageManager.pageDimensions());
 		psProperties.setProperty(PSGraphics2D.PAGE_MARGINS, new Insets(0, 0, 0, 0));
 		
-		PSGraphics2D psGraphic = new PSGraphics2D(out, pageManger.pageDimensions());
+		PSGraphics2D psGraphic = new PSGraphics2D(out, pageManager.pageDimensions());
 		psGraphic.setProperties(psProperties);
 		psGraphic.setMultiPage(true);
 		psGraphic.startExport();
-		for (int pageNumber = 0; pageNumber < pageManger.numberOfPages(); pageNumber++) {
+		for (int pageNumber = 0; pageNumber < pageManager.numberOfPages(); pageNumber++) {
 			try {
-				psGraphic.openPage(pageManger.pageDimensions(), "Page " + (pageNumber + 1));
-				psGraphic.setClip(0, 0, (int) pageManger.pageDimensions().getWidth(), (int) pageManger.pageDimensions().getHeight());
-				pageManger.render(pageNumber, new GraphicsState(psGraphic));
+				psGraphic.openPage(pageManager.pageDimensions(), "Page " + (pageNumber + 1));
+				psGraphic.setClip(0, 0, (int) pageManager.pageDimensions().getWidth(), (int) pageManager.pageDimensions().getHeight());
+				pageManager.render(pageNumber, new GraphicsState(psGraphic));
 				psGraphic.closePage();
 			} catch (PageManagerRenderingException e) {
 				logger.log(LogService.LOG_ERROR, e.getMessage(), e);
