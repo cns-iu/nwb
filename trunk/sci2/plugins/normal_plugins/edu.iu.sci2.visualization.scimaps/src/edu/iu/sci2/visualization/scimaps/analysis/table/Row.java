@@ -32,6 +32,13 @@ public class Row {
 	}
 
 	/**
+	 * @return the number of column-value mappings in this row.
+	 */
+	public int size() {
+		return columnValues.size();
+	}
+
+	/**
 	 * Sets the value in {@link Column} {@code column} to {@code value}.
 	 * 
 	 * @throws NullPointerException
@@ -41,6 +48,9 @@ public class Row {
 	 */
 	public <T> Row put(Column<T> column, T value) {
 		Preconditions.checkNotNull(column, "column null");
+		/* A Column on primitive.class is a Column<Boxed>, so this signature cannot statically bar
+		 * null values. And if we accept a null value for a primitive Column, tuple.set will throw
+		 * an exception in copyIntoTuple. So why not fail now? */
 		if (column.getClazz().isPrimitive() && value == null) {
 			throw new NullPointerException(
 					String.format("Cannot set null value on primitive column %s.", column));
@@ -55,14 +65,15 @@ public class Row {
 	}
 	
 	/**
-	 * Writes the columnValues of this row into {@code tuple}.
+	 * Writes the values of this row into {@code tuple}.
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if for any {@link Column} the tuple indicates that it cannot accept values of
+	 *             that type in that column
 	 * @throws IllegalStateException
-	 *             if for any {@link Column} the tuple indicates that it cannot accept columnValues of
-	 *             that type in that column, or if the {@link Schema} implied by the columnValues set for
-	 *             this row is not mutually compatible (by names and types) with the Schema of the
-	 *             given tuple according to a two-way check of
-	 *             {@link Schema#isAssignableFrom(Schema)}
+	 *             if the {@link Schema} implied by the columns set for this row is not mutually
+	 *             compatible (by names and types) with the Schema of the given tuple according to
+	 *             a two-way check of {@link Schema#isAssignableFrom(Schema)}
 	 */
 	public void copyIntoTuple(Tuple tuple) {
 		Schema impliedSchema = Column.buildSchemaFor(columnValues.keySet());
@@ -83,10 +94,12 @@ public class Row {
 		for (Map.Entry<Column<?>, Object> entry : columnValues.entrySet()) {
 			Column<?> column = entry.getKey();
 			Object value = entry.getValue();
-			String name = column.getName();
 			
-			Preconditions.checkState(tuple.canSet(name, column.getClazz()),
-					"Cannot set value %s in column %s of tuple %s.", value, column.getName(), tuple);
+			// TODO throw AssertionError?  and/or does the doc need to be adjusted?
+			/* This should never happen because put() only accepts values of a type <=T for any
+			 * Column<T>. */
+			Preconditions.checkArgument(tuple.canSet(column.getName(), column.getClazz()),
+					"Cannot set value %s in column %s of tuple %s.", value, column, tuple);
 			
 			tuple.set(column.getName(), value);
 		}

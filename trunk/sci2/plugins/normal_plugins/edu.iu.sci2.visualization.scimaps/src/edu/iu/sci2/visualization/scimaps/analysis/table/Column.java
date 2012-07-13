@@ -22,14 +22,20 @@ public class Column<T> implements Comparable<Column<?>> {
 	private final String name;
 	
 	private Column(Class<T> clazz, String name) {
-		this.clazz = Preconditions.checkNotNull(clazz);
-		this.name = Preconditions.checkNotNull(name);
+		this.clazz = clazz;
+		this.name = name;
 	}
 	
 	/**
 	 * A column of type {@code clazz} named {@code name}.
+	 * 
+	 * @throws NullPointerException
+	 *             if clazz or name is null
 	 */
 	public static <T> Column<T> create(Class<T> clazz, String name) {
+		Preconditions.checkNotNull(clazz);
+		Preconditions.checkNotNull(name);
+		
 		return new Column<T>(clazz, name);
 	}
 
@@ -88,16 +94,16 @@ public class Column<T> implements Comparable<Column<?>> {
 	}
 
 	/**
+	 * A locked {@link Schema} representing this set of columns.
+	 * 
 	 * @throws NullPointerException
 	 *             if {@code columns} is null
-	 * @throws IllegalArgumentException
-	 *             if any column's name or class is null, or if any column names are duplicates
 	 */
 	public static Schema buildSchemaFor(Set<? extends Column<?>> columns) {
 		Preconditions.checkNotNull(columns);
 		
 		Schema s = new Schema(columns.size());
-		
+
 		for (Column<?> column : columns) {
 			s.addColumn(column.getName(), column.getClazz());
 		}
