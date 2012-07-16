@@ -24,37 +24,37 @@ public class AbstractTabularAnalysisTest {
 	private static final ImmutableList<Integer> PRIMARY_IDS = ImmutableList.of(0, 1, 2, 3);
 	private static final ImmutableList<Integer> ADDITIONAL_IDS = ImmutableList.of(4, 5);
 	
-	private static Table table;
+	private static Table resultTable;
 	
 	@BeforeClass
 	public static void createTestAnalysisAndCopyAsTable() {
-		table = new TestTabularAnalysis().copyAsTable();
+		resultTable = new TestTabularAnalysis().copyAsTable();
 	}
 	
 	@Test
 	public void checkRowCountEqualsTotalIDCount() {
-		assertEquals(PRIMARY_IDS.size() + ADDITIONAL_IDS.size(), table.getRowCount());
+		assertEquals(PRIMARY_IDS.size() + ADDITIONAL_IDS.size(), resultTable.getRowCount());
 	}
 	
 	@Test
 	public void checkRows() {
-		@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
-		Iterator<Tuple> rows = table.tuples();
+		@SuppressWarnings("unchecked") // Raw Iterator from Table.tuples()
+		Iterator<Tuple> rows = resultTable.tuples();
 		
 		for (Integer id : Iterables.concat(PRIMARY_IDS, ADDITIONAL_IDS)) {
-			assertTrue("Fewer rows than IDs", rows.hasNext());
+			assertTrue("Fewer rows than IDs.", rows.hasNext());
 			Tuple row = rows.next();
 			
 			assertTrue(
 					String.format(
-							"Can't get objects of type %s from column %s",
+							"Can't get objects of type %s from column %s.",
 							ID.getClazz(), ID.getName()),
 					row.canGet(ID.getName(), ID.getClazz()));
 			
-			assertEquals("ID mismatch", id, row.get(ID.getName()));
+			assertEquals("ID mismatch.", id, row.get(ID.getName()));
 		}
 		
-		assertFalse("More rows than IDs", rows.hasNext());
+		assertFalse("More rows than IDs.", rows.hasNext());
 	}
 	
 	/**

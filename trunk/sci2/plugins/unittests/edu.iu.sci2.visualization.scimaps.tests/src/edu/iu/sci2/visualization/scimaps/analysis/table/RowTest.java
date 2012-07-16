@@ -117,7 +117,6 @@ public class RowTest {
 		
 		new Row().put(column, testInt).copyIntoTuple(tuple);
 		
-		// TODO OK to do both of these?
 		assertEquals(1, table.getRowCount());
 		assertEquals(testInt, tuple.get(column.getName()));
 	}
@@ -132,7 +131,6 @@ public class RowTest {
 		
 		new Row().put(column, testInt).addAsNewRowToTable(table);
 		
-		// TODO OK to do both of these?
 		assertEquals(1, table.getRowCount());
 		assertEquals(testInt, table.get(0, column.getName()));
 	}
