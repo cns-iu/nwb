@@ -83,8 +83,6 @@ public class RowTest {
 		Tuple mockTuple = EasyMock.createMock(Tuple.class);
 		expect(mockTuple.getSchema())
 			.andReturn(new Schema()); // The target schema lacks the column set for our row
-		expect(mockTuple.canSet(EasyMock.anyObject(String.class), EasyMock.anyObject(Class.class)))
-			.andReturn(true); // TODO pointless?
 		replay(mockTuple);
 		
 		thrown.expect(IllegalStateException.class);
@@ -98,8 +96,6 @@ public class RowTest {
 		Tuple mockTuple = EasyMock.createMock(Tuple.class);
 		expect(mockTuple.getSchema())
 			.andReturn(schema); // The target schema includes a column not set on our row
-		expect(mockTuple.canSet(EasyMock.anyObject(String.class), EasyMock.anyObject(Class.class)))
-			.andReturn(true); // TODO pointless?
 		replay(mockTuple);
 		
 		thrown.expect(IllegalStateException.class);
