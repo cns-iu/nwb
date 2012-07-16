@@ -16,8 +16,8 @@ import edu.iu.sci2.visualization.scimaps.analysis.table.Row;
  * A summary of the disciplines in a map of science according to how often each was mapped into.
  */
 public class DisciplineAnalysis extends AbstractTabularAnalysis<Discipline> {
-	static final Column<String> NAME = Column.create(String.class, "Discipline");
-	static final Column<Integer> TOTAL = Column.create(Integer.class, "Journal Occurrences");
+	public static final Column<String> NAME = Column.create(String.class, "Discipline");
+	public static final Column<Integer> TOTAL = Column.create(Integer.class, "Journal Occurrences");
 	
 	private final ImmutableMultiset<Discipline> disciplineTotals;
 

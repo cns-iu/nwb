@@ -28,6 +28,21 @@ public final class JournalDataset {
 	private JournalDataset(Multiset<JournalDataset.Journal> journals) {
 		this.journals = ImmutableMultiset.copyOf(journals);
 	}
+	
+	/**
+	 * Constructs a JournalDataset for a multiset of {@link JournalDataset.Journal
+	 * journals}.
+	 * 
+	 * @param journals
+	 *            A multiset of journals
+	 * @throws NullPointerException
+	 *             if {@code journals} is null
+	 */
+	public static JournalDataset forJournals(Multiset<JournalDataset.Journal> journals) {
+		Preconditions.checkNotNull(journals);
+		
+		return new JournalDataset(journals);
+	}
 
 	/**
 	 * Constructs a JournalDataset from a {@link Table} by reading the values in
@@ -99,6 +114,13 @@ public final class JournalDataset {
 	}
 	
 	/**
+	 * The total number of occurrences across all journals in this dataset.
+	 */
+	public int size() {
+		return journals.size();
+	}
+
+	/**
 	 * The number of occurrences of a journal in this dataset, possibly zero but never negative.
 	 */
 	public int count(JournalDataset.Journal journal) {
@@ -129,7 +151,7 @@ public final class JournalDataset {
 	 * A {@link Map} from each distinct journal identifier occurring in this dataset to the number
 	 * of times it occurs.
 	 */
-	ImmutableMap<String, Integer> copyAsIdentifierCountMap() {
+	public ImmutableMap<String, Integer> copyAsIdentifierCountMap() {
 		ImmutableMap.Builder<String, Integer> builder = ImmutableMap.builder();
 		
 		for (Entry<JournalDataset.Journal> entry : journals.entrySet()) {

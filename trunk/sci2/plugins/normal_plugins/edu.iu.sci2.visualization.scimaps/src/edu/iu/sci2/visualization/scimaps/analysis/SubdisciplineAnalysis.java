@@ -21,9 +21,9 @@ import edu.iu.sci2.visualization.scimaps.analysis.table.Row;
  * A summary of the subdisciplines in a map of science according to how often each was mapped into.
  */
 public class SubdisciplineAnalysis extends AbstractTabularAnalysis<Subdiscipline> {
-	static final Column<Integer> ID = Column.create(Integer.class, "Subdiscipline ID");
-	static final Column<String> DESCRIPTION = Column.create(String.class, "Description");
-	static final Column<Float> TOTAL = Column.create(Float.class, "Journal Occurrences Distributed");
+	public static final Column<Integer> ID = Column.create(Integer.class, "Subdiscipline ID");
+	public static final Column<String> DESCRIPTION = Column.create(String.class, "Description");
+	public static final Column<Float> TOTAL = Column.create(Float.class, "Journal Occurrences Distributed");
 	
 	private final ImmutableSortedMap<Subdiscipline, Float> subdisciplineTotals;
 	private final int unmappedTotal;
