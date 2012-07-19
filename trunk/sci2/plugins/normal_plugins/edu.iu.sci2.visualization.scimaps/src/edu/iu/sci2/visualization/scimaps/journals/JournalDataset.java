@@ -8,6 +8,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
+import prefuse.data.tuple.TupleSet;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -30,8 +31,7 @@ public final class JournalDataset {
 	}
 	
 	/**
-	 * Constructs a JournalDataset for a multiset of {@link JournalDataset.Journal
-	 * journals}.
+	 * Constructs a JournalDataset for a multiset of {@link JournalDataset.Journal journals}.
 	 * 
 	 * @param journals
 	 *            A multiset of journals
@@ -43,67 +43,97 @@ public final class JournalDataset {
 		
 		return new JournalDataset(journals);
 	}
-
+	
 	/**
-	 * Constructs a JournalDataset from a {@link Table} by reading the values in
-	 * {@code journalColumnName}. Counts of unreadable, missing, and loaded values (both total and
-	 * distinct) are sent to the provided {@link LogService}.
+	 * Constructs a dataset using all journal names from a String-valued column
+	 * {@code journalColumnName} of {@code table}. A counts of missing values (if any) can be sent
+	 * to a provided {@link LogService}.
 	 * 
 	 * @param table
 	 *            A table having some String-valued column of journal identifiers
 	 * @param journalColumnName
 	 *            The name of the column containing journal identifiers
 	 * @param logger
-	 *            A {@link LogService} for reporting results
+	 *            A {@link LogService} for reporting results, or null to suppress warnings
+	 * 
 	 * @throws NullPointerException
-	 *             if any parameter is null
+	 *             if {@code table} is null or {@code journalColumnName} is null
+	 * @throws IllegalArgumentException
+	 *             if the table cannot serve String values from column {@code journalColumnName}
 	 */
-	public static JournalDataset fromTable(Table table, String journalColumnName, LogService logger) {
+	public static JournalDataset fromTable(Table table, String journalColumnName,
+			LogService logger) {
 		Preconditions.checkNotNull(table);
 		Preconditions.checkNotNull(journalColumnName);
-		Preconditions.checkNotNull(logger);
+		Preconditions.checkArgument(
+				table.canGetString(journalColumnName),
+				"Cannot get String values from column %s of table %s.", journalColumnName, table);
 		
-		ImmutableMultiset.Builder<JournalDataset.Journal> builder = ImmutableMultiset.builder();
-
-		int unreadableCount = 0;
-		int nullCount = 0;
+		TableReader tableReader = new TableReader(table, journalColumnName);
 		
-		for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
-				Iterator<Tuple> rows = table.tuples(); rows.hasNext();) {
-			Tuple row = rows.next();
-
-			if (!row.canGetString(journalColumnName)) {
-				unreadableCount++;
-				continue;				
-			}
+		if (logger != null) {
+			tableReader.logWarningsTo(logger);
+		}
+		
+		return JournalDataset.forJournals(tableReader.buildJournals());
+	}
+	
+	/**
+	 * @see JournalDataset#fromTable(TupleSet, String, LogService)
+	 */
+	private static class TableReader {
+		private final TupleSet table;
+		private final String journalColumnName;
+		
+		private final ImmutableMultiset.Builder<JournalDataset.Journal> builder;
+		
+		private int nullCount;
+		
+		/**
+		 * @see JournalDataset#fromTable(TupleSet, String, LogService)
+		 */
+		TableReader(TupleSet tupleSet, String journalColumnName) {
+			this.table = tupleSet;
+			this.journalColumnName = journalColumnName;
 			
+			this.builder = ImmutableMultiset.builder();
+			this.nullCount = 0;
+			
+			readTable();
+		}
+		
+		void logWarningsTo(LogService logger) {
+			if (nullCount > 0) {
+				logger.log(LogService.LOG_WARNING, String.format(
+						"Skipped %d rows with missing journal identifiers.", nullCount));
+			}
+		}
+		
+		ImmutableMultiset<JournalDataset.Journal> buildJournals() {
+			return builder.build();
+		}
+
+		private void readTable() {
+			for (@SuppressWarnings("unchecked") // Raw Iterator from table.tuples()
+					Iterator<Tuple> rows = table.tuples(); rows.hasNext();) {
+				readRow(rows.next());
+			}
+		}
+
+		private void readRow(Tuple row) {
+			assert (row.canGetString(journalColumnName)) : "TableReader can only be constructed " +
+					"via JournalDataset.fromTable, which fails if it cannot get Strings from " +
+					"this column of the table as a whole.";
+
 			String journalName = row.getString(journalColumnName);
 				
 			if (journalName == null) {
 				nullCount++;
-				continue;
+				return;
 			}
 				
 			builder.add(JournalDataset.Journal.forName(journalName.trim()));
 		}
-
-		if (unreadableCount > 0) { 
-			logger.log(LogService.LOG_WARNING, String.format(
-					"Skipped %d rows with unreadable journal identifiers.", nullCount));
-		}
-		
-		if (nullCount > 0) {
-			logger.log(LogService.LOG_WARNING,
-					String.format("Skipped %d rows with missing journal identifiers.", nullCount));
-		}
-		
-		ImmutableMultiset<JournalDataset.Journal> journals = builder.build();
-		
-		logger.log(LogService.LOG_INFO, String.format(
-				"Loaded %d occurrences of %d distinct journals.", journals.size(), journals
-						.elementSet().size()));
-		
-		return new JournalDataset(journals);
 	}
 
 	/**
@@ -131,8 +161,12 @@ public final class JournalDataset {
 	 * The sum of the number of occurrences in the dataset of all the journals in {@code journals}.
 	 * 
 	 * @see #count(Journal)
+	 * @throws NullPointerException
+	 *             if {@code journals} is null
 	 */
 	public int totalCount(Set<JournalDataset.Journal> journals) {
+		Preconditions.checkNotNull(journals);
+		
 		int totalCount = 0;
 		
 		for (JournalDataset.Journal journal : journals) {
@@ -142,6 +176,9 @@ public final class JournalDataset {
 		return totalCount;
 	}
 	
+	public ImmutableSet<JournalDataset.Journal> distinctJournals() {
+		return ImmutableSet.copyOf(journals.elementSet());
+	}
 	
 
 	/* TODO This is a bridge method for interacting with existing code that expects the dataset
@@ -201,11 +238,12 @@ public final class JournalDataset {
 		private Journal(String identifier) {
 			this.identifier = identifier;
 		}
-		
+
 		/**
-		 * The JournalDataset.Journal instance representing this journal name. The resulting
-		 * instance may not take its identifier from the given name verbatim. It may first perform
-		 * one or more forms of canonicalization.
+		 * An instance representing the journal identified by this name. The journal name will be
+		 * trimmed and lowercased before use. One or more other forms of normalization appropriate
+		 * for equating journal identifiers may also be applied. The number or nature of these
+		 * other normalizations is not specified.
 		 * 
 		 * @param name
 		 *            A string identifying some journal
@@ -215,12 +253,14 @@ public final class JournalDataset {
 		public static JournalDataset.Journal forName(String name) {
 			Preconditions.checkNotNull(name);
 			
-			String identifier =
-					JournalsMapAlgorithm.RESOLVE_JOURNALS_TO_CANONICAL_NAME
-					? CanonicalJournalForms.lookup(name)
-					: name;
+			String normalized = name.trim().toLowerCase();
 			
-			return new JournalDataset.Journal(identifier);
+			normalized =
+					JournalsMapAlgorithm.RESOLVE_JOURNALS_TO_CANONICAL_NAME
+					? CanonicalJournalForms.lookup(normalized)
+					: normalized;
+			
+			return new JournalDataset.Journal(normalized);
 		}
 		
 		public static JournalDataset.Journal forVivoCoreJournal(
@@ -228,6 +268,7 @@ public final class JournalDataset {
 			return JournalDataset.Journal.forName(vivoCoreJournal.getJournalName());
 		}
 
+		// TODO Make this an instance method on oim.vivo.scimapcore.journal.Journal?
 		public static ImmutableSet<JournalDataset.Journal> forVivoCoreJournals(
 				Iterable<? extends oim.vivo.scimapcore.journal.Journal> vivoCoreJournals) {
 			ImmutableSet.Builder<JournalDataset.Journal> datasetJournals = ImmutableSet.builder();

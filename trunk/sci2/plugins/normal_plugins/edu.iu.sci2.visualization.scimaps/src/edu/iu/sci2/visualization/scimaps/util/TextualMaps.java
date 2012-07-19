@@ -15,8 +15,8 @@ import com.google.common.io.LineProcessor;
 /**
  * Utilities for interpreting textual lines of entries as a serialization of a {@link Map}.
  */
-public final class MapResources {
-	private MapResources() {}
+public final class TextualMaps {
+	private TextualMaps() {}
 	
 	/**
 	 * Builds the map by represented by textual lines of entries from an {@link InputSupplier}. The
@@ -29,11 +29,12 @@ public final class MapResources {
 	 *            A {@link Splitter} whose first and second iterates of each line parsed will be
 	 *            interpreted as the entry's key and the value, respectively
 	 * @throws NullPointerException
-	 *             If any parameter is null
+	 *             if any parameter is null
 	 * @throws IOException
-	 *             If the input cannot be read
+	 *             if the input cannot be read
 	 * @throws IllegalArgumentException
-	 *             If the entries define an invalid {@link Map}, having for example duplicate keys
+	 *             if the splitter does not produce exactly two items for any line, or if the
+	 *             entries define an invalid {@link Map} (having for example duplicate keys)
 	 */
 	public static <R extends Readable & Closeable> ImmutableMap<String, String> buildMapFromLinesOfEntries(
 			InputSupplier<R> inputSupplier, Splitter keyValueSplitter) throws IOException {

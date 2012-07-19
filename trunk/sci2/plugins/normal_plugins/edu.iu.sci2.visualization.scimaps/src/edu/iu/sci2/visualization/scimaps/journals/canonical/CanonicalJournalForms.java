@@ -8,7 +8,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 
-import edu.iu.sci2.visualization.scimaps.util.MapResources;
+import edu.iu.sci2.visualization.scimaps.util.TextualMaps;
 
 
 /**
@@ -25,7 +25,7 @@ public final class CanonicalJournalForms {
 	private static final ImmutableMap<String, String> CANONICAL = buildMap();	
 	private static ImmutableMap<String, String> buildMap() {
 		try {
-			return MapResources.buildMapFromLinesOfEntries(
+			return TextualMaps.buildMapFromLinesOfEntries(
 					Resources.newReaderSupplier(
 							Resources.getResource(CanonicalJournalForms.class, "canonical.tsv"),
 							Charsets.UTF_8), // TODO test this

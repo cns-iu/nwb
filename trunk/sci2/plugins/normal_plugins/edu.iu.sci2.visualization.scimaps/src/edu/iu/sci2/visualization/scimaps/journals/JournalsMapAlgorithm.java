@@ -72,15 +72,19 @@ public class JournalsMapAlgorithm implements Algorithm {
 
 	@Override
 	public Data[] execute() throws AlgorithmExecutionException {
-		JournalDataset journalOccurrences =
-				JournalDataset.fromTable(table, journalColumnName, logger);
+		JournalDataset dataset = JournalDataset.fromTable(table, journalColumnName, logger);
 		
-		if (journalOccurrences.isEmpty()) {
+		logger.log(LogService.LOG_INFO, String.format(
+				"Loaded %d occurrences of %d distinct journals.",
+				dataset.size(),
+				dataset.distinctJournals().size()));
+		
+		if (dataset.isEmpty()) {
 			throw new AlgorithmExecutionException("No journals could be found in the data.");
 		}
 
-		MapOfScience mapOfScience = new MapOfScience("Fractional Journal Count",
-				journalOccurrences.copyAsIdentifierCountMap());
+		MapOfScience mapOfScience = new MapOfScience("Fractional record count",
+				dataset.copyAsIdentifierCountMap());
 		
 		if (mapOfScience.getMappedResults().isEmpty()) {
 			throw new AlgorithmExecutionException(
@@ -96,7 +100,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 			visualizationRunner.run();
 		}
 
-		return datafy(mapOfScience, manager, journalOccurrences, this.parentData, this.logger);
+		return datafy(mapOfScience, manager, dataset, this.parentData, this.logger);
 	}
 
 	public static Data[] datafy(MapOfScience mapOfScience, AbstractPageManager pageManager,
