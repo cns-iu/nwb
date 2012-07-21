@@ -23,14 +23,14 @@ import edu.iu.sci2.visualization.scimaps.tempvis.PageElement;
  * 
  */
 public class MapOfScienceRenderer implements PageElement{
+	private final MapOfScience mapOfScience;
+	private final float nodeScalingFactor;
+	private final double pageScalingFactor;
+	private final double leftBoundary;
+	private final double bottomBoundary;
 
-	private MapOfScience mapOfScience;
-	private float nodeScalingFactor;
-	private double pageScalingFactor;
-	private double leftBoundary;
-	private double bottomBoundary;
-
-	public MapOfScienceRenderer(MapOfScience mapOfScience, float nodeScalingFactor, double pageScalingFactor, double leftBoundary, double bottomBoundary) {
+	public MapOfScienceRenderer(MapOfScience mapOfScience, float nodeScalingFactor,
+			double pageScalingFactor, double leftBoundary, double bottomBoundary) {
 		this.mapOfScience = mapOfScience;
 		this.nodeScalingFactor = nodeScalingFactor;
 		this.pageScalingFactor = pageScalingFactor;
@@ -41,18 +41,18 @@ public class MapOfScienceRenderer implements PageElement{
 	/**
 	 * 
 	 * This will draw the {@link MapOfScience} to the given
-	 * {@link GraphicsState} using a scaling factor to increase the size of the
+	 * {@link GraphicsState} using a scalingFactor factor to increase the size of the
 	 * rendered nodes. If there is an issue rendering, a
 	 * {@link MapOfScienceRenderingException} will be thrown.
 	 */
 	public static void render(GraphicsState state, MapOfScience mapOfScience,
-			float scalingFactor) throws MapOfScienceRenderingException {
+			float nodeScalingFactor, double pageScalingFactor) throws MapOfScienceRenderingException {
 
 		state.setFontSize(6);
 		renderLeftSide(state);
 		renderRightSide(state);
 
-		renderMapNodesAndEdges(state, mapOfScience, scalingFactor);
+		renderMapNodesAndEdges(state, mapOfScience, nodeScalingFactor, pageScalingFactor);
 
 		renderDisciplineLabels(state);
 	}
@@ -140,7 +140,7 @@ public class MapOfScienceRenderer implements PageElement{
 	}
 
 	private static void renderMapNodesAndEdges(GraphicsState state,
-			MapOfScience mapOfScience, float scalingFactor) {
+			MapOfScience mapOfScience, float nodeScalingFactor, double pageScalingFactor) {
 
 		Set<Edge> edges = MapOfScience.getEdges();
 		Map<Integer, Float> mapping = mapOfScience.getIdWeightMapping();
@@ -152,12 +152,15 @@ public class MapOfScienceRenderer implements PageElement{
 		EdgeRenderer.renderEdges(state, edges);
 
 		for (Integer id : mapOfScience.getMappedIdsByWeight()) {
-
 			Node node = Nodes.getNodeByID(id);
 			
+			/* The graphics state for rendering the map is scaled in both dimensions by
+			 * pageScalingFactor. But we don't want to scale the circle sizes too or else they'll
+			 * no longer be in the same reference system as the legend. */
 			float weight = mapping.get(id);
-
-			NodeRenderer.render(state, node, weight, scalingFactor);
+			float unscaledWeight = (float) (weight / (pageScalingFactor * pageScalingFactor));
+			
+			NodeRenderer.render(state, node, unscaledWeight, nodeScalingFactor);
 		}
 
 		state.restore();
@@ -184,9 +187,10 @@ public class MapOfScienceRenderer implements PageElement{
 		state.save();
 		state.current.translate(this.leftBoundary, this.bottomBoundary);
 		state.current.scale(this.pageScalingFactor, this.pageScalingFactor);
+//		System.out.println("MapOfScienceRenderer.render(GraphicsState) has pageScalingFactor = " + pageScalingFactor); // TODO remove
 		
 		try {
-			MapOfScienceRenderer.render(state, this.mapOfScience, this.nodeScalingFactor);
+			MapOfScienceRenderer.render(state, this.mapOfScience, this.nodeScalingFactor, this.pageScalingFactor);
 		} catch (MapOfScienceRenderingException e) {
 			throw new PageElementRenderingException(e);
 		} finally {

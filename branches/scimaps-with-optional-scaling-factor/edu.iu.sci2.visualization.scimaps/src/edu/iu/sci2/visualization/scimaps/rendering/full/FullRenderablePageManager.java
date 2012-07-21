@@ -11,6 +11,7 @@ import edu.iu.sci2.visualization.scimaps.rendering.CenteredCopyrightInfo;
 import edu.iu.sci2.visualization.scimaps.rendering.CircleSizeLegend;
 import edu.iu.sci2.visualization.scimaps.rendering.HowToArea;
 import edu.iu.sci2.visualization.scimaps.rendering.ItalicCenteredFooter;
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 import edu.iu.sci2.visualization.scimaps.rendering.PageLegend;
 import edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown.DisciplineBreakdownArea;
 import edu.iu.sci2.visualization.scimaps.rendering.discipline_breakdown.DisciplineBreakdownAreas;
@@ -19,10 +20,9 @@ import edu.iu.sci2.visualization.scimaps.rendering.scimaps.MapOfScienceRenderer;
 public class FullRenderablePageManager extends AbstractRenderablePageManager {
 	private final String generatedFrom;
 
-	public FullRenderablePageManager(Dimension size, MapOfScience mapOfScience,
+	public FullRenderablePageManager(Layout layout, Dimension size, MapOfScience mapOfScience,
 			float scalingFactor, String generatedFrom) {
-		super(size, mapOfScience, scalingFactor);
-		
+		super(layout, size, mapOfScience, scalingFactor);
 		this.generatedFrom = generatedFrom;
 
 		addPageIndependentElements();
@@ -53,7 +53,7 @@ public class FullRenderablePageManager extends AbstractRenderablePageManager {
 
 	@Override
 	protected void addMapOfSciencePage(int pageNumber) {
-		float pageScalingFactor = 1.3f;
+		float mapScalingFactor = layout.getMapSpecificScalingFactor();
 		int fontSize = 10;
 		int titleFontSize = 14;
 
@@ -62,17 +62,21 @@ public class FullRenderablePageManager extends AbstractRenderablePageManager {
 				new CenteredCopyrightInfo(
 						(float) this.dimensions.getWidth() / 2, inch(5.72f),
 						fontSize));
-		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor,
-				pageScalingFactor, inch(3.47f), inch(7.0f), fontSize,
-				titleFontSize, 5, 50));
+		addToPage(pageNumber, new CircleSizeLegend(this.scalingFactor, inch(3.47f), inch(7.0f),
+				fontSize, titleFontSize, 5, layout.getAreaForLegendMax()));
 		addToPage(
 				pageNumber,
-				new PageLegend(mapOfScience.getDataColumnName(), (int) this.mapOfScience
-						.countOfUnmappedPublications(), Collections.min(this.mapOfScience
-						.getMappedWeights()),
-						Collections.max(this.mapOfScience.getMappedWeights()), inch(0.25f),
-						inch(7.0f), titleFontSize, fontSize));
+				new PageLegend(
+						mapOfScience.getDataColumnName(),
+						(int) this.mapOfScience.countOfUnmappedPublications(),
+						Collections.min(this.mapOfScience.getMappedWeights()),
+						Collections.max(this.mapOfScience.getMappedWeights()),
+						scalingFactor,
+						inch(0.25f),
+						inch(7.0f),
+						titleFontSize,
+						fontSize));
 		addToPage(pageNumber, new MapOfScienceRenderer(this.mapOfScience,
-				this.scalingFactor, pageScalingFactor, inch(0.0f), inch(5.0f)));
+				this.scalingFactor, mapScalingFactor, inch(0.0f), inch(5.0f)));
 	}
 }

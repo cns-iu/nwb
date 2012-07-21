@@ -16,9 +16,13 @@ import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.sci2.visualization.scimaps.rendering.Layout;
-
 import prefuse.data.Table;
+
+import com.google.common.base.Optional;
+
+import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithmFactory;
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition;
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 
 public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
 	public static final String NODE_ID_COLUMN_NAME_ID = "nodeIDColumnName";
@@ -41,11 +45,14 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		String nodeLabelColumnName = (String) parameters.get(NODE_LABEL_COLUMN_NAME_ID);
 		String nodeValueColumnName = (String) parameters.get(NODE_VALUE_COLUMN_NAME_ID);
 		String dataDisplayName = (String) parameters.get(SUBTITLE_ID);
-		float scalingFactor = (Float) parameters.get(SCALING_FACTOR_ID);
+		String scalingFactorString = (String) parameters.get(SCALING_FACTOR_ID);
 		boolean webVersion = (Boolean) parameters.get(WEB_VERSION_ID);
 		Layout layout = webVersion ? Layout.SIMPLE : Layout.FULL;
 		
 		boolean showWindow = (Boolean) parameters.get(SHOW_WINDOW_ID);
+		
+		Optional<Float> scalingFactor = JournalsMapAlgorithmFactory
+				.interpretScalingFactorOrFail(scalingFactorString);
 		
 		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName,
 				nodeValueColumnName, dataDisplayName, scalingFactor, layout, showWindow);
@@ -83,7 +90,9 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 					newParameters,
 					NODE_VALUE_COLUMN_NAME_ID,
 					columnNamesWithNone,
-					columnNamesWithNone);	
+					columnNamesWithNone);
+		
+		newParameters = ScalingFactorAttributeDefinition.mutateParameters(newParameters);
 				
 		return mutateSubtitleParameter(newParameters, data);
 	}

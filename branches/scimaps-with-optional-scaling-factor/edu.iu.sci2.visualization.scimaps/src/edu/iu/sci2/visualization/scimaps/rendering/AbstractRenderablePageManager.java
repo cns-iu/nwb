@@ -14,9 +14,9 @@ public abstract class AbstractRenderablePageManager extends AbstractPageManager 
 	protected final MapOfScience mapOfScience;
 	protected final float scalingFactor;
 
-	protected AbstractRenderablePageManager(Dimension dimensions, MapOfScience mapOfScience,
+	protected AbstractRenderablePageManager(Layout layout, Dimension dimensions, MapOfScience mapOfScience,
 			float scalingFactor) {
-		super(dimensions);
+		super(layout, dimensions);
 		
 		this.mapOfScience = mapOfScience;
 		this.scalingFactor = scalingFactor;

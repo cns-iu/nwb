@@ -14,6 +14,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.MutateParameterUtilities;
@@ -22,9 +23,13 @@ import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.sci2.visualization.scimaps.rendering.Layout;
-
 import prefuse.data.Table;
+
+import com.google.common.base.Optional;
+
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition;
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition.ScalingFactorInterpretationException;
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 //SOMEDAY this and the FieldsMapAlgorithmFactory are very similar.  Combine them.
 public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		ParameterMutator {
@@ -39,15 +44,33 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 	public Algorithm createAlgorithm(Data[] data,
 			Dictionary<String, Object> parameters, CIShellContext context) {
 		String journalColumnName = (String) parameters.get(JOURNAL_COLUMN_ID);
-		float scalingFactor = ((Float) parameters.get(SCALING_FACTOR_ID)).floatValue();
 		String dataDisplayName = (String) parameters.get(SUBTITLE_ID);
+		String scalingFactorString = (String) parameters.get(SCALING_FACTOR_ID);
 		boolean webVersion = ((Boolean) parameters.get(WEB_VERSION_ID)).booleanValue();
-		Layout layout = webVersion ? Layout.SIMPLE : Layout.FULL;
 		boolean showWindow = ((Boolean) parameters.get(SHOW_EXPORT_WINDOW)).booleanValue();
+		
 		LogService logger = (LogService) context.getService(LogService.class.getName());
+
+		Layout layout = webVersion ? Layout.SIMPLE : Layout.FULL;
+		
+		Optional<Float> scalingFactor = interpretScalingFactorOrFail(scalingFactorString);
 		
 		return new JournalsMapAlgorithm(data, journalColumnName, scalingFactor, dataDisplayName,
 				layout, showWindow, logger);
+	}
+
+	// TODO Think more about how to organize this w.r.t. FieldsMapAlgorithmFactory
+	public static Optional<Float> interpretScalingFactorOrFail(String scalingFactorString) {
+		Optional<Float> scalingFactor;
+		try {
+			scalingFactor = ScalingFactorAttributeDefinition.asOptional(scalingFactorString);
+		} catch (ScalingFactorInterpretationException e) {
+			/* This shouldn't happen via metatype-driven calls because the AD has a validator that
+			 * checks this. */
+			throw new AlgorithmCreationFailedException(
+					"Could not interpret scaling factor value: " + e.getMessage(), e);
+		}
+		return scalingFactor;
 	}
 
 	/**
@@ -59,13 +82,18 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 			ObjectClassDefinition oldParameters) {
 		Table table = (Table) data[0].getData();
 
+		// TODO Fix the chainedness of this, it's too confusing
+		
 		ObjectClassDefinition paramsWithJournal = addJournalColumnDropdownParameter(
 				oldParameters, table);
 
 		ObjectClassDefinition paramsWithJournalAndFilename = addSourceDataFilenameParameter(
 				paramsWithJournal, data);
+		
+		BasicObjectClassDefinition paramsWithJournalAndFilenameAndScalingFactor =
+				ScalingFactorAttributeDefinition.mutateParameters(paramsWithJournalAndFilename);
 
-		return mutateSubtitleParameter(paramsWithJournalAndFilename, data);
+		return mutateSubtitleParameter(paramsWithJournalAndFilenameAndScalingFactor, data);
 	}
 
 	/**
@@ -109,8 +137,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 	 */
 	private static ObjectClassDefinition addSourceDataFilenameParameter(
 			ObjectClassDefinition newParameters, Data[] data) {
-		String guessedSourceDataFilename = AlgorithmUtilities
-				.guessSourceDataFilename(data[0]);
+		String guessedSourceDataFilename = AlgorithmUtilities.guessSourceDataFilename(data[0]);
 
 		return MutateParameterUtilities.mutateDefaultValue(newParameters,
 				SUBTITLE_ID, guessedSourceDataFilename);

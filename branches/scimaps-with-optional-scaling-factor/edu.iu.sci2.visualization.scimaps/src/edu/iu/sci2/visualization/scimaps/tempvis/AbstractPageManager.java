@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 import edu.iu.sci2.visualization.scimaps.tempvis.PageElement.PageElementRenderingException;
 
 /**
@@ -25,9 +26,11 @@ public abstract class AbstractPageManager {
 	private final Multimap<Integer, PageElement> pageSpecificElements = HashMultimap.create();
 	private final Set<PageElement> pageIndependentElements = new HashSet<PageElement>();
 	// The page size in points
+	protected final Layout layout;
 	protected final Dimension dimensions;
 	
-	protected AbstractPageManager(Dimension dimensions) {
+	protected AbstractPageManager(Layout layout, Dimension dimensions) {
+		this.layout = layout;
 		this.dimensions = dimensions;
 	}
 	

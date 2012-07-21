@@ -14,8 +14,8 @@ public class NodeRenderer {
 	 * of the {@link GraphicsState}.
 	 */
 	public static void render(GraphicsState state, Node node, float weight,
-			float scalingFactor) {
-		float radius = Node.calculateRadius(weight, scalingFactor);
+			float nodeScalingFactor) {
+		float radius = Node.calculateRadius(weight, nodeScalingFactor);
 
 		state.save();
 		state.current.setColor(node.getColor());

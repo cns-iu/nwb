@@ -20,27 +20,22 @@ public class CircleSizeLegend implements PageElement {
 	private double topBoundary;
 	private int fontSize;
 	private int titleFontSize;
-	private float pageScalingFactor;
 	private float scalingFactor;
 
 	/**
-	 * If you scaled your {@link Node}s, you can use this constructor which will
-	 * take that into account numerically, though not graphically.
+	 * If you scaled your {@link Node}s, you can use this constructor which will take that into
+	 * account numerically, though not graphically.
 	 * 
 	 * @param scalingFactor
 	 *            The nodes were scaled by in the Map of Science
-	 * @param pageScalingFactor
-	 *            The scaling factor for the page
 	 */
-	public CircleSizeLegend(float scalingFactor, float pageScalingFactor,
-			double leftBoundary, double topBoundary, int fontSize,
-			int titleFontSize, float minArea, float maxArea) {
+	public CircleSizeLegend(float scalingFactor, double leftBoundary, double topBoundary,
+			int fontSize, int titleFontSize, float minArea, float maxArea) {
 		this.leftBoundary = leftBoundary;
 		this.topBoundary = topBoundary;
 		this.fontSize = fontSize;
 		this.titleFontSize = titleFontSize;
 		
-		this.pageScalingFactor = pageScalingFactor;
 		this.scalingFactor = scalingFactor;
 
 		this.minArea = minArea;
@@ -50,7 +45,7 @@ public class CircleSizeLegend implements PageElement {
 
 	@Override
 	public void render(GraphicsState state) {
-		// Draw the word 'Area'
+		// Draw the heading
 		String title = "Area";
 		state.save();
 		state.current.translate(this.leftBoundary, this.topBoundary);
@@ -70,9 +65,9 @@ public class CircleSizeLegend implements PageElement {
 		float midRadius = Node.calculateRadius(this.midArea, 1.0f);
 		float maxRadius = Node.calculateRadius(this.maxArea, 1.0f);
 
-		String minLabel = FORMATTER.format(Node.calculateWeight(minRadius / this.pageScalingFactor, this.scalingFactor));
-		String midLabel = FORMATTER.format(Node.calculateWeight(midRadius / this.pageScalingFactor, this.scalingFactor));
-		String maxLabel = FORMATTER.format(Node.calculateWeight(maxRadius / this.pageScalingFactor, this.scalingFactor));
+		String minLabel = FORMATTER.format(Node.calculateWeight(minRadius, scalingFactor));
+		String midLabel = FORMATTER.format(Node.calculateWeight(midRadius, scalingFactor));
+		String maxLabel = FORMATTER.format(Node.calculateWeight(maxRadius, scalingFactor));
 
 		double circleX = maxRadius;
 

@@ -17,24 +17,28 @@ public class PageLegend implements PageElement{
 	private static final DecimalFormat formatter = new DecimalFormat("###,###");
 
 	private final String dataColumnName;
-	private int numberOfUnclassified;
-	private double minimumValue;
-	private double maximumValue;
-	private double leftBoundary;
-	private double topBoundary;
-	private int titleFontSize;
-	private int normalFontSize;
+	private final int numberOfUnclassified;
+	private final double minimumValue;
+	private final double maximumValue;
+	private final float scalingFactor;
+	private final double leftBoundary;
+	private final double topBoundary;
+	private final int titleFontSize;
+	private final int normalFontSize;
+
 
 	/**
 	 * Construct a PageLegend
 	 * @param numberOfUnclassified the number of {@link Journal}s that were unmapped on the {@link MapOfScience}.
 	 */
 	public PageLegend(String dataColumnName, int numberOfUnclassified, double minimumValue,
-			double maximumValue, double leftBoundary, double topBoundary, int titleFontSize, int normalFontSize) {
+			double maximumValue, float scalingFactor, double leftBoundary, double topBoundary,
+			int titleFontSize, int normalFontSize) {
 		this.dataColumnName = dataColumnName;
 		this.numberOfUnclassified = numberOfUnclassified;
 		this.minimumValue = minimumValue;
 		this.maximumValue = maximumValue;
+		this.scalingFactor = scalingFactor;
 		this.leftBoundary = leftBoundary;
 		this.topBoundary = topBoundary;
 		this.titleFontSize = titleFontSize;
@@ -52,6 +56,7 @@ public class PageLegend implements PageElement{
 		String unclassified = "Unclassified = " + this.numberOfUnclassified;
 		String minimum = "Minimum = " + formatter.format(this.minimumValue);
 		String maximum = "Maximum = " + formatter.format(this.maximumValue);
+		String scalingFactor = "Scaling factor = " + String.valueOf(this.scalingFactor);
 		String color = "Color: Discipline"
 				+ System.getProperty("line.separator")
 				+ "See end of PDF for color legend.";
@@ -64,6 +69,7 @@ public class PageLegend implements PageElement{
 		state.drawStringAndTranslate(unclassified, 0, 0);
 		state.drawStringAndTranslate(minimum, 0, 0);
 		state.drawStringAndTranslate(maximum, 0, 0);
+		state.drawStringAndTranslate(scalingFactor, 0, 0);
 
 		for (String colorString : color.split(System
 				.getProperty("line.separator"))) {

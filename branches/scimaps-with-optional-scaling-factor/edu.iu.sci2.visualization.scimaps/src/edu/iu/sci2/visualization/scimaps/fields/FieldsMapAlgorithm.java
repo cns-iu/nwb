@@ -10,6 +10,8 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
+import com.google.common.base.Optional;
+
 import prefuse.data.Table;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm;
@@ -25,13 +27,13 @@ public class FieldsMapAlgorithm implements Algorithm {
 	private final String nodeValueColumnName;
 	private final String dataDisplayName;
 	private final LogService logger;
-	private final float scalingFactor;
+	private final Optional<Float> scalingFactorOrAuto;
 	private final Layout layout;
 	private final boolean showWindow;
 
 	public FieldsMapAlgorithm(Data[] data, LogService logger, String nodeIDColumnName,
 			String nodeLabelColumnName, String nodeValueColumnName, String dataDisplayName,
-			float scalingFactor, Layout layout, boolean showWindow) {
+			Optional<Float> scalingFactorOrAuto, Layout layout, boolean showWindow) {
 		this.inData = data[0];
 		this.table = (Table) data[0].getData();
 
@@ -41,7 +43,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 		this.nodeLabelColumnName = nodeLabelColumnName;
 		this.nodeValueColumnName = nodeValueColumnName;
 		this.dataDisplayName = dataDisplayName;
-		this.scalingFactor = scalingFactor;
+		this.scalingFactorOrAuto = scalingFactorOrAuto;
 		this.layout = layout;
 		this.showWindow = showWindow;
 	}
@@ -57,6 +59,9 @@ public class FieldsMapAlgorithm implements Algorithm {
 				tableReader.getUnclassifiedLabelCounts());
 
 		MapOfScience map = createMapOfScience(nodeValueColumnName, fieldsAnalyzer);
+		
+		float scalingFactor = JournalsMapAlgorithm.determineScalingFactor(scalingFactorOrAuto, map
+				.getIdWeightMapping().values(), layout);
 		
 		AbstractRenderablePageManager manager = layout.createPageManager(map, scalingFactor,
 				dataDisplayName);

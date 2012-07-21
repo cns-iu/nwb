@@ -23,6 +23,7 @@ import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm;
 import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithmFactory;
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition;
 import edu.iu.sci2.visualization.scimaps.testing.LogOnlyCIShellContext;
 
 public class MapOfScienceTest {
@@ -111,31 +112,30 @@ public class MapOfScienceTest {
 
 		try {
 			File inFile = new File("sampledata", "LaszloBarabasi.isi.csv");
-			Data data = new BasicData(inFile,
-					JournalsMapAlgorithm.CSV_MIME_TYPE);
+			Data data = new BasicData(inFile, JournalsMapAlgorithm.CSV_MIME_TYPE);
 
-			PrefuseCsvReader prefuseCSVReader = new PrefuseCsvReader(
-					new Data[] { data });
+			PrefuseCsvReader prefuseCSVReader = new PrefuseCsvReader(new Data[] { data });
 			Data[] convertedData = prefuseCSVReader.execute();
 
 			Dictionary<String, Object> parameters = new Hashtable<String, Object>();
-			parameters.put(JournalsMapAlgorithmFactory.JOURNAL_COLUMN_ID,
-					"Journal Title (Full)");
-			parameters.put(JournalsMapAlgorithmFactory.SCALING_FACTOR_ID, 1.0f);
-			parameters.put(JournalsMapAlgorithmFactory.SUBTITLE_ID,
-					inFile.getName());
-			parameters
-					.put(JournalsMapAlgorithmFactory.SHOW_EXPORT_WINDOW, true);
+			parameters.put(JournalsMapAlgorithmFactory.JOURNAL_COLUMN_ID, "Journal Title (Full)");
+			parameters.put(JournalsMapAlgorithmFactory.SCALING_FACTOR_ID,
+//					String.valueOf(1.0f));
+					ScalingFactorAttributeDefinition.AUTO_TOKEN);
+			parameters.put(JournalsMapAlgorithmFactory.SUBTITLE_ID, inFile.getName());
+			parameters.put(JournalsMapAlgorithmFactory.SHOW_EXPORT_WINDOW, true);
 			parameters.put(JournalsMapAlgorithmFactory.WEB_VERSION_ID, false);
 
 			AlgorithmFactory algorithmFactory = new JournalsMapAlgorithmFactory();
 			CIShellContext ciContext = new LogOnlyCIShellContext();
-			Algorithm algorithm = algorithmFactory.createAlgorithm(
-					convertedData, parameters, ciContext);
+			Algorithm algorithm = algorithmFactory.createAlgorithm(convertedData, parameters,
+					ciContext);
 
 			System.out.println("Executing.. ");
-			algorithm.execute();
+			Data[] outData = algorithm.execute();
 			System.out.println(".. Done.");
+			
+//			Desktop.getDesktop().open((File) outData[2].getData()); // TODO remove
 		} catch (NoClassDefFoundError e) {
 			if (e.getMessage() != null
 					&& e.getMessage()

@@ -7,9 +7,9 @@
 		<AD name="UCSD Area" id="nodeIDColumnName" type="String" description="Choose the column from your table that gives a UCSD node ID." default="MUTATE_ME"/>
 		<AD name="Other Class" id="nodeLabelColumnName" type="String" description="Choose the column from your table that labels the record." default="MUTATE_ME"/>
 		<AD name="Value" id="nodeValueColumnName" type="String" description="Choose the column from your table that gives the value associated with a UCSD node." default="MUTATE_ME"/>
-		<AD name="Scaling Factor" id="scalingFactor" type="Float" description="Scale the sizes of all circles by this constant." default="1.0"/>
-		<AD name="Simplified Layout?" id="webVersion" type="boolean" description="If selected, a simplified graphic will be produced. If not selected, the graphic produced will be suitable for printing and include a title, date, howto, etc." default="false" />
-		<AD name="Show Export Window?" id="showWindow" type="boolean" description="If selected, a window with the visualization will be shown.  It has useful export features if the output file needs to be customized." default="false" />
+		<AD name="Scaling Factor" id="scalingFactor" type="String" description="An absolute scaling factor to apply to all size codings.  Leave as default for automatic scaling (recommended)." default="MUTATED"/>
+		<AD name="Simplified Layout?" id="webVersion" type="Boolean" description="If selected, a simplified graphic will be produced. If not selected, the graphic produced will be suitable for printing and include a title, date, howto, etc." default="false" />
+		<AD name="Show Export Window?" id="showWindow" type="Boolean" description="If selected, a window with the visualization will be shown.  It has useful export features if the output file needs to be customized." default="true" />
 	</OCD>
 	<Designate pid="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm">
 		<Object ocdref="edu.iu.sci2.visualization.scimaps.fields.FieldsMapAlgorithm.OCD" />
@@ -21,9 +21,9 @@
 		 description="Locate the journals from a table on the UCSD Map of Science ">
 		<AD name="Subtitle" id="subtitle" type="String" description="The subtitle text printed below the title of the visualization. Only available for non-simplified layout." default="" />
 		<AD name="Journal Column" id="journalColumn" type="String" description="Choose a column from your table that gives a journal name, abbreviation, or ISSN (International Standard Serial Number)" default="MUTATE_ME"/>
-		<AD name="Scaling Factor" id="scalingFactor" type="Float" description="Scale the sizes of all circles by this constant." default="1.0"/>
-		<AD name="Simplified Layout?" id="webVersion" type="boolean" description="If selected, a simplified graphic will be produced. If not selected, the graphic produced will be suitable for printing and include a title, date, howto, etc." default="false" />
-		<AD name="Show Export Window?" id="showWindow" type="boolean" description="If selected, a window with the visualization will be shown.  It has useful export features if the output file needs to be customized." default="false" />
+		<AD name="Scaling Factor" id="scalingFactor" type="String" description="An absolute scaling factor to apply to all size codings.  Leave as default for automatic scaling (recommended)." default="MUTATED"/>
+		<AD name="Simplified Layout?" id="webVersion" type="Boolean" description="If selected, a simplified graphic will be produced. If not selected, the graphic produced will be suitable for printing and include a title, date, howto, etc." default="false" />
+		<AD name="Show Export Window?" id="showWindow" type="Boolean" description="If selected, a window with the visualization will be shown.  It has useful export features if the output file needs to be customized." default="true" />
 	</OCD>
 	<Designate pid="edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm">
 		<Object ocdref="edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm.OCD" />

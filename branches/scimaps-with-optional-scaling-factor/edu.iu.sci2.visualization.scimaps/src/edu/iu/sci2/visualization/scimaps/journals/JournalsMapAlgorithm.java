@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +30,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -52,18 +55,19 @@ public class JournalsMapAlgorithm implements Algorithm {
 	private final Data parentData;
 	private final Table table;
 	private final String journalColumnName;
-	private final float scalingFactor;
+	private final Optional<Float> scalingFactorOrAuto;
 	private final String dataDisplayName;
 	private final Layout layout;
 	private final boolean showWindow;
 	private final LogService logger;
 
-	public JournalsMapAlgorithm(Data[] data, String journalColumnName, float scalingFactor,
-			String dataDisplayName, Layout layout, boolean showWindow, LogService logger) {
+	public JournalsMapAlgorithm(Data[] data, String journalColumnName,
+			Optional<Float> scalingFactorOrAuto, String dataDisplayName, Layout layout,
+			boolean showWindow, LogService logger) {
 		this.parentData = data[0];
 		this.table = (Table) data[0].getData();
 		this.journalColumnName = journalColumnName;
-		this.scalingFactor = scalingFactor;
+		this.scalingFactorOrAuto = scalingFactorOrAuto;
 		this.dataDisplayName = dataDisplayName;
 		this.layout = layout;
 		this.showWindow = showWindow;
@@ -91,6 +95,7 @@ public class JournalsMapAlgorithm implements Algorithm {
 					"No journals could be mapped to the Map of Science.");
 		}
 		
+		float scalingFactor = determineScalingFactor(scalingFactorOrAuto, mapOfScience.getIdWeightMapping().values(), layout);
 		AbstractRenderablePageManager manager =
 				layout.createPageManager(mapOfScience, scalingFactor, dataDisplayName);
 		
@@ -101,6 +106,23 @@ public class JournalsMapAlgorithm implements Algorithm {
 		}
 
 		return datafy(mapOfScience, manager, dataset, this.parentData, this.logger);
+	}
+
+	// TODO Think more about how to organize this w.r.t. FieldsMapAlgorithm
+	public static float determineScalingFactor(Optional<Float> scalingFactorOrAuto, Collection<Float> subdisciplineWeights, Layout layout) {
+		// TODO remove
+		System.out.println("Collections.min(subdisciplineWeights) = " + Collections.min(subdisciplineWeights));
+		System.out.println("Collections.max(subdisciplineWeights) = " + Collections.max(subdisciplineWeights));
+		
+		if (scalingFactorOrAuto.isPresent()) {
+			return scalingFactorOrAuto.get();
+		} else {
+			float maxSubdisciplineWeight = Collections.max(subdisciplineWeights);
+
+			/* This is the scaling factor that makes the largest subdiscipline circle the same size
+			 * as the largest legend circle. */
+			return layout.getAreaForLegendMax() / maxSubdisciplineWeight;
+		}
 	}
 
 	public static Data[] datafy(MapOfScience mapOfScience, AbstractPageManager pageManager,
