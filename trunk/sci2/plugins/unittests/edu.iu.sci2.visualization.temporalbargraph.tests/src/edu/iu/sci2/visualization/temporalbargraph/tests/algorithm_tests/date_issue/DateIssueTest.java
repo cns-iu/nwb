@@ -26,11 +26,6 @@ import edu.iu.sci2.visualization.temporalbargraph.tests.TestDataLoadingUtilities
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
 public class DateIssueTest {
-	/*
-	 * Use this to decide if you want to visually inspect the output files.
-	 * WARNING! It will open many files!!
-	 */
-	private final boolean openFiles = false;
 	private static ImmutableSortedMap<String, Object> commonParameters;
 	private static Data[] convertedData;
 
@@ -84,7 +79,7 @@ public class DateIssueTest {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					DateIssueTest.convertedData, this.openFiles);
+					DateIssueTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -105,7 +100,7 @@ public class DateIssueTest {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					DateIssueTest.convertedData, this.openFiles);
+					DateIssueTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -124,7 +119,7 @@ public class DateIssueTest {
 
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					DateIssueTest.convertedData, this.openFiles);
+					DateIssueTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -143,7 +138,7 @@ public class DateIssueTest {
 
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					DateIssueTest.convertedData, this.openFiles);
+					DateIssueTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");

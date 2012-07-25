@@ -25,11 +25,6 @@ import edu.iu.sci2.visualization.temporalbargraph.print.TemporalBarGraphAlgorith
 import edu.iu.sci2.visualization.temporalbargraph.tests.TestDataLoadingUtilities;
 
 public class PrintTest {
-	/*
-	 * Use this to decide if you want to visually inspect the output files.
-	 * WARNING! It will open many files!!
-	 */
-	private static final boolean openFiles = false;
 	private static ImmutableSortedMap<String, Object> commonParameters;
 	private static Data[] convertedData;
 
@@ -83,8 +78,7 @@ public class PrintTest {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					PrintTest.convertedData,
-					PrintTest.openFiles);
+					PrintTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -105,8 +99,7 @@ public class PrintTest {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					PrintTest.convertedData,
-					PrintTest.openFiles);
+					PrintTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");

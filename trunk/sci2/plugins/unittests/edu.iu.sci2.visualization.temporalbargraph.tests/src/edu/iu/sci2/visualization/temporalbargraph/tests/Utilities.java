@@ -18,14 +18,19 @@ import org.osgi.framework.BundleException;
 import edu.iu.sci2.testutilities.TestUtilities;
 
 public class Utilities {
-	/**
-	 * This run the TBG algorithm indicated by the {@code AlgorithmFactory}.
-	 * Additionally, it will open the files if the {@code openFiles} parameter
-	 * is {@code true}.
-	 * 
-	 * @throws AlgorithmExecutionException If the files could not be opened
+	/*
+	 * Use this to decide if you want to visually inspect the output files.
+	 * WARNING! It will open many files!!
+	 * DO NOT CHECK IT INTO SVN WITH true.  THIS WILL MAKE SERVER TESTS FAIL!
 	 */
-	public static void testTBGAlgorithm(AlgorithmFactory algorithmFactory,
+	public static final boolean OPEN_FILES = false;
+
+	/**
+	 * Use this over ride with caution if you want to only open for a single
+	 * case. Do NOT leave it as open, since this will fail on the server tests.
+	 */
+	public static void testTBGAlgorithmOverride(
+			AlgorithmFactory algorithmFactory,
 			Dictionary<String, Object> parameters, Data[] convertedData,
 			boolean openFiles) throws AlgorithmExecutionException {
 		CIShellContext cishellContext;
@@ -59,5 +64,20 @@ public class Utilities {
 								+ e.getLocalizedMessage(), e);
 			}
 		}
+	}
+
+	/**
+	 * This run the TBG algorithm indicated by the {@code AlgorithmFactory}.
+	 * Additionally. It uses the static {@link Utilities#OPEN_FILES} to open the
+	 * files or not.
+	 * 
+	 * @throws AlgorithmExecutionException
+	 *             If the files could not be opened
+	 */
+	public static void testTBGAlgorithm(AlgorithmFactory algorithmFactory,
+			Dictionary<String, Object> parameters, Data[] convertedData)
+			throws AlgorithmExecutionException {
+		testTBGAlgorithmOverride(algorithmFactory, parameters, convertedData,
+				OPEN_FILES);
 	}
 }

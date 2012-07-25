@@ -26,11 +26,6 @@ import edu.iu.sci2.visualization.temporalbargraph.tests.TestDataLoadingUtilities
 import edu.iu.sci2.visualization.temporalbargraph.web.WebTemporalBarGraphAlgorithmFactory;
 
 public class WithCategoryTest {
-	/*
-	 * Use this to decide if you want to visually inspect the output files.
-	 * WARNING! It will open many files!!
-	 */
-	private static final boolean openFiles = false;
 	private static ImmutableSortedMap<String, Object> commonParameters;
 	private static Data[] convertedData;
 
@@ -84,8 +79,7 @@ public class WithCategoryTest {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategoryTest.convertedData,
-					WithCategoryTest.openFiles);
+					WithCategoryTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -106,8 +100,7 @@ public class WithCategoryTest {
 		AlgorithmFactory algorithmFactory = new TemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategoryTest.convertedData,
-					WithCategoryTest.openFiles);
+					WithCategoryTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -125,8 +118,7 @@ public class WithCategoryTest {
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategoryTest.convertedData,
-					WithCategoryTest.openFiles);
+					WithCategoryTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
@@ -144,8 +136,7 @@ public class WithCategoryTest {
 		AlgorithmFactory algorithmFactory = new WebTemporalBarGraphAlgorithmFactory();
 		try {
 			testTBGAlgorithm(algorithmFactory, parameters,
-					WithCategoryTest.convertedData,
-					WithCategoryTest.openFiles);
+					WithCategoryTest.convertedData);
 		} catch (AlgorithmExecutionException e) {
 			e.printStackTrace();
 			fail("Algorithm failed.");
