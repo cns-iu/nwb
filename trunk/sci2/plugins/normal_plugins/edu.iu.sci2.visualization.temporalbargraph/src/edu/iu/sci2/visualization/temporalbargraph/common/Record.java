@@ -124,10 +124,10 @@ public class Record {
 			DateTimeFormatter formatter;
 			if (DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT.equals(dateFormat)) {
 				formatter = new DateTimeFormatterBuilder().append(null,
-						EUROPEAN_FORMATS).toFormatter();
+						US_FORMATS).toFormatter();
 			} else {
 				formatter = new DateTimeFormatterBuilder().append(null,
-						US_FORMATS).toFormatter();
+						EUROPEAN_FORMATS).toFormatter();
 			}
 			try {
 				/*
