@@ -187,7 +187,6 @@ public class MapOfScienceRenderer implements PageElement{
 		state.save();
 		state.current.translate(this.leftBoundary, this.bottomBoundary);
 		state.current.scale(this.pageScalingFactor, this.pageScalingFactor);
-//		System.out.println("MapOfScienceRenderer.render(GraphicsState) has pageScalingFactor = " + pageScalingFactor); // TODO remove
 		
 		try {
 			MapOfScienceRenderer.render(state, this.mapOfScience, this.nodeScalingFactor, this.pageScalingFactor);
