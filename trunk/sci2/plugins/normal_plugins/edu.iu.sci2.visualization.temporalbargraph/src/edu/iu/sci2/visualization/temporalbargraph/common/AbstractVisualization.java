@@ -3,7 +3,6 @@ package edu.iu.sci2.visualization.temporalbargraph.common;
 import java.awt.Color;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,7 +97,7 @@ public abstract class AbstractVisualization {
 		}
 
 		assert yearTicks.size() >= 2;
-		assert yearTicks.get(yearTicks.size() - 1).getYear() > endYear;
+		assert yearTicks.get(yearTicks.size() - 1).getYear() >= endYear;
 		assert yearTicks.get(0).getYear() == startYear;
 		return yearTicks;
 	}
