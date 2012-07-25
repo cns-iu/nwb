@@ -10,11 +10,10 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
-import com.google.common.base.Optional;
-
 import prefuse.data.Table;
 import edu.iu.sci2.visualization.scimaps.MapOfScience;
 import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithm;
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingStrategy;
 import edu.iu.sci2.visualization.scimaps.rendering.AbstractRenderablePageManager;
 import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 import edu.iu.sci2.visualization.scimaps.tempvis.VisualizationRunner;
@@ -27,13 +26,13 @@ public class FieldsMapAlgorithm implements Algorithm {
 	private final String nodeValueColumnName;
 	private final String dataDisplayName;
 	private final LogService logger;
-	private final Optional<Float> scalingFactorOrAuto;
+	private final ScalingStrategy scalingStrategy;
 	private final Layout layout;
 	private final boolean showWindow;
 
 	public FieldsMapAlgorithm(Data[] data, LogService logger, String nodeIDColumnName,
 			String nodeLabelColumnName, String nodeValueColumnName, String dataDisplayName,
-			Optional<Float> scalingFactorOrAuto, Layout layout, boolean showWindow) {
+			ScalingStrategy scalingStrategy, Layout layout, boolean showWindow) {
 		this.inData = data[0];
 		this.table = (Table) data[0].getData();
 
@@ -43,7 +42,7 @@ public class FieldsMapAlgorithm implements Algorithm {
 		this.nodeLabelColumnName = nodeLabelColumnName;
 		this.nodeValueColumnName = nodeValueColumnName;
 		this.dataDisplayName = dataDisplayName;
-		this.scalingFactorOrAuto = scalingFactorOrAuto;
+		this.scalingStrategy = scalingStrategy;
 		this.layout = layout;
 		this.showWindow = showWindow;
 	}
@@ -60,8 +59,8 @@ public class FieldsMapAlgorithm implements Algorithm {
 
 		MapOfScience map = createMapOfScience(nodeValueColumnName, fieldsAnalyzer);
 		
-		float scalingFactor = JournalsMapAlgorithm.determineScalingFactor(scalingFactorOrAuto, map
-				.getIdWeightMapping().values(), layout);
+		float scalingFactor = scalingStrategy.scalingFactorFor(
+				map.getIdWeightMapping().values(), layout.getAreaForLegendMax());
 		
 		AbstractRenderablePageManager manager = layout.createPageManager(map, scalingFactor,
 				dataDisplayName);

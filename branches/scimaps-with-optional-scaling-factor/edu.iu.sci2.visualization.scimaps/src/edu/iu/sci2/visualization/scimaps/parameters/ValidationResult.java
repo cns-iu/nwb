@@ -35,11 +35,8 @@ public enum ValidationResult {
 	}
 	
 	/**
-	 * 
-	 * 
-	 * @return Whether this result signals validation failure.
+	 * @return Whether this result signals validation failure
 	 */
-	// TODO Phrasing?
 	public static boolean isFailure(String result) {
 		return result != NONE.token() && result != SUCCESS.token();
 	}

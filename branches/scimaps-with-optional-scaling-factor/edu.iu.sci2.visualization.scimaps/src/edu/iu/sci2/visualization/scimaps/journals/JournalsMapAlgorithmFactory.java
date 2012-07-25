@@ -14,7 +14,6 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.ColumnNotFoundException;
 import org.cishell.utilities.MutateParameterUtilities;
@@ -24,11 +23,9 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-
-import com.google.common.base.Optional;
-
 import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition;
 import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition.ScalingFactorInterpretationException;
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingStrategy;
 import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 //SOMEDAY this and the FieldsMapAlgorithmFactory are very similar.  Combine them.
 public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
@@ -53,24 +50,28 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 
 		Layout layout = webVersion ? Layout.SIMPLE : Layout.FULL;
 		
-		Optional<Float> scalingFactor = interpretScalingFactorOrFail(scalingFactorString);
+		ScalingStrategy scalingStrategy = tryInterpretingAsScalingStrategy(scalingFactorString);
 		
-		return new JournalsMapAlgorithm(data, journalColumnName, scalingFactor, dataDisplayName,
+		return new JournalsMapAlgorithm(data, journalColumnName, scalingStrategy, dataDisplayName,
 				layout, showWindow, logger);
 	}
 
-	// TODO Think more about how to organize this w.r.t. FieldsMapAlgorithmFactory
-	public static Optional<Float> interpretScalingFactorOrFail(String scalingFactorString) {
-		Optional<Float> scalingFactor;
+	/**
+	 * @param s
+	 *            text to interpret as a scaling strategy
+	 * @return the scaling strategy represented by {@code s}
+	 * @throws AlgorithmCreationFailedException
+	 *             if {@code s} could not be interpreted as a scaling factor setting
+	 */
+	public static ScalingStrategy tryInterpretingAsScalingStrategy(String s) {
 		try {
-			scalingFactor = ScalingFactorAttributeDefinition.asOptional(scalingFactorString);
+			return ScalingFactorAttributeDefinition.interpret(s);
 		} catch (ScalingFactorInterpretationException e) {
 			/* This shouldn't happen via metatype-driven calls because the AD has a validator that
 			 * checks this. */
 			throw new AlgorithmCreationFailedException(
 					"Could not interpret scaling factor value: " + e.getMessage(), e);
 		}
-		return scalingFactor;
 	}
 
 	/**
@@ -79,36 +80,27 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 	 */
 	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
-			ObjectClassDefinition oldParameters) {
+			ObjectClassDefinition oldOCD) {
 		Table table = (Table) data[0].getData();
 
-		// TODO Fix the chainedness of this, it's too confusing
-		
-		ObjectClassDefinition paramsWithJournal = addJournalColumnDropdownParameter(
-				oldParameters, table);
+		ObjectClassDefinition newOCD = setDefaultValueForSubtitleParameter(oldOCD, data);
+		newOCD = setJournalColumnParameterOptions(newOCD, table);
+		newOCD = ScalingFactorAttributeDefinition.mutateParameters(newOCD, JournalsMapAlgorithmFactory.SCALING_FACTOR_ID);
 
-		ObjectClassDefinition paramsWithJournalAndFilename = addSourceDataFilenameParameter(
-				paramsWithJournal, data);
-		
-		BasicObjectClassDefinition paramsWithJournalAndFilenameAndScalingFactor =
-				ScalingFactorAttributeDefinition.mutateParameters(paramsWithJournalAndFilename);
-
-		return mutateSubtitleParameter(paramsWithJournalAndFilenameAndScalingFactor, data);
+		return newOCD;
 	}
 
 	/**
-	 * Add the possible columns that contain the Journal Title to a drop down in
-	 * the order of their likelihood of being the correct column.
+	 * Add the possible columns that contain the Journal Title to a drop down in the order of their
+	 * likelihood of being the correct column.
 	 */
-	private static ObjectClassDefinition addJournalColumnDropdownParameter(
+	private static ObjectClassDefinition setJournalColumnParameterOptions(
 			ObjectClassDefinition oldParameters, Table table) {
 		List<String> goodColumnNames = new ArrayList<String>();
 
 		boolean hasStringColumn = true;
 		try {
-			/*
-			 * Journal names or abbreviations
-			 */
+			/* Journal names or abbreviations */
 			goodColumnNames.addAll(Arrays.asList(TableUtilities
 					.getValidStringColumnNamesInTable(table)));
 		} catch (ColumnNotFoundException e) {
@@ -118,8 +110,7 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		if (hasStringColumn || !goodColumnNames.isEmpty()) {
 			// Note descending order (that is, the most journal-ish names
 			// first).
-			Collections.sort(goodColumnNames,
-					Collections.reverseOrder(new Journalishness()));
+			Collections.sort(goodColumnNames, Collections.reverseOrder(new Journalishness()));
 
 			DropdownMutator mutator = new DropdownMutator();
 			mutator.add(JOURNAL_COLUMN_ID, goodColumnNames);
@@ -129,31 +120,19 @@ public class JournalsMapAlgorithmFactory implements AlgorithmFactory,
 		String message = "Table contains no string or integer columns, "
 				+ "so there is no candidate for a column containing journal identifiers.";
 		throw new AlgorithmCreationFailedException(message);
-
 	}
 
 	/**
 	 * Guess the filename for the data and add it as a suggested name.
 	 */
-	private static ObjectClassDefinition addSourceDataFilenameParameter(
-			ObjectClassDefinition newParameters, Data[] data) {
-		String guessedSourceDataFilename = AlgorithmUtilities.guessSourceDataFilename(data[0]);
-
-		return MutateParameterUtilities.mutateDefaultValue(newParameters,
-				SUBTITLE_ID, guessedSourceDataFilename);
-	}
-	
-	/**
-	 * Generate a default subtitle.
-	 */
-	private static ObjectClassDefinition mutateSubtitleParameter(
+	private static ObjectClassDefinition setDefaultValueForSubtitleParameter(
 			ObjectClassDefinition newParameters, Data[] data) {
 		// Generate default subtitle from the dataset label
-		String defaultSubtitle = DEFAULT_SUBTITLE_PREFIX 
+		String defaultSubtitle = DEFAULT_SUBTITLE_PREFIX
 				+ data[0].getMetadata().get(DataProperty.LABEL);
-		
-		return MutateParameterUtilities
-				.mutateDefaultValue(newParameters, SUBTITLE_ID,defaultSubtitle);
+
+		return MutateParameterUtilities.mutateDefaultValue(newParameters, SUBTITLE_ID,
+				defaultSubtitle);
 	}
 
 	/**

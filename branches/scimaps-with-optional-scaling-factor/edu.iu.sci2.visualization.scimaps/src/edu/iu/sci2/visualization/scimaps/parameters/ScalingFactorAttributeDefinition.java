@@ -2,6 +2,7 @@ package edu.iu.sci2.visualization.scimaps.parameters;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.Locale;
 
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
@@ -10,64 +11,63 @@ import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 
-import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithmFactory;
-
+/**
+ * An attribute definition with additional validation for its value as either the special String
+ * {@value #AUTO_TOKEN} or a String representing a valid float, as judged by the NumberFormat for
+ * the default locale and limited to {@link #VALID_RANGE}.
+ */
 public final class ScalingFactorAttributeDefinition extends BasicAttributeDefinition {
 	public static final String AUTO_TOKEN = "auto";
 	public static final Range<Float> VALID_RANGE = Ranges.greaterThan(0.0f);
 	
-	public ScalingFactorAttributeDefinition(String id, String name, String description,
-			String defaultValue) {
-		/* Nominally STRING so that AUTO_TOKEN is an acceptable value, but really FLOAT. */
-		super(id, name, description, AttributeDefinition.STRING, defaultValue);
+	ScalingFactorAttributeDefinition(String id, String name, String description) {
+		/* Nominally STRING so that AUTO_TOKEN is an acceptable value, but every other value will
+		 * need to pass validation as an interpretable float. */
+		super(id, name, description, AttributeDefinition.STRING, AUTO_TOKEN);
 	}
 
 	@Override
 	public String validate(String value) {
+		assert (value != null);
+		
 		// Fail if parent not satisfied
 		String parentValidation = super.validate(value);
 		if (ValidationResult.isFailure(parentValidation)) {
 			return parentValidation;
-		}
-		
-		assert (value != null) : "TODO Is this even possible?";
-		
-		// Succeed if value can be interpreted as a request for automatic scaling
-		if (isRequestForAuto(value)) {
-			return ValidationResult.SUCCESS.token();
-		}			
+		}		
 		
 		try {
-			interpretAsExplicitScalingFactor(value);
+			interpret(value);
 			
 			return ValidationResult.SUCCESS.token();
 		} catch (ScalingFactorInterpretationException e) {
-			return e.getMessage(); // A string explaining the problem signals validation failure
+			return e.getMessage();
 		}
 	}
 	
-	public static BasicObjectClassDefinition mutateParameters(ObjectClassDefinition oldOCD) {
+	/**
+	 * Produces a copy of {@code oldOCD} where any existing attribute definition with ID
+	 * {@code targetID} is replaced with an instance of ScalingFactorAttributeDefinition.
+	 */
+	public static BasicObjectClassDefinition mutateParameters(ObjectClassDefinition oldOCD,
+			String targetID) {
 		BasicObjectClassDefinition newOCD = MutateParameterUtilities.createNewParameters(oldOCD);
 		
+		/* XXX The original scaling factor attribute definition must be
+		 * ObjectClassDefinition.REQUIRED. */
 		for (AttributeDefinition oldAD : oldOCD.getAttributeDefinitions(
-				ObjectClassDefinition.ALL)) {
+				ObjectClassDefinition.REQUIRED)) {
 			String id = oldAD.getID();
 	
-			if (JournalsMapAlgorithmFactory.SCALING_FACTOR_ID.equals(id)) {
-				AttributeDefinition newAD = new ScalingFactorAttributeDefinition(id,
-						oldAD.getName(), oldAD.getDescription(),
-						AUTO_TOKEN);
-	
-				newOCD.addAttributeDefinition(
-					ObjectClassDefinition.REQUIRED, newAD);
+			if (targetID.equals(id)) {
+				newOCD.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new ScalingFactorAttributeDefinition(
+								oldAD.getID(), oldAD.getName(), oldAD.getDescription()));
 			} else {
-				// TODO Not good that this makes everything else ObjectClassDefinition.REQUIRED..
-				newOCD.addAttributeDefinition(
-						ObjectClassDefinition.REQUIRED, oldAD);
+				newOCD.addAttributeDefinition(ObjectClassDefinition.REQUIRED, oldAD);
 			}
 		}
 		
@@ -75,21 +75,20 @@ public final class ScalingFactorAttributeDefinition extends BasicAttributeDefini
 	}
 
 	/**
-	 * TODO javadoc
-	 * 
 	 * @param s
-	 * @return
+	 *            Text indicating a scaling strategy (e.g. {@value #AUTO_TOKEN} or "1.5")
 	 * @throws ScalingFactorInterpretationException
+	 *             if the value cannot be interpreted as any of the recognized strategies
 	 */
-	public static Optional<Float> asOptional(String s) throws ScalingFactorInterpretationException {
-		if (isRequestForAuto(s)) {
-			return Optional.absent();
+	public static ScalingStrategy interpret(String s) throws ScalingFactorInterpretationException {
+		if (isRequestForAutomaticScaling(s)) {
+			return ScalingStrategies.automatic();
 		} else {
-			return Optional.of(interpretAsExplicitScalingFactor(s));
+			return ScalingStrategies.explicit(interpretAsExplicitScalingFactor(s));
 		}
 	}
 	
-	private static boolean isRequestForAuto(String s) {
+	private static boolean isRequestForAutomaticScaling(String s) {
 		return ScalingFactorAttributeDefinition.AUTO_TOKEN.equals(s.trim());
 	}
 	
@@ -98,8 +97,20 @@ public final class ScalingFactorAttributeDefinition extends BasicAttributeDefini
 		final Locale locale = Locale.getDefault();
 		
 		try {
-			float asFloat = NumberFormat.getInstance(locale).parse(s).floatValue();
+			// Try a strict parse
+			NumberFormat numberFormat = NumberFormat.getInstance(locale);
+			ParsePosition position = new ParsePosition(0);
+			Number number = numberFormat.parse(s, position);
+			if (position.getIndex() != s.length()) {
+				throw new ParseException("Failed to parse entire string: " + s,	position.getIndex());
+			}
+			if (number == null) {
+				throw new ScalingFactorInterpretationException("No number found.");
+			}
 			
+			float asFloat = number.floatValue();
+			
+			// Check range
 			if (ScalingFactorAttributeDefinition.VALID_RANGE.contains(asFloat)) {
 				return asFloat;
 			} else {
@@ -117,6 +128,9 @@ public final class ScalingFactorAttributeDefinition extends BasicAttributeDefini
 		}
 	}
 	
+	/**
+	 * An exception signaling failure in the interpretation of a String as a valid scaling factor.
+	 */
 	public static class ScalingFactorInterpretationException extends Exception {
 		private static final long serialVersionUID = 6935912990246353042L;
 

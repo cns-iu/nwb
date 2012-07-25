@@ -17,11 +17,9 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-
-import com.google.common.base.Optional;
-
 import edu.iu.sci2.visualization.scimaps.journals.JournalsMapAlgorithmFactory;
 import edu.iu.sci2.visualization.scimaps.parameters.ScalingFactorAttributeDefinition;
+import edu.iu.sci2.visualization.scimaps.parameters.ScalingStrategy;
 import edu.iu.sci2.visualization.scimaps.rendering.Layout;
 
 public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
@@ -51,8 +49,8 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 		
 		boolean showWindow = (Boolean) parameters.get(SHOW_WINDOW_ID);
 		
-		Optional<Float> scalingFactor = JournalsMapAlgorithmFactory
-				.interpretScalingFactorOrFail(scalingFactorString);
+		ScalingStrategy scalingFactor = JournalsMapAlgorithmFactory
+				.tryInterpretingAsScalingStrategy(scalingFactorString);
 		
 		return new FieldsMapAlgorithm(data, logger, nodeIDColumnName, nodeLabelColumnName,
 				nodeValueColumnName, dataDisplayName, scalingFactor, layout, showWindow);
@@ -92,7 +90,7 @@ public class FieldsMapAlgorithmFactory implements AlgorithmFactory, ParameterMut
 					columnNamesWithNone,
 					columnNamesWithNone);
 		
-		newParameters = ScalingFactorAttributeDefinition.mutateParameters(newParameters);
+		newParameters = ScalingFactorAttributeDefinition.mutateParameters(newParameters, JournalsMapAlgorithmFactory.SCALING_FACTOR_ID);
 				
 		return mutateSubtitleParameter(newParameters, data);
 	}
