@@ -13,7 +13,8 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.ProgressMonitorUtilities;
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utilities.osgi.logging.LogMessageHandler;
+import org.cishell.utilities.logging.LogMessageHandler;
+import org.cishell.utilities.logging.MessageType;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -40,12 +41,12 @@ import edu.iu.sci2.utilities.nsf.NsfDatabaseFieldNames;
 public class NSFTableModelParser {
 
 	private LogMessageHandler logMessageHandler;
-	private LogMessageHandler.MessageTypeDescriptor invalidAwardAmountType;
+	private MessageType invalidAwardAmountType;
 	public static final String ROW_WITH_INVALID_AWARDED_AMOUNT =
 		"row(s) with an invalid awarded amount to date";
 	public static final int ROW_WITH_INVALID_AWARDED_AMOUNT_COUNT = 5;
 	
-	private LogMessageHandler.MessageTypeDescriptor invalidAwardDateType;
+	private MessageType invalidAwardDateType;
 	public static final String ROW_WITH_INVALID_AWARD_DATE =
 		"row(s) with an invalid award date";
 	public static final int ROW_WITH_INVALID_AWARD_DATE_COUNT = 5;
@@ -158,7 +159,7 @@ public class NSFTableModelParser {
 		this.logMessageHandler = new LogMessageHandler(logger);
 		this.invalidAwardAmountType = logMessageHandler.addMessageType(
 				ROW_WITH_INVALID_AWARDED_AMOUNT,
-				ROW_WITH_INVALID_AWARDED_AMOUNT_COUNT);
+				ROW_WITH_INVALID_AWARDED_AMOUNT_COUNT, LogService.LOG_WARNING);
 		
 		/*
 		 * Since we are going to parse data from one file only, we only need to create 
@@ -309,7 +310,7 @@ public class NSFTableModelParser {
 		/*
 		 * Print all the parse errors.
 		 * */	
-		this.logMessageHandler.printOverloadedMessageTypes(
+		this.logMessageHandler.printOverLimitMessageTypes(
 				LogService.LOG_WARNING);
 
 		/*
@@ -670,7 +671,6 @@ public class NSFTableModelParser {
 				 					+ "\" for Award number \"" + awardNumber + "\"";
 			this.logMessageHandler.handleMessage(
 					this.invalidAwardAmountType,
-					LogService.LOG_WARNING,
 					logMessage);
 		}
 
@@ -764,7 +764,6 @@ public class NSFTableModelParser {
 							   	+ "\" for Award number \"" + awardNumber + "\"";
 			
 			this.logMessageHandler.handleMessage(this.invalidAwardDateType,
-											  LogService.LOG_WARNING,
 											  logMessage);
 			return null;
 		}
