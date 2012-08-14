@@ -57,7 +57,6 @@
 		<module>edu.iu.sci2.utilities.nsf</module>
 		<module>edu.iu.sci2.visualization.bipartitenet</module>
 		<module>edu.iu.sci2.visualization.geomaps</module>
-		<module>edu.iu.sci2.visualization.horizontalbargraph</module>
 		<module>edu.iu.sci2.visualization.imageviewer</module>
 		<module>edu.iu.sci2.visualization.scimaps</module>
 		<module>edu.iu.sci2.visualization.scimap.references</module>
