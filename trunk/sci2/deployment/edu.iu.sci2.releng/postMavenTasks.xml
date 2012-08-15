@@ -7,7 +7,7 @@
 
 	<!-- To override any of these properties, run ant [...] -Dproperty.name=value -->
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
-	<property name="p2.dest" relative="false">${deploy.dir}/p2/</property>
+	<property name="p2.dest" relative="false">/projects/nwb/www/htdocs/${product.name}/p2/</property>
 	<property name="p2.src">${basedir}/target/repository</property>
 
 	<property name="product.version">1.0.0</property>
