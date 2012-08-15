@@ -7,6 +7,9 @@
 
 	<!-- To override any of these properties, run ant [...] -Dproperty.name=value -->
 	<property name="deploy.dir" relative="false">/projects/nwb/www/htdocs/nightly/${product.name}</property>
+	<property name="p2.dest" relative="false">${deploy.dir}/p2/</property>
+	<property name="p2.src">${basedir}/target/repository</property>
+
 	<property name="product.version">1.0.0</property>
 	<!-- Nightly builds: product.build.type=NGT -->
 	<property name="product.build.type">custom</property>
@@ -133,5 +136,28 @@
 		</tar>
 
 		<delete dir="${temp.dir}" />
+	</target>
+	
+	<!-- This will deploy the p2 repositories -->
+	<target name="deploy-p2">
+		<!-- for <if> statements -->
+		<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+		<!-- Deploy the nightly p2 -->
+		<property name="nightly.p2.dest">${p2.dest}nightly-repo/</property>
+		<echo message="Making nightly p2 by copying from ${p2.src} to ${nightly.p2.dest}..."/>
+		<!-- delete the dest dir if it exists -->
+		<if>
+			<available file="${nightly.p2.dest}" type="dir" />
+			<then>
+				<echo message="Deleting previous nightly p2 folder" />
+				<delete dir="${nightly.p2.dest}"/>
+			</then>
+		</if>
+
+		<!-- copy the contents over -->
+		<copy todir="${nightly.p2.dest}">
+			<fileset dir="${p2.src}"/>
+		</copy>
+		<echo message="Finished copying the nightly p2."/>
 	</target>
 </project>
