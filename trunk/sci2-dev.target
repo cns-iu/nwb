@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="Sci2 Development Target Platform" sequenceNumber="18">
+<locations>
+<location path="${eclipse_home}" type="Profile"/>
+<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.cishell.reference.gui.brand.feature.feature.group" version="1.0.0"/>
+<unit id="org.cishell.environment.equinox.feature.feature.group" version="1.0.0"/>
+<unit id="org.cishell.feature.feature.group" version="1.0.0"/>
+<unit id="org.cishell.reference.libs.feature.feature.group" version="1.0.0"/>
+<unit id="org.cishell.reference.feature.feature.group" version="1.0.0"/>
+<unit id="org.cishell.reference.database.feature.feature.group" version="1.0.0"/>
+<unit id="org.cishell.reference.gui.feature.feature.group" version="1.0.0"/>
+<unit id="cishell" version="2.0.0"/>
+<repository location="http://cishell.org/p2/nightly-repo/"/>
+</location>
+<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="edu.iu.sci2.javaalgorithms.feature.feature.group" version="1.0.0"/>
+<unit id="edu.iu.sci2.gui.brand.feature.feature.group" version="1.0.0"/>
+<unit id="edu.iu.sci2.converter.feature.feature.group" version="1.0.0"/>
+<unit id="sci2" version="1.0.0"/>
+<repository location="http://nwb.cns.iu.edu/sci2/p2/nightly-repo/"/>
+</location>
+</locations>
+<environment>
+<os>win32</os>
+<ws>win32</ws>
+<arch>x86_64</arch>
+<nl>en_US</nl>
+</environment>
+<launcherArgs>
+<vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx384m -Duser.name=David M. Coe - david.coe+CNS@gmail.com</vmArgs>
+</launcherArgs>
+</target>
