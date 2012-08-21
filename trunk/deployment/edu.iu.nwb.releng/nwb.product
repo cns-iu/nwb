@@ -9,7 +9,9 @@
          %blurb
       </text>
    </aboutInfo>
-
+   <!-- This doesn't work under Tycho!  You'll have to examine sci2.product
+   		and look at sci2 deployment releng's postMavenTasks.xml, for adding
+   		custom ini file settings.  Search for "reconcile".  :-(  -Thomas -->
    <configIni use="custom" path="/edu.iu.nwb.gui.brand/extra-files/configuration/config.ini"/>
 
    <launcherArgs>
@@ -43,13 +45,14 @@
    </plugins>
 
    <features>
-      <feature id="org.cishell.environment.equinox.feature" version="0.0.0"/>
+      <feature id="org.cishell.environment.equinox.feature"/>
       <feature id="org.cishell.feature" version="0.3.0"/>
       <feature id="org.cishell.reference.feature" version="0.4.0"/>
       <feature id="org.cishell.reference.gui.feature" version="0.4.0"/>
       <feature id="edu.iu.nwb.gui.brand.feature" version="0.6.0"/>
       <feature id="edu.iu.nwb.javaalgorithm.feature" version="0.7.0"/>
       <feature id="edu.iu.nwb.converter.feature" version="0.8.0"/>
+      <feature id="edu.iu.nwb.library.feature" version="1.0.0"/>
    </features>
 
 </product>

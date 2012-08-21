@@ -580,12 +580,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="pdfbox_fontbox"
-         download-size="0"
-         install-size="0"
-         version="1.0.0"/>
-
-   <plugin
          id="edu.iu.sci2.filtering.topn"
          download-size="0"
          install-size="0"
@@ -639,12 +633,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="geolibs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="edu.iu.nwb.analysis.pagerank.weighted"
@@ -763,12 +751,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.lang"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="edu.iu.sci2.model"

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.iu.sci2.library.feature"
+      label="Sci2 Library Feature"
+      version="1.0.0"
+      provider-name="Sci2 Team">
+
+   <description>
+      Library wrapped algorithms that have been integrated in the Sci2 tool.
+   </description>
+
+   <copyright>
+      Copyright 2006 Indiana University
+   </copyright>
+
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
+      Sci2 Tool
+Copyright 2006 Indiana University
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at:
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, 
+software distributed under the License is distributed on an 
+&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
+KIND, either express or implied. See the License for the specific
+language governing permissions and limitations under the License.
+Project Contacts:
+Weixia Huang (huangb@indiana.edu)
+Bruce Herr (bh2@bh2.net)
+Dr. Katy Borner (katy@indiana.edu)
+   </license>
+
+   <plugin
+         id="javaGeom"
+         download-size="0"
+         install-size="0"
+         version="0.10.0"
+         unpack="false"/>
+
+   <plugin
+         id="antlr_stringtemplate"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="freehep_psviewer"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="geolibs"
+         download-size="0"
+         install-size="0"
+         version="2.7.4"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.lang"
+         download-size="0"
+         install-size="0"
+         version="2.5.0"
+         unpack="false"/>
+
+   <plugin
+         id="pdfbox_fontbox"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         unpack="false"/>
+
+</feature>

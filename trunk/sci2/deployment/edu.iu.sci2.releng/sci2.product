@@ -57,6 +57,8 @@
       <feature id="edu.iu.sci2.gui.brand.feature"/>
       <feature id="edu.iu.sci2.javaalgorithms.feature" version="1.0.0"/>
       <feature id="edu.iu.sci2.converter.feature" version="1.0.0"/>
+      <feature id="edu.iu.sci2.library.feature" version="1.0.0"/>
+      <feature id="edu.iu.nwb.library.feature" version="1.0.0"/>
    </features>
 
    <configurations>

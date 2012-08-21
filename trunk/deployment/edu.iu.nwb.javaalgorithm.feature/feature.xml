@@ -558,12 +558,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="antlr_stringtemplate"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="edu.iu.nwb.preprocessing.removegraphattributes"
          download-size="0"
          install-size="0"
