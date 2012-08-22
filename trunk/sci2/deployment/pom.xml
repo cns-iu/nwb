@@ -16,7 +16,8 @@
     <module>edu.iu.sci2.future.feature</module>
     <module>edu.iu.sci2.future.p2</module>
     <module>edu.iu.sci2.library.feature</module>
-    
+    <module>edu.iu.sci2.p2</module>
+    <module>edu.iu.sci2.source.feature</module>
   </modules>
   <parent>
   	<groupId>edu.iu.sci2</groupId>

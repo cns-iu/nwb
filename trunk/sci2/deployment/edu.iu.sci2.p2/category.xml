@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.cishell.source.feature_1.0.0.jar" id="org.cishell.source.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/org.cishell.feature_1.0.0.jar" id="org.cishell.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/org.cishell.reference.feature_1.0.0.jar" id="org.cishell.reference.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/org.cishell.reference.gui.brand.feature_1.0.0.jar" id="org.cishell.reference.gui.brand.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/org.cishell.reference.gui.feature_1.0.0.jar" id="org.cishell.reference.gui.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/org.cishell.reference.libs.feature_1.0.0.jar" id="org.cishell.reference.libs.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/org.cishell.reference.database.feature_1.0.0.jar" id="org.cishell.reference.database.feature" version="1.0.0">
+      <category name="CIShell Development"/>
+   </feature>
+   <feature url="features/edu.iu.sci2.converter.feature_1.0.0.jar" id="edu.iu.sci2.converter.feature" version="1.0.0">
+      <category name="Sci2 Development"/>
+   </feature>
+   <feature url="features/edu.iu.sci2.gui.brand.feature_1.0.0.jar" id="edu.iu.sci2.gui.brand.feature" version="1.0.0">
+      <category name="Sci2 Development"/>
+   </feature>
+   <feature url="features/edu.iu.sci2.javaalgorithms.feature_1.0.0.jar" id="edu.iu.sci2.javaalgorithms.feature" version="1.0.0">
+      <category name="Sci2 Development"/>
+   </feature>
+   <feature url="features/edu.iu.sci2.library.feature_1.0.0.jar" id="edu.iu.sci2.library.feature" version="1.0.0">
+      <category name="Sci2 Development"/>
+   </feature>
+   <feature url="features/edu.iu.sci2.source.feature_1.0.0.jar" id="edu.iu.sci2.source.feature" version="1.0.0">
+      <category name="Sci2 Development"/>
+   </feature>
+   <feature url="features/edu.iu.nwb.library.feature_1.0.0.jar" id="edu.iu.nwb.library.feature" version="1.0.0">
+      <category name="Sci2 Development"/>
+   </feature>
+   <category-def name="CIShell Development" label="CIShell Development"/>
+   <category-def name="Sci2 Development" label="Sci2 Development"/>
+</site>
