@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Twitter Reader" id="edu.iu.sci2.reader.twitter.TwitterReader.OCD"
+		 description="This algorithm will read the tweets from Twitter for the given tag and user IDs. The output result is in table format. ">
+		<AD name="Twitter User ID" id="uid" type="String" description="Please provide the column that contains the Twitter user IDs" default=""/>
+		<AD name="Tag" id="tag" type="String" description="Leave it empty if you want to download all tweets. Else, provide the tag to be searched." default=""/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.reader.twitter.TwitterReader">
+		<Object ocdref="edu.iu.sci2.reader.twitter.TwitterReader.OCD" />
+	</Designate>
+</metatype:MetaData>
