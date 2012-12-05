@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Flickr Reader" id="edu.iu.sci2.reader.flickr.FlickrReader.OCD"
+		 description="This algorithm retireve the Flickr's image URLs for the given Flickr User IDs ">
+		<AD name="Flickr API key" id="apikey" type="String" description="Please provide your Flickr API key" default="4f6ed3c0e47e7c633016933f0b0eb884"/>
+		<AD name="Flickr User ID" id="uid" type="String" description="Please provide the column that contains the Flickr user IDs" default=""/>
+		<AD name="Tag" id="tag" type="String" description="Leave it empty if you want to download all images. Else, provide the tag to be searched." default=""/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.reader.flickr.FlickrReader">
+		<Object ocdref="edu.iu.sci2.reader.flickr.FlickrReader.OCD" />
+	</Designate>
+</metatype:MetaData>
