@@ -2,8 +2,11 @@ package edu.iu.sci2.reader.flickr;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -16,6 +19,8 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 
 public class FlickrReader implements Algorithm {
+	public static final String userColumnTitle = "Flickr UserID";
+	public static final String imageUrlColumnTitle = "Image URL";
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
@@ -34,17 +39,25 @@ public class FlickrReader implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	List<String> userIDs = extractUserIDsFromTable();
-    	
-    	
     	FlickrImageGainer imageGainer = new FlickrImageGainer(apiKey);
-    	List<String> urls;
+    	Map<String, List<String>> uidToUrlsMap = new HashMap<String, List<String>>();
+    	
 		try {
-			urls = imageGainer.getImageURL(tag, userIDs);
+			for (String uID : userIDs) {
+				 this.logger.log(LogService.LOG_INFO, 
+			        		String.format("Downloading image URLs for user %s.", uID));
+				 
+				List<String> urlList = imageGainer.getImageURLs(tag, uID);
+
+				if (!urlList.isEmpty()) {
+					uidToUrlsMap.put(uID, urlList);
+				}
+			}
 		} catch (FlickrRuntimeException e) {
 			throw new AlgorithmExecutionException(
 					"Flickr service or network is unavailable. Try again later", e);
 		}
-    	Table resultTable = covertResultIntoTable(urls);
+    	Table resultTable = covertResultIntoTable(uidToUrlsMap);
 	    
         return generateOutputData(resultTable);
     }
@@ -64,15 +77,23 @@ public class FlickrReader implements Algorithm {
         return userIDs;
     }
     
-    private Table covertResultIntoTable(List<String> imageUrls) {
+    private Table covertResultIntoTable(Map<String, List<String>> uidToUrlsMap) {
+    	Integer count = 0;
     	Table table = new Table();
-        table.addColumn("image URL", String.class);
-        for (String url : imageUrls) {
-        	int rowNumber = table.addRow();
-            table.set(rowNumber, "image URL", url);
+    	table.addColumn(userColumnTitle, String.class);
+        table.addColumn(imageUrlColumnTitle, String.class);
+        for (Entry<String, List<String>> entry : uidToUrlsMap.entrySet()) {
+        	String uid = entry.getKey();
+        	List<String> urls = entry.getValue();
+        	count += urls.size();
+        	for (String url : urls) {
+	        	int rowNumber = table.addRow();
+	        	table.set(rowNumber, userColumnTitle, uid);
+	            table.set(rowNumber, imageUrlColumnTitle, url);
+        	}
  	    }
         this.logger.log(LogService.LOG_INFO, 
-        		String.format("There are %d image URLs downloaded.", imageUrls.size()));
+        		String.format("There are %d image URLs downloaded.", count));
         
         return table;
     }

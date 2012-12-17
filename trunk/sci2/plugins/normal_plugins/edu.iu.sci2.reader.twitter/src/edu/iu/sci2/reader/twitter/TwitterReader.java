@@ -23,6 +23,8 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
 public class TwitterReader implements Algorithm {
+	public static final String userColumnTitle = "Twitter User Name";
+	public static final String msgColumnTitle = "Tweet";
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
@@ -66,7 +68,7 @@ public class TwitterReader implements Algorithm {
     }
     
     private Table searchTwit(List<String> userIDs) throws TwitterException {
-		//String uIDs = "katycns,xliu12,scott_bot";   //,20456447@N03
+		//String uIDs = "katycns,xliu12,scott_bot";  
 		//i.e. "(from:\"katycns\" OR from:\"xliu12\" OR from:\"scott_bot\") #ivmooc"
 
 		String QueryString = "(";
@@ -86,12 +88,12 @@ public class TwitterReader implements Algorithm {
     
     private Table covertResultIntoTable(List<Tweet> tweets) {
     	Table table = new Table();
-        table.addColumn("useID", String.class);
-        table.addColumn("tweet", String.class);
+        table.addColumn(userColumnTitle, String.class);
+        table.addColumn(msgColumnTitle, String.class);
         for (Tweet tweet : tweets) {
         	int rowNumber = table.addRow();
-            table.set(rowNumber, "useID", tweet.getFromUser());
-            table.set(rowNumber, "tweet", tweet.getText());
+            table.set(rowNumber, userColumnTitle, tweet.getFromUser());
+            table.set(rowNumber, msgColumnTitle, tweet.getText());
  	    }
         this.logger.log(LogService.LOG_INFO, 
         		String.format("There are %d tweets downloaded.", tweets.size()));
