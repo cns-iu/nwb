@@ -1,9 +1,12 @@
 package edu.iu.sci2.reader.twitter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Dictionary;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -23,8 +26,11 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
 public class TwitterReader implements Algorithm {
-	public static final String userColumnTitle = "Twitter User Name";
-	public static final String msgColumnTitle = "Tweet";
+	private static final String REACH_LIMIT_ERROR = "403";
+	public static final String USER_COLUMN_TITLE = "Twitter User";
+	public static final String USER_NAME_COLUMN_TITLE = "Twitter User Name";
+	public static final String CREATED_AT_COLUMN_TITLE = "Created At";
+	public static final String MSG_COLUMN_TITLE = "Tweet";
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
@@ -40,7 +46,7 @@ public class TwitterReader implements Algorithm {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	List<String> userIDs = extractUserIDsFromTable();
+    	Set<String> userIDs = extractUniqueUserIDsFromTable();
     	Table resultTable;
 		try {
 			resultTable = searchTwit(userIDs);
@@ -52,48 +58,81 @@ public class TwitterReader implements Algorithm {
         return generateOutputData(resultTable);
     }
     
-    private List<String> extractUserIDsFromTable() {
-    	List<String> userIDs = new ArrayList<String>();
+    private Set<String> extractUniqueUserIDsFromTable() {
+    	Set<String> userIDs = new HashSet<String>();
     	Table inputTable = (Table) data[0].getData();
         int userIDColumnIndex = inputTable.getColumnNumber(userIDColumn);
          
         Iterator<?> rowsIterator = inputTable.iterator();
         while (rowsIterator.hasNext()) {
             int currentRowNumber = Integer.parseInt(rowsIterator.next().toString());
-            String userID = inputTable.get(currentRowNumber, userIDColumnIndex).toString();
-            userIDs.add(userID);
+            Object userIDObject = inputTable.get(currentRowNumber, userIDColumnIndex);
+            // Only accept String object
+            if (userIDObject instanceof String) {
+	            String userID = userIDObject.toString().trim();
+	            /* UserID should not null or empty */
+	            if (userID != null && !userID.isEmpty()) {
+	            	userIDs.add(userID);
+	            }
+            }
         }
         
         return userIDs;
     }
     
-    private Table searchTwit(List<String> userIDs) throws TwitterException {
+    private Table searchTwit(Set<String> userIDs) throws TwitterException {
 		//String uIDs = "katycns,xliu12,scott_bot";  
 		//i.e. "(from:\"katycns\" OR from:\"xliu12\" OR from:\"scott_bot\") #ivmooc"
 
-		String QueryString = "(";
-		for (String uID: userIDs) {
-			QueryString = QueryString + "from:\"" + uID + "\" OR ";
+		String queryString = "";
+		if (!userIDs.isEmpty()) {
+			queryString += "(";
+			for (String uID: userIDs) {
+				queryString += "from:\"" + uID + "\" OR ";
+			}
+			
+			queryString = queryString.substring(0, queryString.length() - 4) + ") ";
 		}
 		
-		QueryString = QueryString.substring(0, QueryString.length() - 4) + ") #" + tag;
-		System.out.println(QueryString);
-		
-	    Twitter twitter = new TwitterFactory().getInstance();
-	    Query query = new Query(QueryString);
-	    QueryResult result = twitter.search(query);
+		queryString += "#" + tag;
 	    
-	    return covertResultIntoTable(result.getTweets());
+	    return covertResultIntoTable(downloadAllTweets(queryString));
+    }
+    
+    private List<Tweet> downloadAllTweets(String querystring) throws TwitterException {
+    	List <Tweet> resultList = new ArrayList<Tweet>();
+		Twitter twitter = new TwitterFactory().getInstance();
+	    int k = 0;
+	    boolean changed = true;
+	    try {
+			while (changed) {
+			    Query query = new Query(querystring); 
+			    query.setRpp(100);
+			    query.setPage(++k); // next page
+			    QueryResult result = twitter.search(query);
+			    changed = resultList.addAll(result.getTweets());
+			}
+		} catch (Exception e) {
+			/* If it terminate with none Tweeter limit issue. We might need to handle other issue in future. */
+			if (!e.getMessage().startsWith(REACH_LIMIT_ERROR)) {
+				throw new TwitterException(e);
+			}
+		}
+	    return resultList;
     }
     
     private Table covertResultIntoTable(List<Tweet> tweets) {
     	Table table = new Table();
-        table.addColumn(userColumnTitle, String.class);
-        table.addColumn(msgColumnTitle, String.class);
+        table.addColumn(USER_COLUMN_TITLE, String.class);
+        table.addColumn(USER_NAME_COLUMN_TITLE, String.class);
+        table.addColumn(CREATED_AT_COLUMN_TITLE, String.class);
+        table.addColumn(MSG_COLUMN_TITLE, String.class);
         for (Tweet tweet : tweets) {
         	int rowNumber = table.addRow();
-            table.set(rowNumber, userColumnTitle, tweet.getFromUser());
-            table.set(rowNumber, msgColumnTitle, tweet.getText());
+            table.set(rowNumber, USER_COLUMN_TITLE, tweet.getFromUser());
+            table.set(rowNumber, USER_NAME_COLUMN_TITLE, tweet.getFromUserName());
+            table.set(rowNumber, CREATED_AT_COLUMN_TITLE, tweet.getCreatedAt().toString());
+            table.set(rowNumber, MSG_COLUMN_TITLE, tweet.getText());
  	    }
         this.logger.log(LogService.LOG_INFO, 
         		String.format("There are %d tweets downloaded.", tweets.size()));
