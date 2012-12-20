@@ -81,8 +81,6 @@ public class TwitterReader implements Algorithm {
     }
     
     private Table searchTwit(Set<String> userIDs) throws TwitterException {
-		//String uIDs = "katycns,xliu12,scott_bot";  
-		//i.e. "(from:\"katycns\" OR from:\"xliu12\" OR from:\"scott_bot\") #ivmooc"
 
 		String queryString = "";
 		if (!userIDs.isEmpty()) {
@@ -125,13 +123,13 @@ public class TwitterReader implements Algorithm {
     	Table table = new Table();
         table.addColumn(USER_COLUMN_TITLE, String.class);
         table.addColumn(USER_NAME_COLUMN_TITLE, String.class);
-        table.addColumn(CREATED_AT_COLUMN_TITLE, String.class);
+        table.addColumn(CREATED_AT_COLUMN_TITLE, Date.class);
         table.addColumn(MSG_COLUMN_TITLE, String.class);
         for (Tweet tweet : tweets) {
         	int rowNumber = table.addRow();
             table.set(rowNumber, USER_COLUMN_TITLE, tweet.getFromUser());
             table.set(rowNumber, USER_NAME_COLUMN_TITLE, tweet.getFromUserName());
-            table.set(rowNumber, CREATED_AT_COLUMN_TITLE, tweet.getCreatedAt().toString());
+            table.set(rowNumber, CREATED_AT_COLUMN_TITLE, tweet.getCreatedAt());
             table.set(rowNumber, MSG_COLUMN_TITLE, tweet.getText());
  	    }
         this.logger.log(LogService.LOG_INFO, 
