@@ -145,7 +145,7 @@ public class TwitterReader implements Algorithm {
          */
         Data output = new BasicData(table, Table.class.getName());
         Dictionary<String, Object> metadata = output.getMetadata();
-        metadata.put(DataProperty.LABEL, "TwitResult");
+        metadata.put(DataProperty.LABEL, "TwitterResult");
         metadata.put(DataProperty.PARENT, this.data[0]);
         metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
          
