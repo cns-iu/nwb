@@ -24,10 +24,10 @@ public class FlickrImageGainer {
 		this.apikey = apikey;
 	}
 
-	public Map<String, List<String>> getImageURLs(String tag, List<String> uIDs)
+	public Map<String, List<FlickrResult>> getImageResults(String tag, List<String> uIDs)
 			throws FlickrRuntimeException {
 		try {
-			return getImageURLs(tag,uIDs,"500");
+			return getImageResults(tag,uIDs,"500");
 		} catch (DocumentException e) {
 			throw new FlickrRuntimeException("Fail to parse document from Flickr.");
 		} catch (IOException e) {
@@ -35,25 +35,25 @@ public class FlickrImageGainer {
 		}
 	}
 
-	private Map<String, List<String>> getImageURLs(String tag, List<String> uIDs,
+	private Map<String, List<FlickrResult>> getImageResults(String tag, List<String> uIDs,
 			String pageContant) throws IOException, DocumentException {
 
-		Map<String, List<String>> uidToUrlsMap = new HashMap<String, List<String>>();
+		Map<String, List<FlickrResult>> uidToResultsMap = new HashMap<String, List<FlickrResult>>();
 		for (String uID : uIDs) {
-			List<String> urlList = getImageURLs(tag, uID, pageContant);
+			List<FlickrResult> resultList = getImageResults(tag, uID, pageContant);
 
-			if (!urlList.isEmpty()) {
-				uidToUrlsMap.put(uID, urlList);
+			if (!resultList.isEmpty()) {
+				uidToResultsMap.put(uID, resultList);
 			}
 		}
 		
-		return uidToUrlsMap;
+		return uidToResultsMap;
 	}
 	
-	public List<String> getImageURLs(String tag, String uIDs)
+	public List<FlickrResult> getImageResults(String tag, String uIDs)
 			throws FlickrRuntimeException {
 		try {
-			return getImageURLs(tag,uIDs,"500");
+			return getImageResults(tag,uIDs,"500");
 		} catch (DocumentException e) {
 			throw new FlickrRuntimeException("Fail to parse document from Flickr.");
 		} catch (IOException e) {
@@ -61,11 +61,11 @@ public class FlickrImageGainer {
 		}
 	}
 	
-	private List<String> getImageURLs(String tag, String uID,
+	private List<FlickrResult> getImageResults(String tag, String uID,
 			String pageContant) throws IOException, DocumentException {
 
 		String method = "flickr.photos.search";
-		List<String> urlList = new ArrayList<String>();
+		List<FlickrResult> resultList = new ArrayList<FlickrResult>();
 		
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("tags", tag);
@@ -84,7 +84,7 @@ public class FlickrImageGainer {
 			while (it.hasNext()) {
 				Element photo = it.next();
 				String photoId = photo.attribute("id").getValue();
-				urlList.add(getPhotoURL(photoId));
+				resultList.add(getPhotoResult(photoId));
 			}
 			Attribute pages = photos.attribute("pages");
 			int pagenume = Integer.parseInt(pages.getValue());
@@ -106,7 +106,7 @@ public class FlickrImageGainer {
 								Element photo = it.next();
 								String photoId = photo.attribute("id")
 										.getValue();
-								urlList.add(getPhotoURL(photoId));
+								resultList.add(getPhotoResult(photoId));
 							}
 						}
 					} catch (DocumentException e) {
@@ -125,31 +125,34 @@ public class FlickrImageGainer {
 			in = null;
 		}
 		
-		return urlList;
+		return resultList;
 	}
 
-	private String getPhotoURL(String photoId) throws IOException, DocumentException {
+	private FlickrResult getPhotoResult(String photoId) throws IOException, DocumentException {
 		String method = "flickr.photos.getInfo";
-		String url = "";
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("photo_id", photoId);
 		Flickr flickr = new Flickr(base, apikey, method, parameters);
-		
 		InputStream in = flickr.callMethod(POST);
 		Document document = new SAXReader().read(in);
 		Element rsp = document.getRootElement();
 		Attribute state = rsp.attribute("stat");
+		String title = "";
+		String username = "";
+		String url = "";
 		if (state.getValue().equals("ok")) {
-			Element photoUrl = rsp.element("photo").element("urls")
-					.element("url");
-			url = photoUrl.getText();
+			Element photoElement = rsp.element("photo");
+			//System.out.println(photoElement.asXML()); // print element as XML text. Good for development
+			title = photoElement.elementText("title");
+			username = photoElement.element("owner").attributeValue("username");
+			url = photoElement.element("urls").elementText("url");
 		}
 		
 		if (in != null) {
 			in.close();
 		}
-		return url;
-
+		
+		return new FlickrResult(username, title, url);
 	}
 
 }

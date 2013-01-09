@@ -19,8 +19,10 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 
 public class FlickrReader implements Algorithm {
-	public static final String userColumnTitle = "Flickr UserID";
-	public static final String imageUrlColumnTitle = "Image URL";
+	public static final String USER_COLUMN_TITLE = "Flickr UserID";
+	public static final String IMAGE_URL_COLUMN_TITLE = "Image URL";
+	public static final String USERNAME_COLUMN_TITLE = "User Name";
+	public static final String TITLE_COLUMN_TITLE = "Title";
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
@@ -36,28 +38,33 @@ public class FlickrReader implements Algorithm {
         this.apiKey = parameters.get("apikey").toString();
         this.tag = parameters.get("tag").toString();
     }
+    
+    public static void main(String[] args) {
+    	FlickrImageGainer imageGainer = new FlickrImageGainer("4f6ed3c0e47e7c633016933f0b0eb884");
+    	imageGainer.getImageResults("NBA", "81872511@N08");
+    }
 
     public Data[] execute() throws AlgorithmExecutionException {
     	List<String> userIDs = extractUserIDsFromTable();
     	FlickrImageGainer imageGainer = new FlickrImageGainer(apiKey);
-    	Map<String, List<String>> uidToUrlsMap = new HashMap<String, List<String>>();
+    	Map<String, List<FlickrResult>> uidToResultsMap = new HashMap<String, List<FlickrResult>>();
     	
 		try {
 			for (String uID : userIDs) {
 				 this.logger.log(LogService.LOG_INFO, 
 			        		String.format("Downloading image URLs for user %s.", uID));
 				 
-				List<String> urlList = imageGainer.getImageURLs(tag, uID);
+				List<FlickrResult> resultList = imageGainer.getImageResults(tag, uID);
 
-				if (!urlList.isEmpty()) {
-					uidToUrlsMap.put(uID, urlList);
+				if (!resultList.isEmpty()) {
+					uidToResultsMap.put(uID, resultList);
 				}
 			}
 		} catch (FlickrRuntimeException e) {
 			throw new AlgorithmExecutionException(
 					"Flickr service or network is unavailable. Try again later", e);
 		}
-    	Table resultTable = covertResultIntoTable(uidToUrlsMap);
+    	Table resultTable = covertResultIntoTable(uidToResultsMap);
 	    
         return generateOutputData(resultTable);
     }
@@ -77,19 +84,23 @@ public class FlickrReader implements Algorithm {
         return userIDs;
     }
     
-    private Table covertResultIntoTable(Map<String, List<String>> uidToUrlsMap) {
+    private Table covertResultIntoTable(Map<String, List<FlickrResult>> uidToResultsMap) {
     	Integer count = 0;
     	Table table = new Table();
-    	table.addColumn(userColumnTitle, String.class);
-        table.addColumn(imageUrlColumnTitle, String.class);
-        for (Entry<String, List<String>> entry : uidToUrlsMap.entrySet()) {
+    	table.addColumn(USER_COLUMN_TITLE, String.class);
+        table.addColumn(USERNAME_COLUMN_TITLE, String.class);
+        table.addColumn(TITLE_COLUMN_TITLE, String.class);
+        table.addColumn(IMAGE_URL_COLUMN_TITLE, String.class);
+        for (Entry<String, List<FlickrResult>> entry : uidToResultsMap.entrySet()) {
         	String uid = entry.getKey();
-        	List<String> urls = entry.getValue();
-        	count += urls.size();
-        	for (String url : urls) {
+        	List<FlickrResult> results = entry.getValue();
+        	count += results.size();
+        	for (FlickrResult ret : results) {
 	        	int rowNumber = table.addRow();
-	        	table.set(rowNumber, userColumnTitle, uid);
-	            table.set(rowNumber, imageUrlColumnTitle, url);
+	        	table.set(rowNumber, USER_COLUMN_TITLE, uid);
+	        	table.set(rowNumber, USERNAME_COLUMN_TITLE, ret.getUsername());
+	        	table.set(rowNumber, TITLE_COLUMN_TITLE, ret.getTitle());
+	            table.set(rowNumber, IMAGE_URL_COLUMN_TITLE, ret.getUrl());
         	}
  	    }
         this.logger.log(LogService.LOG_INFO, 
