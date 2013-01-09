@@ -139,12 +139,14 @@ public class FlickrImageGainer {
 		Attribute state = rsp.attribute("stat");
 		String title = "";
 		String username = "";
+		String date = "";
 		String url = "";
 		if (state.getValue().equals("ok")) {
 			Element photoElement = rsp.element("photo");
 			//System.out.println(photoElement.asXML()); // print element as XML text. Good for development
 			title = photoElement.elementText("title");
 			username = photoElement.element("owner").attributeValue("username");
+			date = photoElement.element("dates").attributeValue("taken");
 			url = photoElement.element("urls").elementText("url");
 		}
 		
@@ -152,7 +154,7 @@ public class FlickrImageGainer {
 			in.close();
 		}
 		
-		return new FlickrResult(username, title, url);
+		return new FlickrResult(username, title, date, url);
 	}
 
 }

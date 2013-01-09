@@ -23,6 +23,7 @@ public class FlickrReader implements Algorithm {
 	public static final String IMAGE_URL_COLUMN_TITLE = "Image URL";
 	public static final String USERNAME_COLUMN_TITLE = "User Name";
 	public static final String TITLE_COLUMN_TITLE = "Title";
+	public static final String DATE_COLUMN_TITLE = "Taken At";
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
@@ -90,6 +91,7 @@ public class FlickrReader implements Algorithm {
     	table.addColumn(USER_COLUMN_TITLE, String.class);
         table.addColumn(USERNAME_COLUMN_TITLE, String.class);
         table.addColumn(TITLE_COLUMN_TITLE, String.class);
+        table.addColumn(DATE_COLUMN_TITLE, String.class);
         table.addColumn(IMAGE_URL_COLUMN_TITLE, String.class);
         for (Entry<String, List<FlickrResult>> entry : uidToResultsMap.entrySet()) {
         	String uid = entry.getKey();
@@ -100,6 +102,7 @@ public class FlickrReader implements Algorithm {
 	        	table.set(rowNumber, USER_COLUMN_TITLE, uid);
 	        	table.set(rowNumber, USERNAME_COLUMN_TITLE, ret.getUsername());
 	        	table.set(rowNumber, TITLE_COLUMN_TITLE, ret.getTitle());
+	        	table.set(rowNumber, DATE_COLUMN_TITLE, ret.getDate());
 	            table.set(rowNumber, IMAGE_URL_COLUMN_TITLE, ret.getUrl());
         	}
  	    }
