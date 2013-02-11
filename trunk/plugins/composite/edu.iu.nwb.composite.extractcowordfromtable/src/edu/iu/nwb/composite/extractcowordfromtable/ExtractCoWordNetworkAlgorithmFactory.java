@@ -43,6 +43,7 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
 	
 	private AlgorithmFactory extractDirectedNetwork;
 	private AlgorithmFactory bibliographicCoupling;
+	private AlgorithmFactory deleteIsolates;
 	private LogService log;
 	private BundleContext bContext;
 	
@@ -190,12 +191,21 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
         	//WARNING: This will break if the PID changes, and given that its current pid is misleading, this seems likely
         	filter = "(service.pid=edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm)";
         	bibliographicCoupling = getAlgorithmFactory(filter);
+        	
+        	/*
+        	 * This is a temporary fix for removing extra nodes created by directed network. 
+        	 * Why word co-occurrence network don't use the co-occurrence network solution? 
+        	 * This algorithm provides unique identifier that co-occurrence network don't have.
+        	 * We should change the co-occurrence network to provide this feature
+        	*/
+        	filter = "(service.pid=edu.iu.nwb.preprocessing.deleteisolates.DeleteIsolatesAlgorithm)";
+        	deleteIsolates = getAlgorithmFactory(filter);
 			
         	DataConversionService converter = (DataConversionService)
             	context.getService(DataConversionService.class.getName());
         	
         	 return new ExtractCoWordNetworkAlgorithm(data, parameters, context,
-             		extractDirectedNetwork, converter, bibliographicCoupling);
+             		extractDirectedNetwork, converter, bibliographicCoupling, deleteIsolates);
              
 		} catch (InvalidSyntaxException e) {
 			log.log(LogService.LOG_ERROR, "Invalid syntax in filter " + filter, e);

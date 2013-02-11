@@ -22,10 +22,11 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	private AlgorithmFactory extractDirectedNetwork;
 	private DataConversionService converter;
 	private AlgorithmFactory bibliographicCoupling;
+	private AlgorithmFactory deleteIsolates;
 
 	public ExtractCoWordNetworkAlgorithm(Data[] data, Dictionary parameters, CIShellContext context,
 			AlgorithmFactory extractDirectedNetwork, DataConversionService converter,
-			AlgorithmFactory bibliographicCoupling) {
+			AlgorithmFactory bibliographicCoupling, AlgorithmFactory deleteIsolates) {
 		this.data = data;
 		this.parameters = parameters;
 		this.context = context;
@@ -33,6 +34,7 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 		this.extractDirectedNetwork = extractDirectedNetwork;
 		this.converter = converter;
 		this.bibliographicCoupling = bibliographicCoupling;
+		this.deleteIsolates = deleteIsolates;
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
@@ -91,6 +93,9 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 					new Hashtable(), context);
 			Data[] coWordNetworkData = bibCouplingAlg.execute();
 			//return undirected similarity network
+			Algorithm deleteIsolatesAlg = deleteIsolates.createAlgorithm(new Data[] { coWordNetworkData[0] },
+					new Hashtable(), context);
+			coWordNetworkData = deleteIsolatesAlg.execute();
 			addCorrectMetadata(coWordNetworkData[0], data[0]);
 			return coWordNetworkData;
 		} catch (ConversionException e) {
