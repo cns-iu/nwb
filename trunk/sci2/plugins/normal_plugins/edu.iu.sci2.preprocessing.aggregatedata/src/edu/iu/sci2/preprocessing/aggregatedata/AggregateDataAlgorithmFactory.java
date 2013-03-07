@@ -21,7 +21,7 @@ import prefuse.data.Table;
 public class AggregateDataAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
 	
 	private List<Integer> inputNumericalParameterIDs, inputStringParameterIDs;
-	private static final String DEFAULT_TEXT_DELIMITER = "| ";
+	private static final String DEFAULT_TEXT_DELIMITER = "";
 
 	private static final String[] NUMERICAL_AGGREGATION_TYPE_NAMES = {
 		"None",
