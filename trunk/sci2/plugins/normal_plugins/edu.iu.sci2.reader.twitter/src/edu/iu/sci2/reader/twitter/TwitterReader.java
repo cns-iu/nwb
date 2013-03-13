@@ -47,6 +47,7 @@ public class TwitterReader implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	Set<String> userIDs = extractUniqueUserIDsFromTable();
+    			
     	Table resultTable;
 		try {
 			resultTable = searchTwit(userIDs);
@@ -82,19 +83,42 @@ public class TwitterReader implements Algorithm {
     
     private Table searchTwit(Set<String> userIDs) throws TwitterException {
 
-		String queryString = "";
-		if (!userIDs.isEmpty()) {
-			queryString += "(";
-			for (String uID: userIDs) {
-				queryString += "from:\"" + uID + "\" OR ";
-			}
-			
-			queryString = queryString.substring(0, queryString.length() - 4) + ") ";
-		}
 		
-		queryString += "#" + tag;
+    	Table table=null;
+    	if (!userIDs.isEmpty()) {
+    		List <Tweet> resultList = new ArrayList<Tweet>();
+    		Iterator it = userIDs.iterator();
+    		String LastUser="";
+
+    		while(true)
+    		{	
+    			String queryString = "";
+    			queryString += "#" + tag;
+    			queryString += "(";
+    			if(LastUser.length()>0) {
+    				String appendString="from:\"" + LastUser + "\" OR ";
+    				queryString += appendString;
+    			}
+    			while(it.hasNext()) {
+    				LastUser=(String) it.next();
+    				String appendString="from:\"" + LastUser + "\" OR ";
+    				if((queryString.length() + appendString.length() - 3)>=500) // Query Greater than 500 chars is not allowed
+    					break;
+    				queryString += appendString;
+    			}
+    			queryString = queryString.substring(0, queryString.length() - 4) + ")";
+    			resultList.addAll(downloadAllTweets(queryString));
+    			if(!it.hasNext())
+    				break;
+    		}
+
+    		table= covertResultIntoTable(resultList);
+    	}
+    	return table;
+		
+		
 	    
-	    return covertResultIntoTable(downloadAllTweets(queryString));
+	    
     }
     
     private List<Tweet> downloadAllTweets(String querystring) throws TwitterException {
@@ -134,7 +158,6 @@ public class TwitterReader implements Algorithm {
  	    }
         this.logger.log(LogService.LOG_INFO, 
         		String.format("There are %d tweets downloaded.", tweets.size()));
-        
         return table;
     }
     
