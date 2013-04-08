@@ -50,7 +50,7 @@ public class TwitterReader implements Algorithm {
     			
     	Table resultTable;
 		try {
-			resultTable = searchTwit(userIDs);
+			resultTable = searchTweet(userIDs);
 		} catch (TwitterException e) {
 			throw new AlgorithmExecutionException(
 					"Twitter service or network is unavailable. Try again later", e);
@@ -81,46 +81,41 @@ public class TwitterReader implements Algorithm {
         return userIDs;
     }
     
-    private Table searchTwit(Set<String> userIDs) throws TwitterException {
+    private Table searchTweet(Set<String> userIDs) throws TwitterException {
 
 		
-    	Table table=null;
+    	List <Tweet> resultList = new ArrayList<Tweet>();
+    	String queryString = "#" + tag;
+    	
     	if (!userIDs.isEmpty()) {
-    		List <Tweet> resultList = new ArrayList<Tweet>();
-    		Iterator it = userIDs.iterator();
-    		String LastUser="";
-
-    		while(true)
-    		{	
-    			String queryString = "";
-    			queryString += "#" + tag;
-    			queryString += "(";
-    			if(LastUser.length()>0) {
-    				String appendString="from:\"" + LastUser + "\" OR ";
-    				queryString += appendString;
-    			}
-    			while(it.hasNext()) {
-    				LastUser=(String) it.next();
-    				String appendString="from:\"" + LastUser + "\" OR ";
-    				if((queryString.length() + appendString.length() - 3)>=500) // Query Greater than 500 chars is not allowed
-    					break;
-    				queryString += appendString;
-    			}
-    			queryString = queryString.substring(0, queryString.length() - 4) + ")";
-    			resultList.addAll(downloadAllTweets(queryString));
-    			if(!it.hasNext())
-    				break;
+    		queryString += " (";
+    		
+    		for(String id : userIDs) {
+				String appendString = "from:\"" + id + "\" OR ";
+				// Query Greater than 500 chars is not allowed. Download the result first and continue
+				if((queryString.length() + appendString.length()) >= 500) {
+					// Remove the last " OR " with -4
+					queryString = queryString.substring(0, queryString.length() - 4) + ")";
+	    			resultList.addAll(downloadAllTweets(queryString));
+	    			queryString = "#" + tag + " (";
+				}
+				
+				queryString += appendString;
     		}
-
-    		table= covertResultIntoTable(resultList);
+    		
+    		// Remove the last " OR " with -4
+			queryString = queryString.substring(0, queryString.length() - 4) + ")";
     	}
-    	return table;
-		
-		
-	    
-	    
+    	
+		resultList.addAll(downloadAllTweets(queryString));
+    	
+    	return covertResultIntoTable(resultList);
     }
     
+    /**
+     * Download tweets for the given query. If the returned result contains multiple pages, 
+     * download the tweets page by page. This method return a list of tweet.
+     */
     private List<Tweet> downloadAllTweets(String querystring) throws TwitterException {
     	List <Tweet> resultList = new ArrayList<Tweet>();
 		Twitter twitter = new TwitterFactory().getInstance();
@@ -143,6 +138,9 @@ public class TwitterReader implements Algorithm {
 	    return resultList;
     }
     
+    /**
+     * Covert the result into Prefuse Table
+     */
     private Table covertResultIntoTable(List<Tweet> tweets) {
     	Table table = new Table();
         table.addColumn(USER_COLUMN_TITLE, String.class);
