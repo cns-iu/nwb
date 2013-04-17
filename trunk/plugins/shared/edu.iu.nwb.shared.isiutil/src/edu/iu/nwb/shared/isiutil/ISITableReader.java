@@ -21,6 +21,7 @@ import edu.iu.nwb.shared.isiutil.exception.ReadTableException;
  */
 public class ISITableReader {	
 	public static final String NORMALIZED_SEPARATOR = "|";
+	public static final String NORMALIZED_SEPARATOR_REGEX = "\\|";
 	public static final int MIN_TAG_LENGTH = 2;
 	public static final String FILE_PATH_COLUMN_NAME = "File Name";
 	
@@ -201,6 +202,9 @@ public class ISITableReader {
 		} else if (separator.equals("\n")) {
 			nextLine = processMultilineTagDataWithNewlineSeparators(
 				currentTag, currentLine, reader, tableData, shouldClean);
+		} else if (separator.equals(";\n")) {
+			nextLine = processMultilineTagDataWithNewlineAndSeparators(
+					currentTag, currentLine, reader, tableData, ";", shouldClean);
 		} else {
 			nextLine = processMultilineTagDataWithNonNewlineSeparators(
 				currentTag, currentLine, reader, tableData, separator, shouldClean);
@@ -239,7 +243,16 @@ public class ISITableReader {
 		return processMultilineTagData(
 			currentTag, currentLine, reader, table, " ", separator, shouldClean);
 	}
-	
+	private String processMultilineTagDataWithNewlineAndSeparators(
+			ISITag currentTag,
+			String currentLine,
+			BufferedReader reader,
+			TableData table,
+			String separator,
+			boolean shouldClean) throws IOException, ReadTableException {
+		return processMultilineTagData(
+				currentTag, currentLine, reader, table, NORMALIZED_SEPARATOR , separator, shouldClean);
+	}
 	//DOIs all start with the DOI directory code, 10, followed by a dot.
 	private static final String LOOKS_LIKE_A_DOI = "10\\..*";
 
@@ -251,7 +264,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData tableData,
-			String appendString,
+			String stringToReplaceNewLine,
 			String separatorString,
 			boolean shouldClean) throws IOException, ReadTableException {
 		currentLine = removeTag(currentLine);
@@ -259,14 +272,14 @@ public class ISITableReader {
 		
 		do {
 			currentLine = currentLine.trim();
-
+			
 			if (currentTag.equals(ISITag.CITED_REFERENCES) && 
 					currentLine.matches(LOOKS_LIKE_A_DOI)) {
 				/*
 				 * ISI sucks, and puts DOIs on the next line in a list of cited references.
 				 * This is kind of a hot mess.
 				 */
-				
+
 				// Add the DOI onto the main part of the reference with a space between.
 				stringSoFar.append(" ");
 				
@@ -279,10 +292,10 @@ public class ISITableReader {
 				if (shouldClean) {
 					currentLine = tagSpecificProcessing(currentTag, currentLine);
 				}
-
-				stringSoFar.append(appendString);
+				
+				stringSoFar.append(stringToReplaceNewLine);
 			}
-
+			
 			stringSoFar.append(currentLine);
 			
 		} while ((currentLine = moveToNextNonEmptyLine(reader)).startsWith("  "));
@@ -291,12 +304,13 @@ public class ISITableReader {
 		 * Take off the first append character (so we don't have a comma before the first element,
 		 *  for instance).
 		 */
-		stringSoFar.delete(0, appendString.length());
+		stringSoFar.delete(0, stringToReplaceNewLine.length());
 		
 		String allTagDataString = stringSoFar.toString();
 		
 		if (separatorString != null) {
-			allTagDataString = allTagDataString.replaceAll(separatorString, NORMALIZED_SEPARATOR);
+			//allTagDataString = allTagDataString.replaceAll(separatorString, NORMALIZED_SEPARATOR);
+			allTagDataString = replaceSeparatorsWithNewSeparators (allTagDataString, separatorString, NORMALIZED_SEPARATOR, NORMALIZED_SEPARATOR_REGEX);
 		}
 		
 		try {
@@ -381,7 +395,7 @@ public class ISITableReader {
 		ContentType currentTagContentType = ContentType.TEXT;
 		ISITag.addArbitraryTag(tagName, tagName, currentTagContentType);
 		tableData.addColumn(ISITag.getColumnName(tagName), currentTagContentType.getTableDataType());
-		
+				
 		return ISITag.getTag(tagName);
 	}
 	
@@ -455,6 +469,20 @@ public class ISITableReader {
 		return processedLine;
 	}
 	
+	private static String replaceSeparatorsWithNewSeparators (String originalString, String originalSeperator, String newSeparator, String newSeparatorRegex) {
+		/*
+		 * This function replaces old separators such as ";" with new separators such as "|" 
+		 * and also solves issues such as removing unnecessary multiple separators "||" caused due to 
+		 * processMultilineTagDataWithNewlineAndSeparators (separates on both new line and separator)
+		 */
+		originalString=originalString.replaceAll(originalSeperator, newSeparator);
+		String[] words = originalString.split(newSeparatorRegex);
+		for (int ii = 0; ii < words.length ; ii++) {
+			words[ii] = words[ii].trim();
+		}
+		return joinOver(words, newSeparator);
+	}
+	
 	private static String processAuthorLine(String line) {
 		/*
 		 * Capitalize every word in the author name, except the last (which is most likely an
@@ -476,14 +504,16 @@ public class ISITableReader {
 		}
 		return s;
 	}
-	
+
 	private static String joinOver(String[] parts, String joiner) {
 		StringBuffer joinBuilder = new StringBuffer();
 		for (int ii = 0; ii < parts.length; ii++) {
-			joinBuilder.append(parts[ii]);
+			if (!parts[ii].isEmpty()) {
+				joinBuilder.append(parts[ii]);
 			
-			if (ii < parts.length - 1) {
-				joinBuilder.append(joiner);
+				if (ii < parts.length - 1) {
+					joinBuilder.append(joiner);
+				}
 			}
 		}
 		
@@ -513,7 +543,7 @@ public class ISITableReader {
 		TableData emptyISITable = new TableData(isiTableSchema);
 
 		return emptyISITable;
-	}
+	}	
 	
 	private void fillFileMetadata(Table table, String absoluteFilePath) {
 		table.addColumn(FILE_PATH_COLUMN_NAME, String.class, absoluteFilePath);

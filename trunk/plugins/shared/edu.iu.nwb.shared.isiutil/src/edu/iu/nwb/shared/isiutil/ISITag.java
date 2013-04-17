@@ -55,7 +55,7 @@ public final class ISITag {
 	public static final ISITag EDITORS =
 		new ISITag("ED", "Editors", ContentType.MULTI_VALUE_TEXT, "\n");
 	public static final ISITag EMAIL_ADDRESSES =
-		new ISITag("EM", "E-mail Addresses", ContentType.MULTI_VALUE_TEXT, "\n");
+		new ISITag("EM", "E-mail Addresses", ContentType.MULTI_VALUE_TEXT, ";\n"); //Separators are both semicolon and newline
 	public static final ISITag END_OF_FILE =
 		new ISITag("EF", "End of File", ContentType.NULL, true);
 	public static final ISITag ENDING_PAGE = new ISITag("EP", "Ending Page", ContentType.TEXT);
