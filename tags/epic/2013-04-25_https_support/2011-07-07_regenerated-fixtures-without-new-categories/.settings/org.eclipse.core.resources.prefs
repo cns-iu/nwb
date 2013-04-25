@@ -1,8 +1,0 @@
-#Thu Jul 07 14:48:08 EDT 2011
-eclipse.preferences.version=1
-encoding//categories/migrations/0003_auto.py=utf-8
-encoding//categories/migrations/0004_auto__del_unique_category_name_description.py=utf-8
-encoding//categories/migrations/0005_auto__add_unique_category_name.py=utf-8
-encoding//categories/migrations/0007_slugifying_categories.py=utf-8
-encoding//core/migrations/0002_auto__del_field_item_category.py=utf-8
-encoding//core/migrations/0003_auto.py=utf-8

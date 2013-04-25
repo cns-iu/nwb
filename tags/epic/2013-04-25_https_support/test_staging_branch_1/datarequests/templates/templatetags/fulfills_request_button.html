@@ -1,9 +1,0 @@
-
-
-{% if datarequests %}
-  <span class="datasetfulfill" id="datasetfulfill_question"> Does this dataset fulfill your request?
-    <a href="{% url datarequests.views.choose_fulfilling_item fulfilling_item_id=dataset.id %}">YES</a>  |   
-    <a onclick="$('#datasetfulfill_question').hide();">NO</a>
-  </span> 
-  
-{% endif %}
