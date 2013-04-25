@@ -1,0 +1,29 @@
+{% if datasets %}
+  {% comment %}
+    """
+    "rate_box_view_helper" always has to be loaded whenever we are loading the 
+    "show_dataset_title_view_ratebox_datainfo" because of a JavaScript dependecy 
+    that will be required by the rate_view_box template inside this template.
+    """
+  {% endcomment %}
+  
+  {% load djangoratings_templatetags %}
+  {% rate_box_view_helper %}
+  
+  {% for dataset in datasets %}
+    <div class="databox">
+      {% load dataset_templatetags %}    
+      {% show_dataset_title_view_ratebox_datainfo dataset %}
+      
+      <p>{{ dataset.description|truncatewords:50 }}</p>
+           
+      {% load tags_templatetags %}
+      {% list_item_tags dataset user %}
+      <div class="comments">
+			<a href="{{ dataset.get_absolute_url }}">{{ dataset.comments.all|length }} comment{{ dataset.comments.all|length|pluralize }}.</a>
+		</div>
+    </div>
+  {% endfor %}
+{% else %}
+<p>There are no datasets.</p>
+{% endif %}

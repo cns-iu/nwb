@@ -1,0 +1,240 @@
+<script type="text/javascript">
+
+	/*
+	*	Method to fill up the stars.
+	*/	
+
+	function renderAvgVoteBox(avgRating){
+	
+		var avgVoteBlockFillPercent = ( avgRating / 5.0 ) * 100.0; 
+		$("#{{ item_id }}-average-vote .current-rating")
+			.css({'width':''+ avgVoteBlockFillPercent + '%'})
+			.text(avgRating + ' Star(s).' );
+	
+	}
+
+	function renderUserVoteBox(userRating){
+	
+		var userVoteBlockFillPercent = ( userRating / 5.0 ) * 100.0;
+		$("#{{ item_id }}-user-vote .current-rating")
+			.css({'width':''+ userVoteBlockFillPercent + '%'})
+			.text(userRating + ' Star(s).' );
+	
+	}
+
+</script>
+
+<div class="ratingsbox">
+	
+	
+	
+	<span class="average-voting">
+	
+	<span id="rating-saving"></span>
+	
+	<span class="inline-rating">
+	
+		<ul class="star-rating" id="{{ item_id }}-average-vote">
+			<li class="current-rating" style="width:0%;">0 Star</li>
+			<li><a href="" id="1" title="Very Poor Quality" class="one-star">1</a></li>
+			<li><a href="" id="2" title="Poor Quality" class="two-stars">2</a></li>
+			<li><a href="" id="3" title="Average Quality" class="three-stars">3</a></li>
+			<li><a href="" id="4" title="High Quality" class="four-stars">4</a></li>
+			<li><a href="" id="5" title="Very High Quality" class="five-stars">5</a></li>
+		</ul>
+    </span>
+	
+	</span>
+
+	<p><span id="average-value">{{ rating|default_if_none:"No" }}</span> Average | <span id="votes-value">{{ votes }}</span> Vote{{ votes|pluralize }}</p>
+	<!-- Turned off the "User Vote Display" 
+	<br />
+	
+	
+	<span class="user-voting">
+	Your Vote: <span id="user-vote-value">{{ user_rating }}</span> 
+				
+		<span class="inline-rating">
+			<ul class="star-rating" id="{{ item_id }}-user-vote">
+				<li class="current-rating" style="width:0%;">0 Star</li>
+				<li><a href="" title="Very Bad" class="one-star">1</a></li>
+				<li><a href="" title="Bad" class="two-stars">2</a></li>
+				<li><a href="" title="Average" class="three-stars">3</a></li>
+				<li><a href="" title="Good" class="four-stars">4</a></li>
+				<li><a href="" title="Very Good" class="five-stars">5</a></li>
+			</ul>
+	    </span>
+	
+	</span>
+	
+	-->
+
+</div>
+
+{% if user_rating %}
+
+	<script>
+
+		$(document).ready(function(){
+
+
+			/*
+			*	These methods basically render the fill the stars according to the rating.
+			*	These methods are defined in the rate_view_box_helper to avoid multiple 
+			*	copies of the same function when more than 1 dataset is displayed. 
+			*
+			*/
+			
+			renderAvgVoteBox({{ rating }});
+
+			/*
+			renderUserVoteBox({{ user_rating }});
+			*/
+
+			/*
+			*	Disable user interaction with the stars.
+			*
+			*/
+			
+			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+
+			/*
+			$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+			*/
+			
+			$(".star-rating-readonly").live('click', function(){
+				return false;
+			});
+			
+		});
+	
+	</script>
+
+{% else %}
+
+	<script>
+
+	$(document).ready(function(){
+
+		/*
+		$('.user-voting').hide();
+		*/
+		
+		var inputRatingString = '{{ rating }}';
+
+		/*
+		*	To handle the cases when there is no average because 
+		*	of no voting done resulting in  rating = None
+		*
+		*/
+		
+		if(inputRatingString == 'None') {
+			inputRatingString = 0;
+		}
+		else {
+			inputRatingString = {{ rating }};
+		}
+		
+		renderAvgVoteBox(inputRatingString);
+
+		{% if is_authenticated %} 
+
+		$("#{{ item_id }}-average-vote li a").click(function(){
+
+			var savingImage = document.createElement('img');
+			savingImage.src = "/core_media/images/ajax-loader-3.gif";
+			savingImage.alt = "Saving your vote, please wait...";
+
+			$("#rating-saving").append(savingImage);
+			$(".inline-rating").animate({opacity:0.3});
+			$("#rating-saving").show();
+
+				$("#{{ item_id }}-average-vote li a").unbind('click');
+			
+				var userVote = parseInt(this.id);
+				var urlVote = "{{ ratebaseurl }}" + userVote + "/";
+
+				$.post(urlVote, function(data){
+					if(data == '"TRUE"') {
+
+						var newAverage = ((inputRatingString * {{ votes }}) + userVote) / ( {{ votes }} + 1 ); 
+
+						$('#average-value').text(newAverage);
+						$('#votes-value').text(({{ votes }} + 1));
+						$('#user-vote-value').text(userVote);
+
+						renderAvgVoteBox(newAverage);
+
+						/*	
+						renderUserVoteBox(userVote);
+						*/
+						
+						$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+
+						/*
+						$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+						*/
+						
+						$(".star-rating-readonly").live('click', function(){
+							return false;
+						});
+
+						$(".inline-rating").animate({opacity:1.0});
+						$("#rating-saving").fadeOut("fast"); 
+						
+
+						/*
+						$('.user-voting').fadeIn();
+						*/
+					}
+					else {
+
+						try {
+							window.location = "{% url django.contrib.auth.views.login %}";							
+						}
+						catch(error) {
+							var notificationContent = "ERROR: You should be logged in before you can rate.";
+							$("#error-message").fadeIn().text(notificationContent);
+						}
+						
+						
+					}
+				});
+
+				return false;
+
+			});
+
+		{% else %}
+
+			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+
+			/*
+			*	This is done to stop the default behavior when an "a href" link is clicked. Because 
+			*	we want user to be redirected towards the login page if they try to vote when the 
+			*	user is not logged in. The href attribute was introduced because IE wont color on hover 
+			*	if href is not present.
+			*/
+
+			$("#{{ item_id }}-average-vote").click(function(){
+
+				try {
+					window.location = "{% url django.contrib.auth.views.login %}?next={% url datasets.views.view_dataset item_id=item_id %}";							
+				}
+				catch(error) {
+					var notificationContent = "ERROR: You should be logged in before you can rate.";
+					$("#error-message").fadeIn().text(notificationContent);
+				}
+
+				return false;
+
+			});
+
+			
+		{% endif %}
+
+		});
+
+	</script>	
+		
+{% endif %}

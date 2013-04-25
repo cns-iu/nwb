@@ -1,0 +1,37 @@
+{# This Script displays the datasets for a particular author. Might need to refactor this into the Profile later on. #}
+{% extends "core/bases/browse_base.html" %}
+{% block css %}
+{{ block.super }}
+<link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% load tags_templatetags %}
+{% show_tag_cloud %}
+
+{% block content %}
+
+{% if messages %}
+	<div class="highlight" id="message">
+		<ul>
+		{% for message in messages %}
+			<li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+
+{% if datasets %}
+
+	<div class="datasets-authorname">
+	
+	Datasets for 
+	
+	{{ requested_user.profile.full_title }}
+
+	
+	</div>
+	{% load dataset_templatetags %}
+	{% list_datasets datasets %}
+{% endif %}
+
+{% endblock %}

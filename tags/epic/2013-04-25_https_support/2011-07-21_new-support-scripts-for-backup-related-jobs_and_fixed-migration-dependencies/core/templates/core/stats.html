@@ -1,0 +1,775 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block css %}
+	{{ block.super }}
+	<link href="/media/core/css/tabs.css" rel="stylesheet" type="text/css" />
+	<style type="text/css">
+		.data_table {
+			position: absolute;
+			padding-left:510px;
+		}
+		
+		.analysis_container {
+			height:280px;
+			clear: both;
+			padding-bottom:21px;
+			padding-top:21px;
+		}	
+		
+		.title {
+			text-align: left;
+			line-height: 40px;
+			border-bottom: 1px dotted gray;
+			font-family: Georgia, Arial;
+			font-size: 16px;
+			font-weight: bold;
+		}
+		
+		.stats_suite {
+			background-color:#CCCCCC;
+			border:1px dashed black;
+			width:824px;
+			padding-left:10px;
+		}
+		#the_whole_deal {
+			height:auto;
+		}
+		
+	</style>	
+{% endblock %}
+
+
+{% block scripts_header %}
+  {{ block.super }}
+  <script type="text/javascript" src="/media/core/javascript/jquery.tools.min.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+
+    google.load('visualization', '1', {
+	    packages: ['annotatedtimeline', 'table']
+	});
+
+    var USER_COUNT_HANDLE = "USER_COUNT";
+	var DATA_REQUEST_HANDLE = "DATA_REQUEST_COUNT";
+	var UPLOAD_FILE_HANDLE = "UPLOAD_FILE_COUNT";	
+    var DOWNLOAD_FILE_HANDLE = "DOWNLOAD_FILE_COUNT";
+    var DOWNLOAD_DATASET_HANDLE = "DOWNLOAD_DATASET_COUNT";
+    var DOWNLOAD_PROJECT_HANDLE = "DOWNLOAD_PROJECT_COUNT";
+
+    var DAILY_ZOOM_LEVEL = "DAILY";
+    var MONTHLY_ZOOM_LEVEL = "MONTHLY";
+
+    /*
+    Used to fraw the visualization.
+    */
+	function drawVisualization(vizType, zoomLevel) {
+	    var data = new google.visualization.DataTable();
+
+	    /*
+	    Used to setup the "data" config values like how many columns & column names to be
+	    added for a particular dataTable. 
+	    */
+	    getDataHeader(data, vizType);
+
+		/*
+		Used to populate the "data" with actual content form the ststs view.
+		*/
+	    getDataContent(data, vizType, zoomLevel);
+
+		/*
+		Used to call the draw methoids on the annotated timeline viz & the table.
+		*/
+		getDataFooter(data, vizType, zoomLevel);
+
+	}
+
+	function getDataFooter(data, vizType, zoomLevel) {
+
+		if (vizType == DATA_REQUEST_HANDLE) {
+
+			if (zoomLevel == DAILY_ZOOM_LEVEL) {
+				
+				var vizDivID = "data_request_viz";
+			    var tableID = "data_request_table";
+			    
+			} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+				
+				var vizDivID = "data_request_viz_monthly";
+			    var tableID = "data_request_table_monthly";
+			    
+			}
+		    
+		    var colsToBeRendered = new Array(0, 1);
+
+		} else if (vizType == USER_COUNT_HANDLE) {
+
+			if (zoomLevel == DAILY_ZOOM_LEVEL) {
+				
+				var vizDivID = "user_viz";
+			    var tableID = "user_table";
+			    
+			} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+				
+				var vizDivID = "user_viz_monthly";
+			    var tableID = "user_table_monthly";
+			    
+			}
+
+		    var colsToBeRendered = new Array(0, 1);
+
+		} else if (vizType == UPLOAD_FILE_HANDLE) {
+
+			if (zoomLevel == DAILY_ZOOM_LEVEL) {
+				
+				var vizDivID = "upload_file_viz";
+			    var tableID = "upload_file_table";
+			    
+			} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+				
+				var vizDivID = "upload_file_viz_monthly";
+			    var tableID = "upload_file_table_monthly";
+			    
+			}
+		    
+		    var colsToBeRendered = new Array(0, 1);
+
+		} else if (vizType == DOWNLOAD_FILE_HANDLE) {
+
+			if (zoomLevel == DAILY_ZOOM_LEVEL) {
+				
+				var vizDivID = "download_file_viz";
+			    var tableID = "download_file_table";
+			    
+			} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+				
+				var vizDivID = "download_file_viz_monthly";
+			    var tableID = "download_file_table_monthly";
+			    
+			}
+
+		    var colsToBeRendered = new Array(0, 1, 4);
+
+		} else if (vizType == DOWNLOAD_DATASET_HANDLE) {
+
+			if (zoomLevel == DAILY_ZOOM_LEVEL) {
+				
+				var vizDivID = "download_dataset_viz";
+			    var tableID = "download_dataset_table";
+			    
+			} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+				
+				var vizDivID = "download_dataset_viz_monthly";
+			    var tableID = "download_dataset_table_monthly";
+			    
+			}
+
+		    var colsToBeRendered = new Array(0, 1, 4);
+
+		} else if (vizType == DOWNLOAD_PROJECT_HANDLE) {
+
+			if (zoomLevel == DAILY_ZOOM_LEVEL) {
+				
+				var vizDivID = "download_project_viz";
+			    var tableID = "download_project_table";
+			    
+			} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+				
+				var vizDivID = "download_project_viz_monthly";
+			    var tableID = "download_project_table_monthly";
+			    
+			}
+
+		    var colsToBeRendered = new Array(0, 1, 4);
+
+		}
+
+		
+	    var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+	    	    document.getElementById(vizDivID));
+
+	        
+   	    annotatedtimeline.draw(data, {
+	    	        'displayAnnotations': true
+	    	    });
+
+   	    
+		/*
+		Since we are only concerned about the columns which contain actual data like
+		the date & the counts we willl render those in the table. Hence the need for 
+		a data view.
+		*/
+	   	var view = new google.visualization.DataView(data);
+	    view.setColumns(colsToBeRendered);
+     
+	    var table = new google.visualization.Table(
+	    	    document.getElementById(tableID));
+
+	    /*
+	    When we enable the "page" feature it does not render properly in firefox when
+	    we started using show/hide of the viz/tables due to tabbing.
+	    */
+	    table.draw(view, {
+		    		'width': '300px',
+		    		'height': '200px',
+		    		/*'page': 'enable',
+		    		'pageSize': '6',*/
+	    	        'showRowNumber': false
+	    	    });	    
+
+	}
+
+	function getDataHeader(data, vizType) {
+
+
+		if (vizType == DATA_REQUEST_HANDLE) {
+
+		    var countColName = "Data Requests";
+
+		} else if (vizType == USER_COUNT_HANDLE) {
+
+		    var countColName = "User Registrations";
+
+		} else if (vizType == UPLOAD_FILE_HANDLE) {
+
+		    var countColName = "File Uploads";
+
+		} else if (vizType == DOWNLOAD_FILE_HANDLE 
+				|| vizType == DOWNLOAD_DATASET_HANDLE ) {
+
+		    var countColName = "Data Files";
+		    var countColName2 = "Readme Files";
+
+		} else if (vizType == DOWNLOAD_PROJECT_HANDLE) {
+
+		    var countColName = "Project d/l";
+		    var countColName2 = "Unique project d/l";
+
+		}
+
+	    data.addColumn('date', 'Date');
+	    data.addColumn('number', countColName);
+	    data.addColumn('string', 'title1');
+	    data.addColumn('string', 'text1');
+
+	    if (vizType == DOWNLOAD_FILE_HANDLE 
+		    || vizType == DOWNLOAD_DATASET_HANDLE
+	    	|| vizType == DOWNLOAD_PROJECT_HANDLE) {
+
+	    	data.addColumn('number', countColName2);
+		    data.addColumn('string', 'title2');
+		    data.addColumn('string', 'text2');
+
+		}
+
+	}
+
+	function getDataContent(data, vizType, zoomLevel) {
+
+		if (vizType == DATA_REQUEST_HANDLE) {
+
+						if (zoomLevel == DAILY_ZOOM_LEVEL) {
+
+							data.addRows([
+							
+							{% for date_value, count_value in data_req_date_count.0 %}
+
+				      	    [new Date(
+				      	    	    {{date_value|date:"Y"}},
+				      	    	    {{date_value|date:"n"}} - 1,
+				      	    	    {{date_value|date:"j"}}),
+
+				      	    	    {{count_value}},
+
+				      	    	    undefined, undefined]
+				      	    	{% if not forloop.last %}
+			      	    	     ,
+			      	    	   {% endif %}
+
+				      	    {% endfor %}
+
+				      	  ]);
+						    
+						} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+
+							data.addRows([
+							
+							{% for date_value, count_value in data_req_date_count.1 %}
+
+							[new Date(
+				      	    	    {{date_value|date:"Y"}},
+				      	    	    {{date_value|date:"n"}} - 1,
+				      	    	    {{date_value|date:"j"}}),
+
+				      	    	    {{count_value}},
+
+				      	    	    undefined, undefined]
+				      	    	{% if not forloop.last %}
+			      	    	     ,
+			      	    	   {% endif %}
+
+				      	    {% endfor %}
+								
+				      	  ]);
+						}
+			      	    
+
+		} else if (vizType == USER_COUNT_HANDLE) {
+
+						if (zoomLevel == DAILY_ZOOM_LEVEL) {
+
+							data.addRows([
+							
+							{% for date_value, count_value in user_date_count.0 %}
+
+							[new Date(
+				      	    	    {{date_value|date:"Y"}},
+				      	    	    {{date_value|date:"n"}} - 1,
+				      	    	    {{date_value|date:"j"}}),
+
+				      	    	    {{count_value}},
+
+				      	    	    undefined, undefined]
+				      	    	    {% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+				      	    {% endfor %}
+
+				      	  ]);
+						    
+						} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+
+							data.addRows([
+							
+							{% for date_value, count_value in user_date_count.1 %}
+
+							[new Date(
+				      	    	    {{date_value|date:"Y"}},
+				      	    	    {{date_value|date:"n"}} - 1,
+				      	    	    {{date_value|date:"j"}}),
+
+				      	    	    {{count_value}},
+
+				      	    	    undefined, undefined]
+				      	    	    {% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+				      	    {% endfor %}
+
+
+				      	  ]);
+						    
+						}
+
+			      	   
+
+		} else if (vizType == UPLOAD_FILE_HANDLE) {
+
+						if (zoomLevel == DAILY_ZOOM_LEVEL) {
+
+							data.addRows([
+							
+							{% for date_value, count_value in dataset_file_date_count.0 %}
+
+							[new Date(
+				      	    	    {{date_value|date:"Y"}},
+				      	    	    {{date_value|date:"n"}} - 1,
+				      	    	    {{date_value|date:"j"}}),
+
+				      	    	    {{count_value}},
+
+				      	    	    undefined, undefined]
+				      	    	    {% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+				      	    {% endfor %}
+
+				      	  ]);
+						    
+						} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+
+							data.addRows([
+							
+							{% for date_value, count_value in dataset_file_date_count.1 %}
+
+							[new Date(
+				      	    	    {{date_value|date:"Y"}},
+				      	    	    {{date_value|date:"n"}} - 1,
+				      	    	    {{date_value|date:"j"}}),
+
+				      	    	    {{count_value}},
+
+				      	    	    undefined, undefined]
+				      	    	    {% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+				      	    {% endfor %}
+
+				      	  ]);
+						    
+						}
+
+			      	    
+
+			      	  
+
+		} else if (vizType == DOWNLOAD_FILE_HANDLE) {
+
+			
+
+							if (zoomLevel == DAILY_ZOOM_LEVEL) {
+
+								data.addRows([
+								
+					      	    {% for date_value, data_file_count_value, readme_file_count_value in download_file_count.0 %}
+
+					      	  [new Date(
+					      	    	    {{date_value|date:"Y"}},
+					      	    	    {{date_value|date:"n"}} - 1,
+					      	    	    {{date_value|date:"j"}}),
+
+					      	    	    {{data_file_count_value}},
+
+					      	    	    undefined, undefined,
+
+					      	    	    {{readme_file_count_value}},
+
+					      	    	    undefined, undefined]
+
+					      	    	{% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+					      	    {% endfor %}
+
+					      	  ]);
+							    
+							} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+
+								data.addRows([
+								
+								{% for date_value, data_file_count_value, readme_file_count_value in download_file_count.1 %}
+
+								[new Date(
+					      	    	    {{date_value|date:"Y"}},
+					      	    	    {{date_value|date:"n"}} - 1,
+					      	    	    {{date_value|date:"j"}}),
+
+					      	    	    {{data_file_count_value}},
+
+					      	    	    undefined, undefined,
+
+					      	    	    {{readme_file_count_value}},
+
+					      	    	    undefined, undefined]
+
+					      	    	{% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+					      	    {% endfor %}
+
+					      	  ]);
+							    
+							}
+
+		} else if (vizType == DOWNLOAD_DATASET_HANDLE) {
+
+			
+
+							if (zoomLevel == DAILY_ZOOM_LEVEL) {
+
+								data.addRows([
+								
+					      	    {% for date_value, data_file_count_value, readme_file_count_value in download_dataset_count.0 %}
+
+					      	  [new Date(
+					      	    	    {{date_value|date:"Y"}},
+					      	    	    {{date_value|date:"n"}} - 1,
+					      	    	    {{date_value|date:"j"}}),
+
+					      	    	    {{data_file_count_value}},
+
+					      	    	    undefined, undefined,
+
+					      	    	    {{readme_file_count_value}},
+
+					      	    	    undefined, undefined]
+
+					      	    	{% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+					      	    {% endfor %}
+
+
+					      	  ]);
+					      	    
+							    
+							} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+
+								data.addRows([
+								
+								{% for date_value, data_file_count_value, readme_file_count_value in download_dataset_count.1 %}
+
+								[new Date(
+					      	    	    {{date_value|date:"Y"}},
+					      	    	    {{date_value|date:"n"}} - 1,
+					      	    	    {{date_value|date:"j"}}),
+
+					      	    	    {{data_file_count_value}},
+
+					      	    	    undefined, undefined,
+
+					      	    	    {{readme_file_count_value}},
+
+					      	    	    undefined, undefined]
+
+					      	    	{% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+					      	    {% endfor %}
+
+					      	  ]);
+							    
+							}
+
+		} else if (vizType == DOWNLOAD_PROJECT_HANDLE) {
+
+			
+
+							if (zoomLevel == DAILY_ZOOM_LEVEL) {
+
+								data.addRows([
+								
+								{% for date_value, projects_count_value, unique_projects_count_value in download_project_count.0 %}
+
+								[new Date(
+					      	    	    {{date_value|date:"Y"}},
+					      	    	    {{date_value|date:"n"}} - 1,
+					      	    	    {{date_value|date:"j"}}),
+
+					      	    	    {{projects_count_value}},
+
+					      	    	    undefined, undefined,
+
+					      	    	    {{unique_projects_count_value}},
+
+					      	    	    undefined, undefined]
+
+					      	    	{% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+					      	    {% endfor %}
+
+					      	  ]);
+							    
+							} else if(zoomLevel == MONTHLY_ZOOM_LEVEL) {
+
+								data.addRows([
+								
+								{% for date_value, projects_count_value, unique_projects_count_value in download_project_count.1 %}
+
+								[new Date(
+					      	    	    {{date_value|date:"Y"}},
+					      	    	    {{date_value|date:"n"}} - 1,
+					      	    	    {{date_value|date:"j"}}),
+
+					      	    	    {{projects_count_value}},
+
+					      	    	    undefined, undefined,
+
+					      	    	    {{unique_projects_count_value}},
+
+					      	    	    undefined, undefined]
+
+					      	    	{% if not forloop.last %}
+				      	    	     ,
+				      	    	   {% endif %}
+
+					      	    {% endfor %}
+
+					      	  ]);
+							    
+							}
+
+		}
+
+	}
+
+  </script>
+{% endblock %}
+
+{% block nav %}
+  <div id="nav">
+    {% load core_templatetags %}
+    {% nav_bar 'About' %}
+  </div>
+{% endblock %}{# block nav #}
+
+{% block content %}
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+
+		drawVisualization(USER_COUNT_HANDLE, DAILY_ZOOM_LEVEL);
+
+		drawVisualization(USER_COUNT_HANDLE, MONTHLY_ZOOM_LEVEL);
+		
+	    drawVisualization(DATA_REQUEST_HANDLE, DAILY_ZOOM_LEVEL);
+
+	    drawVisualization(DATA_REQUEST_HANDLE, MONTHLY_ZOOM_LEVEL);
+
+	    drawVisualization(UPLOAD_FILE_HANDLE, DAILY_ZOOM_LEVEL);
+
+	    drawVisualization(UPLOAD_FILE_HANDLE, MONTHLY_ZOOM_LEVEL);
+
+	    drawVisualization(DOWNLOAD_FILE_HANDLE, DAILY_ZOOM_LEVEL);
+
+	    drawVisualization(DOWNLOAD_FILE_HANDLE, MONTHLY_ZOOM_LEVEL);
+
+	    drawVisualization(DOWNLOAD_DATASET_HANDLE, DAILY_ZOOM_LEVEL);
+
+	    drawVisualization(DOWNLOAD_DATASET_HANDLE, MONTHLY_ZOOM_LEVEL);
+
+	    drawVisualization(DOWNLOAD_PROJECT_HANDLE, DAILY_ZOOM_LEVEL);
+
+	    drawVisualization(DOWNLOAD_PROJECT_HANDLE, MONTHLY_ZOOM_LEVEL);
+
+	});
+
+
+	/*
+	Code for enable the tabbing behavior
+	*/
+	$(document).ready(function() {
+
+		
+		 
+		$('.tabs a').click(function(){
+			switch_tabs($(this));
+		});
+	 
+		switch_tabs($('.defaulttab'));
+	 
+	});
+	 
+	function switch_tabs(obj) {
+		
+		$('.analysis_container').hide();
+		$('.tabs a').removeClass("link_selected");
+		$('.tabs li').removeClass("tab_selected");
+		var id = obj.attr("rel");
+	 
+		$('#'+id).show();
+		obj.addClass("link_selected");
+		obj.parent().addClass("tab_selected");
+		
+	}
+	
+
+
+  </script>
+  
+<ul class="tabs">
+        <li><a href="#" class="defaulttab" rel="user_analysis">User Stats</a></li>
+        <li><a href="#" rel="data_request_analysis">Data Request Stats</a></li>
+        <li><a href="#" rel="upload_file_analysis">File Upload Stats</a></li>
+        <li><a href="#" rel="download_file_analysis">File Download Stats</a></li>
+        <li><a href="#" rel="project_download_analysis">Project Download Stats</a></li>
+</ul>
+
+<div class="clear" style="clear:both;" ></div>
+
+<div id="the_whole_deal">
+<div id="user_analysis" class="analysis_container">
+
+	<div class="stats_suite">
+	<div class="title">User Registrations by day.</div>
+	<div id="user_table" class="data_table"></div>
+	<div id="user_viz" style="width: 500px; height: 200px;"></div>
+	
+	
+	<div class="title">User Registrations by month.</div>
+	<div id="user_table_monthly" class="data_table"></div>
+	<div id="user_viz_monthly" style="width: 500px; height: 200px;"></div>
+	</div>
+</div>
+
+<div id="data_request_analysis" class="analysis_container">
+<div class="stats_suite">
+	<div class="title">Data Requests by day.</div>
+	<div id="data_request_table" class="data_table"></div>
+	<div id="data_request_viz" style="width: 500px; height: 200px;"></div>
+	
+	<div class="title">Data Requests by month.</div>
+	<div id="data_request_table_monthly" class="data_table"></div>
+	<div id="data_request_viz_monthly" style="width: 500px; height: 200px;"></div>
+	<br />
+	</div>
+	
+</div>
+
+<div id="upload_file_analysis" class="analysis_container">
+<div class="stats_suite">
+	<div class="title">File Uploads by day.</div>
+	<div id="upload_file_table" class="data_table"></div>
+	<div id="upload_file_viz" style="width: 500px; height: 200px;"></div>
+	
+	
+	<div class="title">File Uploads by month.</div>
+	<div id="upload_file_table_monthly" class="data_table"></div>
+	<div id="upload_file_viz_monthly" style="width: 500px; height: 200px;"></div>
+	</div>
+</div>	
+
+<div id="download_file_analysis" class="analysis_container">
+<div class="stats_suite">
+	<div class="title">Data File and Readme File downloads by day.</div>
+	<div id="download_file_table" class="data_table"></div>
+	<div id="download_file_viz" style="width: 500px; height: 200px;"></div>
+	
+	
+	<div class="title">Data File and Readme File downloads by month.</div>
+	<div id="download_file_table_monthly" class="data_table"></div>
+	<div id="download_file_viz_monthly" style="width: 500px; height: 200px;"></div>
+	</div>
+	<hr />
+	<div class="stats_suite">
+	<div class="title">(Unique) Datasets from which there was download of data files and readme files (by day).</div>
+	<div id="download_dataset_table" class="data_table"></div>
+	<div id="download_dataset_viz" style="width: 500px; height: 200px;"></div>
+	
+	
+	<div class="title">(Unique) Datasets from which there was download of data files and readme files (by month).</div>
+	<div id="download_dataset_table_monthly" class="data_table"></div>
+	<div id="download_dataset_viz_monthly" style="width: 500px; height: 200px;"></div>
+	
+	</div>
+	<hr />
+
+</div>
+
+<div id="project_download_analysis" class="analysis_container">
+	<div class="stats_suite">
+	<div class="title">Project downloads v/s Unique project downloads (by day).</div>
+	<div id="download_project_table" class="data_table"></div>
+	<div id="download_project_viz" style="width: 500px; height: 200px;"></div>
+	<br />
+	
+	<div class="title">Project downloads v/s Unique project downloads (by month).</div>
+	<div id="download_project_table_monthly" class="data_table"></div>
+	<div id="download_project_viz_monthly" style="width: 500px; height: 200px;"></div>
+	</div>
+</div>	
+
+<div class="clear" style="clear:both;"></div>
+
+</div>
+{% endblock %}

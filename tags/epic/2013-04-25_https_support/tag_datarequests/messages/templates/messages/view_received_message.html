@@ -1,0 +1,30 @@
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+{% if received_message %}
+<h3>Your received message.</h3>
+<table>
+  <tr>
+    <td>To:</td>
+    <td>{{ received_message.recipient }}</td>
+  </tr>
+  <tr>
+    <td>From:</td>
+    <td>{{ received_message.sender }}</td>
+  </tr>
+  <tr>
+    <td>Subject:</td>
+    <td>{{ received_message.subject }}</td>
+  </tr>
+  <tr>
+  	{# TODO: Add css styling rather than inlining it here #}	
+    <td colspan="2" style="border-top: thin solid black;">{{ received_message.message|linebreaksbr }}</td>
+  </tr>
+</table>
+<a href="{% url messages.views.send_message user_id=user.id, in_reply_to_message_id=received_message.id %}"><button>Reply</button></a>
+<hr>
+
+{% else %}
+<p>There was a problem finding the message.</p>
+{% endif %}
+<a href="{% url messages.views.index user_id=user.id %}">Inbox</a>
+{% endblock %}

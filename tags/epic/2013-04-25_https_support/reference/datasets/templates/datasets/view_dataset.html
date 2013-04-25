@@ -1,0 +1,128 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% load tags_templatetags %}
+
+{% block content %}
+  <div id="error-message">
+    {% block messages %}
+      {% for message in messages %}
+        {{ message }}
+      {%endfor%}
+    {% endblock %}
+  </div>
+  
+  {% if messages %}
+    <div class="highlight" id="message">
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  
+  {% if dataset.is_active %}
+	  <div class="databox">
+	    {% if dataset.next_version %}
+	    <p>There is a newer version of this dataset:
+	      <ul>
+	        <li>
+	          <a href="{{ dataset.next_version.get_absolute_url }}">{{ dataset.next_version }}</a>
+	        </li>
+	      </ul>
+	    </p>
+	    {% endif %}
+	    {% if dataset.previous_version %}
+	    <p>There is an older version of this dataset:
+	      <ul>
+	        <li>
+	          <a href="{{ dataset.previous_version.get_absolute_url }}">{{ dataset.previous_version }}</a>
+	        </li>
+	      </ul>
+	    </p>
+	    {% endif %}
+	    {% load dataset_templatetags %}
+	    
+	    {% show_dataset_title_vote_ratebox_datainfo dataset %}
+	    
+	    <p>{{ dataset.description|linebreaksbr }}</p>
+	    
+	    {% list_item_tags dataset user 'True' %}
+	    {# TODO: list_item_references dataset #}
+	    {% comment %}
+	    <h4>
+	      References<br />
+	      will go here . . .
+	    </h4>
+	    {% endcomment %}
+	  </div>
+	  
+	  {% if user.is_authenticated %}
+	    <h3>Dataset Files</h3>
+	    
+	    <p>
+	      {% if dataset.files.all %}
+	        {% for file in dataset.files.all %}      
+	            {# TODO: this should be a reverse? #}
+	            <a href="{{ file.file_contents.url }}">
+	              <img src="/core_media/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
+	            </a>
+	            
+	            {{ file.get_short_name }}
+	            
+	            {% if file.is_readme %}
+	              {# TODO: Style this #}
+	              <span class="readme_file">
+	              ReadMe Icon
+	              </span>
+	            {% endif %}
+	            <br />
+	        {% endfor %}
+	        {% ifnotequal dataset.files.all|length 0 %}
+	          <br />
+	          <a href="{% url datasets.views.download_all_files item_id=dataset.id slug=dataset.slug %}">
+	            <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
+	          </a>	          
+	          Download All Files
+	          <br />
+	          <br />
+	        {% endifnotequal %}
+	      {% else %}
+	        <h2>The files for this dataset have been removed.</h2>
+	      {% endif %}
+	    </p>
+	  {% else %}
+	    {% if dataset.files.all %}
+	      <h2>
+	        {# TODO: Make this not a big fat hack. #}
+	        {# We should be using the url template tag instead of the hardcoded url. #}
+	        Please <a href="/login/?next={{ dataset.get_absolute_url }}">login</a> to download this dataset.
+	      </h2>
+	    {% else %}
+	      <h2>The files for this dataset have been removed.</h2>
+	    {% endif %}
+	  {% endif %}
+	  <h4>References</h4>
+	  {% if references %}
+	    <ul>
+	      {% for reference in references %}
+	        <li>{{ reference.reference }}</li>
+	      {% endfor %}
+	    </ul>
+	  {% else %}
+	    <p>There are no references for this dataset.
+	  {% endif %}
+	  <h4>
+	    Please Cite This Dataset As:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt;
+	  </h4>
+	
+	  
+	  {% load geoloc_templatetags %}
+	  {% display_map_for_datasets dataset.id %}
+	  
+	  {% load comment_templatetags %}
+	  {% comments_section dataset user form %}
+  {% else %}
+    <h2>This dataset is not available.</h2>
+  {% endif %}
+{% endblock %}{# block content #}

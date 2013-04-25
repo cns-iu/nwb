@@ -1,0 +1,40 @@
+{% extends "core/browse.html" %}
+
+{% load category_templatetags %}
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
+{% load project_templatetags %}
+
+{% block submenu %}
+  {% category_submenu category 'all' %}
+{% endblock %}
+
+{% block content %}
+  <span class="highlight">Category > {{ category.name }}</span>
+  <p>Description: {{ category.description }}</p>
+  
+  <h1>Recent Data Requests</h1>
+  {% if datarequests %}
+    [<a href="{% url categories.views.view_datarequests_for_category category.id %}">view more</a> recent data requests in this category]
+    {% datarequest_list_short datarequests %}
+  {% else %}
+   <p>There are no datarequests in this category.</p>
+  {% endif %}
+  
+  <h1>Recent Datasets</h1>
+  {% if datasets %}
+    [<a href="{% url categories.views.view_datasets_for_category category.id %}">view more</a> recent datasets in this category]
+  	{% dataset_list datasets %}
+  {% else %}
+    <p>There are no datasets in this category.</p>
+  {% endif %}
+    
+  <h1>Recent Projects</h1>
+  
+  {% if projects %}
+    [<a href="{% url categories.views.view_projects_for_category category.id %}">view more</a> recent projects in this category]
+    {% project_list projects %}
+  {% else %}
+    <p>There are no projects in this category.</p>
+  {% endif %}
+{% endblock %}

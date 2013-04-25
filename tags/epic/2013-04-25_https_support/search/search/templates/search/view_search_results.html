@@ -1,0 +1,10 @@
+Search page
+{% if results %}
+  <ul>
+    {% for result in results %}
+      <li>
+        <a href="{{ result.item.specific.get_absolute_url }}">{{ result.item.specific }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

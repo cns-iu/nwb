@@ -1,0 +1,96 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block css %}
+  {{ block.super }}
+  <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+  <h3>{{ profile.full_title }} - 
+  {% if user.is_authenticated %}
+    {% ifnotequal user profile.user %}
+      <a href="{% url messages.views.send_message user_id=user.id, recipient_id=profile.user.id %}">
+        Contact Creator
+      </a>
+    {% endifnotequal %}
+  {% endif %}
+  </h3>
+  {% ifequal profile.user user %}
+    <p><b>Username:</b> {{ profile.user.username }}</p>
+  {% endifequal %}
+  <p><b>First Name:</b> {{ profile.user.first_name }}</p>
+  <p><b>Last Name:</b> {{ profile.user.last_name }}</p>
+  <p><b>Affiliation:</b> {{ profile.affiliation }}</p>
+  <p><b>Date Joined:</b> {{ profile.user.date_joined|date:"F d, Y - P" }}</p>
+  
+  {% ifequal profile.user user %}
+    <p><b><a href="{% url core.views.edit_profile %}">Edit Profile</a></b></p>
+	<p><b><a href="{% url core.views.change_password %}">Change Password</a></b></p>
+  {% endifequal %}
+  
+  <hr />
+  
+  {% if datasets %}
+     {% ifequal profile.user user %}
+       <h3>Your Datasets</h3>
+     {% else %}
+       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Datasets</h3>
+     {% endifequal %}
+          
+    {% load dataset_templatetags %}
+    {% list_datasets datasets %}
+  {% else %}
+     {% ifequal profile.user user %}
+	   <p>You have not uploaded any datasets.</p>
+     {% else %}
+       <p>{{ profile.full_title }} has not uploaded any datasets.</p>
+     {% endifequal %}
+  {% endif %}
+  
+  {# TODO: Clean up the styling here #}
+  <a href="{% url datasets.views.view_datasets %}">View All Datasets</a>
+  
+  {# Listing all the un-canceled data requests made by the user. #}
+  
+  <hr />
+  
+  {% if projects %}
+    {% ifequal profile.user user %}
+      <h3>Your Projects</h3>
+    {% else %}
+      <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Projects</h3>
+    {% endifequal %}
+    
+    {% load project_templatetags %}
+    {% list_projects projects 'True' %}
+  {% else %}
+    {% ifequal profile.user user %}
+      <p>You have not created any projects.</p>
+    {% else %}
+      <p>{{ profile.full_title }} has not created any projects.</p>
+    {% endifequal %}
+  {% endif %}
+  
+  <a href="{% url projects.views.view_projects %}">View All Projects</a>
+  
+  <hr />
+  
+  {% if datarequests %}
+     {% ifequal profile.user user %}
+       <h3>Your Data Requests</h3>
+     {% else %}
+       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Data Requests</h3>
+     {% endifequal %}
+    
+    {% load datarequest_templatetags %}
+    {% display_datarequests datarequests %}
+  {% else %}
+    {% ifequal profile.user user %}
+	   <p>You have not made any data requests.</p>
+     {% else %}
+       <p>{{ profile.full_title }} has not made any data requests.</p>
+     {% endifequal %}
+  {% endif %}
+  
+  <a href="{% url datarequests.views.view_datarequests %}">View All Data Requests</a>
+{% endblock %}

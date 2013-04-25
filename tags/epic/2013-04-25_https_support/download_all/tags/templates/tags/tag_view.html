@@ -1,0 +1,6 @@
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+<h3>Items tagged as {{ tag_name }}</h3>
+{% load dataset_templatetags %}
+{% list_datasets datasets %}
+{% endblock %}

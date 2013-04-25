@@ -1,0 +1,83 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block nav %}
+  <div id="nav"> 
+    <ul>   
+      <li class="navfirst"><a href="{% url core.views.browse %}">Browse</a></li>
+      <li><a href="{% url datasets.views.create_dataset %}">Upload</a></li>
+      <li><a href="{% url datarequests.views.new_datarequest %}" class="pageon">Request</a></li>
+      <li><a href="{% url core.views.about %}">About</a></li>
+    </ul> 
+  </div>
+{% endblock %}{# block nav #}
+
+{% block content %}
+<div class="requestbox">
+   <h1>Make a Request</h1>
+   <br/>
+   <form id="request_form" name="request_form" action="{% url datarequests.views.new_datarequest %}" method="POST">
+      <br/>
+      <label> {{ form.name }} </label>
+      <br/>
+      <label> {{ form.description }} </label>
+      <br/>
+      <!--TODO: have data requests be taggable -->
+      <input type="image" src="/core_media/images/makerequest_button.jpg" value="Make Request" alt="Make Request" />
+      <br/>
+   </form>
+</div>
+
+<script type="text/javascript">
+var thisForm = "request_form";
+var defaultVals = new Array();
+defaultVals[0] = new Array("name", "Name this data request.");
+defaultVals[1] = new Array("description", "Describe the data you are requesting.");
+
+window.onload = MPLoadDefaults();
+
+// specify the name of your form
+
+
+// load field names and default values into list
+
+
+// populate fields with default values on page load
+function MPLoadDefaults() {
+with (document.forms[thisForm]) {
+for (var n=0; n<defaultVals.length; n++) {
+var thisField = defaultVals[n][0];
+var thisDefault = defaultVals[n][1];
+if (elements[thisField].value == '')
+elements[thisField].value = thisDefault;
+}}}
+
+// clear default value from field when selected
+function MPClearField(field) {
+var fieldName = field.name;
+for (var n=0; n<defaultVals.length; n++) {
+var thisField = defaultVals[n][0];
+var thisDefault = defaultVals[n][1];
+if (thisField == fieldName) {
+if (field.value == thisDefault) field.value = '';
+break;
+}}}
+
+// clear all defaults when form is submitted
+function MPClearAll() {
+with (document.forms[thisForm]) {
+for (var n=0; n<defaultVals.length; n++) {
+var thisField = defaultVals[n][0];
+var thisDefault = defaultVals[n][1];
+if (elements[thisField].value == thisDefault)
+elements[thisField].value = '';
+}}}
+
+</script>
+
+{% load datarequest_templatetags %}
+{% display_recently_fulfilled_requests %}
+{% endblock %}
+
+
+
+

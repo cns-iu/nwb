@@ -1,0 +1,61 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
+{% load project_templatetags %}
+{% load search_templatetags %}
+
+{% block css %}
+  {{ block.super }}
+  <link href="/media/core/css/star_rating.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block scripts_header %}
+  {{ block.super }}
+  <script type="text/javascript" src="/media/core/javascript/image_swap.js"></script>
+{% endblock %}
+
+{% block nav %}
+  <div id="nav"> 
+    {% nav_bar %}
+  </div>
+{% endblock %}
+
+{% block submenu %}
+  {# TODO: Figure out how to actually space this over the *proper* way. #}
+  {% search_submenu query 'datasets' %}
+{% endblock %}
+
+{% block content %}
+  {% if query %}
+    <span class="highlight">Search Results for "{{ query }}"</span>
+
+    <h1>Datasets</h1>
+    {% if datasets_page.object_list %}
+      {% pagination datasets_page %}
+      {% dataset_list datasets_page.object_list %}
+      {% pagination datasets_page %}
+    {% else %}
+      <p>No datasets were found.</p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block request %}
+  <div class="databox">
+    <h1>Can't find what you're looking for?
+      <a href="{% url datarequests.views.new_datarequest %}" 
+         onmouseout="MM_swapImgRestore()" 
+         onmouseover="MM_swapImage('Image3','','/media/core/images/request_hover_27.jpg',1)">
+             <img src="/media/core/images/request_27.jpg" 
+                alt="makerequest" 
+                name="Image3" 
+                width="150" 
+                height="35" 
+                border="0" 
+                id="Image3" />
+      </a>
+    </h1>
+  </div>
+{% endblock %}
