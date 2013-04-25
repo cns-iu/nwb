@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 DEBUG_SQL = False
 
 ADMINS = (
-    ('Epic Devs', 'cns-epic-dev-l@listserv.indiana.edu'),
+    ('Epic Devs', 'cns-epic-dev-l@iulist.indiana.edu'),
 )
 
 MANAGERS = ADMINS
@@ -143,9 +143,8 @@ GOOGLE_KEY = \
 #  not in memory.
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
-# For registration.
-#DEFAULT_FROM_EMAIL = 'NOREPLY@epic.cns.iu.edu'
-DEFAULT_FROM_EMAIL = 'cns-epic-l@listserv.indiana.edu'
+# For registration and password recovery
+DEFAULT_FROM_EMAIL = 'cns-epic-l@iulist.indiana.edu'
 
 DEACTIVATED_ACCOUNT_VIEW = 'epic.core.views.deactivated_account'
 
