@@ -18,6 +18,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 import prefuse.data.Table;
 import edu.iu.sci2.preprocessing.geocoder.coders.FamilyOfGeocoders;
 import edu.iu.sci2.preprocessing.geocoder.coders.Geocoder;
+import edu.iu.sci2.preprocessing.geocoder.coders.bing.BingFamilyOfGeocoder;
 import edu.iu.sci2.preprocessing.geocoder.coders.yahoo.YahooFamilyOfGeocoder;
 
 /**
@@ -33,7 +34,8 @@ public abstract class AbstractGeocoderFactory implements AlgorithmFactory, Param
 
 	public static final String PLACE_NAME_COLUMN = "place_name_column";
 	public static final String PLACE_TYPE = "place_type";
-	public static final String APPLICATION_ID = "application_id";
+	public static final String YAHOO_APPLICATION_ID = "yahoo_application_id";
+	public static final String BING_APPLICATION_ID = "bing_application_id";
 	public static final String ENABLE_DETAIL = "details";
 	
 	public static final String ADDRESS = "Address";
@@ -65,8 +67,17 @@ public abstract class AbstractGeocoderFactory implements AlgorithmFactory, Param
 		Computation computation = GeocoderComputation.getInstance();
 		if (FamilyOfGeocoders.FAMILY_TYPE.Yahoo.equals(this.familyGeocoder.getFamilyType())) {
 			YahooFamilyOfGeocoder.class.cast(familyGeocoder).
-									setApplicationId((String) parameters.get(APPLICATION_ID));
-			
+			setApplicationId((String) parameters.get(YAHOO_APPLICATION_ID));
+
+			/* If the user request for detail from the geocoding result */
+			if ((Boolean.class.cast(parameters.get(ENABLE_DETAIL)))) {
+				computation = DetailGeocoderComputation.getInstance();
+			}
+		}
+		if (FamilyOfGeocoders.FAMILY_TYPE.Bing.equals(this.familyGeocoder.getFamilyType())) {
+			BingFamilyOfGeocoder.class.cast(familyGeocoder).
+			setApplicationId((String) parameters.get(BING_APPLICATION_ID));
+
 			/* If the user request for detail from the geocoding result */
 			if ((Boolean.class.cast(parameters.get(ENABLE_DETAIL)))) {
 				computation = DetailGeocoderComputation.getInstance();

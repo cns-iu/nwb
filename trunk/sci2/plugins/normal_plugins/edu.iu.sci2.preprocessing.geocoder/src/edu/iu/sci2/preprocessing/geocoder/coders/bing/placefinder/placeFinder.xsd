@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="Response">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element type="xsd:string" name="Copyright"/>
+        <xsd:element type="xsd:anyURI" name="BrandLogoUri"/>
+        <xsd:element type="xsd:short" name="StatusCode"/>
+        <xsd:element type="xsd:string" name="StatusDescription"/>
+        <xsd:element type="xsd:string" name="AuthenticationResultCode"/>
+        <xsd:element type="xsd:string" name="TraceId"/>
+        <xsd:element name="ResourceSets">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="ResourceSet">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element type="xsd:byte" name="EstimatedTotal"/>
+                    <xsd:element name="Resources">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="Location" maxOccurs="unbounded" minOccurs="0">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element type="xsd:string" name="Name"/>
+                                <xsd:element name="Point">
+                                  <xsd:complexType>
+                                    <xsd:sequence>
+                                      <xsd:element type="xsd:float" name="Latitude"/>
+                                      <xsd:element type="xsd:float" name="Longitude"/>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                                <xsd:element name="BoundingBox">
+                                  <xsd:complexType>
+                                    <xsd:sequence>
+                                      <xsd:element type="xsd:float" name="SouthLatitude"/>
+                                      <xsd:element type="xsd:float" name="WestLongitude"/>
+                                      <xsd:element type="xsd:float" name="NorthLatitude"/>
+                                      <xsd:element type="xsd:float" name="EastLongitude"/>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                                <xsd:element type="xsd:string" name="EntityType"/>
+                                <xsd:element name="Address">
+                                  <xsd:complexType>
+                                    <xsd:sequence>
+                                      <xsd:element type="xsd:string" name="AddressLine" minOccurs="0"/>
+                                      <xsd:element type="xsd:string" name="AdminDistrict" minOccurs="0"/>
+                                      <xsd:element type="xsd:string" name="AdminDistrict2" minOccurs="0"/>
+                                      <xsd:element type="xsd:string" name="CountryRegion"/>
+                                      <xsd:element type="xsd:string" name="FormattedAddress"/>
+                                      <xsd:element type="xsd:string" name="Locality" minOccurs="0"/>
+                                      <xsd:element type="xsd:string" name="Landmark" minOccurs="0"/>
+                                      <xsd:element type="xsd:string" name="PostalCode" minOccurs="0"/>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                                <xsd:element type="xsd:string" name="Confidence"  maxOccurs="unbounded" minOccurs="0"/>
+                                <xsd:element type="xsd:string" name="MatchCode"  maxOccurs="unbounded" minOccurs="0"/>
+                                <xsd:element name="GeocodePoint" maxOccurs="unbounded" minOccurs="0">
+                                  <xsd:complexType>
+                                    <xsd:sequence>
+                                      <xsd:element type="xsd:float" name="Latitude"/>
+                                      <xsd:element type="xsd:float" name="Longitude"/>
+                                      <xsd:element type="xsd:string" name="CalculationMethod"/>
+                                      <xsd:element type="xsd:string" name="UsageType" maxOccurs="unbounded" minOccurs="0"/>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

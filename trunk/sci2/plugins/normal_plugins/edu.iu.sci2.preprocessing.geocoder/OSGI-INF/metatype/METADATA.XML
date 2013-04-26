@@ -11,12 +11,24 @@
 	
 	<OCD name="Yahoo! Geocoder" id="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD"
 		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) using Yahoo.  Ensure your machine is connected to the Internet.  If you need to geocode more than a few entities, you may wish to obtain a Yahoo Place Finder application ID from http://developer.yahoo.com/geo/placefinder/ .  You may otherwise leave this field blank.  Each ID is limited to 50,000 requests per day.  Performance may vary due to network latency; expect about 500 unique requests per minute.">
-		<AD name="Yahoo Application ID" id="application_id" type="String" description="Please obtain a Yahoo Place Finder application ID from \nhttp://developer.yahoo.com/geo/placefinder/" default=""/>
+		<AD name="Yahoo Application ID" id="yahoo_application_id" type="String" description="Please obtain a Yahoo Place Finder application ID from \nhttp://developer.yahoo.com/geo/placefinder/" default=""/>
 		<AD name="Place Type" id="place_type" type="String" description="Select the type of place: State, Country, Zip Code or Address" default="Address"/>
 		<AD name="Place Name Column" id="place_name_column" type="String" description="Find longitudes and latitudes for the place names in this column" default=""/>
 		<AD name="Include address details" id="details" type="Boolean" description="Include additional address details from Yahoo! such as county, ZIP code, city, etc." default="false"/>
 	</OCD>
 	<Designate pid="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm">
 		<Object ocdref="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD" />
+	</Designate>
+	
+	
+	<OCD name="Bing Geocoder" id="edu.iu.sci2.preprocessing.geocoder.BingGeocoderAlgorithm.OCD"
+		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) using Bing.  Ensure your machine is connected to the Internet. Each App Key is limited to 50,000 requests per day. Performance may vary due to network latency; ">
+		<AD name="Bing App key" id="bing_application_id" type="String" description="Please obtain a Bing maps key from \nhttp://www.microsoft.com/maps/" default=""/>
+		<AD name="Place Type" id="place_type" type="String" description="Select the type of place: State, Country, Zip Code or Address" default="Address"/>
+		<AD name="Place Name Column" id="place_name_column" type="String" description="Find longitudes and latitudes for the place names in this column" default=""/>
+		<AD name="Include address details" id="details" type="Boolean" description="Include additional address details from Bing such as county, ZIP code, city, etc." default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.preprocessing.geocoder.BingGeocoderAlgorithm">
+		<Object ocdref="edu.iu.sci2.preprocessing.geocoder.BingGeocoderAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>
