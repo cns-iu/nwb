@@ -100,8 +100,13 @@ public abstract class AbstractBingCoder implements Geocoder, DetailGeocoder {
 		/*
 		 * Convert result to geolocation and return the result
 		 */
-		
-		List<Location> locations = response.getResourceSets().getResourceSet().getResources().getLocation();
+		List<Location> locations = null;
+		try {
+		 locations = response.getResourceSets().getResourceSet().getResources().getLocation();
+		}
+		catch(NullPointerException e){
+			throw new GeoCoderException("No result found");
+		}
 		if (locations.size()>0) {
 			
 			Location location = locations.get(0);			
