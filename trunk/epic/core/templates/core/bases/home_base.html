@@ -17,22 +17,19 @@
         <div id="homecolumn3">
           {% block homecolumn3 %}
           {% endblock %}
+          <br/>
+      	  <a href="http://epic.wiki.cns.iu.edu" target="_blank">Try EpiC Tool Now!</a>
         </div>
-        
-         
-        
+
       {% endblock %}
     </div>
     
     <div id="leftsidebarindex">
       {% block leftsidebar %}
-      {% search_box %}
-      {% categories_box %}
-      {% show_tag_cloud %}
+	      {% search_box %}
+	      {% categories_box %}
+	      {% show_tag_cloud %}
       {% endblock %}
-      <br/>
-      <a href="http://epic.wiki.cns.iu.edu" target="_blank">Try EpiC Tool Now!</a>
-  </div>
-    
+    </div>
   </div>
 {% endblock %}
