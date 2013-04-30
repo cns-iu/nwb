@@ -89,7 +89,6 @@
 	
 	function addLocationMarkers(locations){
 		// Clear all the current markers and draw all the markers from the locations array.
-		map.clearOverlays();
 		for (var i=0; i < locations.length; i++){
 			addLocationMarker(locations[i][0], locations[i][1], locations[i][2], locations[i][3]);
 		}
@@ -103,6 +102,7 @@
 			infoHtml += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>';
 		}
 		
+		console.log("marker 1");
 		// Setup options.
 		var options = {
 			map: map,
@@ -111,15 +111,18 @@
 			title: canonical_name
 		};
 		
+		console.log("marker 2");
 		// Create marker
 	    var marker = createGoogleMarker(options);
 		
+	    console.log("marker 3");
 		// When you click a marker, its info window appears
 		addClickListener(marker, function() { 
 			infoWindows.close();
 			infoWindows.setContent(this.content);
 			infoWindows.open(map, this); 
 		});
+		console.log("marker 4");
 	}
 	
 </script>
