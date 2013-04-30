@@ -24,7 +24,7 @@ def parse_geolocation(location):
     return {'lat': lat, 'lng': lng, 'canonical_name': canonical_name,}
 
 def get_best_location(location_string):
-	geocoder = geocoders.GoogleV3(settings.GOOGLE_KEY)
+	geocoder = geocoders.Google()
 	places = geocoder.geocode(location_string, exactly_one=False)
 	try:
 		first_returned_location = places.next()
