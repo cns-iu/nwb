@@ -1,6 +1,6 @@
 {% block scripts_header %}
 {{ block.super }}
-<script src="https://maps.google.com/maps?file=api&amp;v=2&amp;key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+<script src="https://www.google.com/jsapi?key={{ GOOGLE_KEY }}" type="text/javascript"></script>
 {% endblock %}
 
 <style type="text/css">
@@ -23,6 +23,35 @@
 {{ block.super }}
 <script type="text/javascript">
 
+	/**
+	 * This is the Google MAP API utilities file to make sure all calls to 
+	 * Google API is correct. Please add all common utilities at here.
+	 */
+	var GMAPS = google.maps;
+	var GEVENT = google.maps.event;
+	var DEFAULT_POINT = new google.maps.Point(0, 0);
+	var infoWindows;
+	var map;
+	
+	/* Using .load instead of .ready due to issue with IE and Google Maps API */
+	$(window).load(function() {
+		map = createMap();
+		infoWindows = GMAPS.InfoWindow({ content: "" });
+		var locations = getLocations();
+		addLocationMarkers(locations);
+	}
+	
+	function createNoWrapLatLng(lat, lng) {
+		return new GMAPS.LatLng(lat, lng, true);
+	}
+
+	function createGoogleMarker(options) {
+		return new GMAPS.Marker(options);
+	}
+	
+	function addClickListener(marker, actionFunction) {
+		return GEVENT.addListener(marker, 'click', actionFunction);
+	}
 
 	if (GBrowserIsCompatible()) {
 		var map = createMap();
@@ -31,25 +60,27 @@
 	}
 
 	function createMap() {
-		var map_long = 0;
-		var map_lat = 45;
-		var map_zoom = 1;
-		var map_div = document.getElementById("map");
-
-		var map = new GMap2(map_div);
+		var centerLatLng = new gMap.LatLng(45, 0);
 		
-		map.addControl(new GSmallMapControl());
-		map.addControl(new GMapTypeControl());
+		var mapOptions = {
+			zoom: 1,
+			streetViewControl: false,
+			center: centerLatLng,
+			mapTypeId: GMAPS.MapTypeId.TERRAIN,
+			
+			/* Remove switching option for the underline map */
+			mapTypeControlOptions: { mapTypeIds: [] }
+		};
 		
-		var pt = new GLatLng(map_lat, map_long);
-		map.setCenter(pt, map_zoom);
+		var mapAreaId = $("#map");
+		var map = new GMAPS.Map(mapAreaId[0], mapOptions);
+		
 		return map;
 	}
 	
 	function getLocations(){
 		
 		// The locations are set by the template.  They should be passed in as the location_list
-		
 		var locations = 
 			[
 				{% for location in location_list %}
@@ -77,22 +108,31 @@
 	}
 	
 	function addLocationMarker(lng, lat, canonical_name, url_list) {
-		// Create a marker.
-		var markerPoint = new GPoint(lng, lat);
-	    var marker = new GMarker(markerPoint);
-	    
-	    // Create marker info window html.
+		// Create marker info window html.
 	    //(the info window will have the name of the marker and a list of dataset names as links to the datasets)
 		var infoHtml = '<b>' + canonical_name + '</b>';
 		for( var i=0; i < url_list.length ; i++) {
 			infoHtml += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>';
 		}
-		//When you click a marker, its info window appears
-		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(infoHtml); });
-		map.addOverlay(marker);
+		
+		// Setup options.
+		var options = {
+			map: map,
+			content: infoHtml,
+			position: createNoWrapLatLng(lat, lng),
+			title: canonical_name
+		};
+		
+		// Create marker
+	    var marker = createGoogleMarker(options);
+		
+		// When you click a marker, its info window appears
+		addClickListener(marker, function() { 
+			infowindow.close();
+			infowindow.setContent(this.content);
+			infowindow.open(map, this); 
+		});
 	}
-	
-	
 	
 </script>
 {% endblock %}

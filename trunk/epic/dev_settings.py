@@ -6,7 +6,7 @@ from deploy_settings import *
 
 
 GOOGLE_KEY = \
-    'ABQIAAAAGfs37W0paJHSAkG_6nFTJRR4-7fY0mUWhLoroRlYL9BhgFA-nBSB1J6vu5W15LpVZgge0zFYJ18CEg'
+    'AIzaSyBHizo3iE4BsFVjvBoGNqeQyOEPFC91oc0'
 
 DEBUG = True
 
