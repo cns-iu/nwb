@@ -116,9 +116,9 @@
 		
 		// When you click a marker, its info window appears
 		addClickListener(marker, function() { 
-			infowindow.close();
-			infowindow.setContent(this.content);
-			infowindow.open(map, this); 
+			infoWindows.close();
+			infoWindows.setContent(this.content);
+			infoWindows.open(map, this); 
 		});
 	}
 	
