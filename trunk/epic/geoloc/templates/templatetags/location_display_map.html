@@ -12,12 +12,6 @@
 }
 </style>
 
-<script type="text/javascript">
-	window.onUnload = GUnload();
-</script>
-
-
-
 <div id="map"></div>
 {% block scripts_footer %}
 {{ block.super }}
@@ -39,7 +33,7 @@
 		infoWindows = GMAPS.InfoWindow({ content: "" });
 		var locations = getLocations();
 		addLocationMarkers(locations);
-	}
+	});
 	
 	function createNoWrapLatLng(lat, lng) {
 		return new GMAPS.LatLng(lat, lng, true);
