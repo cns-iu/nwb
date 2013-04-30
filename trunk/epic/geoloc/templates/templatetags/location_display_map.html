@@ -30,8 +30,11 @@
 	/* Using .load instead of .ready due to issue with IE and Google Maps API */
 	$(window).load(function() {
 		map = createMap();
+		console.log("info");
 		infoWindows = GMAPS.InfoWindow({ content: "" });
+		console.log("location");
 		var locations = getLocations();
+		console.log("markers");
 		addLocationMarkers(locations);
 	});
 	
@@ -59,9 +62,11 @@
 			/* Remove switching option for the underline map */
 			mapTypeControlOptions: { mapTypeIds: [] }
 		};
-		
+		console.log("map 1");
 		var mapAreaId = $("#map");
 		var map = new GMAPS.Map(mapAreaId[0], mapOptions);
+		
+		console.log("map 2");
 		
 		return map;
 	}
