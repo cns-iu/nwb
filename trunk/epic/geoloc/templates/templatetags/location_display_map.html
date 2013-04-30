@@ -21,14 +21,15 @@
 	 * This is the Google MAP API utilities file to make sure all calls to 
 	 * Google API is correct. Please add all common utilities at here.
 	 */
-	var GMAPS = google.maps;
-	var GEVENT = google.maps.event;
-	var DEFAULT_POINT = new google.maps.Point(0, 0);
+	var GMAPS;
+	var GEVENT;
 	var infoWindows;
 	var map;
 	
 	/* Using .load instead of .ready due to issue with IE and Google Maps API */
 	$(window).load(function() {
+		GMAPS = google.maps;
+		GEVENT = google.maps.event;
 		map = createMap();
 		infoWindows = GMAPS.InfoWindow({ content: "" });
 		var locations = getLocations();
