@@ -31,7 +31,7 @@
 	$(window).load(function() {
 		map = createMap();
 		console.log("info");
-		infoWindows = GMAPS.InfoWindow({ content: "" });
+		infoWindows = new GMAPS.InfoWindow({ content: "" });
 		console.log("location");
 		var locations = getLocations();
 		console.log("markers");
