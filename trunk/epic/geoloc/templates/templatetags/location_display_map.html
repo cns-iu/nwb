@@ -48,12 +48,6 @@
 		return GEVENT.addListener(marker, 'click', actionFunction);
 	}
 
-	if (GBrowserIsCompatible()) {
-		var map = createMap();
-		var locations = getLocations();
-		addLocationMarkers(locations);
-	}
-
 	function createMap() {
 		var centerLatLng = new gMap.LatLng(45, 0);
 		
