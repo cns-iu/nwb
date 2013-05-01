@@ -109,11 +109,13 @@ function createMap() {
 	var map = new GMAPS.Map(mapAreaId[0], mapOptions);
 	addClickListener(map, function(e) {     
 	    if (e.latLng) { 
+	    	console.log("In map event");
 	        var html = createHtmlForMapClickInfoWindow(e.latLng);
 	        infoWindows.close();
 			infoWindows.setContent(html);
-			infoWindows.setContent(e.latLng);
+			infoWindows.setPosition(e.latLng);
 			infoWindows.open(map);
+			console.log("Done map event");
 	        {% comment %}
 	        // This was an attempt to automatically focus the input field, but it
 	        // doesn't work.
@@ -311,9 +313,11 @@ function addLocationMarker(location) {
 	
 	// When you click a marker, its info window appears
 	addClickListener(marker, function() { 
+		console.log("Clicked marker");
 		infoWindows.close();
 		infoWindows.setContent(this.content);
 		infoWindows.open(map, this); 
+		console.log("done marker");
 	});
 }
 
