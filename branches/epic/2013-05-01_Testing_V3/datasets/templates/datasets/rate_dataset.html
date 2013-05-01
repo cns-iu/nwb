@@ -1,0 +1,14 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block content %}
+  <h2>Rate the Dataset</h2>
+  <form enctype="multipart/form-data" action="{% url datasets.rate_dataset item_id=item.id %}" method="POST">
+    <table class="form">
+      {{ form.as_table }}
+    </table>
+    
+    <p><input type="submit" value="Rate" /></p>
+  </form>
+  
+  <a href="/">Home</a>
+{% endblock %}

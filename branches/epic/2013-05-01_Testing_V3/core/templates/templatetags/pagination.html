@@ -1,0 +1,36 @@
+{# TODO: Replace em-spaces with styling? #}
+{% if page.has_other_pages %} 
+  <div class="pagination">
+    <span class="step-links">
+      {% if page.has_previous %}
+        <a href="?page=1">&laquo;&nbsp;first</a>&emsp;
+        <a href="?page={{ page.previous_page_number }}">&lsaquo;&nbsp;previous</a>&emsp;
+      {% endif %}
+      
+      {% ifnotequal page_index_start 1 %}
+        ...&emsp;
+      {% endifnotequal %}
+  
+      {% for page_number in page_range %}
+        {% ifequal page.number page_number %}
+          {{ page_number }}
+        {% else %}
+          <a href="?page={{ page_number }}">{{ page_number }}</a>
+        {% endifequal %}
+        
+        {% ifnotequal page_number page.paginator.num_pages %}
+          &emsp;
+        {% endifnotequal %}
+      {% endfor %}
+      
+      {% ifnotequal page_index_finish page.paginator.num_pages %}
+        ...
+      {% endifnotequal %}
+    
+      {% if page.has_next %}
+        &emsp;<a href="?page={{ page.next_page_number }}">next&nbsp;&rsaquo;</a>
+        &emsp;<a href="?page={{ page.paginator.num_pages }}">last&nbsp;&raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+{% endif %}

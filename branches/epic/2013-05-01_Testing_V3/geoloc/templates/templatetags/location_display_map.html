@@ -1,0 +1,134 @@
+{% block scripts_header %}
+{{ block.super }}
+<script src="https://www.google.com/jsapi?key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&sensor=false"></script>
+{% endblock %}
+
+<style type="text/css">
+#map {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 500px; 
+    height: 360px;
+}
+</style>
+
+<div id="map"></div>
+{% block scripts_footer %}
+{{ block.super }}
+<script type="text/javascript">
+
+	/**
+	 * This is the Google MAP API utilities file to make sure all calls to 
+	 * Google API is correct. Please add all common utilities at here.
+	 */
+	var GMAPS = google.maps;
+	var GEVENT = google.maps.event;
+	var infoWindows;
+	var map;
+	
+	/* Using .load instead of .ready due to issue with IE and Google Maps API */
+	$(window).load(function() {
+		map = createMap();
+		console.log("info");
+		infoWindows = new GMAPS.InfoWindow({ content: "" });
+		console.log("location");
+		var locations = getLocations();
+		console.log("markers");
+		addLocationMarkers(locations);
+	});
+	
+	function createNoWrapLatLng(lat, lng) {
+		return new GMAPS.LatLng(lat, lng, true);
+	}
+
+	function createGoogleMarker(options) {
+		return new GMAPS.Marker(options);
+	}
+	
+	function addClickListener(marker, actionFunction) {
+		return GEVENT.addListener(marker, 'click', actionFunction);
+	}
+
+	function createMap() {
+		var centerLatLng = createNoWrapLatLng(45, 0);
+		
+		var mapOptions = {
+			zoom: 1,
+			streetViewControl: false,
+			center: centerLatLng,
+			mapTypeId: GMAPS.MapTypeId.TERRAIN,
+			
+			/* Remove switching option for the underline map */
+			mapTypeControlOptions: { mapTypeIds: [] }
+		};
+		console.log("map 1");
+		var mapAreaId = $("#map");
+		var map = new GMAPS.Map(mapAreaId[0], mapOptions);
+		
+		console.log("map 2");
+		
+		return map;
+	}
+	
+	function getLocations(){
+		
+		// The locations are set by the template.  They should be passed in as the location_list
+		var locations = 
+			[
+				{% for location in location_list %}
+		             [
+			             {{ location.longitude }},{{ location.latitude }},'{{ location.canonical_name }}', 
+			             	[
+				             	{% for dataset in location.datasets.all %}
+				             	[
+					             	'{{ dataset.name }}','{{ dataset.get_absolute_url }}'
+					             ]{% if not forloop.last %},{% endif %}
+			             		{% endfor %}
+			             	]
+			         ]{% if not forloop.last %},{% endif %}
+			    {% endfor %}
+			];
+		return locations;
+	}
+	
+	function addLocationMarkers(locations){
+		// Clear all the current markers and draw all the markers from the locations array.
+		for (var i=0; i < locations.length; i++){
+			addLocationMarker(locations[i][0], locations[i][1], locations[i][2], locations[i][3]);
+		}
+	}
+	
+	function addLocationMarker(lng, lat, canonical_name, url_list) {
+		// Create marker info window html.
+	    //(the info window will have the name of the marker and a list of dataset names as links to the datasets)
+		var infoHtml = '<b>' + canonical_name + '</b>';
+		for( var i=0; i < url_list.length ; i++) {
+			infoHtml += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>';
+		}
+		
+		console.log("marker 1");
+		// Setup options.
+		var options = {
+			map: map,
+			content: infoHtml,
+			position: createNoWrapLatLng(lat, lng),
+			title: canonical_name
+		};
+		
+		console.log("marker 2");
+		// Create marker
+	    var marker = createGoogleMarker(options);
+		
+	    console.log("marker 3");
+		// When you click a marker, its info window appears
+		addClickListener(marker, function() { 
+			infoWindows.close();
+			infoWindows.setContent(this.content);
+			infoWindows.open(map, this); 
+		});
+		console.log("marker 4");
+	}
+	
+</script>
+{% endblock %}
