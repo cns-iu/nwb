@@ -30,7 +30,6 @@ def get_best_location(location_string):
 		first_returned_location = places[0]
 	except (IndexError, TypeError):
 		raise CouldNotFindLocation, "The location string '%s' could not be resolved to a location" % (location_string)
-	places.close()
 	
 	return first_returned_location
 
