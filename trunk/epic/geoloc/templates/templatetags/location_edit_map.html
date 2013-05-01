@@ -1,6 +1,7 @@
 {% block scripts_header %}
 {{ block.super }}
-<script src="https://maps.google.com/maps?file=api&amp;v=2&amp;key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+<script src="https://www.google.com/jsapi?key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&sensor=false"></script>
 {% endblock %}
 
 
@@ -61,41 +62,74 @@ Location = function (lat, lng, canonicalName, urlNameList) {
 };
   </script>
   
+  
+  
   <script type="text/javascript">
-if (GBrowserIsCompatible()) {
-  // Setup Google map.
-  
-  var map_long = 0;
-  var map_lat = 45;
-  var map_zoom = 1;
-  var map_div = document.getElementById("map");
-  
-  var map = new GMap2(map_div);
-  
-  map.addControl(new GSmallMapControl());
-  map.addControl(new GMapTypeControl());
-  
-  var pt = new GLatLng(map_lat, map_long);
-  map.setCenter(pt, map_zoom);
-  
-  GEvent.addListener(map, "click", function(overlay, latlng) {     
-    if (latlng) { 
-      var html = createHtmlForMapClickInfoWindow(latlng);
-      map.openInfoWindow(latlng, html);
-      {% comment %}
-      // This was an attempt to automatically focus the input field, but it
-      // doesn't work.
-      // document.getElementById(LOCATION_NAME_INPUT_ID).focus();
-      {% endcomment %}
-    }
-  });
-  
-  // Add existing location markers to map.
-  
-  var locations = getInitialLocations(getForms('add'));
-  drawLocationMarkers(locations);
+
+/**
+ * This is the Google MAP API utilities file to make sure all calls to 
+ * Google API is correct. Please add all common utilities at here.
+ */
+var GMAPS = google.maps;
+var GEVENT = google.maps.event;
+var infoWindows;
+var map;
+var locations = [];
+var markers = [];
+
+/* Using .load instead of .ready due to issue with IE and Google Maps API */
+$(window).load(function() {
+	infoWindows = new GMAPS.InfoWindow({ content: "" });
+	map = createMap();
+	var locations = getInitialLocations(getForms('add'));
+	drawLocationMarkers(locations);
+});
+
+function createNoWrapLatLng(lat, lng) {
+	return new GMAPS.LatLng(lat, lng, true);
 }
 
+function createGoogleMarker(options) {
+	return new GMAPS.Marker(options);
+}
+
+function addClickListener(marker, actionFunction) {
+	return GEVENT.addListener(marker, 'click', actionFunction);
+}
+
+function createMap() {
+	var centerLatLng = createNoWrapLatLng(45, 0);
+	
+	var mapOptions = {
+		zoom: 1,
+		streetViewControl: false,
+		center: centerLatLng,
+		mapTypeId: GMAPS.MapTypeId.TERRAIN,
+		
+		/* Remove switching option for the underline map */
+		mapTypeControlOptions: { mapTypeIds: [] }
+	};
+	var mapAreaId = $("#map");
+	var map = new GMAPS.Map(mapAreaId[0], mapOptions);
+	addClickListener(map, function(e) {     
+	    if (e.latLng) { 
+	        var html = createHtmlForMapClickInfoWindow(e.latLng);
+	        infoWindows.close();
+			infoWindows.setContent(html);
+			infoWindows.setContent(e.latLng);
+			infoWindows.open(map);
+	        {% comment %}
+	        // This was an attempt to automatically focus the input field, but it
+	        // doesn't work.
+	        // document.getElementById(LOCATION_NAME_INPUT_ID).focus();
+	        {% endcomment %}
+	    }
+	});
+	
+	return map;
+}
+
+/* TODO: Need to rework. Didn't seem to work */
 var ENTER_KEY_CODE = 13;
 
 function _swallowEnterKey(event, canonical_name, lat, lng) {
@@ -194,6 +228,7 @@ function calculateNumberOfFormsOnPage(formPrefix) {
   return getForms(formPrefix).length;
 }
 
+/* TODO: Should check if the remove item is a create item in form before added */
 // Create the html that represents a form on the page.
 function createHtmlForForm(formPrefix, formNumber, formValue) {
   var id = 'id_' + formPrefix + '-' + formNumber + '-' +
@@ -259,17 +294,31 @@ function createHtmlForLocationMarker(location) {
   return html;
 }
 
-function createMarkerFromLocation(location) {
-  return new GMarker(new GPoint(location.lng, location.lat));
-}
-
 function addLocationMarker(location) {
-  var marker = createMarkerFromLocation(location);
-  var html = createHtmlForLocationMarker(location);
-  GEvent.addListener(marker, "click", function() {
-    marker.openInfoWindowHtml(html);
-  });
-  map.addOverlay(marker);
+	// Create marker info window html.
+    //(the info window will have the name of the marker and a list of dataset names as links to the datasets)
+	var infoHtml = createHtmlForLocationMarker(location);
+	
+	// Setup options.
+	var options = {
+		map: map,
+		content: infoHtml,
+		position: createNoWrapLatLng(location.lat, location.lng),
+		title: location.canonicalName
+	};
+	
+	// Create marker
+    var marker = createGoogleMarker(options);
+	
+	// Add to markers array
+	markers.push(marker);
+	
+	// When you click a marker, its info window appears
+	addClickListener(marker, function() { 
+		infoWindows.close();
+		infoWindows.setContent(this.content);
+		infoWindows.open(map, this); 
+	});
 }
 
 function lookupLocation(id) {
@@ -294,7 +343,7 @@ function lookupLocation(id) {
                                     '');
         addNewLocationFromLocation(location);
         jQuery("#map_messages").html(responseData.success);
-        map.setCenter(new GLatLng(location.lat, location.lng));
+        map.setCenter(createNoWrapLatLng(location.lat, location.lng));
       }
       else {
         jQuery("#map_messages").html(responseData.failure);
@@ -306,7 +355,7 @@ function lookupLocation(id) {
 function addNewLocationFromLocation(location) {
   insertLocation(location);
   addLocationMarker(location);
-  map.getInfoWindow().hide();
+  infoWindows.close();
 }
 
 function cleanNameFromUserInput(inputName) {
@@ -335,9 +384,15 @@ function removeLoc(canonicalName, lat, lng) {
   drawLocationMarkers(locations);
 }
 
+function removeAllMarkersFromMap() {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
+  markers = [];
+}
+
 function drawLocationMarkers(locations) {
-  map.clearOverlays();
-  
+	removeAllMarkersFromMap();  
   for (var i = 0; i < locations.length; i++) {
     var location = locations[i];
     addLocationMarker(location);
