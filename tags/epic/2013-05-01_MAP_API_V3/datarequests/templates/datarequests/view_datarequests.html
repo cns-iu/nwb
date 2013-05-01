@@ -1,0 +1,16 @@
+{% extends "core/browse.html" %}
+
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+
+{% block submenu %}
+  {# TODO: Figure out how to actually space this over the *proper* way. #}
+  {% browse_submenu 'data requests' %}
+{% endblock %}
+
+{% block content %}
+  <h1> Data Requests </h1>
+  {% pagination datarequests_page %}
+  {% datarequest_list datarequests_page.object_list %}
+  {% pagination datarequests_page %}
+{% endblock %}
