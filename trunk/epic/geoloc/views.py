@@ -53,6 +53,6 @@ def geoloc_get_best_location(request):
 		return HttpResponse(json, mimetype='application/json')
 	except Exception, e:
 		# TODO This represents a library error and should be logged.
-		responseData['failure'] = "Error resolving '%s' to a location" % location_string
+		responseData['failure'] =  str(e) + "Error resolving '%s' to a location" % location_string
 		json = simplejson.dumps(responseData)
 		return HttpResponse(json, mimetype='application/json')
