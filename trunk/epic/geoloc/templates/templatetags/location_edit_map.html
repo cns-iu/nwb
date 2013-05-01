@@ -109,13 +109,11 @@ function createMap() {
 	var map = new GMAPS.Map(mapAreaId[0], mapOptions);
 	addClickListener(map, function(e) {     
 	    if (e.latLng) { 
-	    	console.log("In map event");
 	        var html = createHtmlForMapClickInfoWindow(e.latLng);
 	        infoWindows.close();
 			infoWindows.setContent(html);
 			infoWindows.setPosition(e.latLng);
 			infoWindows.open(map);
-			console.log("Done map event");
 	        {% comment %}
 	        // This was an attempt to automatically focus the input field, but it
 	        // doesn't work.
@@ -162,7 +160,7 @@ function createHtmlForMapClickInfoWindow(latlng) {
   
   var textBox = '<input type="text" id="' + LOCATION_NAME_INPUT_ID +
                 '" ' + onKeyPressString + ' \\>';
-  var onClickFunction = "addNewLocationFromElement(" +
+  var onClickFunction = "event.stopPropagation(); addNewLocationFromElement(" +
                         addNewLocationFromElementArguments +
                         "); return false;";
   var submitBox = '<br><input type="submit" value="Add Location" onclick="' + 
@@ -188,7 +186,6 @@ function createLocationFromLocationString(locationString) {
   
   var lat = splitLocationString[1];
   var lng = splitLocationString[2];
-  // console.log(lat, lng);
   var canonicalName = splitLocationString[3];
   var unprocessedUrlNameList = splitLocationString[4];
   var urlNameList = [];
@@ -281,7 +278,7 @@ function createHtmlForLocationMarker(location) {
     body += '<br /><a href="' + pair.url + '">' + pair.name + '</a>';
   }
   
-  var onclickFunction = "removeLoc('" +  location.canonicalName  +
+  var onclickFunction = "event.stopPropagation(); removeLoc('" +  location.canonicalName  +
                         "'," + location.lat + "," +
                         location.lng + "); return false";
   var submit = '<br /><br /><input type="submit" ' +
@@ -313,11 +310,9 @@ function addLocationMarker(location) {
 	
 	// When you click a marker, its info window appears
 	addClickListener(marker, function() { 
-		console.log("Clicked marker");
 		infoWindows.close();
 		infoWindows.setContent(this.content);
 		infoWindows.open(map, this); 
-		console.log("done marker");
 	});
 }
 
