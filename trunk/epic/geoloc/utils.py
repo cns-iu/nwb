@@ -27,8 +27,8 @@ def get_best_location(location_string):
 	geocoder = geocoders.GoogleV3()
 	places = geocoder.geocode(location_string, exactly_one=False)
 	try:
-		first_returned_location = places.next()
-	except StopIteration:
+		first_returned_location = places[0]
+	except Exception:
 		raise CouldNotFindLocation, "The location string '%s' could not be resolved to a location" % (location_string)
 	places.close()
 	
