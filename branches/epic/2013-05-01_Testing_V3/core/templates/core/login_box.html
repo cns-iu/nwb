@@ -1,0 +1,14 @@
+<form method="post" action="{% url django.contrib.auth.views.login %}">
+  <label>{{ login_form.username }}</label>
+  <br />
+  <label>{{ login_form.password }}</label>
+  <br />
+  <input type="submit" value="login" />
+  <input type="hidden" name="next" value="{{ next }}" />
+  
+  <br />
+  {# TODO: fix the styling, don't just add spacing. #}
+  <label style="font-size: 12px; color:white;">New user? <a style="font-size: 12px; color:white; border-bottom-style: dotted; border-bottom-width: thin;" href="{% url core.views.register %}">Register now</a>.</label>
+  <br />
+  <label style="font-size: 12px; color:white;">Forgot your <a style="font-size: 12px; color:white; border-bottom-style: dotted; border-bottom-width: thin;" href="{% url core.views.forgot_password %}">password</a>?</label>
+</form>
