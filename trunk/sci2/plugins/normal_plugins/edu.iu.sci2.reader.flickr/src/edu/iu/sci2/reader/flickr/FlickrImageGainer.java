@@ -103,7 +103,7 @@ public class FlickrImageGainer {
 							Iterator<Element> it1 = photos1
 									.elementIterator();
 							while (it1.hasNext()) {
-								Element photo = it.next();
+								Element photo = it1.next();
 								String photoId = photo.attribute("id")
 										.getValue();
 								resultList.add(getPhotoResult(photoId));
