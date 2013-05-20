@@ -1,0 +1,397 @@
+{% block scripts_header %}
+{{ block.super }}
+<script src="https://www.google.com/jsapi?key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3.3&sensor=false"></script>
+{% endblock %}
+
+
+{{ geoloc_add_formset }}
+{{ geoloc_remove_formset }}
+
+{# TODO: Style this #}
+<div class="messages" id="map_messages"></div>
+<div class="map_location_bar">
+     <p>
+       <b>Add a location:</b>
+       <input type="text" size="30" id="location_input"/>
+       <input type="submit" value="Search" name="find" onclick="lookupLocation('location_input'); return false;"/>
+     </p>
+</div>
+
+<div id="map" style="width: 500px; height: 360px"></div>
+
+
+{% block scripts_footer %}
+  {{ block.super }}
+  <script type="text/javascript">	
+// TODO: refactor out add_locations and remove_locations to just have one list
+// of locations.
+
+var LOCATION_NAME_INPUT_ID = "canonical_name";
+
+UrlNamePair = function(name, url) {
+  this.name = name;
+  this.url = url;
+};
+
+Location = function (lat, lng, canonicalName, urlNameList) {
+  this.lat = lat;
+  this.lng = lng;
+  this.canonicalName = canonicalName;
+  this.urlNameList = urlNameList;
+  this.toString = function() {
+    if (urlNameList) {
+      return '[[' + this.lat + ', ' + this.lng + '], \'' + 
+             this.canonicalName + '\', [' + location.urlNameList + ']]';
+    }
+    else {
+      return '[[' + this.lat + ', ' + this.lng + '], \'' + 
+             this.canonicalName + '\', []]';
+    }
+  };
+  
+  this.equals = function(location) {
+    return ((this.lat == location.lat) &&
+            (this.lng == location.lng) && 
+            (this.canonicalName == location.canonicalName));
+  };
+};
+  </script>
+  
+  
+  
+  <script type="text/javascript">
+
+/**
+ * This is the Google MAP API utilities file to make sure all calls to 
+ * Google API is correct. Please add all common utilities at here.
+ */
+var GMAPS = google.maps;
+var GEVENT = google.maps.event;
+var infoWindows;
+var map;
+var locations = [];
+var markers = [];
+
+/* Using .load instead of .ready due to issue with IE and Google Maps API */
+$(window).load(function() {
+	infoWindows = new GMAPS.InfoWindow({ content: "" });
+	map = createMap();
+	var locations = getInitialLocations(getForms('add'));
+	drawLocationMarkers(locations);
+});
+
+function createNoWrapLatLng(lat, lng) {
+	return new GMAPS.LatLng(lat, lng, true);
+}
+
+function createGoogleMarker(options) {
+	return new GMAPS.Marker(options);
+}
+
+function addClickListener(marker, actionFunction) {
+	return GEVENT.addListener(marker, 'click', actionFunction);
+}
+
+function createMap() {
+	var centerLatLng = createNoWrapLatLng(45, 0);
+	
+	var mapOptions = {
+		zoom: 1,
+		streetViewControl: false,
+		center: centerLatLng,
+		mapTypeId: GMAPS.MapTypeId.TERRAIN,
+		
+		/* Remove switching option for the underline map */
+		mapTypeControlOptions: { mapTypeIds: [] }
+	};
+	var mapAreaId = $("#map");
+	var map = new GMAPS.Map(mapAreaId[0], mapOptions);
+	addClickListener(map, function(e) {     
+	    if (e.latLng) { 
+	        var html = createHtmlForMapClickInfoWindow(e.latLng);
+	        infoWindows.close();
+			infoWindows.setContent(html);
+			infoWindows.setPosition(e.latLng);
+			infoWindows.open(map);
+	        {% comment %}
+	        // This was an attempt to automatically focus the input field, but it
+	        // doesn't work.
+	        // document.getElementById(LOCATION_NAME_INPUT_ID).focus();
+	        {% endcomment %}
+	    }
+	});
+	
+	return map;
+}
+
+/* TODO: Need to rework. Didn't seem to work */
+var ENTER_KEY_CODE = 13;
+
+function _swallowEnterKey(event, canonical_name, lat, lng) {
+  var keyCode;
+  
+  if (window.event) {
+    // For Internet Explorer, apparently.
+    keyCode = event.keyCode;
+  }
+  else {
+    // For other browsers, apparently.
+    keyCode = event.which;
+  }
+  
+  
+  if (keyCode == ENTER_KEY_CODE) {
+    addNewLocationFromElement(canonical_name, lat, lng);
+    
+    return false;
+  }
+  
+  return true;
+}
+
+function createHtmlForMapClickInfoWindow(latlng) {
+  var title = '<br />Location Name:';
+  
+  var addNewLocationFromElementArguments =
+    "'canonical_name', " + latlng.lat() + ", " + latlng.lng();
+  var onKeyPressString = 'onKeyPress="return _swallowEnterKey(event, ' +
+                         addNewLocationFromElementArguments + ')"';
+  
+  var textBox = '<input type="text" id="' + LOCATION_NAME_INPUT_ID +
+                '" ' + onKeyPressString + ' \\>';
+  var onClickFunction = "event.stopPropagation(); addNewLocationFromElement(" +
+                        addNewLocationFromElementArguments +
+                        "); return false;";
+  var submitBox = '<br><input type="submit" value="Add Location" onclick="' + 
+                  onClickFunction + '" />';
+  var html = title + textBox + submitBox;
+  
+  return html;
+}
+
+// Get all the forms of a certain prefix that are on the page.
+
+function getForms(formPrefix) {
+  re = new RegExp("id_" + formPrefix + "-\\d+-" + formPrefix + "_location");
+  
+  return jQuery('input:hidden').filter(function() {
+    return this.id.match(re);
+  });
+}
+
+function createLocationFromLocationString(locationString) {
+  var re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+?)', (\[(?:\[u'(.+?)', '(.+?)'\](?:, )?)*\])\]$/i;
+  var splitLocationString = locationString.split(re);
+  
+  var lat = splitLocationString[1];
+  var lng = splitLocationString[2];
+  var canonicalName = splitLocationString[3];
+  var unprocessedUrlNameList = splitLocationString[4];
+  var urlNameList = [];
+  
+  var splitUrlNameList = unprocessedUrlNameList.split('], ');
+  
+  for(var j = 0; j < splitUrlNameList.length; j++) {
+    re = /^\[(?:)\[?u'(.+)', '(.+)'/i;
+    var unprocessedUrlName = splitUrlNameList[j].split(re);
+    
+    var name = unprocessedUrlName[1];
+    var url = unprocessedUrlName[2];
+    
+    var urlNamePair = new UrlNamePair(name, url);
+    urlNameList = urlNameList.concat(urlNamePair);
+  }
+  
+  return new Location(lat, lng, canonicalName, urlNameList);
+}
+
+function getInitialLocations(existingLocationForms) {
+  var locations = [];
+  
+  for (var i = 0; i < existingLocationForms.length ; i ++) {
+    var loc = 
+    	createLocationFromLocationString(existingLocationForms[i].value);
+    locations = locations.concat(loc);
+  }
+  
+  return locations;
+}
+
+// Get the number of forms with a certain prefix on the page.
+function calculateNumberOfFormsOnPage(formPrefix) {
+  return getForms(formPrefix).length;
+}
+
+/* TODO: Should check if the remove item is a create item in form before added */
+// Create the html that represents a form on the page.
+function createHtmlForForm(formPrefix, formNumber, formValue) {
+  var id = 'id_' + formPrefix + '-' + formNumber + '-' +
+           formPrefix + '_location';
+  var value = formValue;
+  var name = formPrefix + '-' + formNumber + '-' + formPrefix + '_location';
+  
+  return '<input type="hidden" id="' + id + '" value="' + value +
+         '" name="' + name + '"/>';
+}
+
+// Add a new form to the page with the value specified.
+function addFormToPage(formPrefix, formValue) {
+  var formNumber = calculateNumberOfFormsOnPage(formPrefix);
+  var html = createHtmlForForm(formPrefix, formNumber, formValue);
+  
+  if (formNumber === 0) {
+    jQuery('form').prepend(html);
+  }
+  else {
+    jQuery('#id_' + formPrefix + '-0-' + formPrefix +'_location').
+      parent().prepend(html);
+  }
+  
+  jQuery('#id_' + formPrefix + '-TOTAL_FORMS').attr('value', formNumber + 1);
+}
+
+// Insert a location into the array of locations and add an 'add' 
+// form to the html.
+function insertLocation(location) {
+  addFormToPage('add', location.toString());
+  locations = locations.concat(location);
+}
+
+// Remove a location from the array of locations and add an 'remove'
+// form to the html.
+function removeLocation(location) {
+  for(var i = 0; i < locations.length; i++) {
+    if (location.equals(locations[i])) {
+      locations.splice(i, 1);
+      addFormToPage('remove', location.toString());
+    }
+  }
+}
+
+function createHtmlForLocationMarker(location) {
+  var title = '<b>' + location.canonicalName + '</b>';
+  var body = '';
+  
+  for (var i = 0; i < location.urlNameList.length; i++) {
+    var pair = location.urlNameList[i];
+    body += '<br /><a href="' + pair.url + '">' + pair.name + '</a>';
+  }
+  
+  var onclickFunction = "event.stopPropagation(); removeLoc('" +  location.canonicalName  +
+                        "'," + location.lat + "," +
+                        location.lng + "); return false";
+  var submit = '<br /><br /><input type="submit" ' +
+               'value="Remove this Location" onclick="' +
+               onclickFunction + '" />';
+  var html = title + body + submit;
+  
+  return html;
+}
+
+function addLocationMarker(location) {
+	// Create marker info window html.
+    //(the info window will have the name of the marker and a list of dataset names as links to the datasets)
+	var infoHtml = createHtmlForLocationMarker(location);
+	
+	// Setup options.
+	var options = {
+		map: map,
+		content: infoHtml,
+		position: createNoWrapLatLng(location.lat, location.lng),
+		title: location.canonicalName
+	};
+	
+	// Create marker
+    var marker = createGoogleMarker(options);
+	
+	// Add to markers array
+	markers.push(marker);
+	
+	// When you click a marker, its info window appears
+	addClickListener(marker, function() { 
+		infoWindows.close();
+		infoWindows.setContent(this.content);
+		infoWindows.open(map, this); 
+	});
+}
+
+function lookupLocation(id) {
+  var location_string = document.getElementById(id).value;
+  
+  if (location_string === '') {
+    jQuery('#map_messages').html('You must provide a location.');
+    
+    return false;
+  }
+  
+  var data = {};
+  data.location_string = location_string;
+  jQuery.post(
+    '{% url geoloc.views.geoloc_get_best_location %}',
+    data,
+    function(responseData) {
+      if (responseData.success) {
+        var location = new Location(responseData.lat,
+                                    responseData.lng,
+                                    responseData.canonical_name,
+                                    '');
+        addNewLocationFromLocation(location);
+        jQuery("#map_messages").html(responseData.success);
+        map.setCenter(createNoWrapLatLng(location.lat, location.lng));
+      }
+      else {
+        jQuery("#map_messages").html(responseData.failure);
+      }
+    },
+    'json');
+}
+
+function addNewLocationFromLocation(location) {
+  insertLocation(location);
+  addLocationMarker(location);
+  infoWindows.close();
+}
+
+function cleanNameFromUserInput(inputName) {
+  var re_quote = /\'/gi;
+  var re_double_quote = /\"/gi;
+  var canonicalName =
+    inputName.replace(re_quote, "").replace(re_double_quote, "");
+  
+  if (canonicalName === "") {
+    canonicalName = "Unnamed Location";
+  }
+  
+  return canonicalName;
+}
+
+function addNewLocationFromElement(elementId, lat, lng) {
+  var canonicalName =
+    cleanNameFromUserInput(document.getElementById(elementId).value);
+  var location = new Location(lat, lng, canonicalName, '');
+  addNewLocationFromLocation(location);
+}
+
+function removeLoc(canonicalName, lat, lng) {
+  var location = new Location(lat, lng, canonicalName, '');
+  removeLocation(location);
+  drawLocationMarkers(locations);
+}
+
+function removeAllMarkersFromMap() {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
+  markers = [];
+}
+
+function drawLocationMarkers(locations) {
+	removeAllMarkersFromMap();  
+  for (var i = 0; i < locations.length; i++) {
+    var location = locations[i];
+    addLocationMarker(location);
+  }
+}
+  </script>
+{% endblock %}

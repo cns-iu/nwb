@@ -1,0 +1,29 @@
+{# This script displays the projects for a particular user. Might need to refactor this into the Profile later on. #}
+
+{% extends "core/bases/browse_base.html" %}
+
+{% load project_templatetags %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  {% if messages %}
+    <div class="highlight" id="message">
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  
+  {% if projects %}
+    <div class="projects-authorname">
+      Projects for {{ requested_user.get_full_name }}
+	</div>
+	
+	{% project_list projects 'True' %}
+  {% endif %}
+{% endblock %}
