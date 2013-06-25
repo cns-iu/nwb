@@ -3,6 +3,7 @@ package edu.iu.sci2.visualization.scimaps.tests;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.HeadlessException;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Dictionary;
@@ -136,17 +137,16 @@ public class MapOfScienceTest {
 			System.out.println("Executing.. ");
 			algorithm.execute();
 			System.out.println(".. Done.");
-		} catch (NoClassDefFoundError e) {
+		} catch (Exception e) {
 			if (e.getMessage() != null
 					&& e.getMessage()
-							.contains("sun.awt.X11GraphicsEnvironment")) {
+							.contains("No X11 DISPLAY")) {
 				Assume.assumeNoException(e);
+			} else {
+				System.err.println("error!");
+				e.printStackTrace();
+				fail("There was a problem" + e.getMessage());
 			}
-			throw e;
-		} catch (Exception e) {
-			System.err.println("error!");
-			e.printStackTrace();
-			fail("There was a problem" + e.getMessage());
 		}
 	}
 
