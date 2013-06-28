@@ -88,7 +88,6 @@
 		</menu>
 		<menu name="Geospatial" type="group"> 
 			<menu pid="edu.iu.sci2.preprocessing.geocoder.GeocoderAlgorithm"/>
-			<menu pid="edu.iu.sci2.preprocessing.geocoder.YahooGeocoderAlgorithm"/>
 		</menu>
 		<menu name="Topical" type="group">
 			<menu pid= "edu.iu.nwb.analysis.burst.Burst"/> 

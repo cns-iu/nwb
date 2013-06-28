@@ -25,5 +25,5 @@ Import-Package: au.com.bytecode.opencsv,
  org.osgi.service.prefs,
  prefuse.data
 X-AutoStart: true
-Service-Component: OSGI-INF/component.xml, OSGI-INF/yahooAlgorithm.xml, OSGI-INF/bingAlgorithm.xml
+Service-Component: OSGI-INF/component.xml, OSGI-INF/bingAlgorithm.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -15,7 +15,7 @@ import edu.iu.sci2.preprocessing.geocoder.coders.Geocoder.CODER_TYPE;
 public interface FamilyOfGeocoders {
 
 	/* Existing families */
-	public static enum FAMILY_TYPE { Generic, Yahoo, Bing };
+	public static enum FAMILY_TYPE { Generic, Bing };
 	
 	/* Family type */
 	public FAMILY_TYPE getFamilyType();
