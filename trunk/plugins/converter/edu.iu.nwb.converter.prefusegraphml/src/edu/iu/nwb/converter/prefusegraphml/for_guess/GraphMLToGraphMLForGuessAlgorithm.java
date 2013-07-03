@@ -3,6 +3,7 @@ package edu.iu.nwb.converter.prefusegraphml.for_guess;
 import java.io.File;
 import java.util.Dictionary;
 
+import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -12,20 +13,23 @@ import org.cishell.framework.data.DataProperty;
 import edu.iu.nwb.converter.prefusegraphml.reader.PrefuseGraphMLReader;
 import edu.iu.nwb.converter.prefusegraphml.writer.PrefuseGraphMLWriter;
 
+
 public class GraphMLToGraphMLForGuessAlgorithm implements Algorithm {
 	public static final String GRAPH_ML_FOR_GUESS_MIME_TYPE = "file:text/graphml_for_guess+xml";
 	public static final String DEFAULT_LABEL = "Untitled";
 
 	private Data[] inputData;
-    
-    public GraphMLToGraphMLForGuessAlgorithm(Data[] inputData) {
-    	this.inputData = inputData;
+    private CIShellContext context;
+	
+    public GraphMLToGraphMLForGuessAlgorithm(Data[] inputData, CIShellContext context) {
+     	this.inputData = inputData;
+    	this.context = context;
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
     		Data[] graphData =
-				(new PrefuseGraphMLReader(this.inputData, true)).execute();
+				(new PrefuseGraphMLReader(this.inputData, true, this.context)).execute();
 			Data[] outputData = (new PrefuseGraphMLWriter(graphData)).execute();
     		
     		return createOutData(outputData);

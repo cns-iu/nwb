@@ -10,9 +10,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -56,7 +54,7 @@ public class GraphMLWriter extends AbstractGraphWriter {
     /**
      * Map containing legal data types and their names in the GraphML spec
      */
-    private static final HashMap TYPES = new HashMap();
+    private static final HashMap<Class<?>, String> TYPES = new HashMap<Class<?>, String>();
     static {
         TYPES.put(int.class, Tokens.INT);
         TYPES.put(Integer.class, Tokens.INT);
@@ -133,10 +131,11 @@ public class GraphMLWriter extends AbstractGraphWriter {
         if (graphHasNodes) {
 //        	String idFieldName = determineIDFieldName(nodeSchema);
         	xml.comment("nodes");
-        	Iterator nodes = graph.nodes();
+        	@SuppressWarnings("unchecked")
+			Iterator<Node> nodes = (Iterator<Node>) graph.nodes();
 
         	while (nodes.hasNext()) {
-        		Node node = (Node) nodes.next();
+        		Node node = nodes.next();
             
         		if (nodeSchema.getColumnCount() > 0) {
         			xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(node.getRow()));
@@ -167,10 +166,11 @@ public class GraphMLWriter extends AbstractGraphWriter {
         	String[] attributeValues = new String[3];
         
         	xml.comment("edges");
-        	Iterator edges = graph.edges();
+        	@SuppressWarnings("unchecked")
+			Iterator<Edge> edges = (Iterator<Edge>) graph.edges();
 
         	while (edges.hasNext()) {
-        		Edge edge = (Edge) edges.next();
+        		Edge edge = edges.next();
         		attributeValues[0] = "e" + String.valueOf(edge.getRow());
         		attributeValues[1] = "n" + String.valueOf(edge.getSourceNode().getRow());
         		attributeValues[2] = "n" + String.valueOf(edge.getTargetNode().getRow());
@@ -282,7 +282,7 @@ OUTER:
      */
     private void checkGraphMLSchema(Schema s) throws DataIOException {
         for ( int i=0; i<s.getColumnCount(); ++i ) {
-            Class type = s.getColumnType(i);
+            Class<?> type = s.getColumnType(i);
             if ( TYPES.get(type) == null ) {
                 throw new DataIOException(
                 	"Data type unsupported by the "

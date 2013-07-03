@@ -13,6 +13,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.cishell.framework.CIShellContext;
+import org.osgi.service.log.LogService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -39,9 +41,12 @@ import prefuse.util.collections.IntIterator;
  */
 public class GraphMLReaderModified extends AbstractGraphReader {
 	private boolean cleanForGUESS;
-
-	public GraphMLReaderModified(boolean cleanForGUESS) {
+	private CIShellContext context;
+	
+	public GraphMLReaderModified(boolean cleanForGUESS, CIShellContext context) {
 		this.cleanForGUESS = cleanForGUESS;
+		this.context = context;
+
 	}
 
     /**
@@ -51,7 +56,7 @@ public class GraphMLReaderModified extends AbstractGraphReader {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 		    SAXParser saxParser = factory.newSAXParser();
-			GraphMLHandler handler = new GraphMLHandler(this.cleanForGUESS);
+			GraphMLHandler handler = new GraphMLHandler(this.cleanForGUESS, this.context);
 	        saxParser.parse(input, handler);
 
 	        return handler.getGraph();
@@ -133,19 +138,31 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         private int nodeRow = -1;
         private Table currentTable = null;
         protected HashMap<String, Integer> nodeIDsToRowNumbers = new HashMap<String, Integer>();
-        protected HashMap idMap = new HashMap();
+        protected HashMap<String, String> idToNameMap = new HashMap<String, String>();
         
         private boolean isDirected = false;
         private boolean inSchema;
 
         private boolean cleanForGUESS;
-
-        public GraphMLHandler(boolean cleanForGUESS) {
+        
+        private HashMap<String, Integer> attributeNameToCount = new HashMap<String, Integer>();
+        private HashMap<String, Integer> attributeIdToCount = new HashMap<String, Integer>();
+        private HashMap<String, Integer> attributeKeyToCount = new HashMap<String, Integer>();
+        
+        private LogService logger;
+   
+        public GraphMLHandler(boolean cleanForGUESS, CIShellContext context) {
         	this.cleanForGUESS = cleanForGUESS;
+        	this.logger  = (LogService) context.getService("org.osgi.service.log.LogService");
         }
         
         public void startDocument() {
-            nodeIDsToRowNumbers.clear();
+
+        	if(this.cleanForGUESS){
+            	logger.log(LogService.LOG_WARNING,"[Warning] The column names that conflict with the existing column or " +
+    					"keywords used by the GUESS plugin will be renamed.");
+        	}
+        	nodeIDsToRowNumbers.clear();
             inSchema = true;
             
             this.edgeSchema.addColumn(SOURCE, int.class);
@@ -199,9 +216,38 @@ public class GraphMLReaderModified extends AbstractGraphReader {
             if (graphID != null)
                 graph.putClientProperty(ID, graphID);
         }
+        	
+        private String formNonConflictingNameForGUESS(String name, HashMap<String,Integer> hashMap, boolean showLog) {
+        	
+        	int count = 0;
+        	String modifiedName = name;
+     
+        	//If the name is already present in the hash map, get the count value(which is the number of times this 
+        	//name has been used before. So, return the name with the count value added to its end.
+        	//If it is not present (which means it is the first time this name is used), then add it to the hashmap
+        	//with a count value incremented by 1 and return the same name without adding any numbers at the end.
+        	if(hashMap.get(name) != null){
+         		count =	hashMap.get(name);
+        		modifiedName += count;
+        	}
+        	else{
+        		//Check whether the names fall under the list of names specific to GUESS plugin.
+        		//If so modify the name by appending '0' at the end. In general case we do not append '0' for the
+        		//first occurrence. Only from 2nd occurrence we add '1' and then '2' at the end.
+        		if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(name) ||
+            			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(name)) {
+            		modifiedName += count;
+                }
+        	}
+        	
+        	if(name != null && hashMap != null)
+    			hashMap.put(name, new Integer(++count));		
 
-        private String formNonConflictingNameForGUESS(String name) {
-        	return "original" + name;
+        	if(showLog && !name.equalsIgnoreCase(modifiedName)){
+            	logger.log(LogService.LOG_WARNING,name + "----->" + modifiedName);
+        	}
+        	
+    		return modifiedName;
         }
 
         public static final String GUESS_ATTRIBUTE_COLOR = "color";
@@ -226,6 +272,10 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         public static final String GUESS_ATTRIBUTE_NODE_1 = "node1";
         public static final String GUESS_ATTRIBUTE_NODE_2 = "node2";
         public static final String GUESS_ATTRIBUTE_WEIGHT = "weight";
+        
+        public static final String GUESS_ATTRIBUTE_COUNT = "count";
+        public static final String GUESS_ATTRIBUTE_SIZE = "size";
+        public static final String GUESS_ATTRIBUTE_TYPE = "type";
 
         public static final Collection<String> DEFAULT_GUESS_NODES_ATTRIBUTES =
         	Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
@@ -245,7 +295,10 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         		GUESS_ATTRIBUTE_VISIBLE,
         		GUESS_ATTRIBUTE_WIDTH,
         		GUESS_ATTRIBUTE_X,
-        		GUESS_ATTRIBUTE_Y)));
+        		GUESS_ATTRIBUTE_Y,
+        		GUESS_ATTRIBUTE_COUNT,
+        		GUESS_ATTRIBUTE_SIZE,
+        		GUESS_ATTRIBUTE_TYPE)));
 
         public static final Collection<String> DEFAULT_GUESS_EDGE_ATTRIBUTES =
         	Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
@@ -292,21 +345,15 @@ public class GraphMLReaderModified extends AbstractGraphReader {
                 this.idAttribute = attributes.getValue(ID);
                 this.nameAttribute = attributes.getValue(ATTRIBUTE_NAME);
 
+                //TODO: The idAttribute need to be clarified: What it uses for?
                 if (this.cleanForGUESS) {
-                	if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(this.idAttribute) ||
-                			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(this.idAttribute)) {
-                		this.idAttribute = formNonConflictingNameForGUESS(this.idAttribute);
-                	}
-
-                	if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(this.nameAttribute) ||
-                			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(this.nameAttribute)) {
-                		this.nameAttribute = formNonConflictingNameForGUESS(this.nameAttribute);
-                	}
+                	this.idAttribute = formNonConflictingNameForGUESS(this.idAttribute, this.attributeIdToCount, false);
+              		this.nameAttribute = formNonConflictingNameForGUESS(this.nameAttribute, this.attributeNameToCount, true);
                 }
 
                 this.typeAttribute = attributes.getValue(ATTRIBUTE_TYPE);
             } else if (attributeName.equals(NODE)) {
-                schemaCheck();
+            	schemaCheck();
 
                 nodeRow = nodes.addRow();
                 
@@ -325,10 +372,7 @@ public class GraphMLReaderModified extends AbstractGraphReader {
                 this.currentKey = attributes.getValue(KEY);
 
                 if (this.cleanForGUESS) {
-                	if (DEFAULT_GUESS_NODES_ATTRIBUTES.contains(this.currentKey) ||
-                			DEFAULT_GUESS_EDGE_ATTRIBUTES.contains(this.currentKey)) {
-            			this.currentKey = formNonConflictingNameForGUESS(this.currentKey);
-                	}
+            		this.currentKey = formNonConflictingNameForGUESS(this.currentKey, this.attributeKeyToCount, false);
                 }
             }
         }
@@ -344,8 +388,8 @@ public class GraphMLReaderModified extends AbstractGraphReader {
             } else if (attributeName.equals(DATA)) {
                 // Value is in the buffer.
                 String contents = this.elementContents.toString();
-                String name = (String) idMap.get(this.currentKey);
-                Class type = currentTable.getColumnType(name);
+                String name = idToNameMap.get(this.currentKey);
+                Class<?> type = currentTable.getColumnType(name);
 
                 try {
                     Object val = parse(contents, type);
@@ -354,6 +398,7 @@ public class GraphMLReaderModified extends AbstractGraphReader {
                 	throw new SAXException(e);
                 }
             } else if (NODE.equals(attributeName) || EDGE.equals(attributeName)) {
+            	this.attributeKeyToCount.clear();
                 nodeRow = -1;
                 currentTable = null;
             }
@@ -414,7 +459,7 @@ public class GraphMLReaderModified extends AbstractGraphReader {
             			"Unrecognized \"" + FOR + "\" value: " + this.forAttribute);
                 }
 
-                idMap.put(this.idAttribute, this.nameAttribute);
+                idToNameMap.put(this.idAttribute, this.nameAttribute);
                 
                 this.defaultValue = null;
             } catch (DataParseException e) {
@@ -442,7 +487,7 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         	}
         }
         
-        protected Class parseType(String type) throws SAXException {
+        protected Class<?> parseType(String type) throws SAXException {
             type = type.toLowerCase();
             if (type.equals(INT) || type.equals(INTEGER) ) {
                 return int.class;
@@ -464,7 +509,7 @@ public class GraphMLReaderModified extends AbstractGraphReader {
         }
 
         // This parses the contents of an element as (the) type of data.
-        protected Object parse(String input, Class type) throws DataParseException {
+        protected Object parse(String input, Class<?> type) throws DataParseException {
             DataParser parser = this.parserFactory.getParser(type);
 
             return parser.parse(input);

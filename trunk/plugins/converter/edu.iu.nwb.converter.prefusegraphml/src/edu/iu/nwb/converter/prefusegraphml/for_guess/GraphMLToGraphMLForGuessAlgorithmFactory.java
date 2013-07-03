@@ -13,6 +13,6 @@ public class GraphMLToGraphMLForGuessAlgorithmFactory implements AlgorithmFactor
     		Data[] data,
     		Dictionary<String, Object> parameters,
     		CIShellContext ciShellContext) {
-        return new GraphMLToGraphMLForGuessAlgorithm(data);
+        return new GraphMLToGraphMLForGuessAlgorithm(data, ciShellContext);
     }
 }
