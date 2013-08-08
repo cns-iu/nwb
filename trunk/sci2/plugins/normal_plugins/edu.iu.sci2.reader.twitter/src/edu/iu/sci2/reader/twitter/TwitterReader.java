@@ -17,16 +17,15 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-
 import twitter4j.Query;
 import twitter4j.QueryResult;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterReader implements Algorithm {
-	private static final String REACH_LIMIT_ERROR = "403";
 	public static final String USER_COLUMN_TITLE = "Twitter User";
 	public static final String USER_NAME_COLUMN_TITLE = "Twitter User Name";
 	public static final String CREATED_AT_COLUMN_TITLE = "Created At";
@@ -34,6 +33,10 @@ public class TwitterReader implements Algorithm {
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
+	private String consumerKey;
+	private String consumerSecret;
+	private String accessToken;
+	private String accessSecret;
 	private String tag;
     
     public TwitterReader(Data[] data,
@@ -43,6 +46,10 @@ public class TwitterReader implements Algorithm {
         this.data = data;
         this.userIDColumn = parameters.get("uid").toString();
         this.tag = parameters.get("tag").toString();
+        this.consumerKey = parameters.get("consumerKey").toString();
+        this.consumerSecret = parameters.get("consumerSecret").toString();
+        this.accessToken = parameters.get("accessToken").toString();
+        this.accessSecret = parameters.get("accessSecret").toString();
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -53,7 +60,7 @@ public class TwitterReader implements Algorithm {
 			resultTable = searchTweet(userIDs);
 		} catch (TwitterException e) {
 			throw new AlgorithmExecutionException(
-					"Twitter service or network is unavailable. Try again later", e);
+					"Twitter service or network is unavailable. Try again later.", e);
 		}
 	    
         return generateOutputData(resultTable);
@@ -76,15 +83,12 @@ public class TwitterReader implements Algorithm {
 	            	userIDs.add(userID);
 	            }
             }
-        }
-        
+        }   
         return userIDs;
     }
     
     private Table searchTweet(Set<String> userIDs) throws TwitterException {
-
-		
-    	List <Tweet> resultList = new ArrayList<Tweet>();
+    	List <Status> resultList = new ArrayList<Status>();
     	String queryString = "#" + tag;
     	
     	if (!userIDs.isEmpty()) {
@@ -112,50 +116,71 @@ public class TwitterReader implements Algorithm {
     	return covertResultIntoTable(resultList);
     }
     
+    private Twitter createTwitterInstance() {
+    	Table inputTable = (Table) data[0].getData();
+ 
+    	// Get authentication information
+        Object ck = inputTable.get(0, inputTable.getColumnNumber(consumerKey));
+        Object cs = inputTable.get(0, inputTable.getColumnNumber(consumerSecret));
+        Object at = inputTable.get(0, inputTable.getColumnNumber(accessToken));
+        Object as = inputTable.get(0, inputTable.getColumnNumber(accessSecret));
+    	
+    	ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setDebugEnabled(true)
+				.setOAuthConsumerKey(ck.toString().trim())
+				.setOAuthConsumerSecret(cs.toString().trim())
+				.setOAuthAccessToken(at.toString().trim())
+				.setOAuthAccessTokenSecret(as.toString().trim());
+
+		return new TwitterFactory(cb.build()).getInstance();
+    }
+    
     /**
      * Download tweets for the given query. If the returned result contains multiple pages, 
      * download the tweets page by page. This method return a list of tweet.
      */
-    private List<Tweet> downloadAllTweets(String querystring) throws TwitterException {
-    	List <Tweet> resultList = new ArrayList<Tweet>();
-		Twitter twitter = new TwitterFactory().getInstance();
-	    int k = 0;
-	    boolean changed = true;
-	    try {
-			while (changed) {
-			    Query query = new Query(querystring); 
-			    query.setRpp(100);
-			    query.setPage(++k); // next page
-			    QueryResult result = twitter.search(query);
-			    changed = resultList.addAll(result.getTweets());
+    private List<Status> downloadAllTweets(String querystring) throws TwitterException {
+    	List <Status> resultList = new ArrayList<Status>();
+
+		Twitter twitter = createTwitterInstance();
+		
+		Query query = new Query(querystring);
+		try {
+			while(query != null) {
+				query.setCount(100);
+				QueryResult queryResult = twitter.search(query);
+				List<Status> tweets = queryResult.getTweets();
+				resultList.addAll(tweets);
+				query = queryResult.nextQuery();
 			}
 		} catch (Exception e) {
-			/* If it terminate with none Tweeter limit issue. We might need to handle other issue in future. */
-			if (!e.getMessage().startsWith(REACH_LIMIT_ERROR)) {
-				throw new TwitterException(e);
-			}
+			// Currently, assume all exception is due to Twitter API limit. We might need to handle other issue in future.
+			this.logger.log(LogService.LOG_WARNING, 
+					"You have reach the Twitter query limit (180 queries per 15 minutes). Please try again in 15 minutes.");
 		}
-	    return resultList;
+		
+		// Return the queried results
+		return resultList;
     }
     
     /**
      * Covert the result into Prefuse Table
      */
-    private Table covertResultIntoTable(List<Tweet> tweets) {
+    private Table covertResultIntoTable(List<Status> statuses) {
     	Table table = new Table();
         table.addColumn(USER_COLUMN_TITLE, String.class);
         table.addColumn(USER_NAME_COLUMN_TITLE, String.class);
         table.addColumn(CREATED_AT_COLUMN_TITLE, Date.class);
         table.addColumn(MSG_COLUMN_TITLE, String.class);
-        for (Tweet tweet : tweets) {
+        for (Status status : statuses) {
         	int rowNumber = table.addRow();
-            table.set(rowNumber, USER_COLUMN_TITLE, tweet.getFromUser());
-            table.set(rowNumber, USER_NAME_COLUMN_TITLE, tweet.getFromUserName());
-            table.set(rowNumber, CREATED_AT_COLUMN_TITLE, tweet.getCreatedAt());
-            table.set(rowNumber, MSG_COLUMN_TITLE, tweet.getText());
+            table.set(rowNumber, USER_COLUMN_TITLE, String.valueOf(status.getUser().getId()));
+            table.set(rowNumber, USER_NAME_COLUMN_TITLE, status.getUser().getName());
+            table.set(rowNumber, CREATED_AT_COLUMN_TITLE, status.getCreatedAt());
+            table.set(rowNumber, MSG_COLUMN_TITLE, status.getText());
  	    }
         this.logger.log(LogService.LOG_INFO, 
-        		String.format("There are %d tweets downloaded.", tweets.size()));
+        		String.format("There are %d tweets downloaded.", statuses.size()));
         return table;
     }
     

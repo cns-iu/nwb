@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>edu.iu.sci2.reader.twitter</artifactId>
-  <version>0.0.3</version>
+  <version>1.0.0</version>
   <packaging>eclipse-plugin</packaging>
   <groupId>edu.iu.sci2.normal_plugins</groupId>
 </project>

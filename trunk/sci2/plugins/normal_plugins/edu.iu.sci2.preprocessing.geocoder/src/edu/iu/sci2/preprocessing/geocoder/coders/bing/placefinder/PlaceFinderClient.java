@@ -106,13 +106,13 @@ public final class PlaceFinderClient {
 			throws IOException, JAXBException, InvalidUrlException,
 			NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
-		paramToValue.put(LOCATION_PARAM, country);
+		paramToValue.put(LOCATION_PARAM, "&countryRegion=" + country);
 		paramToValue.put(OUTPUT_PARAM, OUTPUT_TYPE);
 		paramToValue.put(APPID_PARAM, applicationId);
-
+		
 		return request(paramToValue);
 	}
-
+ 
 	/**
 	 * Prepare params and request Bing PlaceFinderService
 	 * 
@@ -136,7 +136,7 @@ public final class PlaceFinderClient {
 			String applicationId) throws IOException, JAXBException,
 			InvalidUrlException, NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
-		paramToValue.put(LOCATION_PARAM, state + "," + country);
+		paramToValue.put(LOCATION_PARAM, "&adminDistrict=" + state + "&countryRegion=" + country);
 		paramToValue.put(OUTPUT_PARAM, OUTPUT_TYPE);
 		paramToValue.put(APPID_PARAM, applicationId);
 		return request(paramToValue);
@@ -165,7 +165,7 @@ public final class PlaceFinderClient {
 			String applicationId) throws IOException, JAXBException,
 			InvalidUrlException, NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
-		paramToValue.put(LOCATION_PARAM, zipCode + "," + country);
+		paramToValue.put(LOCATION_PARAM, "&postalCode=" + zipCode + "&countryRegion=" + country);
 		paramToValue.put(OUTPUT_PARAM, OUTPUT_TYPE);
 		paramToValue.put(APPID_PARAM, applicationId);
 		return request(paramToValue);

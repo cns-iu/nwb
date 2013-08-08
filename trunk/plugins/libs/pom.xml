@@ -15,6 +15,7 @@
     <module>uk.ac.shef.wit.simmetrics</module>
     <module>org.jsoup</module>
     <module>easymock</module>
+    <module>org.json</module>
   </modules>
   <parent>
   	<groupId>edu.iu.nwb</groupId>

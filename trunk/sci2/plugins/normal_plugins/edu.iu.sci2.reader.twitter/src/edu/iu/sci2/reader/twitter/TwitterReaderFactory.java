@@ -37,7 +37,7 @@ public class TwitterReaderFactory implements AlgorithmFactory, ParameterMutator 
             /*
              * Append column titles into drop down boxes and assign to name parameter.
              */
-            if (oldAttributeDefinition.getID().equals("uid")) {
+            if (!oldAttributeDefinition.getID().equals("tag")) {
                 newParameters.addAttributeDefinition(
                         ObjectClassDefinition.REQUIRED,
                         new BasicAttributeDefinition(
