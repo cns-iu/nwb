@@ -4,8 +4,8 @@ Bundle-Name: edu.iu.nwb.converter.postscript.gs
 Bundle-SymbolicName: edu.iu.nwb.converter.postscript.gs
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: com.google.common.base,
- com.google.common.collect,
+Import-Package: com.google.common.base;version="11.0.1",
+ com.google.common.collect;version="11.0.1",
  org.apache.commons.lang,
  org.cishell.framework,
  org.cishell.framework.algorithm,
