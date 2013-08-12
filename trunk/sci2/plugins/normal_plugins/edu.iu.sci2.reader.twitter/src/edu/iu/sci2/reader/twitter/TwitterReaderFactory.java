@@ -1,5 +1,7 @@
 package edu.iu.sci2.reader.twitter;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -16,13 +18,33 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 import prefuse.data.Table;
 
 public class TwitterReaderFactory implements AlgorithmFactory, ParameterMutator {
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary<String, Object> parameters,
-    								 CIShellContext ciShellContext) {
-        return new TwitterReader(data, parameters, ciShellContext);
-    }
+    public static final String DEFAULT_TWITTER_AUTH_FILE_NAME = "twitterAuth.PROPERTIES";
 
-    @Override
+	public Algorithm createAlgorithm(Data[] data,
+			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+				String filePath = (String) parameters.get("authData");
+		return new TwitterReader(data, parameters, filePath, ciShellContext);
+	}
+
+	private String getTwitterAuthData(String defaultValue) {
+		try {
+			URL authDataFileURL = new URL(new URL(
+					System.getProperty("osgi.configuration.area")),
+					DEFAULT_TWITTER_AUTH_FILE_NAME);
+			String filePath = authDataFileURL.getFile();
+			
+			if (filePath.startsWith("\\") || filePath.startsWith("/")) {
+				filePath = filePath.substring(1);
+			}
+
+			return filePath;
+		} catch (MalformedURLException e) {
+			return defaultValue;
+		}
+	}
+	
+	
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition parameters) {
 		Table table = (Table) data[0].getData();
@@ -37,7 +59,7 @@ public class TwitterReaderFactory implements AlgorithmFactory, ParameterMutator 
             /*
              * Append column titles into drop down boxes and assign to name parameter.
              */
-            if (!oldAttributeDefinition.getID().equals("tag")) {
+            if (oldAttributeDefinition.getID().equals("uid")) {
                 newParameters.addAttributeDefinition(
                         ObjectClassDefinition.REQUIRED,
                         new BasicAttributeDefinition(
@@ -47,13 +69,21 @@ public class TwitterReaderFactory implements AlgorithmFactory, ParameterMutator 
                                 oldAttributeDefinition.getType(), 
                                 columnTitles, 
                                 columnTitles));
+            } else if (oldAttributeDefinition.getID().equals("authData")) {
+            	String defaultValue = "file:" + getTwitterAuthData(oldAttributeDefinition.getDefaultValue()[0]);
+            		String id = oldAttributeDefinition.getID();
+            		String name = oldAttributeDefinition.getName();
+    				String description = oldAttributeDefinition.getDescription();
+    				int type = oldAttributeDefinition.getType();
+    				AttributeDefinition newAttributeDefinition = new BasicAttributeDefinition(
+    					id, name, description, type, defaultValue);
+    				newParameters.addAttributeDefinition(
+    						ObjectClassDefinition.REQUIRED, newAttributeDefinition);    				
             } else {
-                /* None edit field */
                 newParameters.addAttributeDefinition(
                     ObjectClassDefinition.REQUIRED, oldAttributeDefinition);
             }
         }
         return newParameters;
 	}
-    
 }

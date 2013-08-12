@@ -2,12 +2,9 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Twitter Reader" id="edu.iu.sci2.reader.twitter.TwitterReader.OCD"
 		 description="This algorithm will read the tweets from Twitter for the given tag and user IDs. The output result is in table format. ">
-		<AD name="Twitter User ID" id="uid" type="String" description="Please provide the column that contains the Twitter user IDs" default=""/>
+		<AD name="Twitter User ID" id="uid" type="String" description="Please provide the column that contains the Twitter user IDs." default=""/>
 		<AD name="Tag" id="tag" type="String" description="Leave it empty if you want to download all tweets. Else, provide the tag to be searched." default=""/>
-		<AD name="Consumer key" id="consumerKey" type="String" description="Please provide the Consumer key provided by your Twitter application" default="Consumer key"/>
-		<AD name="Consumer Secret" id="consumerSecret" type="String" description="Please provide the Consumer secret provided by your Twitter application" default="Consumer secret"/>
-		<AD name="Access Token" id="accessToken" type="String" description="Please provide the Access key provided by your Twitter application" default="Access key"/>
-		<AD name="Access Secret" id="accessSecret" type="String" description="Please provide the Access key provided by your Twitter application" default="Access secret"/>
+		<AD name="Authentication Data" id="authData" type="String" description="Please provide the location of the PROPERTIES file that holds your Twitter authentication data." default="file:"/>
 	</OCD>
 	<Designate pid="edu.iu.sci2.reader.twitter.TwitterReader">
 		<Object ocdref="edu.iu.sci2.reader.twitter.TwitterReader.OCD" />

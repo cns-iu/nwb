@@ -136,7 +136,7 @@ public final class PlaceFinderClient {
 			String applicationId) throws IOException, JAXBException,
 			InvalidUrlException, NetworkConnectionException {
 		Map<String, String> paramToValue = new HashMap<String, String>();
-		paramToValue.put(LOCATION_PARAM, "&adminDistrict=" + state + "&countryRegion=" + country);
+		paramToValue.put(LOCATION_PARAM, "&adminDistrict=" + state);
 		paramToValue.put(OUTPUT_PARAM, OUTPUT_TYPE);
 		paramToValue.put(APPID_PARAM, applicationId);
 		return request(paramToValue);
@@ -196,7 +196,7 @@ public final class PlaceFinderClient {
 		/* Start HTTP request */
 		String responseString = query(GET_METHOD, url);
 		/* Parse responseString to Response */
-		
+		System.out.println(url);
 		return generateResponse(responseString);
 	}
 

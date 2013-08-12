@@ -1,11 +1,15 @@
 package edu.iu.sci2.reader.twitter;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.cishell.framework.CIShellContext;
@@ -30,29 +34,34 @@ public class TwitterReader implements Algorithm {
 	public static final String USER_NAME_COLUMN_TITLE = "Twitter User Name";
 	public static final String CREATED_AT_COLUMN_TITLE = "Created At";
 	public static final String MSG_COLUMN_TITLE = "Tweet";
+	private static final String CONSUMER_KEY = "consumerKey";
+	private static final String CONSUMER_SECRET = "consumerSecret";
+	private static final String ACCESS_TOKEN = "accessToken";
+	private static final String ACCESS_SECRET = "accessSecret";
 	private LogService logger;
     private Data[] data;
 	private String userIDColumn;
-	private String consumerKey;
-	private String consumerSecret;
-	private String accessToken;
-	private String accessSecret;
+	private HashMap<String, String> authData;
 	private String tag;
+	private String propertyFile;
     
     public TwitterReader(Data[] data,
-    				  Dictionary<String, Object> parameters,
+    				  Dictionary<String, Object> parameters, String propertyFile,
     				  CIShellContext ciShellContext) {
     	this.logger = (LogService) ciShellContext.getService(LogService.class.getName());
         this.data = data;
         this.userIDColumn = parameters.get("uid").toString();
         this.tag = parameters.get("tag").toString();
-        this.consumerKey = parameters.get("consumerKey").toString();
-        this.consumerSecret = parameters.get("consumerSecret").toString();
-        this.accessToken = parameters.get("accessToken").toString();
-        this.accessSecret = parameters.get("accessSecret").toString();
+        this.propertyFile = propertyFile;
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
+    	try {
+			this.authData = getAuthData(propertyFile);
+		} catch (IOException e1) {
+			throw new AlgorithmExecutionException(
+					"The given property file is invalid!");
+		}
     	Set<String> userIDs = extractUniqueUserIDsFromTable();
     			
     	Table resultTable;
@@ -65,6 +74,19 @@ public class TwitterReader implements Algorithm {
 	    
         return generateOutputData(resultTable);
     }
+    
+    private HashMap<String, String> getAuthData(String filePath) throws IOException {
+		HashMap<String, String> arr = new HashMap<String, String>();
+		Properties properties = new Properties();
+		properties.load(new FileInputStream(filePath));
+
+		arr.put(CONSUMER_KEY, properties.getProperty(CONSUMER_KEY));
+		arr.put(CONSUMER_SECRET, properties.getProperty(CONSUMER_SECRET));
+		arr.put(ACCESS_TOKEN, properties.getProperty(ACCESS_TOKEN));
+		arr.put(ACCESS_SECRET, properties.getProperty(ACCESS_SECRET));
+	
+		return arr;
+	}
     
     private Set<String> extractUniqueUserIDsFromTable() {
     	Set<String> userIDs = new HashSet<String>();
@@ -117,20 +139,12 @@ public class TwitterReader implements Algorithm {
     }
     
     private Twitter createTwitterInstance() {
-    	Table inputTable = (Table) data[0].getData();
- 
-    	// Get authentication information
-        Object ck = inputTable.get(0, inputTable.getColumnNumber(consumerKey));
-        Object cs = inputTable.get(0, inputTable.getColumnNumber(consumerSecret));
-        Object at = inputTable.get(0, inputTable.getColumnNumber(accessToken));
-        Object as = inputTable.get(0, inputTable.getColumnNumber(accessSecret));
-    	
     	ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
-				.setOAuthConsumerKey(ck.toString().trim())
-				.setOAuthConsumerSecret(cs.toString().trim())
-				.setOAuthAccessToken(at.toString().trim())
-				.setOAuthAccessTokenSecret(as.toString().trim());
+				.setOAuthConsumerKey(authData.get(CONSUMER_KEY))
+				.setOAuthConsumerSecret(authData.get(CONSUMER_SECRET))
+				.setOAuthAccessToken(authData.get(ACCESS_TOKEN))
+				.setOAuthAccessTokenSecret(authData.get(ACCESS_SECRET));
 
 		return new TwitterFactory(cb.build()).getInstance();
     }
@@ -180,7 +194,7 @@ public class TwitterReader implements Algorithm {
             table.set(rowNumber, MSG_COLUMN_TITLE, status.getText());
  	    }
         this.logger.log(LogService.LOG_INFO, 
-        		String.format("There are %d tweets downloaded.", statuses.size()));
+        		String.format("%d tweets were downloaded.", statuses.size()));
         return table;
     }
     
