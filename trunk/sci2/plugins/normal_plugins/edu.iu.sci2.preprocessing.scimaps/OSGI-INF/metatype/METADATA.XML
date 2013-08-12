@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Journal Naming Convention" id="edu.iu.sci2.preprocessing.scimaps.JournalNamingConvention.OCD"
+		 description="This algorithm compares and standardizes journals to match Map of Science standard.  ">
+		<AD name="Journal Column" id="journal" type="String" description="Choose a column from your table that gives a journal name, or abbreviation" default=""/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.preprocessing.scimaps.JournalNamingConvention">
+		<Object ocdref="edu.iu.sci2.preprocessing.scimaps.JournalNamingConvention.OCD" />
+	</Designate>
+</metatype:MetaData>
