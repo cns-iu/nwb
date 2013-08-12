@@ -6,12 +6,14 @@
 		<!-- <menu pid="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm"/> -->
 		<menu type="break"/>
 		<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
+		<menu pid= "edu.iu.sci2.reader.flickr.FlickrReader"/>
 		<menu name="Google Scholar" type="group">
 			<menu pid= "edu.iu.sci2.reader.googlescholar.GoogleCitationUserIdSearchAlgorithm"/>
 			<menu pid= "edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm"/>
 			<menu pid= "edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm"/>
 			<menu pid= "edu.iu.sci2.reader.googlescholar.CitationTableAlgorithm"/>
 		</menu>
+		<menu pid= "edu.iu.sci2.reader.twitter.TwitterReader"/>
 		<menu type="break"/>
 		<menu pid= "org.cishell.reference.gui.persistence.save.Save"/>
 		<menu type="break"/>
@@ -57,6 +59,7 @@
 			<menu pid="edu.iu.sci2.preprocessing.extractzipcode.ExtractZipcodeAlgorithm"/>
 		</menu>
 		<menu name="Topical" type="group"> 
+			<menu pid="edu.iu.sci2.preprocessing.scimaps.JournalNamingConvention"/>
 		    <menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalizer"/>
 		</menu>
 		<menu name="Networks" type="group">
