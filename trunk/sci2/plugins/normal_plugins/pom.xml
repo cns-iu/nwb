@@ -51,6 +51,7 @@
 		<module>edu.iu.sci2.preprocessing.geocoder</module>
 		<module>edu.iu.sci2.preprocessing.mergenetworks</module>
 		<module>edu.iu.sci2.preprocessing.zip2district</module>
+		<module>edu.iu.sci2.preprocessing.scimaps</module>
 		<module>edu.iu.sci2.reader.googlescholar</module>
 		<module>edu.iu.sci2.tool.db_to_prefuse</module>
 		<module>edu.iu.sci2.utilities</module>
@@ -62,6 +63,7 @@
 		<module>edu.iu.sci2.visualization.scimap.references</module>
 		<module>edu.iu.sci2.visualization.temporalbargraph</module>
 		<module>edu.iu.sci2.reader.twitter</module>
+		<module>edu.iu.sci2.reader.flickr</module>
 		<module>edu.iu.sci2.reader.facebook</module>
 	</modules>
 </project>
