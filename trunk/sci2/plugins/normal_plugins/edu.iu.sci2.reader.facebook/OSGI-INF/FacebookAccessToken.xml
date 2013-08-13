@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="edu.iu.sci2.reader.facebook.token.FacebookToken.component" immediate="false">
 	<implementation class="edu.iu.sci2.reader.facebook.token.FacebookTokenFactory"/>
-	<properties entry="OSGI-INF/algorithm.properties"/>
+	<properties entry="OSGI-INF/FacebookAccessToken.properties"/>
 	
 	<service>
 		<provide interface=
