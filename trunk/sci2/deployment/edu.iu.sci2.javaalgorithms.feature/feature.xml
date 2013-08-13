@@ -839,5 +839,12 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="1.0.0"
          unpack="false"/>
+         
+   <plugin
+         id="edu.iu.sci2.reader.facebook"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         unpack="false"/>
 
 </feature>
