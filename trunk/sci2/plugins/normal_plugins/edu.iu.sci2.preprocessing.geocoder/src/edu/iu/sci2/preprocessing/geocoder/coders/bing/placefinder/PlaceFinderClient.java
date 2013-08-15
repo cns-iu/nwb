@@ -196,7 +196,6 @@ public final class PlaceFinderClient {
 		/* Start HTTP request */
 		String responseString = query(GET_METHOD, url);
 		/* Parse responseString to Response */
-		System.out.println(url);
 		return generateResponse(responseString);
 	}
 
