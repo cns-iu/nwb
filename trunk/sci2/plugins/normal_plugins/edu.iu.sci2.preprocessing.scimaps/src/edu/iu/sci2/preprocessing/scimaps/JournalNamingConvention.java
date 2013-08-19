@@ -19,8 +19,7 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 
 public class JournalNamingConvention implements Algorithm {
-	private static final String JOURNAL_NAME_COLUMN = "Journal Name";
-	private static final String STANDARDIZED_JOURNAL_NAME_COLUMN = "Standardized Journal Name";
+	private static final String STANDARDIZED_JOURNAL_NAME_COLUMN = "Reconciled Journal Name";
     private Data[] data;
     private String journalColumnName;
 	private LogService logger;
