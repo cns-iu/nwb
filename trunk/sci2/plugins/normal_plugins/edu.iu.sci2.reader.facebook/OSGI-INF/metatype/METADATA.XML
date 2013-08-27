@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="AccessToken" id="edu.iu.sci2.reader.facebook.token.FacebookToken.OCD"
-		 description="GetAccessToken ">
+		 description="Facebook requires that users authenticate before using the API. In order to authenticate, please login, review and accept the permissions Facebook requires. Once you log in and accept the permissions, Facebook will generate an access token for you on a new page. Copy that token and paste it in the dialog box when you run other Facebook algorithms.">
 	</OCD>
 	<Designate pid="edu.iu.sci2.reader.facebook.token.FacebookToken">
 		<Object ocdref="edu.iu.sci2.reader.facebook.token.FacebookToken.OCD" />
 	</Designate>
 	<OCD name="FacebookFriendsData" id="edu.iu.sci2.reader.facebook.FacebookFriend.FacebookFriends.OCD"
-		 description="Gather Data From Facebook ">
+		 description="Gather name, user ID, latest update, gender, current location, hometown, birth date, interests, religion, political views, relationship status, and attended events of your Facebook connections. Obtain a key from the Access Token plugin to continue. Also, please review the terms and conditions for the Facebook API here: https://developers.facebook.com/policy">
+		 <AD name="Access Token" id="accessToken" type="String" description="Run the Facebook Access Token plugin. After following the steps, copy/paste the result." default=""/>
 	</OCD>
 	<Designate pid="edu.iu.sci2.reader.facebook.FacebookFriend.FacebookFriends">
 		<Object ocdref="edu.iu.sci2.reader.facebook.FacebookFriend.FacebookFriends.OCD" />
 	</Designate>
 	<OCD name="MutualFriends" id="edu.iu.sci2.reader.facebook.FriendsNetwork.FriendsNetwork.OCD"
-		 description="Get the mutual Friends Network ">
+		 description="Create a friendship network of your Facebook connections. Obtain a key from the Access Token plugin to continue. Also, please review the terms and conditions for the Facebook API here: https://developers.facebook.com/policy">
+		 <AD name="Access Token" id="accessToken" type="String" description="Run the Facebook Access Token plugin. After following the steps, copy/paste the result." default=""/>
 	</OCD>
 	<Designate pid="edu.iu.sci2.reader.facebook.FriendsNetwork.FriendsNetwork">
 		<Object ocdref="edu.iu.sci2.reader.facebook.FriendsNetwork.FriendsNetwork.OCD" />

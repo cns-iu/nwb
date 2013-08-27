@@ -8,9 +8,9 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 public class FacebookTokenFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext ciShellContext) {
-        return new FacebookToken(data, parameters, ciShellContext);
-    }
+	public Algorithm createAlgorithm(Data[] data,
+			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+		return new FacebookToken(data, ciShellContext);
+	}
+
 }

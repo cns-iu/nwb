@@ -1,27 +1,22 @@
-package edu.iu.sci2.reader.facebook.FriendsNetwork.model;
+package edu.iu.sci2.reader.facebook.utilities;
 
 import java.util.ArrayList;
 
-public class FriendsPair {
-	
+public class FriendPair {
+
 	private String name1;
-	
-	//private String id1;
 	private String name2;
-	//private String id2;
 	private ArrayList<String> commonEventList;
-	
+
 	private Long numOfMutualFriends;
 
-	public FriendsPair(String name1, String name2)
-	{
-	    this.name1 = name1;
-	    this.name2 = name2;
-	    this.commonEventList=new ArrayList<String>();
-	    //this.id1 = id1;
-	    //this.id2 = id2;	  
-	    this.numOfMutualFriends =(long)0;
-	}	
+	public FriendPair(String name1, String name2) {
+		this.name1 = name1;
+		this.name2 = name2;
+		this.commonEventList = new ArrayList<String>();
+		this.numOfMutualFriends = (long) 0;
+	}
+
 	public String getName1() {
 		return name1;
 	}
@@ -29,14 +24,6 @@ public class FriendsPair {
 	public void setName1(String name1) {
 		this.name1 = name1;
 	}
-
-	/*public String getId1() {
-		return id1;
-	}
-
-	public void setId1(String id1) {
-		this.id1 = id1;
-	}*/
 
 	public String getName2() {
 		return name2;
@@ -53,31 +40,22 @@ public class FriendsPair {
 	public String getCommonEventList() {
 		String listString = "";
 
-		for (String s : commonEventList)
-		{
-		    listString += s + "|";
+		for (String s : commonEventList) {
+			listString += s + "|";
 		}
-		
+
 		return listString;
 	}
-	
-	public Integer getNumberOfCommonEvents()
-	{
+
+	public Integer getNumberOfCommonEvents() {
 		return commonEventList.size();
 	}
 
 	public Long getNumOfMutualFriends() {
 		return numOfMutualFriends;
 	}
+
 	public void setNumOfMutualFriends(Long numOfMutualFriends) {
 		this.numOfMutualFriends = numOfMutualFriends;
 	}
-	/*public String getId2() {
-		return id2;
-	}
-
-	public void setId2(String id2) {
-		this.id2 = id2;
-	}*/	
-
 }

@@ -7,10 +7,10 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
+//TODO: Fix all warning
 public class FriendsNetworkFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext ciShellContext) {
-        return new FriendsNetwork(data, parameters, ciShellContext);
-    }
+	public Algorithm createAlgorithm(Data[] data, Dictionary<String, Object> parameters,
+			CIShellContext ciShellContext) {
+		return new FriendsNetwork(ciShellContext, parameters.get("accessToken").toString());
+	}
 }

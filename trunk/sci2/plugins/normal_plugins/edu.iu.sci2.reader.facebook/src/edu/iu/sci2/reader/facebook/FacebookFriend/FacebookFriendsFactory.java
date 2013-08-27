@@ -8,9 +8,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 public class FacebookFriendsFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext ciShellContext) {
-        return new FacebookFriends(data, parameters, ciShellContext);
-    }
+	public Algorithm createAlgorithm(Data[] data,
+			Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+		return new FacebookFriends(ciShellContext, parameters.get("accessToken").toString());
+	}
 }

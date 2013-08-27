@@ -1,9 +1,9 @@
-package edu.iu.sci2.reader.facebook.FacebookFriend.model;
+package edu.iu.sci2.reader.facebook.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendData {
+public class FriendObject {
 	private String name;
 	private Long id;
 	private String interest;
@@ -13,24 +13,24 @@ public class FriendData {
 	private String religion;
 	private String politicalView;
 	private String birthday;
-
 	private String relationShipStatus;
 	private String gender;
 	private List<String> events;
-	
-	public FriendData(Long id){
-		   this.id= id;
-		   this.name = "";
-		   this.interest = "";
-		   this.status ="";
-		   this.homeTownLocation="";
-		   this.religion = "";
-		   this.politicalView ="";
-		   this.birthday ="";
-		   this.relationShipStatus ="";
-		   this.gender = "";
-		   this.events = new ArrayList<String>();
-	   }
+
+	public FriendObject(Long id) {
+		this.id = id;
+		this.name = "";
+		this.interest = "";
+		this.status = "";
+		this.homeTownLocation = "";
+		this.religion = "";
+		this.politicalView = "";
+		this.birthday = "";
+		this.relationShipStatus = "";
+		this.gender = "";
+		this.events = new ArrayList<String>();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -114,18 +114,19 @@ public class FriendData {
 	public List<String> getEventList() {
 		return events;
 	}
-	
+
 	public void addEvent(String event) {
-		 events.add(event);
+		events.add(event);
 	}
 
 	public void setEvents(List<String> events) {
 		this.events = events;
-	}   
-	
+	}
+
 	public String getCurrentLocation() {
 		return currentLocation;
 	}
+
 	public void setCurrentLocation(String currentLocation) {
 		this.currentLocation = currentLocation;
 	}
