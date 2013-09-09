@@ -37,7 +37,16 @@
          name="Data Manager"/>
      </extension> 
    	
-	   
+	<extension
+	       point="org.eclipse.ui.views">
+	     <view
+         allowMultiple="false"
+         class="edu.iu.sci2.gui.brand.WorkFlowView"
+       	 icon="icons/workflow_mgr.png"
+         id="org.cishell.reference.gui.workflow.views.WorkflowView"
+         name="Workflow Manager"/>
+     </extension> 	
+        
 	<extension point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.cishell.reference.gui.workspace.Perspective">
            <view id="org.cishell.reference.gui.log.LogView"
