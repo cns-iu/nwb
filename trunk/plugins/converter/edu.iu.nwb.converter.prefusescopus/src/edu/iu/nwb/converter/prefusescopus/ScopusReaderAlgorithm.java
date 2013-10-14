@@ -1,6 +1,8 @@
 package edu.iu.nwb.converter.prefusescopus;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -11,6 +13,10 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.DataConversionService;
+import org.cishell.utilities.TableUtilities;
+import org.cishell.utilities.FileUtilities;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.DataTypeException;
@@ -33,12 +39,27 @@ public class ScopusReaderAlgorithm implements Algorithm {
         this.log = (LogService) context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() throws AlgorithmExecutionException {
+	public Data[] execute() throws AlgorithmExecutionException {
     	Data inputData = convertInputData(data[0]);
     	Table scopusTable = (Table) inputData.getData();
     	TableCleaner cleaner = new TableCleaner(this.log);
     	scopusTable = cleaner.cleanTable(scopusTable);
-        Data[] outputData = formatAsData(scopusTable);
+    	
+    	URL configPath = FileUtilities.lookupResourceUrl(ScopusReaderAlgorithm.class, "headerMap.properties");
+    	
+    	// call table standardizing function to replace specified Scopus headers
+    	Table finalTable = null;
+		try {
+			finalTable = TableUtilities.standardizeTable(configPath, scopusTable);
+		} catch (IOException e) {
+			e.printStackTrace();
+			String errorMsg = "An error has occurred while attempting to read the properties file. " +
+							"Please check that the file exists in the correct locatation and that " +
+							"the file path given is correct.";
+			throw new AlgorithmExecutionException(errorMsg);
+		}
+    	
+        Data[] outputData = formatAsData(finalTable);
         return outputData;
     }
     
