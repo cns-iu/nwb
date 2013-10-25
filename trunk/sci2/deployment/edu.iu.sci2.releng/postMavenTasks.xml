@@ -101,7 +101,7 @@
 		</replaceregexp>
 
 		<zip destfile="${product.zip.out}" duplicate="fail">
-			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini,${exclude_p2}" prefix="${product.prefix}" />
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${exclude_p2} **/eclipsec.exe **/artifacts.xml" prefix="${product.prefix}" />
 			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="${product.prefix}/plugins" />
 			<zipfileset dir="${temp.dir}" includes="**/*.ini" prefix="${product.prefix}" />
 		</zip>
@@ -129,7 +129,7 @@
 		</replaceregexp>
 
 		<tar destfile="${product.tgz.out}" compression="gzip">
-			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files} ${exclude_p2}" prefix="${product.prefix}" />
+			<zipfileset src="${product.zip}" excludes="**/configuration/config.ini ${permission.files} **/eclipsec.exe **/artifacts.xml ${exclude_p2}" prefix="${product.prefix}" />
 			<zipfileset src="${product.zip}" includes="${permission.files}" filemode="755" prefix="${product.prefix}" />
 			<zipfileset dir="../../../ant-parent/plugins" erroronmissingdir="true" includesfile="${product.name}-nonpde-plugins.txt" prefix="${product.prefix}/plugins" />
 			<zipfileset dir="${temp.dir}" includes="**/*.ini" prefix="${product.prefix}" />
