@@ -4,7 +4,6 @@ Bundle-Name: Google Scholar Citation Reader
 Bundle-SymbolicName: edu.iu.sci2.reader.googlescholar
 Bundle-Version: 0.0.1
 Service-Component: OSGI-INF/CitationTableAlgorithm.xml,
- OSGI-INF/CitationBibtexAlgorithm.xml,
  OSGI-INF/CitationIndiciesAlgorithm.xml,
  OSGI-INF/GoogleCitationUserIdSearchAlgorithm.xml
 X-AutoStart: true

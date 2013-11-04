@@ -8,14 +8,6 @@
 	<Designate pid="edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm">
 		<Object ocdref="edu.iu.sci2.reader.googlescholar.CitationIndiciesAlgorithm.OCD" />
 	</Designate>
-	<OCD name="Attach Citation BibTex File from Google Scholar" id="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm.OCD"
-		 description="Web reader algorithm that takes a column of user IDs as input and returns the citation bibtex associated with each unique user ID.">
-		<AD name="User ID column" id="author" type="String" description="Google citation user ID column name to be processed" default="Mutated by Factory"/>
-		<AD name="Delimiter" id="delimiter" type="String" description="Delimiter's used in author table" default="|"/>
-	</OCD>
-	<Designate pid="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm">
-		<Object ocdref="edu.iu.sci2.reader.googlescholar.CitationBibtexAlgorithm.OCD" />
-	</Designate>
 	<OCD name="Attach Citation Table from Google Scholar" id="edu.iu.sci2.reader.googlescholar.CitationTableAlgorithm.OCD"
 		 description="Web reader algorithm that takes a column of user IDs as input and returns the citation tables associated with each unique user ID.">
 		<AD name="User ID column" id="author" type="String" description="Google citation user ID column name to be processed" default="Mutated by Factory"/>
