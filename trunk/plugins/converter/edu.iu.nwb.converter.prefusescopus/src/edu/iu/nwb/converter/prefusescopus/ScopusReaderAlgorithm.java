@@ -45,17 +45,15 @@ public class ScopusReaderAlgorithm implements Algorithm {
     	TableCleaner cleaner = new TableCleaner(this.log);
     	scopusTable = cleaner.cleanTable(scopusTable);
     	
-    	URL configPath = FileUtilities.lookupResourceUrl(ScopusReaderAlgorithm.class, "headerMap.properties");
+    	URL configPath = FileUtilities.lookupResourceUrl(ScopusReaderAlgorithm.class, "scopus.hmap");
     	
     	// call table standardizing function to replace specified Scopus headers
     	Table finalTable = null;
 		try {
 			finalTable = TableUtilities.standardizeTable(configPath, scopusTable);
 		} catch (IOException e) {
-			e.printStackTrace();
-			String errorMsg = "An error has occurred while attempting to read the properties file. " +
-							"Please check that the file exists in the correct locatation and that " +
-							"the file path given is correct.";
+			String errorMsg = "An error has occurred while attempting to read the Scopus format file. " +
+							"Please contact cns-sci2-help-l@iulist.indiana.edu for assistance.";
 			throw new AlgorithmExecutionException(errorMsg);
 		}
     	
@@ -63,17 +61,14 @@ public class ScopusReaderAlgorithm implements Algorithm {
         return outputData;
     }
     
-    
     private Data convertInputData(Data inputData) throws AlgorithmExecutionException {
     	DataConversionService converter = (DataConversionService)
         	context.getService(DataConversionService.class.getName());
     	
-		/* This is a bit like a cast. We know the nsf format is also a csv, so
+    	/* This is a bit like a cast. We know the nsf format is also a csv, so
 		 * we change the format to csv so the Conversion service knows it is a
 		 * csv when it tries to convert it to a prefuse.data.Table
 		 */
-		 
-		//printTable((Table) inputData.getData());
 		Data formatChangedData = new BasicData(inputData.getMetadata(),
 											  (File) inputData.getData(),
 											  CSV_MIME_TYPE);
@@ -91,7 +86,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
 		try {
 			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
 			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized Scopus table");
-			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 			return dm;
 		} catch (SecurityException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
