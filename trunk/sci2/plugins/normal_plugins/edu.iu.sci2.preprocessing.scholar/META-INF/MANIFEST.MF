@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: edu.iu.sci2.preprocessing.scholar
+Bundle-SymbolicName: edu.iu.sci2.preprocessing.scholar
+Bundle-Version: 0.0.1
+Bundle-ClassPath: .
+Import-Package: org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.utilities;version="1.0.1",
+ org.osgi.service.log;version="1.3.0",
+ prefuse.data
+X-AutoStart: true
+Service-Component: OSGI-INF/component.xml

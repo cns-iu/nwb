@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Convert to Generic Publication" id="edu.iu.sci2.preprocessing.scholar.GenericPublicationAlgorithm.OCD"
+		 description="This plugin matches and replaces the headers in a file with the corresponding generic Sci2 publication headers. Please select a .hmap file containing a mapping of headers below:">
+		<AD name="Header map" id="file" type="String" description="A .hmap file mapping original headers to their generic Sci2 equivalent." default="file:"/>
+	</OCD>
+	<Designate pid="edu.iu.sci2.preprocessing.scholar.GenericPublicationAlgorithm">
+		<Object ocdref="edu.iu.sci2.preprocessing.scholar.GenericPublicationAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
