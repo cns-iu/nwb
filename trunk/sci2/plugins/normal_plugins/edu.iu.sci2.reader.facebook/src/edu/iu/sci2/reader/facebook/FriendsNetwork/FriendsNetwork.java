@@ -38,27 +38,31 @@ public class FriendsNetwork implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		Table table = null;
-		if (FacebookUtilities.isValidToken(token)) {
+		if (FacebookUtilities.isValidToken(token, logger)) {
 			table = getFriendsNetwork(token);
 		} else {
-			logger.log(LogService.LOG_ERROR,
-					"The Access Token is not valid, to get a new Access token select \"Facebook Reader->Access Token\" Menu.");
+			logger.log(
+					LogService.LOG_ERROR,
+					"You have failed to submit a valid access token. The time has either expired on your current access token, or you did not provide one. Please obtain a new access token by going to \"Facebook->Access Token\" on the File menu.");
 			return null;
 		}
 		return generateOutData(table);
 	}
 
-	public Table getFriendsNetwork(String token) throws AlgorithmExecutionException {
+	public Table getFriendsNetwork(String token)
+			throws AlgorithmExecutionException {
 		Table table = null;
 		HashMap<Long, String> idToName = new HashMap<Long, String>();
-		
+
 		try {
-			String myName = FacebookUtilities.getMyName(data);
-			String myId = FacebookUtilities.getMyId(data);
+			String myName = FacebookUtilities.getMyName(data, logger);
+			String myId = FacebookUtilities.getMyId(data, logger);
 			idToName.put(Long.parseLong(myId), myName);
-			
-			// gets all information about each of the authenticated user's friends
-			JSONObject friendsObj = new JSONObject(CallAPI.MyFriendsAPI(data, logger));
+
+			// gets all information about each of the authenticated user's
+			// friends
+			JSONObject friendsObj = new JSONObject(CallAPI.MyFriendsAPI(data,
+					logger));
 			JSONArray jsonFriendsArray = friendsObj.getJSONArray("data");
 			for (int i = 0; i < jsonFriendsArray.length(); i++) {
 				JSONObject currentResult = jsonFriendsArray.getJSONObject(i);
@@ -67,19 +71,21 @@ public class FriendsNetwork implements Algorithm {
 				idToName.put(id, friendOneName);
 				pairList.add(new FriendPair(myName, friendOneName));
 			}
-			
+
 			// retrieves an array of mutual friends
 			JSONObject mutualFriendsObject = new JSONObject(
 					CallAPI.MutualFriendsAPI(data, logger));
 			JSONArray jsonMutualArray = mutualFriendsObject
 					.getJSONArray("data");
-			
-			// gets a list of all events attended by the authenticated user's friends
+
+			// gets a list of all events attended by the authenticated user's
+			// friends
 			JSONObject friendsEventObj = new JSONObject(
 					CallAPI.FriendsEventAPI(data, logger));
 			JSONArray jsonEventArr = friendsEventObj.getJSONArray("data");
-			
-			// converts each eventID into a name, and changes the separation format
+
+			// converts each eventID into a name, and changes the separation
+			// format
 			HashMap<Long, String> eventIdToName = new HashMap<Long, String>();
 			for (int i = 0; i < jsonEventArr.length(); i++) {
 				JSONObject currentResult = jsonEventArr.getJSONObject(i);
@@ -88,15 +94,14 @@ public class FriendsNetwork implements Algorithm {
 				Long id = currentResult.getLong("eid");
 				eventIdToName.put(id, eventName.replace("|", ","));
 			}
-			
-			// retrieves a list of events attended by you and your friends, 
+
+			// retrieves a list of events attended by you and your friends,
 			// or your friends and their friends who are also your friends
 			JSONObject friendsCommonEventObject = new JSONObject(
 					CallAPI.FriendsCommonEventAPI(data, logger));
 			JSONArray jsonCommonEventArr = friendsCommonEventObject
 					.getJSONArray("data");
 
-			
 			Map<Long, ArrayList<String>> commonEvents = new HashMap<Long, ArrayList<String>>();
 			for (int i = 0; i < jsonCommonEventArr.length(); i++) {
 				JSONObject currentResult = jsonCommonEventArr.getJSONObject(i);
@@ -156,7 +161,8 @@ public class FriendsNetwork implements Algorithm {
 			table = generateTabularData(pairList);
 		} catch (JSONException e) {
 			throw new AlgorithmExecutionException(
-					"An error has occurred while trying to reach the authentication URL. Please report to cns-sci2-help-l@iulist.indiana.edu", e); 
+					"An error has occurred while trying to reach the authentication URL. Please report to cns-sci2-help-l@iulist.indiana.edu",
+					e);
 		}
 		return table;
 	}

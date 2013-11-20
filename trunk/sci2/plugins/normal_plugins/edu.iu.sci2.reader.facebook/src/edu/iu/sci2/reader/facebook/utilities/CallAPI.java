@@ -32,8 +32,7 @@ public final class CallAPI {
 					"Cannot connect to the authentication server. Please check your connection and try again.");
 		} catch (IOException e) {
 			logger.log(
-					LogService.LOG_ERROR,
-					"Couldn't find or launch a default browser. Please set or install a default browser and try again.");
+					LogService.LOG_ERROR, "Failed to create connection.");
 		}
 
 		return "No data";
@@ -64,8 +63,8 @@ public final class CallAPI {
 				logger);
 	}
 
-	public static String DetailsAPI(String token) throws AlgorithmExecutionException {
-		return callAPI(token, "https://graph.facebook.com/me?", null);
+	public static String DetailsAPI(String token, LogService logger) throws AlgorithmExecutionException {
+		return callAPI(token, "https://graph.facebook.com/me?", logger);
 	}
 
 	public static String FriendsDataAPI(String token, LogService logger) throws AlgorithmExecutionException {

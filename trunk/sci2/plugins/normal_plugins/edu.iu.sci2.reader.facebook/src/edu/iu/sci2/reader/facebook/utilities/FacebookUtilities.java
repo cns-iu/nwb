@@ -9,6 +9,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.osgi.service.log.LogService;
 
 public final class FacebookUtilities {
 	public static final int DEFAULT_NUMBER_OF_RETRIES = 3;
@@ -19,10 +20,10 @@ public final class FacebookUtilities {
 	}
 
 	// Checks if a token provided by Facebook is valid
-	public static boolean isValidToken(String token) throws AlgorithmExecutionException {
+	public static boolean isValidToken(String token, LogService logger) throws AlgorithmExecutionException {
 		if (!token.isEmpty()) {
 			token = "access_token=" + token;
-			String data = CallAPI.DetailsAPI(token);
+			String data = CallAPI.DetailsAPI(token, logger);
 			try {
 				new JSONObject(new JSONTokener(data));
 			} catch (JSONException e) {
@@ -75,15 +76,15 @@ public final class FacebookUtilities {
 	}
 
 	// retrieves the name of the authenticated user
-	public static String getMyName(String token) throws JSONException, AlgorithmExecutionException {
-		String data = CallAPI.DetailsAPI(token);
+	public static String getMyName(String token, LogService logger) throws JSONException, AlgorithmExecutionException {
+		String data = CallAPI.DetailsAPI(token, logger);
 		JSONObject obj = new JSONObject(new JSONTokener(data));
 		return obj.getString("name");
 	}
 
 	// retrieves the user id of the authenticated user
-	public static String getMyId(String token) throws JSONException, AlgorithmExecutionException {
-		String data = CallAPI.DetailsAPI(token);
+	public static String getMyId(String token, LogService logger) throws JSONException, AlgorithmExecutionException {
+		String data = CallAPI.DetailsAPI(token, logger);
 		JSONObject obj = new JSONObject(new JSONTokener(data));
 		return obj.getString("id");
 	}

@@ -36,14 +36,17 @@ public class FacebookFriends implements Algorithm {
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		if (FacebookUtilities.isValidToken(token)) {
-			return generateOutData(getFriendsData(token));
+		
+		Table table = null;
+		if (FacebookUtilities.isValidToken(token, logger)) {
+			table = getFriendsData(token);
 		} else {
 			logger.log(
 					LogService.LOG_ERROR,
-					"The Access Token is not valid, to get a new Access token select \"Facebook->Access Token\" Menu.");
+					"You have failed to submit a valid access token. The time has either expired on your current access token, or you did not provide one. Please obtain a new access token by going to \"Facebook->Access Token\" on the File menu.");
 			return null;
 		}
+		return generateOutData(table);
 	}
 
 	// TODO: This function should be modularized into FacebookUtilities
