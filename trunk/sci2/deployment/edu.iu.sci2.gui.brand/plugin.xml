@@ -26,9 +26,16 @@
         </property>
 	   </product>
    	</extension>
-   	
-   	<extension
-	       point="org.eclipse.ui.views">
+
+     <extension point="org.eclipse.ui.views">
+	     <view allowMultiple="false"
+         class="edu.iu.sci2.gui.brand.WorkFlowView"
+         icon="icons/workflow_mgr.png"
+         id="org.cishell.reference.gui.workflow.views.WorkflowView"
+         name="Workflow Manager"/>
+     </extension> 	   
+
+   	<extension point="org.eclipse.ui.views">
 	     <view
          allowMultiple="false"
          class="edu.iu.sci2.gui.brand.DataManagerView"
@@ -36,17 +43,7 @@
          id="org.cishell.reference.gui.datamanager.DataManagerView"
          name="Data Manager"/>
      </extension> 
-	   
-   	<extension
-	       point="org.eclipse.ui.views">
-	     <view
-         allowMultiple="false"
-         class="edu.iu.sci2.gui.brand.WorkFlowView"
-         icon="icons/workflow_mgr.png"
-         id="org.cishell.reference.gui.workflow.views.WorkflowView"
-         name="Workflow Manager"/>
-     </extension> 	   
-	   
+    
 	<extension point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.cishell.reference.gui.workspace.Perspective">
            <view id="org.cishell.reference.gui.log.LogView"
@@ -58,15 +55,23 @@
       </perspectiveExtension>
 	
       <perspectiveExtension targetID="org.cishell.reference.gui.workspace.Perspective">
-           <view id="org.cishell.reference.gui.datamanager.DataManagerView"
+		   <view id="org.cishell.reference.gui.datamanager.DataManagerView"
                 relative="org.cishell.reference.gui.log.LogView"
                 relationship="right"
                 ratio="0.75"
                 moveable = "true"
                 closeable = "false"                   
                 visible="true"/>
+                
+           <view id=" org.cishell.reference.gui.workflow.views.WorkflowView"
+                relative="org.cishell.reference.gui.datamanager.DataManagerView"
+                relationship="bottom"
+                ratio="1"
+                moveable = "true"
+                closeable = "false"                   
+                visible="false"/>
       </perspectiveExtension>
-      
+
       <perspectiveExtension targetID="org.cishell.reference.gui.workspace.Perspective">
            <view id="org.cishell.reference.gui.scheduler.SchedulerView"
                 relative="org.cishell.reference.gui.log.LogView"
