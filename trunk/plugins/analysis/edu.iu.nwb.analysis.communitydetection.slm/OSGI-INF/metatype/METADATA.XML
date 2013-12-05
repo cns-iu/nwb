@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="SLM Community Detection" id="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm.OCD"
+		 description="The SLM is the improvement of the Louvain algorithm. See www.ludowaltman.nl/slm/ for more information. ">
+		<AD name="Weight" id="weight" type="String" description="The field used for the weight" default="unweighted"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
