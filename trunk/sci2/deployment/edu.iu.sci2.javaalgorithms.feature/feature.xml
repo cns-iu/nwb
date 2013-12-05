@@ -619,9 +619,23 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+   <plugin
+         id="edu.iu.sci2.preprocessing.scholar"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="edu.iu.nwb.analysis.blondelcommunitydetection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+  <plugin
+         id="edu.iu.nwb.analysis.communitydetection.slm"
          download-size="0"
          install-size="0"
          version="0.0.0"

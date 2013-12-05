@@ -52,6 +52,7 @@
 		<module>edu.iu.sci2.preprocessing.mergenetworks</module>
 		<module>edu.iu.sci2.preprocessing.zip2district</module>
 		<module>edu.iu.sci2.preprocessing.scimaps</module>
+		<module>edu.iu.sci2.preprocessing.scholar</module>
 		<module>edu.iu.sci2.reader.googlescholar</module>
 		<module>edu.iu.sci2.tool.db_to_prefuse</module>
 		<module>edu.iu.sci2.utilities</module>

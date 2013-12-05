@@ -14,6 +14,7 @@
     <module>edu.iu.iv.search.p2p.randomwalk</module>
     <module>edu.iu.nwb.analysis.betweenness</module>
     <module>edu.iu.nwb.analysis.blondelcommunitydetection</module>
+    <module>edu.iu.nwb.analysis.communitydetection.slm</module>
     <module>edu.iu.nwb.analysis.burst</module>
     <module>edu.iu.nwb.analysis.dichotomize</module>
     <module>edu.iu.nwb.analysis.extractattractors</module>
