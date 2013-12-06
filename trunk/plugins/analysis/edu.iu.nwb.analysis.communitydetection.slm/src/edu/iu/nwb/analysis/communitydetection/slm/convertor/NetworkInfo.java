@@ -5,13 +5,10 @@ import java.util.ArrayList;
 public class NetworkInfo {
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
-	
 	private int maxCommunityLevel = 0;
-	
 	private int renumberingID = 0;
 	private int totalEdgeCount = 0;
-
-	private double maximumWeight;
+	private double maximumWeight = 0.0;
 	
 	public NetworkInfo() {
 	}

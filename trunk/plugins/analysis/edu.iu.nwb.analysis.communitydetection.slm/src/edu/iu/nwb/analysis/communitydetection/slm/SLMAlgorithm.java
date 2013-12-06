@@ -13,6 +13,8 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.FileUtilities;
 
+import com.google.common.collect.ImmutableMap;
+
 import edu.iu.nwb.analysis.communitydetection.slm.convertor.NWBAndTreeFilesMerger;
 import edu.iu.nwb.analysis.communitydetection.slm.convertor.NWBToEdgeListConverter;
 import edu.iu.nwb.analysis.communitydetection.slm.convertor.NetworkInfo;
@@ -24,62 +26,90 @@ import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
 public class SLMAlgorithm implements Algorithm {
-    public static final String NO_EDGE_WEIGHT_VALUE = "unweighted";
-	public static final Object WEIGHT_FIELD_ID = "weight";
+	public static final String NO_EDGE_WEIGHT_VALUE = "unweighted";
+	public static final String WEIGHT_FIELD_ID = "weight";
+	public static final String RESOLUTION_FIELD_ID = "resolution";
+	public static final String RANDOM_START_FIELD_ID = "rstart";
+	public static final String RANDOM_SEED_FIELD_ID = "rseed";
+	public static final String ITERATIONS_FIELD_ID = "iterations";
+	public static final String ALGORITHM_FIELD_ID = "algorithm";
+	public static final Map<String, Integer> ALGORITHM_MAP = ImmutableMap.of(
+			"Louvain Algorithm", 1,
+			"Louvain Agorithm With Multilevel Refinement", 2, 
+			"SLM Algorithm", 3);
+
 	private Data[] data;
-    private CIShellContext ciShellContext;
-	private String weightAttribute;
+	private CIShellContext ciShellContext;
+	private String weightColumnTitle;
+	private double resolution;
+	private int randomStart;
+	private int randomSeed;
+	private int algorithm;
+	private int iterations;
 	private boolean isWeighted;
-    
-    public SLMAlgorithm(Data[] data,
-    				  Dictionary<String, Object> parameters,
-    				  CIShellContext ciShellContext) {
-        this.data = data;
-        this.ciShellContext = ciShellContext;
-        
-        this.weightAttribute = parameters.get(WEIGHT_FIELD_ID).toString();
-        
-        if (this.weightAttribute.equals(NO_EDGE_WEIGHT_VALUE)) {
-        	this.isWeighted = false;
-        } else {
-        	this.isWeighted = true;
-        }
-    }
 
-    public Data[] execute() throws AlgorithmExecutionException {
-    	File inputNWBFile = (File)data[0].getData();
-    	System.out.println("Start");
-    	NetworkInfo networkInfo = new NetworkInfo();
-    	Preprocessor preprocessor = new Preprocessor(networkInfo,null, false);
+	public SLMAlgorithm(Data[] data, Dictionary<String, Object> parameters,
+			CIShellContext ciShellContext) {
+		this.data = data;
+		this.ciShellContext = ciShellContext;
+		this.weightColumnTitle = parameters.get(WEIGHT_FIELD_ID).toString();
+		this.resolution = (Double) parameters.get(RESOLUTION_FIELD_ID);
+		this.randomStart = (Integer) parameters.get(RANDOM_START_FIELD_ID);
+		this.randomSeed = (Integer) parameters.get(RANDOM_SEED_FIELD_ID);
+		this.iterations = (Integer) parameters.get(ITERATIONS_FIELD_ID);
+		this.algorithm = ALGORITHM_MAP.get(parameters.get(ALGORITHM_FIELD_ID)
+				.toString());
 
-    	try {
-    		File vosInputFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-VOS", "txt");
-        	File vosOutputFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-VOS-OUT", "txt");
+		if (this.weightColumnTitle.equals(NO_EDGE_WEIGHT_VALUE)) {
+			this.isWeighted = false;
+		} else {
+			this.isWeighted = true;
+		}
+	}
+
+	public Data[] execute() throws AlgorithmExecutionException {
+		File inputNWBFile = (File) data[0].getData();
+		NetworkInfo networkInfo = new NetworkInfo();
+		Preprocessor preprocessor = new Preprocessor(networkInfo,
+				weightColumnTitle, isWeighted);
+
+		try {
+			File vosInputFile = FileUtilities
+					.createTemporaryFileInDefaultTemporaryDirectory(
+							"TEMP-VOS-IN", "txt");
+			File vosOutputFile = FileUtilities
+					.createTemporaryFileInDefaultTemporaryDirectory(
+							"TEMP-VOS-OUT", "txt");
 			NWBFileParser nwbFileParser = new NWBFileParser(inputNWBFile);
 			nwbFileParser.parse(preprocessor);
-			NWBToEdgeListConverter converter = new NWBToEdgeListConverter(networkInfo, vosInputFile, null, false);
-			ModularityOptimizer optimizer = new ModularityOptimizer();
+			NWBToEdgeListConverter.convert(vosInputFile, networkInfo);
+			ModularityOptimizer optimizer = new ModularityOptimizer(
+					algorithm, randomStart, randomSeed, iterations, resolution);
 			optimizer.OptimizeModularity(vosInputFile, vosOutputFile);
-			File outputFile = NWBAndTreeFilesMerger.mergeCommunitiesFileWithNWBFile(vosOutputFile, inputNWBFile, networkInfo);
+			File outputFile = NWBAndTreeFilesMerger
+					.mergeCommunitiesFileWithNWBFile(vosOutputFile,
+							inputNWBFile, networkInfo);
 			return wrapFileAsOutputData(outputFile, data[0]);
-    	} catch (PreprocessorException e) {
+		} catch (PreprocessorException e) {
 			throw new AlgorithmExecutionException("Invalid NWB file.", e);
 		} catch (ParsingException e) {
 			throw new AlgorithmExecutionException("Invalid NWB file.", e);
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException("VOS community detection error.", e);
+			throw new AlgorithmExecutionException(
+					"VOS community detection error.", e);
 		} catch (TreeFileParsingException e) {
 			throw new AlgorithmExecutionException("Fail to generate output", e);
 		}
-    }
+	}
 
 	private static Data[] wrapFileAsOutputData(File outputFile, Data parent) {
 		Data outputFileData = new BasicData(outputFile, "file:text/nwb");
-		Dictionary<String, Object> outputFileMetaData = outputFileData.getMetadata();
+		Dictionary<String, Object> outputFileMetaData = outputFileData
+				.getMetadata();
 		outputFileMetaData.put(DataProperty.LABEL, "With community attributes");
 		outputFileMetaData.put(DataProperty.PARENT, parent);
 		outputFileMetaData.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-		
+
 		return new Data[] { outputFileData };
-    }
+	}
 }

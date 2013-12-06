@@ -42,33 +42,36 @@ public class Preprocessor extends NWBFileParserAdapter {
 		
 		Node targetNode = Node.getOrCreateNode(targetNodeID, this.networkInfo);
 		targetNode.incrementEdgeCount(this.networkInfo);
-
-		processWeight(attributes);
 		
-		this.networkInfo.addEdge(new Edge(sourceNode, targetNode, attributes));
+		if (this.isWeighted) {
+			int weight = processWeight(attributes);
+			this.networkInfo.addEdge(new Edge(sourceNode, targetNode, attributes, weight));
+		} else {
+			this.networkInfo.addEdge(new Edge(sourceNode, targetNode, attributes));
+		}
 	}
 
-	private void processWeight(Map<String, Object> attributes) {
-		if (this.isWeighted) {
-			Object weightAttribute = attributes.get(this.weightAttribute);
-			if (weightAttribute == null) {
-				String exceptionMessage =
-					"An edge with no weight specified was found.  " +
+	private int processWeight(Map<String, Object> attributes) {
+		int weight = 0;
+		
+		try {
+			Number weightNumber = (Number) attributes.get(this.weightAttribute);
+			weight = weightNumber.intValue();
+		} catch (Exception e) {
+			String exceptionMessage =
+					"An edge with invalid weight specified was found.  " +
 					"All edges must have a weight if you specify a weight column.";
-				throw new PreprocessorException(exceptionMessage);
-			} else {
-				Number weightNumber = (Number)weightAttribute;
-				double weight = weightNumber.doubleValue();
-
-				if (weight < 0.0) {
-					String exceptionMessage =
-						"An edge with a negative weight was found.  " +
-						"All edges must have a positive weight if you specify a weight column.";
-					throw new PreprocessorException(exceptionMessage);
-				} else {
-					this.maximumWeightFound = Math.max(weight, this.maximumWeightFound);
-				}
-			}
+			throw new PreprocessorException(exceptionMessage);
 		}
+		
+		if (weight < 0) {
+			String exceptionMessage =
+				"An edge with a negative weight was found.  " +
+				"All edges must have a positive weight if you specify a weight column.";
+			throw new PreprocessorException(exceptionMessage);
+		}
+		this.maximumWeightFound = Math.max(weight, this.maximumWeightFound);
+		
+		return weight;
 	}
 }

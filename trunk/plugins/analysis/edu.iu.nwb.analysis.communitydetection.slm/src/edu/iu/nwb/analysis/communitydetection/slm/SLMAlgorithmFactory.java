@@ -25,10 +25,11 @@ public class SLMAlgorithmFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data,
     								 Dictionary<String, Object> parameters,
     								 CIShellContext ciShellContext) {
+    	parameters.put(SLMAlgorithm.ALGORITHM_FIELD_ID, "SLM Algorithm");
         return new SLMAlgorithm(data, parameters, ciShellContext);
     }
     
-    @SuppressWarnings("unchecked")	// LinkedHashMap<String, String>
+    @SuppressWarnings("unchecked")
     public ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters) {
     	Data inData = data[0];
@@ -47,7 +48,7 @@ public class SLMAlgorithmFactory implements AlgorithmFactory {
     		throw new RuntimeException(e);
     	}
 
-    	LinkedHashMap edgeSchema = getEdgeSchema(nwbFileMetaDataGetter);
+    	LinkedHashMap<String, String> edgeSchema = getEdgeSchema(nwbFileMetaDataGetter);
     	BasicObjectClassDefinition newParameters =
     		MutateParameterUtilities.createNewParameters(oldParameters);
 		AttributeDefinition[] oldAttributeDefinitions =

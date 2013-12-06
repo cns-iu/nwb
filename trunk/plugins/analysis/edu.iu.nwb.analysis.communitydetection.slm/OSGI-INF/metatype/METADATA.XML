@@ -3,6 +3,10 @@
 	<OCD name="SLM Community Detection" id="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm.OCD"
 		 description="The SLM is the improvement of the Louvain algorithm. See www.ludowaltman.nl/slm/ for more information. ">
 		<AD name="Weight" id="weight" type="String" description="The field used for the weight" default="unweighted"/>
+		<AD name="Random Start" id="rstart" type="Integer" description="Number of random starts" default="10"/>
+		<AD name="Random Seed" id="rseed" type="Integer" description="Seed of the random number generator" default="0"/>
+		<AD name="Resolution" id="resolution" type="Double" description="Use a value above (below) 1.0 if you want to obtain a larger (smaller) number of communities" default="1.0"/>
+		<AD name="Iterations" id="iterations" type="Integer" description="Number of iterations per random start" default="10"/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm">
 		<Object ocdref="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm.OCD" />

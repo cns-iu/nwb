@@ -19,21 +19,27 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class ModularityOptimizer {
-	boolean printOutput, update;
+	boolean printOutput = true, update;
 	double modularity, maxModularity, resolution, resolution2;
 	int algorithm, i, j, nClusters, nIterations, nRandomStarts;
 	long beginTime, endTime, randomSeed;
 	Network network;
 	Random random;
 	
+	public ModularityOptimizer(int algorithm, int randomStart, int randomSeed, int iterations, double resolution) {
+		this.resolution = resolution;
+		this.algorithm = algorithm;
+		this.nRandomStarts = randomStart;
+		this.nIterations = iterations;
+		this.randomSeed = randomSeed;
+	}
+	
 	public ModularityOptimizer() {
 		this.resolution = 1.0;
-		this.algorithm = 3; 
-		this.nRandomStarts = 10; 
+		this.algorithm = 3;
+		this.nRandomStarts = 10;
 		this.nIterations = 10;
 		this.randomSeed = 0;
-		this.printOutput = true;
-
 	}
 
 	public void OptimizeModularity(File inputFile, File outputFile) throws IOException {
@@ -41,9 +47,6 @@ public class ModularityOptimizer {
 		if (printOutput) {
 			System.out
 					.println("Modularity Optimizer version 1.0.0 by Ludo Waltman and Nees Jan van Eck");
-			System.out.println();
-		} else {
-			// nothin
 		}
 
 		network = readInputFile(inputFile);
@@ -206,16 +209,21 @@ public class ModularityOptimizer {
 	}
 
 	private static void writeOutputFile(File file, int[] cluster) throws IOException {
-		BufferedWriter bufferedWriter;
-		int i;
+		BufferedWriter bufferedWriter = null;
+		try {
+			bufferedWriter = new BufferedWriter(new FileWriter(file));
 
-		bufferedWriter = new BufferedWriter(new FileWriter(file));
+			for (int i = 0; i < cluster.length; i++) {
+				bufferedWriter.write(i + " " + Integer.toString(cluster[i]));
+				bufferedWriter.newLine();
+			}
 
-		for (i = 0; i < cluster.length; i++) {
-			bufferedWriter.write(i + " " + Integer.toString(cluster[i]));
-			bufferedWriter.newLine();
+			bufferedWriter.close();
+		} finally {
+			if(bufferedWriter != null) {
+				bufferedWriter.close();
+			}
+			
 		}
-
-		bufferedWriter.close();
 	}
 }

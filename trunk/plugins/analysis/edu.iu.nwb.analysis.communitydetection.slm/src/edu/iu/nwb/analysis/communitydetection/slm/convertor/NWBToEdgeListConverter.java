@@ -6,35 +6,19 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-public class NWBToEdgeListConverter {
+public final class NWBToEdgeListConverter {
 
-	private NetworkInfo networkInfo;
-	private String weightAttribute;
-	private boolean isWeighted;
-
-	public NWBToEdgeListConverter(NetworkInfo networkInfo, File outputFile,
-			String weightAttribute, boolean isWeighted) {
-		this.networkInfo = networkInfo;
-		this.weightAttribute = weightAttribute;
-		this.isWeighted = isWeighted;
-
-		try {
-			this.createOutputFile(outputFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+	private NWBToEdgeListConverter() {
 	}
 
-	private void createOutputFile(File outputFile) 
+	public static void convert(File outputFile, NetworkInfo networkInfo) 
 			throws FileNotFoundException, UnsupportedEncodingException {
-		List<Edge> edges = this.networkInfo.getEdges();
+		List<Edge> edges = networkInfo.getEdges();
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(outputFile, "UTF-8");
 			for (Edge e : edges) {
-				writer.println(e.getSource().getNewID() + "  " + e.getTarget().getNewID());
+				writer.println(e.toVosString());
 			}
 		} finally {
 			if (writer != null) {
@@ -42,5 +26,4 @@ public class NWBToEdgeListConverter {
 			}
 		}
 	}
-
 }
