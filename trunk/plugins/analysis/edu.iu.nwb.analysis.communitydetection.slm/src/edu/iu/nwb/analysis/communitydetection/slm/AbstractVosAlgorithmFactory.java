@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.LinkedHashMap;
 
-import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.MutateParameterUtilities;
@@ -21,15 +19,9 @@ import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
-public class SLMAlgorithmFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary<String, Object> parameters,
-    								 CIShellContext ciShellContext) {
-    	parameters.put(SLMAlgorithm.ALGORITHM_FIELD_ID, "SLM Algorithm");
-        return new SLMAlgorithm(data, parameters, ciShellContext);
-    }
+public abstract class AbstractVosAlgorithmFactory 
+		implements AlgorithmFactory, ParameterMutator {
     
-    @SuppressWarnings("unchecked")
     public ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters) {
     	Data inData = data[0];
@@ -53,19 +45,17 @@ public class SLMAlgorithmFactory implements AlgorithmFactory {
     		MutateParameterUtilities.createNewParameters(oldParameters);
 		AttributeDefinition[] oldAttributeDefinitions =
 			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-		Collection<String> numberKeysTypes = Arrays.asList(
-			NWBFileProperty.TYPE_INT, NWBFileProperty.TYPE_FLOAT);
+		Collection<String> numberKeysTypes = Arrays.asList(NWBFileProperty.TYPE_INT);
 		Collection<String> numberKeysToSkip = Arrays.asList(
 			NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.ATTRIBUTE_TARGET);
 		Collection<String> numberKeysToAdd = Arrays.asList(
-				SLMAlgorithm.NO_EDGE_WEIGHT_VALUE);
+				AbstractVosAlgorithm.NO_EDGE_WEIGHT_VALUE);
 		
 		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
 			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
 			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
-			
 			if (oldAttributeDefinitionID.equals(
-					SLMAlgorithm.WEIGHT_FIELD_ID))
+					AbstractVosAlgorithm.WEIGHT_FIELD_ID))
 			{
 				newAttributeDefinition = MutateParameterUtilities.formAttributeDefinitionFromMap(
 					oldAttributeDefinition,

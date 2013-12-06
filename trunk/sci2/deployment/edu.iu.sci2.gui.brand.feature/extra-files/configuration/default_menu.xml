@@ -122,9 +122,11 @@
 				<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
 		        <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
 		        <menu type="break"/>
-		        <menu pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm"/>
-				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
-		        <menu type="break"/>	
+		        <menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainMultilevelRefinementAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm"/>
+				<menu type="break"/>	
 				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 			</menu>
 			<menu name = "Weighted &amp;&amp; Undirected" type="group">
@@ -140,6 +142,9 @@
 				<menu pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm"/>
 				<menu type="break"/>
 				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainMultilevelRefinementAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm"/>
 				<menu type="break"/>	
 				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 			</menu>
@@ -158,12 +163,13 @@
 				<menu type="break"/>
 				<menu pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm"/>
 				<menu type="break"/>
-				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm"/>
 				<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>	
 				<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>
-				<!--  	
-				<menu pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm"/>	
-				-->
+				<menu type="break"/>
+				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainMultilevelRefinementAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm"/>
 				<menu type="break"/>
 				<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
 		        <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
@@ -175,6 +181,11 @@
 			<menu type="break"/>			
 			</menu>
 			<menu name = "Weighted &amp;&amp; Directed" type="group">
+				<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.LouvainMultilevelRefinementAlgorithm"/>
+				<menu pid="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm"/>
+				<menu type="break"/>
 				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 				<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
 			</menu>
