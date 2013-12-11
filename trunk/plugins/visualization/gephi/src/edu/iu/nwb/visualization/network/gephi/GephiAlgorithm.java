@@ -25,7 +25,10 @@ public class GephiAlgorithm implements Algorithm {
 	/* An extension for GraphML that Gephi recognizes. */
 	public static final String GRAPHML_EXT = ".graphml";
 	
-	private static final String MAC_EXECUTABLE_PATH = "/Applications/gephi.app/Contents/MacOS/gephi";
+	private static final String MAC_EXECUTABLE_PATH = "~/Applications/Gephi.app/Contents/MacOS/gephi";
+	private static final String MAC_ALT_EXECUTABLE_PATH_1 = "/Applications/Gephi.app/Contents/MacOS/gephi";
+	private static final String MAC_ALT_EXECUTABLE_PATH_2 = "~/Applications/gephi.app/Contents/MacOS/gephi";
+	private static final String MAC_ALT_EXECUTABLE_PATH_3 = "/Applications/gephi.app/Contents/MacOS/gephi";
 	private static String OS = System.getProperty("os.name").toLowerCase();
 	
 	private final Data[] data;
@@ -86,19 +89,39 @@ public class GephiAlgorithm implements Algorithm {
 	/**
 	 * Gephi can't take input file from Program.execute(). This is only
 	 * happenned on gephi. So we try to use the static path to launch gephi
-	 * for now. If it failed, it will launch gephi with Program.execute()
+	 * for now. If it failed, log error.
 	 * 
 	 * Another issue is when gephi load the input file, the input file
 	 * is deleted from the Mac temporary folder. Either it is Mac OS 
 	 * default behavior or Gephi. However, this will cause the Gephi
 	 * fail to load the file. To avoid this, the permission need to be changed.
 	 */
-	private static void launchGephiOnMac(Program program, File file) {
-		try {
-			Runtime.getRuntime().exec("chmod 555 " + file.getAbsolutePath());
-			Runtime.getRuntime().exec(MAC_EXECUTABLE_PATH + " " + file.getAbsolutePath());
-		} catch (Exception e) {
-			executeProgramWithFile(program, file);
+	private void launchGephiOnMac(Program program, File file) {
+		// Search for possible executable on Mac OS
+		String executable = null;
+		if (new File(MAC_EXECUTABLE_PATH).exists()) {
+			executable = MAC_EXECUTABLE_PATH;
+		} else if (new File(MAC_ALT_EXECUTABLE_PATH_1).exists()) {
+			executable = MAC_ALT_EXECUTABLE_PATH_1;
+		} else if (new File(MAC_ALT_EXECUTABLE_PATH_2).exists()) {
+			executable = MAC_ALT_EXECUTABLE_PATH_2;
+		} else if (new File(MAC_ALT_EXECUTABLE_PATH_3).exists()) {
+			executable = MAC_ALT_EXECUTABLE_PATH_3;
+		}
+		
+		if (executable != null) {
+			try {
+				Runtime.getRuntime().exec("chmod 555 " + file.getAbsolutePath());
+				Runtime.getRuntime().exec(executable + " " + file.getAbsolutePath());
+			} catch (Exception e) {
+				String error = "An error occured while try to launch Gephi. \n"
+						+ "You can save the network as .graphml file extension and load it into Gephi manually.";
+				logger.log(LogService.LOG_ERROR, error);
+			}
+		} else {
+			String error = "An error occured while try to launch Gephi. Please make sure /Applications/Gephi.app exist.\n"
+					+ "Alternately, you can save the network as .graphml file extension and load it into Gephi manually.";
+			logger.log(LogService.LOG_ERROR, error);
 		}
 	}
 	
@@ -144,7 +167,7 @@ public class GephiAlgorithm implements Algorithm {
 						+ " to a temporary file.  It will be ignored and "
 						+ "Gephi will not run if it was the only file to be opened.\n"
 						+ e.getMessage();
-				this.logger.log(LogService.LOG_ERROR, error);
+				logger.log(LogService.LOG_ERROR, error);
 				continue;
 			}
 
