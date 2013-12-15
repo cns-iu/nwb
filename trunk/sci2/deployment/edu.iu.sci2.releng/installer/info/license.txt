@@ -1,5 +1,5 @@
 The Sci2 Tool
-Version: Alpha 5
+Version: 1.1 beta
 
 (c)Copyright 2009 Indiana University
 Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,6 +14,5 @@ implied. See the License for the specific language governing
 permissions and limitations under the License.
 
 Project Contacts:
-Micah W. Linnemeier (mwlinnem@indiana.edu)
+Chin Hua Kong (kongch@indiana.edu)
 Katy Borner (katy@indiana.edu)
-Kevin Boyack (kboyack@mapofscience.com)

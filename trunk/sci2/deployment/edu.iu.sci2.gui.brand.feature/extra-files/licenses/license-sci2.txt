@@ -14,5 +14,5 @@ implied. See the License for the specific language governing
 permissions and limitations under the License.
 
 Project Contacts:
-Weixia Huang (huangb@indiana.edu)
+Chin Hua Kong (kongch@indiana.edu)
 Dr. Katy B�rner (katy@indiana.edu)
