@@ -44,19 +44,19 @@ public class Preprocessor extends NWBFileParserAdapter {
 		targetNode.incrementEdgeCount(this.networkInfo);
 		
 		if (this.isWeighted) {
-			int weight = processWeight(attributes);
+			double weight = processWeight(attributes);
 			this.networkInfo.addEdge(new Edge(sourceNode, targetNode, attributes, weight));
 		} else {
 			this.networkInfo.addEdge(new Edge(sourceNode, targetNode, attributes));
 		}
 	}
 
-	private int processWeight(Map<String, Object> attributes) {
-		int weight = 0;
+	private double processWeight(Map<String, Object> attributes) {
+		double weight = 0;
 		
 		try {
 			Number weightNumber = (Number) attributes.get(this.weightAttribute);
-			weight = weightNumber.intValue();
+			weight = weightNumber.doubleValue();
 		} catch (Exception e) {
 			String exceptionMessage =
 					"An edge with invalid weight specified was found.  " +

@@ -6,7 +6,7 @@ public class Edge {
 	public static String VOS_SEPARATOR = "\t";
 	private Node s = null;
 	private Node t = null;
-	private int weight = 1;
+	private double weight = 1;
 	private Map<String, Object> attributes = null;
 
 	public Edge(Node s, Node t, Map<String, Object> attributes) {
@@ -15,7 +15,7 @@ public class Edge {
 		this.attributes = attributes;
 	}
 	
-	public Edge(Node s, Node t, Map<String, Object> attributes, int weight) {
+	public Edge(Node s, Node t, Map<String, Object> attributes, double weight) {
 		this.s = s;
 		this.t = t;
 		this.weight = weight;

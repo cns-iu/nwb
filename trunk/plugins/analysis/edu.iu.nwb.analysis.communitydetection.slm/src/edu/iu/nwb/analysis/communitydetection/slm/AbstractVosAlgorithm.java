@@ -29,6 +29,7 @@ public class AbstractVosAlgorithm implements Algorithm {
 	
 	public static final String NO_EDGE_WEIGHT_VALUE = "unweighted";
 	public static final String WEIGHT_FIELD_ID = "weight";
+	public static final String MODULARITY_FUNCTION_FIELD_ID = "modularity";
 	public static final String RESOLUTION_FIELD_ID = "resolution";
 	public static final String RANDOM_START_FIELD_ID = "rstart";
 	public static final String RANDOM_SEED_FIELD_ID = "rseed";
@@ -38,6 +39,9 @@ public class AbstractVosAlgorithm implements Algorithm {
 			"Louvain Algorithm", 1,
 			"Louvain Agorithm With Multilevel Refinement", 2, 
 			"SLM Algorithm", 3);
+	public static final Map<String, Integer> MODULARITY_FUCNTION_MAP = ImmutableMap.of(
+			"Standard", 1,
+			"Alternative", 2);
 
 	private Data[] data;
 	private CIShellContext ciShellContext;
@@ -48,6 +52,7 @@ public class AbstractVosAlgorithm implements Algorithm {
 	private int algorithm;
 	private int iterations;
 	private boolean isWeighted;
+	private int modularityFunction;
 
 	protected AbstractVosAlgorithm(Data[] data, Dictionary<String, Object> parameters,
 			CIShellContext ciShellContext) {
@@ -59,6 +64,8 @@ public class AbstractVosAlgorithm implements Algorithm {
 		this.randomSeed = (Integer) parameters.get(RANDOM_SEED_FIELD_ID);
 		this.iterations = (Integer) parameters.get(ITERATIONS_FIELD_ID);
 		this.algorithm = ALGORITHM_MAP.get(parameters.get(ALGORITHM_FIELD_ID)
+				.toString());
+		this.modularityFunction = MODULARITY_FUCNTION_MAP.get(parameters.get(MODULARITY_FUNCTION_FIELD_ID)
 				.toString());
 
 		if (this.weightColumnTitle.equals(NO_EDGE_WEIGHT_VALUE)) {
@@ -85,7 +92,7 @@ public class AbstractVosAlgorithm implements Algorithm {
 			nwbFileParser.parse(preprocessor);
 			NWBToEdgeListConverter.convert(vosInputFile, networkInfo);
 			ModularityOptimizer optimizer = new ModularityOptimizer(
-					algorithm, randomStart, randomSeed, iterations, resolution);
+					algorithm, modularityFunction, randomStart, randomSeed, iterations, resolution);
 			optimizer.OptimizeModularity(vosInputFile, vosOutputFile);
 			File outputFile = NWBAndTreeFilesMerger
 					.mergeCommunitiesFileWithNWBFile(vosOutputFile,

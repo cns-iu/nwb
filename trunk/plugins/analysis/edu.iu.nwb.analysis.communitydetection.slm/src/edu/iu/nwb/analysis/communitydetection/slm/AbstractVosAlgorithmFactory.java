@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
+import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
@@ -45,7 +46,7 @@ public abstract class AbstractVosAlgorithmFactory
     		MutateParameterUtilities.createNewParameters(oldParameters);
 		AttributeDefinition[] oldAttributeDefinitions =
 			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-		Collection<String> numberKeysTypes = Arrays.asList(NWBFileProperty.TYPE_INT);
+		Collection<String> numberKeysTypes = Arrays.asList(NWBFileProperty.TYPE_INT, NWBFileProperty.TYPE_FLOAT);
 		Collection<String> numberKeysToSkip = Arrays.asList(
 			NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.ATTRIBUTE_TARGET);
 		Collection<String> numberKeysToAdd = Arrays.asList(
@@ -63,6 +64,19 @@ public abstract class AbstractVosAlgorithmFactory
 					numberKeysTypes,
 					numberKeysToSkip,
 					numberKeysToAdd);
+			}
+			
+			if (oldAttributeDefinitionID.equals(
+					AbstractVosAlgorithm.MODULARITY_FUNCTION_FIELD_ID))
+			{
+				String[] labels = AbstractVosAlgorithm.MODULARITY_FUCNTION_MAP.keySet().toArray(new String[]{});
+				newAttributeDefinition = new BasicAttributeDefinition(
+						oldAttributeDefinition.getID(), 
+						oldAttributeDefinition.getName(), 
+						oldAttributeDefinition.getDescription(), 
+						oldAttributeDefinition.getType(), 
+						labels, 
+						labels);
 			}
 			
 			newParameters.addAttributeDefinition(

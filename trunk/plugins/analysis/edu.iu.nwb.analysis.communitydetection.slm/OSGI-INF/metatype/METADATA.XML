@@ -3,6 +3,7 @@
 	<OCD name="SLM Community Detection" id="edu.iu.nwb.analysis.communitydetection.slm.SLMAlgorithm.OCD"
 		 description="The SLM is the improvement of the Louvain algorithm. See www.ludowaltman.nl/slm/ for more information. ">
 		<AD name="Weight" id="weight" type="String" description="The field used for the weight" default="unweighted"/>
+		<AD name="Modularity Function" id="modularity" type="String" description="The Standard modularity function has been proposed by Newman and Girvan (2004) and Newman (2004). The Alternative modularity function has been proposed by Traag, Van Dooren, and Nesterov (2011)" default="Standard"/>
 		<AD name="Resolution" id="resolution" type="Double" description="Use a value above (below) 1.0 if you want to obtain a larger (smaller) number of communities" default="1.0"/>
 		<AD name="Random Start" id="rstart" type="Integer" description="Number of random starts" default="10"/>
 		<AD name="Iterations" id="iterations" type="Integer" description="Number of iterations per random start" default="10"/>
@@ -14,6 +15,7 @@
 	<OCD name="Louvain Community Detection" id="edu.iu.nwb.analysis.communitydetection.slm.LouvainAlgorithm.OCD"
 		 description="The Louvain algorithm is the large network community detection algorithm. See www.ludowaltman.nl/slm/ for more information. ">
 		<AD name="Weight" id="weight" type="String" description="The field used for the weight" default="unweighted"/>
+		<AD name="Modularity Function" id="modularity" type="String" description="The Standard modularity function has been proposed by Newman and Girvan (2004) and Newman (2004). The Alternative modularity function has been proposed by Traag, Van Dooren, and Nesterov (2011)" default="Standard"/>
 		<AD name="Resolution" id="resolution" type="Double" description="Use a value above (below) 1.0 if you want to obtain a larger (smaller) number of communities" default="1.0"/>
 		<AD name="Random Start" id="rstart" type="Integer" description="Number of random starts" default="10"/>
 		<AD name="Iterations" id="iterations" type="Integer" description="Number of iterations per random start" default="10"/>
@@ -25,6 +27,7 @@
 	<OCD name="Louvain Community Detection" id="edu.iu.nwb.analysis.communitydetection.slm.LouvainMultilevelRefinementAlgorithm.OCD"
 		 description="The Louvain Multilevel Refinement algorithm is the large network community detection algorithm. See www.ludowaltman.nl/slm/ for more information.">
 		<AD name="Weight" id="weight" type="String" description="The field used for the weight" default="unweighted"/>
+		<AD name="Modularity Function" id="modularity" type="String" description="The Standard modularity function has been proposed by Newman and Girvan (2004) and Newman (2004). The Alternative modularity function has been proposed by Traag, Van Dooren, and Nesterov (2011)" default="Standard"/>
 		<AD name="Resolution" id="resolution" type="Double" description="Use a value above (below) 1.0 if you want to obtain a larger (smaller) number of communities" default="1.0"/>
 		<AD name="Random Start" id="rstart" type="Integer" description="Number of random starts" default="10"/>
 		<AD name="Iterations" id="iterations" type="Integer" description="Number of iterations per random start" default="10"/>

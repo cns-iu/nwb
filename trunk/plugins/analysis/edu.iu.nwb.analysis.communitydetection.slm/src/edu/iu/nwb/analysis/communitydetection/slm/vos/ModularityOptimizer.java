@@ -5,7 +5,7 @@ package edu.iu.nwb.analysis.communitydetection.slm.vos;
  *
  * @author Ludo Waltman
  * @author Nees Jan van Eck
- * @version 1.0.0, 08/23/13
+ * @version 1.1.0, 12/17/13
  */
 
 import java.io.BufferedWriter;
@@ -21,17 +21,21 @@ import java.util.Scanner;
 public class ModularityOptimizer {
 	boolean printOutput = true, update;
 	double modularity, maxModularity, resolution, resolution2;
-	int algorithm, i, j, nClusters, nIterations, nRandomStarts;
+	int algorithm, i, j, nClusters, nIterations, nRandomStarts, modularityFunction;
 	long beginTime, endTime, randomSeed;
 	Network network;
 	Random random;
 	
-	public ModularityOptimizer(int algorithm, int randomStart, int randomSeed, int iterations, double resolution) {
+	public ModularityOptimizer(int algorithm, int modularityFunction, int randomStart, int randomSeed, int iterations, double resolution) {
+		if (algorithm < 1 || algorithm > 3 || modularityFunction < 1 || modularityFunction > 2) {
+			throw new IllegalArgumentException("The given parameters are invalid. The algorithm parameter should be between 1 to 3. The modularity function parameter should be between 1 to 2.");
+		}
 		this.resolution = resolution;
 		this.algorithm = algorithm;
 		this.nRandomStarts = randomStart;
 		this.nIterations = iterations;
 		this.randomSeed = randomSeed;
+		this.modularityFunction = modularityFunction;
 	}
 	
 	public ModularityOptimizer() {
@@ -40,16 +44,17 @@ public class ModularityOptimizer {
 		this.nRandomStarts = 10;
 		this.nIterations = 10;
 		this.randomSeed = 0;
+		this.modularityFunction = 1;
 	}
 
 	public void OptimizeModularity(File inputFile, File outputFile) throws IOException {
 
 		if (printOutput) {
 			System.out
-					.println("Modularity Optimizer version 1.0.0 by Ludo Waltman and Nees Jan van Eck");
+					.println("Modularity Optimizer version 1.1.0 by Ludo Waltman and Nees Jan van Eck");
 		}
 
-		network = readInputFile(inputFile);
+		network = readInputFile(inputFile, modularityFunction);
 
 		if (printOutput) {
 			System.out.format("Number of nodes: %d%n", network.getNNodes());
@@ -64,7 +69,7 @@ public class ModularityOptimizer {
 			System.out.println();
 		}
 
-		resolution2 = resolution / network.getTotalEdgeWeight();
+		resolution2 = (modularityFunction == 1) ? resolution / network.getTotalEdgeWeight() : resolution;
 
 		beginTime = System.currentTimeMillis();
 		int[] cluster = null;
@@ -122,13 +127,13 @@ public class ModularityOptimizer {
 		}
 	}
 
-	private static Network readInputFile(File file) throws IOException {
+	private static Network readInputFile(File file, int modularityFunction) throws IOException {
 		class Edge implements Comparable<Edge> {
 			public int node1;
 			public int node2;
-			public int weight;
+			public double weight;
 
-			public Edge(int node1, int node2, int weight) {
+			public Edge(int node1, int node2, double weight) {
 				this.node1 = node1;
 				this.node2 = node2;
 				this.weight = weight;
@@ -150,7 +155,7 @@ public class ModularityOptimizer {
 				lineScanner = new Scanner(fileScanner.nextLine());
 				int node1 = lineScanner.nextInt();
 				int node2 = lineScanner.nextInt();
-				int edgeWeight = lineScanner.hasNextInt() ? lineScanner.nextInt() : 1;
+				double edgeWeight = lineScanner.hasNextDouble() ? lineScanner.nextDouble() : 1;
 				if (node1 != node2) {
 					edgeArrayList1.add(new Edge(node1, node2, edgeWeight));
 					edgeArrayList1.add(new Edge(node2, node1, edgeWeight));
@@ -167,7 +172,7 @@ public class ModularityOptimizer {
 		ArrayList<Edge> edgeArrayList2 = new ArrayList<Edge>();
 		int node1 = -1;
 		int node2 = -1;
-		int edgeWeight = 0;
+		double edgeWeight = 0;
 		for (int i = 0; i < edgeArrayList1.size(); i++) {
 			Edge edge = edgeArrayList1.get(i);
 			if ((edge.node1 == node1) && (edge.node2 == node2))
@@ -183,7 +188,7 @@ public class ModularityOptimizer {
 		edgeArrayList2.add(new Edge(node1, node2, edgeWeight));
 
 		int[][] edge2 = new int[edgeArrayList2.size()][2];
-		int[] edgeWeight2 = new int[edgeArrayList2.size()];
+		double[] edgeWeight2 = new double[edgeArrayList2.size()];
 		for (int i = 0; i < edgeArrayList2.size(); i++) {
 			Edge edge = edgeArrayList2.get(i);
 			edge2[i][0] = edge.node1;
@@ -196,16 +201,20 @@ public class ModularityOptimizer {
 			if (edge2[j][0] > nNodes)
 				nNodes = edge2[j][0];
 		nNodes++;
+		
+		Network network;
+		if (modularityFunction == 1)
+        {
+			double[] nodeWeight = new double[nNodes];
+            for (int i = 0; i < edge2.length; i++)
+                nodeWeight[edge2[i][0]] += edgeWeight2[i];
 
-		int[] nodeWeight = new int[nNodes];
-		for (int i = 0; i < edge2.length; i++)
-			nodeWeight[edge2[i][0]] += edgeWeight2[i];
+            network = new Network(nNodes, edge2, edgeWeight2, nodeWeight);
+        }
+        else
+            network = new Network(nNodes, edge2, edgeWeight2);
 
-		double[] edgeWeightDouble = new double[edgeWeight2.length];
-		for (int i = 0; i < edgeWeight2.length; i++)
-			edgeWeightDouble[i] = edgeWeight2[i];
-
-		return new Network(nNodes, edge2, edgeWeightDouble, nodeWeight);
+		return network;
 	}
 
 	private static void writeOutputFile(File file, int[] cluster) throws IOException {
