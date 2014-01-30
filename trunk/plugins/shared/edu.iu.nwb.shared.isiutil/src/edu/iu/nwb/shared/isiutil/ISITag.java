@@ -14,7 +14,6 @@ public final class ISITag {
 	 * Sorting these alphabetically is a little more sane.
 	 * 
 	 * Tag references:
-	 * http://images.webofknowledge.com/WOK45/help/RCI/WOK/hft_wos.html
 	 * http://isi-rb.rubyforge.org/
 	 */
 	
@@ -25,9 +24,13 @@ public final class ISITag {
 		new ISITag("AU", "Authors", ContentType.MULTI_VALUE_TEXT, "\n");
 	public static final ISITag AUTHORS_FULL_NAMES =
 		new ISITag("AF", "Authors (Full Names)", ContentType.MULTI_VALUE_TEXT, "\n");
+	public static final ISITag AUTHOR_IDENTIFIERS =
+			new ISITag("RI", "Author Identifiers", ContentType.TEXT);
 
 	public static final ISITag BEGINNING_PAGE =
 		new ISITag("BP", "Beginning Page", ContentType.TEXT);
+	public static final ISITag BOOK_DOI =
+			new ISITag("D2", "Book DOI", ContentType.TEXT);
 	public static final ISITag BOOK_SERIES_TITLE =
 		new ISITag("SE", "Book Series Title", ContentType.TEXT);
 	public static final ISITag BOOK_SERIES_SUBTITLE =
@@ -52,6 +55,8 @@ public final class ISITag {
 	public static final ISITag DOCUMENT_TYPE = new ISITag("DT", "Document Type", ContentType.TEXT);
 	public static final ISITag DOI = new ISITag("DI", "DOI", ContentType.TEXT);
 
+	public static final ISITag EDITED_BY =
+			new ISITag("BE", "Edited by", ContentType.TEXT);
 	public static final ISITag EDITORS =
 		new ISITag("ED", "Editors", ContentType.MULTI_VALUE_TEXT, "\n");
 	public static final ISITag EMAIL_ADDRESSES =
@@ -78,12 +83,17 @@ public final class ISITag {
 	public static final ISITag ISSUE = new ISITag("IS", "Issue", ContentType.TEXT);
 
 	public static final ISITag LANGUAGE = new ISITag("LA", "Language", ContentType.TEXT);
+	
+	public static final ISITag MEETING_ABSTRACT =
+			new ISITag("MA", "Meeting Abstract", ContentType.TEXT);
 
 	public static final ISITag NEW_KEYWORDS_GIVEN_BY_ISI =
 		new ISITag("ID", "New ISI Keywords", ContentType.MULTI_VALUE_TEXT, ";");
 	public static final ISITag NUMBER_OF_PAGES =
 		new ISITag("PG", "Number of Pages", ContentType.INTEGER);
 
+	public static final ISITag ORCID_NUMBER =
+			new ISITag("OI", "ORCID Number", ContentType.TEXT);
 	public static final ISITag ORIGINAL_KEYWORDS =
 		new ISITag("DE", "Original Keywords", ContentType.MULTI_VALUE_TEXT, ";");
 
@@ -135,8 +145,10 @@ public final class ISITag {
 		ARTICLE_NUMBER_OF_NEW_APS_JOURNALS,
 		AUTHORS,
 		AUTHORS_FULL_NAMES,
+		AUTHOR_IDENTIFIERS,
 
 		BEGINNING_PAGE,
+		BOOK_DOI,
 		BOOK_SERIES_TITLE,
 		BOOK_SERIES_SUBTITLE,
 
@@ -152,6 +164,7 @@ public final class ISITag {
 		DOCUMENT_TYPE,
 		DOI,
 
+		EDITED_BY,
 		EDITORS,
 		EMAIL_ADDRESSES,
 		END_OF_FILE,
@@ -170,10 +183,13 @@ public final class ISITag {
 		ISSUE,
 
 		LANGUAGE,
+		
+		MEETING_ABSTRACT,
 
 		NEW_KEYWORDS_GIVEN_BY_ISI,
 		NUMBER_OF_PAGES,
 
+		ORCID_NUMBER,
 		ORIGINAL_KEYWORDS,
 
 		PART_NUMBER,
