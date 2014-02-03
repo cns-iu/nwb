@@ -389,8 +389,8 @@ public class ISITableReader {
 			return getTagResult;
 		}
 		this.log.log(LogService.LOG_WARNING,
-				"Unrecognized tag '" + tagName + "'.  Treating tag as if "
-				+ "it held single-value text data");
+				"Unrecognized tag '" + tagName + "' found in ISI import. "
+				+ "The new tag will be parsed into Sci2 as is.");
 			
 		ContentType currentTagContentType = ContentType.TEXT;
 		ISITag.addArbitraryTag(tagName, tagName, currentTagContentType);
