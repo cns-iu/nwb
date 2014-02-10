@@ -20,6 +20,8 @@ public final class ISITag {
 	public static final ISITag ABSTRACT = new ISITag("AB", "Abstract", ContentType.TEXT);
 	public static final ISITag ARTICLE_NUMBER_OF_NEW_APS_JOURNALS =
 		new ISITag("AR", "New Article Number",  ContentType.TEXT);
+	public static final ISITag ASSOCIATED_GROUP =
+			new ISITag("GA", "Associated Group", ContentType.TEXT);
 	public static final ISITag AUTHORS =
 		new ISITag("AU", "Authors", ContentType.MULTI_VALUE_TEXT, "\n");
 	public static final ISITag AUTHORS_FULL_NAMES =
@@ -29,6 +31,10 @@ public final class ISITag {
 
 	public static final ISITag BEGINNING_PAGE =
 		new ISITag("BP", "Beginning Page", ContentType.TEXT);
+	public static final ISITag BOOK_AUTHOR =
+			new ISITag("BA", "Book Author", ContentType.TEXT);
+	public static final ISITag BOOK_AUTHOR_FULLNAME =
+			new ISITag("BF", "Book Author Fullname", ContentType.TEXT);
 	public static final ISITag BOOK_DOI =
 			new ISITag("D2", "Book DOI", ContentType.TEXT);
 	public static final ISITag BOOK_SERIES_TITLE =
@@ -143,11 +149,14 @@ public final class ISITag {
 	private static final ISITag[] isiTagArray = {
 		ABSTRACT,
 		ARTICLE_NUMBER_OF_NEW_APS_JOURNALS,
+		ASSOCIATED_GROUP,
 		AUTHORS,
 		AUTHORS_FULL_NAMES,
 		AUTHOR_IDENTIFIERS,
 
 		BEGINNING_PAGE,
+		BOOK_AUTHOR,
+		BOOK_AUTHOR_FULLNAME,
 		BOOK_DOI,
 		BOOK_SERIES_TITLE,
 		BOOK_SERIES_SUBTITLE,
