@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Blondel Community Detection
 Bundle-SymbolicName: edu.iu.nwb.analysis.blondelcommunitydetection
-Bundle-Version: 0.0.1
+Bundle-Version: 0.0.2
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.util.nwbfile,
  org.cishell.framework;version="1.0.0",

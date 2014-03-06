@@ -9,6 +9,6 @@
   </parent>
   <groupId>edu.iu.nwb.analysis</groupId>
   <artifactId>edu.iu.nwb.analysis.blondelcommunitydetection</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>eclipse-plugin</packaging>
 </project>
