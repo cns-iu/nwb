@@ -31,17 +31,23 @@ public final class ISITag {
 
 	public static final ISITag BEGINNING_PAGE =
 		new ISITag("BP", "Beginning Page", ContentType.TEXT);
+	public static final ISITag BIOSIS_CITATION_INDEX =
+			new ISITag("ZB", "BIOSIS Citation Index", ContentType.INTEGER);
 	public static final ISITag BOOK_AUTHOR =
 			new ISITag("BA", "Book Author", ContentType.TEXT);
 	public static final ISITag BOOK_AUTHOR_FULLNAME =
 			new ISITag("BF", "Book Author Fullname", ContentType.TEXT);
 	public static final ISITag BOOK_DOI =
 			new ISITag("D2", "Book DOI", ContentType.TEXT);
+	public static final ISITag BOOK_GROUP_AUTHORS =
+			new ISITag("GP", "Book Group Authors", ContentType.TEXT); 
 	public static final ISITag BOOK_SERIES_TITLE =
 		new ISITag("SE", "Book Series Title", ContentType.TEXT);
 	public static final ISITag BOOK_SERIES_SUBTITLE =
 		new ISITag("BS", "Book Series Subtitle", ContentType.TEXT);
 
+	public static final ISITag CHINESE_SCIENCE_CITATION_DB =
+			new ISITag("Z8", "Chinese Science Citation DB", ContentType.INTEGER);
 	public static final ISITag CITED_PATENT = new ISITag("CP", "Cited Patent", ContentType.TEXT);
 	public static final ISITag CITED_REFERENCE_COUNT =
 		new ISITag("NR", "Cited Reference Count", ContentType.INTEGER);
@@ -80,6 +86,9 @@ public final class ISITag {
 		new ISITag("FU", "Funding Agency and Grant Number", ContentType.TEXT);
 	public static final ISITag FUNDING_TEXT = new ISITag("FX", "Funding Text", ContentType.TEXT);
 
+	public static final ISITag GROUP_AUTHORS =
+			new ISITag("CA", "Group Authors", ContentType.TEXT);
+	
 	public static final ISITag ISBN = new ISITag("BN", "ISBN", ContentType.TEXT);
 	public static final ISITag ISSN = new ISITag("SN",  "ISSN", ContentType.TEXT);
 	public static final ISITag ISI_DOCUMENT_DELIVERY_NUMBER =
@@ -127,6 +136,8 @@ public final class ISITag {
 	public static final ISITag RESEARCHER_ID =
 		new ISITag("RID", "Researcher ID", ContentType.TEXT); 
 	
+	public static final ISITag SC_ELO_CITATION_INDEX =
+			new ISITag("ZS", "SC:ELO Citation Index", ContentType.INTEGER);
 	public static final ISITag SPECIAL_ISSUE =
 		new ISITag("SI", "Special Issue",  ContentType.TEXT);
 	public static final ISITag SUBJECT_CATEGORY =
@@ -137,6 +148,8 @@ public final class ISITag {
 	public static final ISITag TITLE = new ISITag("TI", "Title", ContentType.TEXT);
 	public static final ISITag TOTAL_TIMES_CITED = 
 			new ISITag("Z9", "Total Times Cited", ContentType.INTEGER);
+	public static final ISITag TRANSLATED_TITLE =
+			new ISITag("XI", "Translated Title", ContentType.TEXT); 
 	public static final ISITag TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION =
 		new ISITag("J9", "Journal Name (Abbreviated)", ContentType.TEXT);
 
@@ -155,12 +168,15 @@ public final class ISITag {
 		AUTHOR_IDENTIFIERS,
 
 		BEGINNING_PAGE,
+		BIOSIS_CITATION_INDEX,
 		BOOK_AUTHOR,
 		BOOK_AUTHOR_FULLNAME,
 		BOOK_DOI,
+		BOOK_GROUP_AUTHORS,
 		BOOK_SERIES_TITLE,
 		BOOK_SERIES_SUBTITLE,
 
+		CHINESE_SCIENCE_CITATION_DB,
 		CITED_PATENT,
 		CITED_REFERENCE_COUNT,
 		CITED_REFERENCES,
@@ -184,6 +200,8 @@ public final class ISITag {
 		FULL_JOURNAL_TITLE,
 		FUNDING_AGENCY_AND_GRANT_NUMBER,
 		FUNDING_TEXT,
+		
+		GROUP_AUTHORS,
 
 		ISBN,
 		ISSN,
@@ -215,6 +233,7 @@ public final class ISITag {
 		RESEARCH_FIELD,
 		RESEARCHER_ID,
 
+		SC_ELO_CITATION_INDEX,
 		SPECIAL_ISSUE,
 		SUBJECT_CATEGORY,
 		SUPPLEMENT,
@@ -222,6 +241,7 @@ public final class ISITag {
 		TIMES_CITED,
 		TITLE,
 		TOTAL_TIMES_CITED,
+		TRANSLATED_TITLE,
 		TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION,
 
 		UNIQUE_ID,
