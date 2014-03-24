@@ -8,6 +8,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.CommunityDetectionRunner;
 import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.NWBAndTreeFilesMerger;
@@ -28,6 +29,7 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
 	
 	private Dictionary<String, Object> parameters;
 	private CIShellContext context;
+	private LogService logger;
 
     public BlondelCommunityDetectionAlgorithm(
     		AlgorithmFactory blondelCommunityDetectionAlgorithmFactory,
@@ -49,6 +51,9 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
         
         this.parameters = parameters;
         this.context = context;
+        
+        // grab log for outputting error messages
+     	logger = (LogService) context.getService(LogService.class.getName());
     }
 
     /*
@@ -84,8 +89,18 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
     	 *  producing a community-annotated NWB file.
     	 */
 
-    	File outputNWBFile = NWBAndTreeFilesMerger.mergeCommunitiesFileWithNWBFile(
+    	File tempNWBFile = NWBAndTreeFilesMerger.mergeCommunitiesFileWithNWBFile(
     		communityTreeFile, this.inputNWBFile, networkInfo);
+    	
+    	/*
+    	 * For Sci2-1175 JIRA, check and modify the NWB file before outputting it
+    	 */
+    	File outputNWBFile;
+		try {
+			outputNWBFile = OuterNodeAttributeRemover.removeOutermostNodeAttributeIfDuplicate(tempNWBFile);
+		} catch (OuterNodeAttributeRemoverException e) {
+			throw new AlgorithmExecutionException(e);
+		}
     	
     	// Wrap the community-annotated NWB file in Data[] for output.
     	
