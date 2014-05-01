@@ -1,12 +1,11 @@
 package edu.iu.nwb.converter.prefusescopus.util;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.data.BasicData;
-import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
+import org.cishell.utilities.TableUtilities;
 
 import prefuse.data.DataTypeException;
+import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.column.Column;
@@ -53,9 +52,43 @@ public class TableCleaner {
 	private static final String PAGE_END_COLUMN_NAME = "Page end";
 
 	public Table cleanTable(Table scopusTableIn) throws AlgorithmExecutionException {
+		scopusTableIn = fixBotchedUnicodeImport(scopusTableIn);
 		Table scopusTable = normalizeAuthorNames(scopusTableIn);
 		scopusTable = normalizeReferences(scopusTable);
 		return addSelfReferences(scopusTable);
+	}
+	
+	/**
+	 * Because of an issue where Sci2 can't handle Unicode (UTF-8) encoding on CSVs, the 
+	 * Byte Order Mark will get appended to the front of the first column header as garbled
+	 * text. This method replaces that garbled nonsense header with the correct one. 
+	 * TODO: Implement a more permanent fix for UTF-8 encoded CSV import errors
+	 */
+	private Table fixBotchedUnicodeImport(Table in) {
+		Table returnTable = new Table();
+		
+		// grabs info about inputData
+		Schema oldSchema = in.getSchema();		
+		final int numTableColumns = oldSchema.getColumnCount();
+		final int numTableRows = in.getRowCount();
+		
+		// add columns to return table, correcting them as iteration proceeds
+		for (int i = 0; i < numTableColumns; i++) {
+			String colHead = oldSchema.getColumnName(i);
+			if (i == 0) {
+				// assumes the first column will always be the authors column
+				colHead = AUTHOR_COLUMN_NAME;
+			}
+			returnTable.addColumn(colHead, oldSchema.getColumnType(i));
+		}
+		
+		// add existing rows to return table
+		returnTable.addRows(numTableRows);
+		for (int i = 0; i < numTableRows; i++) {
+			TableUtilities.copyTableRow(i, i, returnTable, in);
+		}
+			
+		return returnTable;
 	}
 
 	private Table normalizeAuthorNames(Table scopusTable) {
