@@ -42,7 +42,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 	public static final String DOUBLE_TYPE_TOKEN = "double";
 	public static final String XML_FILE_EXTENSION = "xml";
 
-	public static final String SLIS_SOFTWARE_URL = "http://nwb.cns.iu.edu/software.html";
+	public static final String SLIS_SOFTWARE_URL = "http://nwb.cns.iu.edu/doc.html";
 
 	private File inNWBFile;
 	private LogService logger;

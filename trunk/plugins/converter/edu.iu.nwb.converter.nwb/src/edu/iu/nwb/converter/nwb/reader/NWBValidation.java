@@ -47,7 +47,7 @@ public class NWBValidation implements AlgorithmFactory {
 					throw new AlgorithmExecutionException(
 						"Sorry, your file does not comply with the NWB File Format Specification.\n"+
 						"Please review the latest NWB File Format Specification at "+
-						"http://nwb.cns.iu.edu/software.html and update your file. \n"+
+						"http://nwb.cns.iu.edu/doc.html and update your file. \n"+
 						validator.getErrorMessages());						
 				}
 
