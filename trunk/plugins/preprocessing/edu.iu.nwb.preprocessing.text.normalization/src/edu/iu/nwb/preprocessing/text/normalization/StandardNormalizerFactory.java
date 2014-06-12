@@ -1,5 +1,5 @@
 package edu.iu.nwb.preprocessing.text.normalization;
-//Test update
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -200,9 +200,12 @@ public class StandardNormalizerFactory implements AlgorithmFactory, ParameterMut
 			String filePath = stopWordListFileURL.getFile();
 
 			// TODO: Hack?
-			if (filePath.startsWith("\\") || filePath.startsWith("/")) {
-				filePath = filePath.substring(1);
-			}
+	        String osName = System.getProperty("os.name");
+	        if(osName.startsWith("Windows")){
+			    if (filePath.startsWith("\\") || filePath.startsWith("/")) {
+				    filePath = filePath.substring(1);
+			    }
+	        }
 
 			return filePath;
 		} catch (MalformedURLException e) {
