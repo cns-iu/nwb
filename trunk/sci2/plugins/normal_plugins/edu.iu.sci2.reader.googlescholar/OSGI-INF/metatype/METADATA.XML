@@ -17,7 +17,7 @@
 		<Object ocdref="edu.iu.sci2.reader.googlescholar.CitationTableAlgorithm.OCD" />
 	</Designate>
 	<OCD name="Google Citation User ID Search" id="edu.iu.sci2.reader.googlescholar.GoogleCitationUserIdSearchAlgorithm.OCD"
-		 description="Warning: Google prevents crawling activity on Google Scholar search. To avoid your IP being blocked by Google, it is recommended to only search for 100 records per day.\nWeb reader algorithm that takes a column of author names as input and returns a table with Google citation user ID and information associated with each author. Multiple results found will be indicated with same unique index and '*' will be used to indicate the default author.">
+		 description="Warning: Google prevents crawling activity on Google Scholar search. To avoid your IP being blocked by Google, it is recommended to only search for 100 records per day. The web reader algorithm takes a column of author names as input and returns a table with Google citation user ID and information associated with each author. Multiple results found will be indicated with same unique index and '*' will be used to indicate the default author.">
 		<AD name="Author column" id="author" type="String" description="Author column name to be processed" default="Mutated by Factory"/>
 		<AD name="Delimiter" id="delimiter" type="String" description="Delimiter's used in author column" default="|"/>
 	</OCD>
