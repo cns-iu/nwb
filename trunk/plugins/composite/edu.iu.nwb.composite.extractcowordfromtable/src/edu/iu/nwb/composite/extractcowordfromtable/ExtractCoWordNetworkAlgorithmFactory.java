@@ -27,7 +27,7 @@ import prefuse.data.Table;
 
 
 public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
-	protected static final String PREFIX = "column_";
+	protected static final String PREFIX = "column~";
 	
 	protected static final String UNFILTERED_COLUMNS[] =
 	{
@@ -164,8 +164,8 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
 			
 			// If the column was filtered (determined in the prior loop), continue on with the next
 			// loop iteration.
-			if (filtered)
-				continue;
+			//if (filtered)
+			//	continue;
 			 
 			newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 				new BasicAttributeDefinition(prefix + name, name, "Normalize column " + name + "?",

@@ -52,7 +52,7 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	    		String parameterKey = (String)parameterKeys.nextElement();
 	    		Object parameterValue = parameters.get(parameterKey);
 	    		// Explode the current key based on "_" to separate the "column" and original_name.
-	    		String[] explodedParameterKey = parameterKey.split("\\_");
+	    		String[] explodedParameterKey = parameterKey.split("\\~");
 	    		
 	    		// Does the key start with "column_"?  (Is this a parameter meant for the target
 	    		// column?) Is it checked?
