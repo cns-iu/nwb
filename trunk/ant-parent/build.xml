@@ -9,7 +9,11 @@
 
 	<property environment="env" />
 	<target name="build">
-		<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+			<classpath>
+				<pathelement location="../sci2/deployment/edu.iu.sci2.releng/build-files/ant-contrib.jar"/>
+			</classpath>
+		</taskdef>
 
 		<delete dir="${basedir}/plugins" />
 		<mkdir dir="${basedir}/plugins" />
