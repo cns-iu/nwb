@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="p2-tasks" default="deploy-dev-p2">
 	<property name="dev-p2.input.dir" relative="true">${basedir}/target/repository</property>
-	<property name="dev-p2.output.dir" relative="false">/projects/nwb/www/htdocs/sci2/p2/</property>
+	<property name="dev-p2.output.dir" relative="false">builds/test/sci2/p2/</property>
 	
 	<!-- This will deploy the p2 repositories -->
 	<target name="deploy-dev-p2">
