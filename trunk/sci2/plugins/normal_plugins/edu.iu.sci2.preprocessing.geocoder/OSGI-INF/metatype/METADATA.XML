@@ -9,7 +9,7 @@
 		<Object ocdref="edu.iu.sci2.preprocessing.geocoder.GeocoderAlgorithm.OCD" />
 	</Designate>
 	<OCD name="Bing Geocoder" id="edu.iu.sci2.preprocessing.geocoder.BingGeocoderAlgorithm.OCD"
-		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) using Bing.  Ensure your machine is connected to the Internet. Each App Key is limited to 50,000 requests per day. Performance may vary due to network latency; ">
+		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) using Bing.  Ensure your machine is connected to the Internet. Each App Key is limited to 50,000 requests per day. Performance may vary due to network latency. ">
 		<AD name="Bing App key" id="bing_application_id" type="String" description="Please obtain a Bing maps key from \nhttp://www.microsoft.com/maps/" default=""/>
 		<AD name="Place Type" id="place_type" type="String" description="Select the type of place: State, Country, Zip Code or Address" default="Address"/>
 		<AD name="Place Name Column" id="place_name_column" type="String" description="Find longitudes and latitudes for the place names in this column" default=""/>
