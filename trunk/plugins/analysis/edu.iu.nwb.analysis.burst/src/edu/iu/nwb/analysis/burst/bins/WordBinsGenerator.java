@@ -141,7 +141,8 @@ public class WordBinsGenerator {
 				} catch (ParseException e) {
 					/* Just continue and do nothing for now. We will handle it later. */
 					if (dateStringExample == null) {
-						dateStringExample = dateString;
+						Date today = new Date();
+						dateStringExample = dateFormat.format(today);
 					}
 					continue;
 				}
@@ -151,7 +152,7 @@ public class WordBinsGenerator {
 		/* No matched date is found. Stop the algorithm and throw exception */
 		if (startDate == null || endDate == null) {
 			String errorMsg = "No valid date is found. Please make sure the given date format '"
-				+ dateFormat.toLocalizedPattern() 
+				+ dateFormat.toLocalizedPattern()
 				+ "' matches the date format of the selected date column.";
 			
 			if (dateStringExample != null) {
@@ -159,7 +160,7 @@ public class WordBinsGenerator {
 			}
 			
 			errorMsg += " More information are available at [url]"
-				+ "http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html[/url].";
+				+ "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html[/url].";
 			throw new BurstException(errorMsg);
 		}
 		
